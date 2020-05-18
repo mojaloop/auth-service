@@ -18,12 +18,13 @@
     "test:junit": "jest --reporters=default --reporters=jest-junit --testMatch '**/test/unit/**/*.test.ts'",
     "test:coverage": "jest --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.ts'",
     "test:coverage-check": "jest --coverage --testMatch '**/test/unit/**/*.test.js'",
-    "git:lintFix": "npm run lint -- --fix"
   },
   "pre-commit": [
-    "lint",
     "test:unit"
   ],
+  "lint-staged": {
+    "*.(j|t)s": ["npx lint", "git add"]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mojaloop/auth-service.git"
@@ -57,6 +58,7 @@
     "eslint-plugin-standard": "4.0.1",
     "jest": "26.0.1",
     "jest-junit": "10.0.0",
+    "lint-staged": "^10.2.3",
     "pre-commit": "^1.2.2",
     "source-map-support": "0.5.12",
     "ts-jest": "^26.0.0",
