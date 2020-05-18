@@ -70,3 +70,5 @@ dist/
 .idea/**
 **/*.iml
 
+# JUnit report
+junit.xml
