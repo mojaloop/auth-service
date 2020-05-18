@@ -19,19 +19,14 @@
     "test:coverage": "jest --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.ts'",
     "test:coverage-check": "jest --coverage --testMatch '**/test/unit/**/*.test.js'"
   },
-
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && npm run test:unit",
       "post-commit": "git update-index --again"
     }
   },
-
   "lint-staged": {
-    "*.{js,ts}": [
-      "eslint --cache --fix",
-      "git add"
-    ]
+    "*.{js,ts}": "eslint --cache --fix"
   },
   "repository": {
     "type": "git",
