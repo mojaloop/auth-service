@@ -24,7 +24,7 @@
 'use strict'
 
 export default class Template {
-  public static add(num1: number, num2: number): number {
+  public static add (num1: number, num2: number): number {
     return num1 + num2
   }
 }

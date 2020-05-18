@@ -25,15 +25,14 @@
 
 'use strict'
 
-
 import Template from '../../src/Template'
 import * as index from '../../src'
 
-describe('minimal unit test', () => {
-  it('should pass', () => {
+describe('minimal unit test', (): void => {
+  it('should pass', (): void => {
     // invoke static method
-    expect(Template.add(1,2)).toBe(3)
+    expect(Template.add(1, 2)).toBe(3)
     // module layout test
-    expect(typeof index).toBe('object');
+    expect(typeof index).toBe('object')
   })
 })
