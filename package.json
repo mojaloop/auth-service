@@ -23,7 +23,7 @@
     "test:unit"
   ],
   "lint-staged": {
-    "*.(j|t)s": ["npm run lint", "git add"]
+    "*": ["npm run lint", "git add"]
   },
   "repository": {
     "type": "git",
