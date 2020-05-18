@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  verbose: true,
+    verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
   collectCoverage: true,

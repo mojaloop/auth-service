@@ -10,9 +10,10 @@
   "scripts": {
     "pretest": "npm run build",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
-    "lint": "eslint **/src/**/*.ts **/test/unit/**/*.ts",
+    "lint": "eslint ./src/**/*.ts *.js",
     "build": "tsc",
     "watch": "tsc -w",
+    "test": "npm run test:unit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.test.ts'",
     "test:junit": "jest --reporters=default --reporters=jest-junit --testMatch '**/test/unit/**/*.test.ts'",
     "test:coverage": "jest --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.ts'",
@@ -20,7 +21,6 @@
     "git:lintFix": "npm run lint -- --fix"
   },
   "pre-commit": [
-    "build",
     "git:lintFix",
     "test:unit"
   ],
@@ -57,7 +57,7 @@
     "eslint-plugin-standard": "4.0.1",
     "jest": "26.0.1",
     "jest-junit": "10.0.0",
-    "prettier": "1.18.2",
+    "pre-commit": "^1.2.2",
     "source-map-support": "0.5.12",
     "ts-jest": "^26.0.0",
     "ts-node": "8.3.0",
