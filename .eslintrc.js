@@ -8,19 +8,38 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
+    'standard'
   ],
   parserOptions: {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
   rules: {
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-var-requires': 'off'
+    '@typescript-eslint/no-explicit-any': 'on',
+    '@typescript-eslint/no-var-requires': 'on',
+    'no-console': 'on',
+    indent: [
+      2,
+      2
+    ],
+    quotes: [
+      2,
+      'single'
+    ],
+    'linebreak-style': [
+      2,
+      'unix'
+    ],
+    'semi': [
+      2,
+      'never'
+    ]
   },
   overrides: [
     {
       // Disable some rules that we abuse in unit tests.
-      files: ['test /**/*.ts'
+      files: [
+        'test /**/*.ts'
       ],
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
