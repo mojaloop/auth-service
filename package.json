@@ -17,7 +17,7 @@
     "test:unit": "jest --testMatch '**/test/unit/**/*.test.ts'",
     "test:junit": "jest --reporters=default --reporters=jest-junit --testMatch '**/test/unit/**/*.test.ts'",
     "test:coverage": "jest --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.ts'",
-    "test:coverage-check": "jest --coverage --testMatch '**/test/unit/**/*.test.js'",
+    "test:coverage-check": "jest --coverage --testMatch '**/test/unit/**/*.test.js'"
   },
   "pre-commit": [
     "test:unit"
