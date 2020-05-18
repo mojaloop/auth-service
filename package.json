@@ -10,7 +10,7 @@
   "scripts": {
     "pretest": "npm run build",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
-    "lint": "eslint --fix ./src/**/*.ts *.js",
+    "lint": "eslint ./src/**/*.ts *.js",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "npm run test:unit",
@@ -23,7 +23,7 @@
     "test:unit"
   ],
   "lint-staged": {
-    "*": ["npm run lint", "git add"]
+    "*.(j|t)s": ["eslint --fix", "git add"]
   },
   "repository": {
     "type": "git",
