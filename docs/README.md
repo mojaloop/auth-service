@@ -1,6 +1,18 @@
 # auth-service/Docs
 
 Documentation for the auth service
+### BDD
+
+[jest-cucumber](https://github.com/bencompton/jest-cucumber) allows to use `jest` to execute Gherkin scenarios. Thanks to `jest` we are getting also code coverage for BDD Scenarios.
+
+in `test/features` are Feature/Scenarios in `.feature` files which contain declarations in Gherkin language.
+
+in `test/step-definitions` are Steps implementations in `.step.ts` files.
+
+Execute scenarios and report code coverage:
+```bash
+npm run test:cucumber
+```
 
 ### unit testing
 
