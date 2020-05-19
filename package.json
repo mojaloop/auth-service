@@ -15,9 +15,10 @@
     "watch": "tsc -w",
     "test": "npm run test:unit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
-    "test:junit": "jest --reporters=default --reporters=jest-junit --testMatch '**/test/unit/**/*.(test|spec).ts'",
-    "test:coverage": "jest --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.(test|spec).ts'",
-    "test:coverage-check": "jest --coverage --testMatch '**/test/unit/**/*.(test|spec).js'"
+    "test:cucumber": "jest --testMatch '**/test/step-definitions/**/*.step.ts'",
+    "test:junit": "jest --reporters=default --reporters=jest-junit",
+    "test:coverage": "jest --coverage --coverageThreshold='{}'",
+    "test:coverage-check": "jest --coverage"
   },
   "husky": {
     "hooks": {
@@ -54,6 +55,7 @@
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-config-standard": "14.1.1",
+    "eslint-plugin-cucumber": "^1.4.0",
     "eslint-plugin-import": "2.20.2",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.1.0",
@@ -61,6 +63,7 @@
     "eslint-plugin-standard": "4.0.1",
     "husky": "^4.2.5",
     "jest": "26.0.1",
+    "jest-cucumber": "^2.0.11",
     "jest-junit": "10.0.0",
     "lint-staged": "^10.2.3",
     "source-map-support": "0.5.12",
