@@ -1,6 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   plugins: [
+    'cucumber',
     '@typescript-eslint'
   ],
   extends: [
@@ -27,7 +28,11 @@ module.exports = {
     'no-console': 'warn',
     quotes: ['error', 'single'],
     'linebreak-style': ['error', 'unix'],
-    semi: ['error', 'never']
+    semi: ['error', 'never'],
+    'cucumber/async-then': 2,
+    'cucumber/expression-type': 2,
+    'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
+    'cucumber/no-arrow-functions': 2
   },
   overrides: [
     {
