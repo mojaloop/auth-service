@@ -20,4 +20,6 @@ workflows:
     test-unit:
       jobs:
         - test-unit
+    test-bdd:
+      jobs:
         - test-bdd
