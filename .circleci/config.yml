@@ -55,4 +55,5 @@ workflows:
             - setup
       - build-docker:
           requires:
-            - build-and-test
+            - test-unit
+            - test-bdd
