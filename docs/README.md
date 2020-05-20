@@ -11,7 +11,7 @@ in `test/step-definitions` are Steps implementations in `.step.ts` files.
 
 Execute scenarios and report code coverage:
 ```bash
-npm run test:cucumber
+npm run test:bdd
 ```
 
 ### unit testing
