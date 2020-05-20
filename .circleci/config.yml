@@ -36,7 +36,6 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
-      - docker/check
       - docker/build:
           image: $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG 
 
