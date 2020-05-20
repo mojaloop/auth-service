@@ -19,28 +19,20 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  * Lewis Daly <lewis@vesselstech.com>
-
+ * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
 'use strict'
 
-let Test = require('tapes')(require('tape'))
+import Template from '../../src/Template'
+import * as index from '../../src'
 
-Test('Example Test', (exampleTest: any): void => {
-  exampleTest.test('Adds two numbers together', (test: any): void => {
-    // Arrange
-    const input1 = 10
-    const input2 = 20
-    const expected = 30
-
-    // Act
-    const result = input1 + input2
-
-    //Assert
-    test.ok(result, expected, 'Result matches expectation')
-    test.end()
+describe('minimal unit test', (): void => {
+  it('should pass', (): void => {
+    // invoke static method
+    expect(Template.add(1, 2)).toBe(3)
+    // module layout test
+    expect(typeof index).toBe('object')
   })
-
-  exampleTest.end()
 })

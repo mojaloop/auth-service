@@ -10,20 +10,25 @@
   "scripts": {
     "pretest": "npm run build",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
-    "lint": "eslint ./src/**/*.ts ./test/**/*.ts",
+    "lint": "eslint ./src/**/*.ts *.js",
     "build": "tsc",
     "watch": "tsc -w",
-    "test:unit": "ts-node node_modules/.bin/tapes test/unit/**/*.test.ts",
-    "test:xunit": "npm run test:unit | tap-xunit",
-    "test:coverage": "nyc tape test/unit/**/*.test.{ts,js} | tap-spec; nyc report ---reporter=text",
-    "test:coverage-check": "npm run test:coverage && istanbul check-coverage",
-    "git:lintFix": "npm run lint -- --fix"
+    "test": "npm run test:unit",
+    "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
+    "test:bdd": "jest --testMatch '**/test/step-definitions/**/*.step.ts'",
+    "test:junit": "jest --reporters=default --reporters=jest-junit",
+    "test:coverage": "jest --coverage --coverageThreshold='{}'",
+    "test:coverage-check": "jest --coverage"
   },
-  "pre-commit": [
-    "build",
-    "git:lintFix",
-    "test:unit"
-  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && npm run test:unit",
+      "post-commit": "git update-index --again"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": "eslint --cache --fix"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mojaloop/auth-service.git"
@@ -35,29 +40,35 @@
   ],
   "author": "lewisdaly",
   "contributors": [
-    "Lewis Daly <lewis@vesselstech.com>"
+    "Lewis Daly <lewis@vesselstech.com>",
+    "Paweł Marzec <pawel.marzec@modusbox.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mojaloop/auth-service/issues"
   },
   "homepage": "https://github.com/mojaloop/auth-service#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "0.1.3",
+    "@types/jest": "25.2.2",
     "@typescript-eslint/eslint-plugin": "1.13.0",
     "@typescript-eslint/parser": "1.13.0",
-    "eslint": "6.1.0",
+    "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
+    "eslint-config-standard": "14.1.1",
+    "eslint-plugin-cucumber": "^1.4.0",
     "eslint-plugin-import": "2.20.2",
+    "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.1.0",
-    "nyc": "14.1.1",
-    "prettier": "1.18.2",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1",
+    "husky": "^4.2.5",
+    "jest": "26.0.1",
+    "jest-cucumber": "^2.0.11",
+    "jest-junit": "10.0.0",
+    "lint-staged": "^10.2.3",
     "source-map-support": "0.5.12",
-    "tap-spec": "5.0.0",
-    "tape": "4.11.0",
-    "tapes": "4.1.0",
+    "ts-jest": "^26.0.0",
     "ts-node": "8.3.0",
-    "typescript": "3.5.3"
+    "typescript": "3.9.2"
   }
 }
