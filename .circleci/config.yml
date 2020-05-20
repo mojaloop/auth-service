@@ -3,20 +3,17 @@ orbs:
   node: circleci/node@2.1.1
 jobs:
   install-dependencies:
-    working_directory: ~/circleci-auth-service
     executor:
       name: node/default
     steps:
       - checkout
       - node/install-packages
   test-unit:
-    working_directory: ~/circleci-auth-service
     executor:
       name: node/default
     steps:
       - run: npm run test:unit
   test-bdd:
-    working_directory: ~/circleci-auth-service
     executor:
       name: node/default
     steps:
