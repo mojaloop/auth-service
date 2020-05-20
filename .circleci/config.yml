@@ -9,7 +9,15 @@ jobs:
       - checkout
       - node/install-packages
       - run: npm run test:unit
+  test-bdd:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run: npm run test:bdd
 workflows:
     test-unit:
       jobs:
         - test-unit
+        - test-bdd
