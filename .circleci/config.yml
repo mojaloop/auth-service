@@ -3,14 +3,15 @@ orbs:
   node: circleci/node@2.1.1
 jobs:
   build-and-test:
+    docker:
+      - image: 'cimg/base:stable'
     executor:
       name: node/default
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm ci
-            - run: npm run test:unit
+      - node/install:
+          node-version: latest
+      - run: npm run test:unit
 workflows:
     build-and-test:
       jobs:
