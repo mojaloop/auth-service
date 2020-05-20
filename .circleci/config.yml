@@ -2,24 +2,31 @@ version: 2.1
 orbs:
   node: circleci/node@2.1.1
 jobs:
-  test-unit:
+  install-dependencies:
+    working_directory: ~/circleci-auth-service-workflows
     executor:
       name: node/default
     steps:
       - checkout
       - node/install-packages
+  test-unit:
+    working_directory: ~/circleci-auth-service-workflows
+    executor:
+      name: node/default
+    steps:
       - run: npm run test:unit
   test-bdd:
+    working_directory: ~/circleci-auth-service-workflows
     executor:
       name: node/default
     steps:
-      - checkout
-      - node/install-packages
       - run: npm run test:bdd
 workflows:
-    test-unit:
-      jobs:
-        - test-unit
-    test-bdd:
-      jobs:
-        - test-bdd
+  version: 2
+  build_accept:
+    jobs:
+      - install-dependencies
+      - test-unit:
+          requires: install-dependencies
+      - test-bdd:
+          requires: install-dependencies
