@@ -6,11 +6,15 @@ RUN apk add --no-cache -t build-dependencies git make gcc g++ python libtool aut
     && npm config set unsafe-perm true \
     && npm install -g node-gyp
 
+COPY package.json package-lock.json* /opt/auth-service/
+
+RUN npm ci
+COPY src /opt/auth-service/src
+COPY test /opt/auth-service/
 
 
-# Create a non-root user: ml-user
-RUN adduser -D ml-user 
-USER ml-user
+FROM node:12.16.1-alpine
+WORKDIR /opt/central-ledger
 
 # Create empty log file & 
 RUN mkdir ./logs && touch ./logs/combined.log
@@ -18,11 +22,16 @@ RUN mkdir ./logs && touch ./logs/combined.log
 # link stdout to the application log file
 RUN ln -sf /dev/stdout ./logs/combined.log
 
+# Create a non-root user: ml-user
+RUN adduser -D ml-user 
+USER ml-user
+
+
+# copy bundle
+COPY --chown=ml-user --from=builder /opt/auth-service/ .
+
 # cleanup
 RUN npm prune --production
 
-# copy bundle
-COPY --chown=ml-user . /opt/auth-service/
-
-EXPOSE 3001
+EXPOSE 3000
 CMD ["npm", "run", "start"]
