@@ -1,18 +1,58 @@
 version: 2.1
 orbs:
   node: circleci/node@2.1.1
+  docker: circleci/docker@1.0.1
 jobs:
-  build_and_test:
+  setup:
     working_directory: ~/circleci-auth-service
-    executor:
-      name: node/default
+    executor: node/default
     steps:
       - checkout    
       - node/install-packages
-      - run: npm run test:bdd
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  test-unit:
+    working_directory: ~/circleci-auth-service
+    executor: node/default
+    steps:
+      - checkout    
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
       - run: npm run test:unit
+  test-bdd:
+    working_directory: ~/circleci-auth-service
+    executor: node/default
+    steps:
+      - checkout    
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run: npm run test:bdd
+      
+  build-docker:
+    working_directory: ~/circleci-auth-service
+    executor: docker/machine
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run: ls -al node_modules/
+
 workflows:
   version: 2
   build_accept:
     jobs:
-      - build_and_test
+      - setup
+      - test-unit:
+          requires:
+            - setup
+      - test-bdd:
+          requires:
+            - setup
+      - build-docker:
+          requires:
+            - build-and-test
