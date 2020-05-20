@@ -2,17 +2,15 @@ version: 2.1
 orbs:
   node: circleci/node@2.1.1
 jobs:
-  build-and-test:
-    docker:
-      - image: 'cimg/base:stable'
+  test-unit:
     executor:
       name: node/default
+      tag: '13'
     steps:
       - checkout
-      - node/install:
-          node-version: latest
-      - run: npm ci && npm run test:unit
+      - node/install-packages
+      - run: npm run test:unit
 workflows:
-    build-and-test:
+    test-unit:
       jobs:
-        - build-and-test
+        - test-unit
