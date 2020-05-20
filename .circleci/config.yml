@@ -4,7 +4,6 @@ orbs:
   docker: circleci/docker@1.0.1
 jobs:
   setup:
-    working_directory: ~/circleci-auth-service
     executor: node/default
     steps:
       - checkout    
@@ -14,7 +13,6 @@ jobs:
           paths:
             - node_modules
   test-unit:
-    working_directory: ~/circleci-auth-service
     executor: node/default
     steps:
       - checkout    
@@ -23,7 +21,6 @@ jobs:
             - dependency-cache-{{ checksum "package.json" }}
       - run: npm run test:unit
   test-bdd:
-    working_directory: ~/circleci-auth-service
     executor: node/default
     steps:
       - checkout    
@@ -33,7 +30,6 @@ jobs:
       - run: npm run test:bdd
       
   build-docker:
-    working_directory: ~/circleci-auth-service
     executor: docker/machine
     steps:
       - checkout
