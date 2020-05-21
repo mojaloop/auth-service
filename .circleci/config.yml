@@ -30,14 +30,15 @@ jobs:
       - run: npm run test:bdd
       
   build-docker:
-    executor: docker/machine
+    executor: docker/docker
     steps:
       - checkout
+      - docker/install-docker-tools
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
-      - docker/build:
-          image: $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG 
+      - run:
+          docker build -t $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG .
 
 workflows:
   version: 2
