@@ -76,6 +76,8 @@ jobs:
           command: |
             npm ci
             npm -s run test:coverage-check
+            mv ./junit.xml ./coverage/junit.xml
+
       - store_artifacts:
           path: coverage
           prefix: test
@@ -84,13 +86,8 @@ jobs:
       - run:
           name: Copy code coverage to SonarQube
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ];
-            then
-                echo "Sending lcov.info to SonarQube..."
-                aws s3 cp coverage/lcov.info $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info
-            else
-                echo "Not a release (env CIRCLE_BRANCH != 'master'), skipping sending lcov.info to SonarQube."
-            fi
+            echo "Sending lcov.info to SonarQube..."
+            aws s3 cp coverage/lcov.info $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info
 
   check-vulnerabilities:
     executor: node/default
