@@ -129,14 +129,7 @@ jobs:
           path: /tmp/license-scanner/results
           prefix: licenses
 
-  lint-Dockerfile:
-    executor: 'docker/docker'
-    steps:
-      - checkout
-      - docker/hadolint:
-          dockerfile: /home/circleci/project/Dockerfile
-          # ignore-rules: 'DL4005,DL3008'
-          # trusted-registries: 'docker.io:5000'
+
   build:
     executor: docker/docker
     steps:
@@ -149,12 +142,15 @@ workflows:
   version: 2
   build_accept:
     jobs:
-     
+      - docker/hadolint:
+          context: org-global
+          dockerfile: /home/circleci/project/Dockerfile
+          # ignore-rules: 'DL4005,DL3008'
+          # trusted-registries: 'docker.io:5000'
       
       - setup:
           context: org-global
-      - lint-Dockerfile:
-          context: org-global
+
       - test-unit:
           context: org-global
           requires:
