@@ -134,7 +134,7 @@ workflows:
   version: 2
   build_accept:
     jobs:
-      - setup
+      - setup:
           context: org-global
       - test-unit:
           context: org-global
