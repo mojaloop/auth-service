@@ -45,7 +45,7 @@ jobs:
           path: ./test/results
   
   check-vulnerabilities:
-    executor: default-docker
+    executor: node/default
     steps:
       - checkout
       - restore_cache:
