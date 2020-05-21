@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@2.1.1
   docker: circleci/docker@1.0.1
-  
+
 jobs:
   setup:
     executor: node/default
@@ -46,9 +46,8 @@ jobs:
           path: ./test/results
 
   test-coverage:
-    machine:
-      image: ubuntu-1604:2019-01
-
+    docker:
+      - image: node:12.16.1-alpine
     steps:
       - checkout
       - restore_cache:
