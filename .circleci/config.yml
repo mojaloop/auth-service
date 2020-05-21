@@ -50,9 +50,6 @@ jobs:
       - image: node:12.16.1-alpine
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install default dependencies
           command: |
@@ -76,7 +73,9 @@ jobs:
             apk -v --purge del py-pip
       - run:
           name: Execute code coverage check
-          command: npm -s run test:coverage-check
+          command: |
+            npm ci
+            npm -s run test:coverage-check
       - store_artifacts:
           path: coverage
           prefix: test
