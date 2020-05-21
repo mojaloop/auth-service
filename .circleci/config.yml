@@ -47,7 +47,7 @@ jobs:
           path: ./test/results
 
   test-coverage:
-    executor: node/default
+    executor: python/default
     steps:
       - checkout
       - restore_cache:
