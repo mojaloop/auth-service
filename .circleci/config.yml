@@ -19,14 +19,14 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
-      - run: mkdir -p ./test/results-unit
+      - run: mkdir -p ./test/results
       - run: npm run test:unit
-      - run: ls -al ./ 
+      - run: mv ./junit.xml ./test/results/unit-junit.xml
       - store_artifacts:
-          path: ./test/results-unit
+          path: ./test/results
           prefix: test
       - store_test_results:
-          path: ./test/results-unit
+          path: ./test/results
   test-bdd:
     executor: node/default
     steps:
@@ -34,14 +34,14 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
-      - run: mkdir -p ./test/results-bdd
+      - run: mkdir -p ./test/results
       - run: npm run test:bdd
-      - run: ls -al ./ 
+      - run: mv ./junit.xml ./test/results/bdd-junit.xml
       - store_artifacts:
-          path: ./test/results-bdd
+          path: ./test/results
           prefix: test
       - store_test_results:
-          path: ./test/results-bdd
+          path: ./test/results
       
 
 workflows:
