@@ -135,18 +135,24 @@ workflows:
   build_accept:
     jobs:
       - setup
+          context: org-global
       - test-unit:
+          context: org-global
           requires:
             - setup
       - test-bdd:
+          context: org-global
           requires:
             - setup
       - test-coverage:
+          context: org-global
           requires:
             - setup
       - check-vulnerabilities:
+          context: org-global
           requires:
             - setup
       - audit-licencees:
+          context: org-global
           requires:
             - setup
