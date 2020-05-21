@@ -1,61 +1,19 @@
 version: 2.1
 orbs:
-  anchore: anchore/anchore-engine@1.6.0
-  deploy-kube: mojaloop/deployment@0.1.6
-  slack: circleci/slack@3.4.2
-executors:
-  default-docker:
-    working_directory: /home/circleci/project
-    docker:
-      - image: node:12.16.1-alpine
-
-  default-machine:
-    machine:
-      image: ubuntu-1604:201903-01
-##
-# defaults
-#
-# YAML defaults templates, in alphabetical order
-##
-defaults_Dependencies: &defaults_Dependencies |
-    apk --no-cache add git
-    apk --no-cache add ca-certificates
-    apk --no-cache add curl
-    apk --no-cache add openssh-client
-    apk add --no-cache -t build-dependencies make gcc g++ python libtool autoconf automake
-    npm config set unsafe-perm true
-    npm install -g node-gyp
-
-defaults_license_scanner: &defaults_license_scanner
-  name: Install and set up license-scanner
-  command: |
-    git clone https://github.com/mojaloop/license-scanner /tmp/license-scanner
-    cd /tmp/license-scanner && make build default-files set-up
-
+  node: circleci/node@2.1.1
+  docker: circleci/docker@1.0.1
 jobs:
   setup:
-    executor: default-docker
+    executor: node/default
     steps:
-      - checkout
-      - run:
-          name: Install general dependencies
-          command: *defaults_Dependencies
-      - run:
-          name: Access npm folder as root
-          command: cd $(npm root -g)/npm
-      - run:
-          name: Update NPM install
-          command: npm ci
-      - run:
-          name: Delete build dependencies
-          command: apk del build-dependencies
+      - checkout    
+      - node/install-packages
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-
   test-unit:
-    executor: default-docker
+    executor: node/default
     steps:
       - checkout    
       - restore_cache:
@@ -69,9 +27,8 @@ jobs:
           prefix: test
       - store_test_results:
           path: ./test/results-unit
-  
   test-bdd:
-    executor: default-docker
+    executor: node/default
     steps:
       - checkout    
       - restore_cache:
@@ -86,7 +43,6 @@ jobs:
       - store_test_results:
           path: ./test/results-bdd
       
-  
 
 workflows:
   version: 2
@@ -99,4 +55,3 @@ workflows:
       - test-bdd:
           requires:
             - setup
-      
