@@ -144,7 +144,7 @@ workflows:
     jobs:
       - docker/hadolint:
           context: org-global
-          dockerfile: /home/circleci/project/Dockerfile
+          # dockerfile: /home/circleci/project/Dockerfile
           # ignore-rules: 'DL4005,DL3008'
           # trusted-registries: 'docker.io:5000'
       
