@@ -2,6 +2,13 @@ version: 2.1
 orbs:
   node: circleci/node@2.1.1
   docker: circleci/docker@1.0.1
+
+setup_license_scanner: &setup_license_scanner
+  name: Install and set up license-scanner
+  command: |
+    git clone https://github.com/mojaloop/license-scanner /tmp/license-scanner
+    cd /tmp/license-scanner && make build default-files set-up
+
 jobs:
   setup:
     executor: node/default
@@ -9,7 +16,7 @@ jobs:
       - checkout    
       - node/install-packages
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
   test-unit:
@@ -18,7 +25,7 @@ jobs:
       - checkout    
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package.json" }}
+            - dependency-cache-{{ checksum "package-lock.json" }}
       - run: mkdir -p ./test/results
       - run: npm run test:unit
       - run: mv ./junit.xml ./test/results/unit-junit.xml
@@ -34,7 +41,7 @@ jobs:
       - checkout    
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package.json" }}
+            - dependency-cache-{{ checksum "package-lock.json" }}
       - run: mkdir -p ./test/results
       - run: npm run test:bdd
       - run: mv ./junit.xml ./test/results/bdd-junit.xml
@@ -50,7 +57,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package.json" }}
+            - dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Create dir for audit results
           command: mkdir -p ./audit/results
@@ -60,6 +67,23 @@ jobs:
       - store_artifacts:
           path: ./audit/results
           prefix: audit 
+
+  audit-licencees:
+    executor: node/default
+    steps:
+      - checkout
+      - run: *setup_license_scanner
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Prune non-production packages before running license-scanner
+          command: npm prune --production
+      - run:
+          name: Run the license-scanner
+          command: cd /tmp/license-scanner && pathToRepo=$CIRCLE_WORKING_DIRECTORY make run
+      - store_artifacts:
+          path: /tmp/license-scanner/results
+          prefix: licenses
 
 workflows:
   version: 2
@@ -73,5 +97,8 @@ workflows:
           requires:
             - setup
       - check-vulnerabilities:
+          requires:
+            - setup
+      - audit-licencees:
           requires:
             - setup
