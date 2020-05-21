@@ -67,6 +67,8 @@
     "jest-cucumber": "^2.0.11",
     "jest-junit": "10.0.0",
     "lint-staged": "^10.2.3",
+    "npm-audit-resolver": "2.2.0",
+    "npm-check-updates": "6.0.0",
     "source-map-support": "0.5.12",
     "ts-jest": "^26.0.0",
     "ts-node": "8.3.0",
