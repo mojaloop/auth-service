@@ -87,6 +87,7 @@ jobs:
           name: Copy code coverage to SonarQube
           command: |
             echo "Sending lcov.info to SonarQube..."
+            echo "S3 destination: $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info"
             aws s3 cp coverage/lcov.info $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info
 
   check-vulnerabilities:
