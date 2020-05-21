@@ -8,11 +8,13 @@
     "dist"
   ],
   "scripts": {
+    "audit:resolve": "SHELL=sh resolve-audit",
+    "audit:check": "SHELL=sh check-audit",
+    "build": "tsc",
+    "lint": "eslint ./src/**/*.ts *.js",
+    "watch": "tsc -w",
     "pretest": "npm run build",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
-    "lint": "eslint ./src/**/*.ts *.js",
-    "build": "tsc",
-    "watch": "tsc -w",
     "start": "npm run test:unit && npm run test:bdd",
     "test": "npm run test:unit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",

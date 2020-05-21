@@ -27,6 +27,7 @@ jobs:
           prefix: test
       - store_test_results:
           path: ./test/results
+
   test-bdd:
     executor: node/default
     steps:
@@ -42,7 +43,23 @@ jobs:
           prefix: test
       - store_test_results:
           path: ./test/results
-      
+  
+  check-vulnerabilities:
+    executor: default-docker
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Create dir for audit results
+          command: mkdir -p ./audit/results
+      - run:
+          name: Check for new npm vulnerabilities
+          command: npm run audit:check --silent -- --json > ./audit/results/auditResults.json
+      - store_artifacts:
+          path: ./audit/results
+          prefix: audit 
 
 workflows:
   version: 2
@@ -53,5 +70,8 @@ workflows:
           requires:
             - setup
       - test-bdd:
+          requires:
+            - setup
+      - check-vulnerabilities:
           requires:
             - setup
