@@ -21,7 +21,7 @@ jobs:
             - dependency-cache-{{ checksum "package.json" }}
       - run: mkdir -p ./test/results-unit
       - run: npm run test:unit
-      - run: mv junit.xml ./test/results-unit
+      - run: ls -al ./ 
       - store_artifacts:
           path: ./test/results-unit
           prefix: test
@@ -36,7 +36,7 @@ jobs:
             - dependency-cache-{{ checksum "package.json" }}
       - run: mkdir -p ./test/results-bdd
       - run: npm run test:bdd
-      - run: mv junit.xml ./test/results-bdd
+      - run: ls -al ./ 
       - store_artifacts:
           path: ./test/results-bdd
           prefix: test
