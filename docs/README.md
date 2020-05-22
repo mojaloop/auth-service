@@ -61,7 +61,9 @@ Corresponding excerpt from package.json:
 
 ## Conventional commits:
 
-Using conventional commits helps standardize the format of commit messages and allows automatic generation of CHANGELOG.md file.
+> __Motivation:__
+> 
+> Using conventional commits helps standardize the format of commit messages and allows automatic generation of [CHANGELOG.md](../CHANGELOG.md) file.
 
 See the available commands
 ```bash
