@@ -4,7 +4,7 @@ orbs:
   docker: circleci/docker@1.0.1
 
 jobs:
-  setup:
+  node-dependencies:
     executor: node/default
     steps:
       - checkout    
@@ -131,11 +131,33 @@ jobs:
 
 
   build:
-    executor: docker/docker
+    docker:
+      - image: node:12.16.1-alpine
     steps:
       - checkout
-      - docker/install-docker-tools
-      - run: docker build -t $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG .
+      - run:
+          name: Install default dependencies
+          command: |
+            apk --no-cache add git
+            apk --no-cache add ca-certificates
+            apk --no-cache add curl
+            apk --no-cache add openssh-client
+            apk add --no-cache -t build-dependencies make gcc g++ python libtool autoconf automake
+            npm config set unsafe-perm true
+            npm install -g node-gyp
+          
+      - run:
+          name: Build Docker $CIRCLE_TAG image
+          command: |
+            echo "Building Docker image: $CIRCLE_TAG"
+            docker build -t $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG .
+      - run:
+          name: Save docker image to workspace
+          command: docker save -o /tmp/docker-image.tar $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - ./docker-image.tar
 
 workflows:
   version: 2
@@ -147,36 +169,36 @@ workflows:
           ignore-rules: 'DL3016,DL3018,DL3003,SC2046'
           #trusted-registries: 'docker.io:5000'
       
-      - setup:
+      - node-dependencies:
           context: org-global
 
       - test-unit:
           context: org-global
           requires:
-            - setup
+            - node-dependencies
       - test-bdd:
           context: org-global
           requires:
-            - setup
+            - node-dependencies
       - test-coverage:
           context: org-global
           requires:
-            - setup
+            - node-dependencies
       - check-vulnerabilities:
           context: org-global
           requires:
-            - setup
+            - node-dependencies
       - audit-licencees:
           context: org-global
           requires:
-            - setup
+            - node-dependencies
 
       - build:
           context: org-global
           requires:
-            - test-unit
-            - test-bdd
-            - test-coverage
-            - check-vulnerabilities
-            - audit-licencees
+            # - test-unit
+            # - test-bdd
+            # - test-coverage
+            # - check-vulnerabilities
+            # - audit-licencees
             - docker/hadolint
