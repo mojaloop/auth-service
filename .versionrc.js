@@ -1,5 +1,5 @@
 module.exports = {
-  header: 'Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)',
+  header: '# Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)',
   types: [
     { type: 'feat', section: 'Features' },
     { type: 'fix', section: 'Bug Fixes' },
