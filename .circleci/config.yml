@@ -136,17 +136,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install default dependencies
-          command: |
-            apk --no-cache add git
-            apk --no-cache add ca-certificates
-            apk --no-cache add curl
-            apk --no-cache add openssh-client
-            apk add --no-cache -t build-dependencies make gcc g++ python libtool autoconf automake
-            npm config set unsafe-perm true
-            npm install -g node-gyp
-          
-      - run:
           name: Build Docker $CIRCLE_TAG image
           command: |
             echo "Building Docker image: $CIRCLE_TAG"
