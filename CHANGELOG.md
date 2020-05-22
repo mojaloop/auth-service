@@ -1,4 +1,11 @@
-Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+# Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [0.1.5](https://github.com/mojaloop/auth-service/compare/v0.1.4...v0.1.5) (2020-05-22)
+
+
+### Style Improvements
+
+* **CHANGELOG:** restyle header ([e78234f](https://github.com/mojaloop/auth-service/commit/e78234f5cdbc3e93c72b6bdd024f69f2d4f68193))
+
 ### [0.1.4](https://github.com/mojaloop/auth-service/compare/v0.1.3...v0.1.4) (2020-05-22)
 
 
