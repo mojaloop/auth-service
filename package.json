@@ -17,11 +17,12 @@
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
     "start": "npm run test:unit && npm run test:bdd",
     "test": "npm run test:unit",
-    "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
     "test:bdd": "jest --testMatch '**/test/step-definitions/**/*.step.ts'",
-    "test:junit": "jest --reporters=default --reporters=jest-junit",
     "test:coverage": "jest --coverage --coverageThreshold='{}'",
-    "test:coverage-check": "jest --coverage"
+    "test:coverage-check": "jest --coverage",
+    "test:integration": "echo \"test:integration - TODO...",
+    "test:junit": "jest --reporters=default --reporters=jest-junit",
+    "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'"
   },
   "husky": {
     "hooks": {

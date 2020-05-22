@@ -1,44 +1,130 @@
+# CircleCI v2.1 Config
 version: 2.1
-orbs:
-  node: circleci/node@2.1.1
-  docker: circleci/docker@1.0.1
 
+##
+# orbs
+#
+# Orbs used in this pipeline
+##
+orbs:
+  anchore: anchore/anchore-engine@1.6.0
+  deploy-kube: mojaloop/deployment@0.1.6
+  slack: circleci/slack@3.4.2
+
+##
+# defaults
+#
+# YAML defaults templates, in alphabetical order
+##
+defaults_Dependencies: &defaults_Dependencies |
+    apk --no-cache add git
+    apk --no-cache add ca-certificates
+    apk --no-cache add curl
+    apk --no-cache add openssh-client
+    apk add --no-cache -t build-dependencies make gcc g++ python libtool autoconf automake
+    npm config set unsafe-perm true
+    npm install -g node-gyp
+
+defaults_awsCliDependencies: &defaults_awsCliDependencies |
+    apk --no-cache add \
+            python \
+            py-pip \
+            groff \
+            less \
+            mailcap
+    pip install --upgrade awscli==1.14.5 s3cmd==2.0.1 python-magic
+    apk -v --purge del py-pip
+
+defaults_license_scanner: &defaults_license_scanner
+  name: Install and set up license-scanner
+  command: |
+    git clone https://github.com/mojaloop/license-scanner /tmp/license-scanner
+    cd /tmp/license-scanner && make build default-files set-up
+
+##
+# Executors
+#
+# CircleCI Executors
+##
+executors:
+  default-docker:
+    working_directory: /home/circleci/project
+    docker:
+      - image: node:12.16.1-alpine
+
+  default-machine:
+    machine:
+      image: ubuntu-1604:201903-01
+
+##
+# Jobs
+#
+# A map of CircleCI jobs
+##
 jobs:
-  node-dependencies:
-    executor: node/default
+  setup:
+    executor: default-docker
     steps:
-      - checkout    
-      - node/install-packages
+      - checkout
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - run:
+          name: Access npm folder as root
+          command: cd $(npm root -g)/npm
+      - run:
+          name: Update NPM install
+          command: npm ci
+      - run:
+          name: Delete build dependencies
+          command: apk del build-dependencies
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+
   test-unit:
-    executor: node/default
+    executor: default-docker
     steps:
-      - checkout    
+      - checkout
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package-lock.json" }}
-      - run: mkdir -p ./test/results
-      - run: npm run test:unit
-      - run: mv ./junit.xml ./test/results/unit-junit.xml
+          - dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Execute unit tests
+          command: npm run test:unit
+      - run:
+          name: prepare test/results
+          command: |
+            mkdir -p test/results
+            mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
           prefix: test
       - store_test_results:
           path: ./test/results
-
+  
   test-bdd:
-    executor: node/default
+    executor: default-docker
     steps:
-      - checkout    
+      - checkout
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package-lock.json" }}
-      - run: mkdir -p ./test/results
-      - run: npm run test:bdd
-      - run: mv ./junit.xml ./test/results/bdd-junit.xml
+          - dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Execute unit tests
+          command: npm run test:bdd
+      - run:
+          name: prepare test/results
+          command: |
+            mkdir -p test/results
+            mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
           prefix: test
@@ -46,38 +132,21 @@ jobs:
           path: ./test/results
 
   test-coverage:
-    docker:
-      - image: node:12.16.1-alpine
+    executor: default-docker
     steps:
       - checkout
       - run:
-          name: Install default dependencies
-          command: |
-            apk --no-cache add git
-            apk --no-cache add ca-certificates
-            apk --no-cache add curl
-            apk --no-cache add openssh-client
-            apk add --no-cache -t build-dependencies make gcc g++ python libtool autoconf automake
-            npm config set unsafe-perm true
-            npm install -g node-gyp
+          name: Install general dependencies
+          command: *defaults_Dependencies
       - run:
           name: Install AWS CLI dependencies
-          command: |
-            apk --no-cache add \
-              python \
-              py-pip \
-              groff \
-              less \
-              mailcap
-            pip install --upgrade awscli==1.14.5 s3cmd==2.0.1 python-magic
-            apk -v --purge del py-pip
+          command: *defaults_awsCliDependencies
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Execute code coverage check
-          command: |
-            npm ci
-            npm -s run test:coverage-check
-            mv ./junit.xml ./coverage/junit.xml
-
+          command: npm run test:coverage-check
       - store_artifacts:
           path: coverage
           prefix: test
@@ -86,37 +155,61 @@ jobs:
       - run:
           name: Copy code coverage to SonarQube
           command: |
-            echo "Sending lcov.info to SonarQube..."
-            echo "S3 destination: $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info"
-            echo "env[AWS_S3_DIR_SONARQUBE] === '$AWS_S3_DIR_SONARQUBE'"
-            aws s3 cp coverage/lcov.info $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info
+            if [ "${CIRCLE_BRANCH}" == "master" ];
+            then
+                echo "Sending lcov.info to SonarQube..."
+                aws s3 cp coverage/lcov.info $AWS_S3_DIR_SONARQUBE/$CIRCLE_PROJECT_REPONAME/lcov.info
+            else
+                echo "Not a release (env CIRCLE_BRANCH != 'master'), skipping sending lcov.info to SonarQube."
+            fi
 
-  check-vulnerabilities:
-    executor: node/default
+  test-integration:
+    executor: default-machine
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - dependency-cache-{{ checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Create dir for audit results
+          name: Create dir for test results
+          command: mkdir -p ./test/results
+      - run:
+          name: Execute integration tests
+          command: npm -s run test:integration
+          no_output_timeout: 25m
+      - store_artifacts:
+          path: ./test/results
+          prefix: test
+      - store_test_results:
+          path: ./test/results
+
+  vulnerability-check:
+    executor: default-docker
+    steps:
+      - checkout
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Create dir for test results
           command: mkdir -p ./audit/results
       - run:
           name: Check for new npm vulnerabilities
           command: npm run audit:check --silent -- --json > ./audit/results/auditResults.json
       - store_artifacts:
           path: ./audit/results
-          prefix: audit 
+          prefix: audit
 
-  audit-licencees:
-    executor: node/default
+  audit-licenses:
+    executor: default-docker
     steps:
       - checkout
       - run:
-          name: Install and set up license-scanner
-          command: |
-            git clone https://github.com/mojaloop/license-scanner /tmp/license-scanner
-            cd /tmp/license-scanner && make build default-files set-up
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - run:
+          <<: *defaults_license_scanner
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
@@ -124,15 +217,13 @@ jobs:
           command: npm prune --production
       - run:
           name: Run the license-scanner
-          command: cd /tmp/license-scanner && pathToRepo=/home/circleci/project make run
+          command: cd /tmp/license-scanner && pathToRepo=$CIRCLE_WORKING_DIRECTORY make run
       - store_artifacts:
           path: /tmp/license-scanner/results
           prefix: licenses
 
-
   build:
-    machine:
-      image: ubuntu-1604:201903-01
+    executor: default-machine
     steps:
       - checkout
       - run:
@@ -148,46 +239,268 @@ jobs:
           paths:
             - ./docker-image.tar
 
+  license-scan:
+    executor: default-machine
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Load the pre-built docker image from workspace
+          command: docker load -i /tmp/docker-image.tar
+      - run:
+          <<: *defaults_license_scanner
+      - run:
+          name: Run the license-scanner
+          command: cd /tmp/license-scanner && mode=docker dockerImages=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG make run
+      - store_artifacts:
+          path: /tmp/license-scanner/results
+          prefix: licenses
+
+  image-scan:
+    executor: anchore/anchore_engine
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Install docker dependencies for anchore
+          command: |
+            apk add --update py-pip docker python-dev libffi-dev openssl-dev gcc libc-dev make jq npm
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - run:
+          name: Install AWS CLI dependencies
+          command: *defaults_awsCliDependencies
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Load the pre-built docker image from workspace
+          command: docker load -i /tmp/docker-image.tar
+      - run:
+          name: Download the mojaloop/ci-config repo
+          command: |
+            git clone https://github.com/mojaloop/ci-config /tmp/ci-config
+            # Generate the mojaloop anchore-policy
+            cd /tmp/ci-config/container-scanning && ./mojaloop-policy-generator.js /tmp/mojaloop-policy.json
+      - run:
+          name: Pull base image locally
+          command: |
+            docker pull node:12.16.1-alpine
+      # Analyze the base and derived image
+      # Note: It seems images are scanned in parallel, so preloading the base image result doesn't give us any real performance gain
+      - anchore/analyze_local_image:
+          # Force the older version, version 0.7.0 was just published, and is broken
+          anchore_version: v0.6.1
+          image_name: "docker.io/node:12.16.1-alpine $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
+          policy_failure: false
+          timeout: '500'
+          # Note: if the generated policy is invalid, this will fallback to the default policy, which we don't want!
+          policy_bundle_file_path: /tmp/mojaloop-policy.json
+      - run:
+          name: Upload Anchore reports to s3
+          command: |
+            aws s3 cp anchore-reports ${AWS_S3_DIR_ANCHORE_REPORTS}/${CIRCLE_PROJECT_REPONAME}/ --recursive
+            aws s3 rm ${AWS_S3_DIR_ANCHORE_REPORTS}/latest/ --recursive --exclude "*" --include "${CIRCLE_PROJECT_REPONAME}*"
+            aws s3 cp anchore-reports ${AWS_S3_DIR_ANCHORE_REPORTS}/latest/ --recursive
+      - run:
+          name: Evaluate failures
+          command: /tmp/ci-config/container-scanning/anchore-result-diff.js anchore-reports/node_12.16.1-alpine-policy.json anchore-reports/${CIRCLE_PROJECT_REPONAME}*-policy.json
+      - slack/status:
+          fail_only: true
+          webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
+          failure_message: 'Anchore Image Scan failed  for: \`"${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"\`'
+      - store_artifacts:
+          path: anchore-reports
+
+  #
+  # TODO: setup publish & deploy if needed
+  #
+
+  # publish:
+  #   executor: default-machine
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: /tmp
+  #     - run:
+  #         name: Load the pre-built docker image from workspace
+  #         command: docker load -i /tmp/docker-image.tar
+  #     - run:
+  #         name: Login to Docker Hub
+  #         command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+  #     - run:
+  #         name: Re-tag pre built image
+  #         command: |
+  #           docker tag $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG
+  #     - run:
+  #         name: Publish Docker image $CIRCLE_TAG & Latest tag to Docker Hub
+  #         command: |
+  #           echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
+  #           docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
+  #           echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG"
+  #           docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG
+  #     - slack/status:
+  #         webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
+  #         success_message: '*"${CIRCLE_PROJECT_REPONAME}"* - Release \`"${CIRCLE_TAG}"\` \nhttps://github.com/mojaloop/"${CIRCLE_PROJECT_REPONAME}"/releases/tag/"${CIRCLE_TAG}"'
+      
+  # deploy:
+  #   executor: deploy-kube/helm-kube
+  #   steps:
+  #     - checkout
+  #     - deploy-kube/setup_and_run:
+  #         helm_set_values: |
+  #           --set central.centralledger.centralledger-service.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-service.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set central.centralledger.centralledger-handler-transfer-prepare.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-handler-transfer-prepare.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set central.centralledger.centralledger-handler-admin-transfer.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-handler-admin-transfer.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set central.centralledger.centralledger-handler-transfer-position.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-handler-transfer-position.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set central.centralledger.centralledger-handler-transfer-get.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-handler-transfer-get.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set central.centralledger.centralledger-handler-transfer-fulfil.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-handler-transfer-fulfil.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set central.centralledger.centralledger-handler-timeout.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set central.centralledger.centralledger-handler-timeout.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set mojaloop-bulk.bulk-centralledger.cl-handler-bulk-transfer-prepare.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set mojaloop-bulk.bulk-centralledger.cl-handler-bulk-transfer-prepare.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set mojaloop-bulk.bulk-centralledger.cl-handler-bulk-transfer-fulfil.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set mojaloop-bulk.bulk-centralledger.cl-handler-bulk-transfer-fulfil.containers.api.image.tag=$CIRCLE_TAG \
+  #           --set mojaloop-bulk.bulk-centralledger.cl-handler-bulk-transfer-processing.containers.api.image.repository=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME \
+  #           --set mojaloop-bulk.bulk-centralledger.cl-handler-bulk-transfer-processing.containers.api.image.tag=$CIRCLE_TAG
+  #     - slack/status:
+  #         fail_only: true
+  #         webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
+  #         failure_message: 'Deployment failed for: \`"${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"\`'
+
+
+##
+# Workflows
+#
+# CircleCI Workflow config
+##
 workflows:
   version: 2
-  build_accept:
+  build_and_test:
     jobs:
-      - docker/hadolint:
+      - setup:
           context: org-global
-          # dockerfile: /home/circleci/project/Dockerfile
-          ignore-rules: 'DL3016,DL3018,DL3003,SC2046'
-          #trusted-registries: 'docker.io:5000'
-      
-      - node-dependencies:
-          context: org-global
-
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
       - test-unit:
           context: org-global
           requires:
-            - node-dependencies
-      - test-bdd:
-          context: org-global
-          requires:
-            - node-dependencies
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
       - test-coverage:
           context: org-global
           requires:
-            - node-dependencies
-      - check-vulnerabilities:
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
+      - vulnerability-check:
           context: org-global
           requires:
-            - node-dependencies
-      - audit-licencees:
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
+      - audit-licenses:
           context: org-global
           requires:
-            - node-dependencies
-
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
+      - test-integration:
+          context: org-global
+          requires:
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
       - build:
           context: org-global
           requires:
-            # - test-unit
-            # - test-bdd
-            # - test-coverage
-            # - check-vulnerabilities
-            # - audit-licencees
-            - docker/hadolint
+            - setup
+            - test-unit
+            - test-coverage
+            - test-integration
+            - vulnerability-check
+            - audit-licenses
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(\-snapshot)?(\-hotfix(\.[0-9]+))?/
+            branches:
+              ignore:
+                - /.*/
+      - license-scan:
+          context: org-global
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(\-snapshot)?(\-hotfix(\.[0-9]+))?/
+            branches:
+              ignore:
+                - /.*/
+      - image-scan:
+          context: org-global
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(\-snapshot)?(\-hotfix(\.[0-9]+))?/
+            branches:
+              ignore:
+                - /.*/
+      # - publish:
+      #     context: org-global
+      #     requires:
+      #       - license-scan
+      #       - image-scan
+      #     filters:
+      #       tags:
+      #         only: /v[0-9]+(\.[0-9]+)*(\-snapshot)?(\-hotfix(\.[0-9]+))?/
+      #       branches:
+      #         ignore:
+      #           - /.*/
+      # - deploy:
+      #     context: org-global
+      #     requires:
+      #       - publish
+      #     filters:
+      #       tags:
+      #         only: /v[0-9]+(\.[0-9]+)*(\-snapshot)?/
+      #       branches:
+      #         ignore:
+      #           - /.*/
