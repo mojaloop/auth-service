@@ -7,8 +7,23 @@
     },
     "1500|npm-audit-resolver>audit-resolve-core>yargs-parser": {
       "decision": "ignore",
-      "madeAt": 1590048118244,
-      "expiresAt": 1592640079056
+      "madeAt": 1590153786455,
+      "expiresAt": 1592745775275
+    },
+    "1500|standard-version>conventional-recommended-bump>git-semver-tags>meow>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1590153786455,
+      "expiresAt": 1592745775275
+    },
+    "1500|standard-version>git-semver-tags>meow>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1590153786455,
+      "expiresAt": 1592745775275
+    },
+    "1500|standard-version>conventional-recommended-bump>meow>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1590153786456,
+      "expiresAt": 1592745775275
     }
   },
   "rules": {},
