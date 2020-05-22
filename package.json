@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/auth-service",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Typescript Mojaloop project template",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
