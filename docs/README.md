@@ -1,7 +1,7 @@
 # auth-service/Docs
 
 Documentation for the auth service
-### BDD
+## BDD
 
 [jest-cucumber](https://github.com/bencompton/jest-cucumber) allows to use `jest` to execute Gherkin scenarios. Thanks to `jest` we are getting also code coverage for BDD Scenarios.
 
@@ -14,7 +14,7 @@ Execute scenarios and report code coverage:
 npm run test:bdd
 ```
 
-### unit testing
+## unit testing
 
 `Jest` setup, which allows to prepare unit tests specified in `test/**/*.(spec|test).ts` files. Coverage report is always generated. If the speed of unit tests will go very slow we will refactor configuration to generate coverage only on demand.
 
@@ -29,7 +29,7 @@ npm run test:junit
 
 There is `mojaloop` convention to use `test/unit` path to keep tests. The placement of test folder should be similar to placement of tested code in `src` folder
 
-### linting
+## linting
 
 [eslint]() setup compatible with javascript [standard](https://standardjs.com/) and dedicated for TypeScript [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint).
   - it is much more flexible
@@ -57,4 +57,35 @@ Corresponding excerpt from package.json:
   "lint-staged": {
     "*.{js,ts}": "eslint --cache --fix"
   }
+```
+
+## Conventional commits:
+
+(about conventional commits)[https://www.conventionalcommits.org/en/v1.0.0/]
+(standard-version)[https://github.com/conventional-changelog/standard-version]
+(conventional-changelog-config-spec)[https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0]
+
+See the available commands
+```bash
+npm run release -- --help
+```
+
+Generate the first release
+```bash
+npm run release -- --first-release
+```
+
+Generate a new release
+```bash
+npm run release
+```
+
+Generate an unnamed pre-relase
+```bash
+npm run release -- --prerelase
+```
+
+Generate the named "alpha" pre-release
+```bash
+npm run release -- --prerelase alpha
 ```
