@@ -61,9 +61,7 @@ Corresponding excerpt from package.json:
 
 ## Conventional commits:
 
-(about conventional commits)[https://www.conventionalcommits.org/en/v1.0.0/]
-(standard-version)[https://github.com/conventional-changelog/standard-version]
-(conventional-changelog-config-spec)[https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0]
+Using conventional commits helps standardize the format of commit messages and allows automatic generation of CHANGELOG.md file.
 
 See the available commands
 ```bash
@@ -80,6 +78,11 @@ Generate a new release
 npm run release
 ```
 
+Generate a new minor release
+```bash
+npm run release -- --release-as minor
+```
+
 Generate an unnamed pre-relase
 ```bash
 npm run release -- --prerelase
@@ -89,3 +92,8 @@ Generate the named "alpha" pre-release
 ```bash
 npm run release -- --prerelase alpha
 ```
+
+### external links
+(about conventional commits)[https://www.conventionalcommits.org/en/v1.0.0/]
+(standard-version)[https://github.com/conventional-changelog/standard-version]
+(conventional-changelog-config-spec)[https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0]
