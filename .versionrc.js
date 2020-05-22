@@ -3,12 +3,12 @@ module.exports = {
   types: [
     { type: 'feat', section: 'Features' },
     { type: 'fix', section: 'Bug Fixes' },
-    { type: 'chore', hidden: true },
-    { type: 'ci', hidden: true },
-    { type: 'docs', hidden: true },
-    { type: 'style', hidden: true },
-    { type: 'refactor', hidden: true },
-    { type: 'perf', hidden: true },
-    { type: 'test', hidden: true }
+    { type: 'chore', section: 'Maintenance' },
+    { type: 'ci', section: 'CI/CD' },
+    { type: 'docs', section: 'Documentation' },
+    { type: 'style', section: 'Style Improvements' },
+    { type: 'refactor', section: 'Code Refactor' },
+    { type: 'perf', section: 'Performance' },
+    { type: 'test', section: 'Tests' }
   ]
 }
