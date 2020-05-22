@@ -134,9 +134,8 @@ jobs:
     executor: docker/docker
     steps:
       - checkout
-      - docker/check
-      - docker/build:
-          image: $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
+      - docker/install-docker-tools
+      - run: docker build -t $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG .
 
 workflows:
   version: 2
