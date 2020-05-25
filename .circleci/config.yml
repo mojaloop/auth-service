@@ -129,7 +129,7 @@ jobs:
           path: ./test/results
           prefix: test
       - store_test_results:
-          path: ./test/results
+            path: ./test/results
 
   test-coverage:
     executor: default-docker
@@ -181,6 +181,20 @@ jobs:
           prefix: test
       - store_test_results:
           path: ./test/results
+
+  linting-check:
+    executor: default-docker
+    steps:
+      - checkout
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - restore_cache:
+          keys:
+          - dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Execute eslint
+          command: npm run lint
 
   vulnerability-check:
     executor: default-docker
@@ -467,6 +481,7 @@ workflows:
             - test-bdd
             - test-coverage
             - test-integration
+            - linting-check
             - vulnerability-check
             - audit-licenses
           filters:
