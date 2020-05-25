@@ -400,79 +400,42 @@ workflows:
     jobs:
       - setup:
           context: org-global
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+
       - test-bdd:
           context: org-global
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+          
       - test-unit:
           context: org-global
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+          
       - test-coverage:
           context: org-global
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+          
       - vulnerability-check:
           context: org-global
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+          
       - audit-licenses:
           context: org-global
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+         
       - test-integration:
           context: org-global
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
+          
+      - linting-check:
+          context: org-global
+          requires:
+            - setup
+            
       - build:
           context: org-global
           requires:
@@ -490,6 +453,7 @@ workflows:
             branches:
               ignore:
                 - /.*/
+
       - license-scan:
           context: org-global
           requires:
@@ -500,6 +464,7 @@ workflows:
             branches:
               ignore:
                 - /.*/
+
       - image-scan:
           context: org-global
           requires:
@@ -510,6 +475,7 @@ workflows:
             branches:
               ignore:
                 - /.*/
+
       # - publish:
       #     context: org-global
       #     requires:
