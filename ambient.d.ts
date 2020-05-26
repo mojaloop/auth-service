@@ -27,4 +27,9 @@
 declare module '@mojaloop/central-services-error-handling'{
   export function validateRoutes(options?: object): object;
 }
-declare module '@mojaloop/central-services-logger';
+declare module '@mojaloop/central-services-logger'
+declare module '@mojaloop/central-services-shared'
+
+declare module '@hapi/good'
+declare module 'hapi-openapi'
+declare module 'blipp'

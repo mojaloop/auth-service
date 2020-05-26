@@ -24,9 +24,11 @@
 
 import rc from 'rc'
 import parse from 'parse-strings-in-object'
-import defaultConfig from '../../config/default.json'
-
+import Config from '../../config/default.json'
+import Package from '../../package.json'
 export interface ServiceConfig {
+  // package.json
+  PACKAGE: object;
 
   // ../server.ts
   PORT: number;
@@ -40,8 +42,9 @@ export interface ServiceConfig {
   };
 }
 
-const RC = parse(rc('AS', defaultConfig)) as ServiceConfig
+const RC = parse(rc('AS', Config)) as ServiceConfig
 
 export default {
-  ...RC
+  ...RC,
+  PACKAGE: Package
 }

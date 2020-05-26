@@ -1,5 +1,3 @@
-#!./node_modules/.bin/ts-node
-
 /*****
  License
  --------------
@@ -18,32 +16,16 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
+
  --------------
  ******/
 
-import Config from './shared/config'
-import { handleCriticalEvents } from './shared/process'
-import ServiceServer from './server'
-import { Command } from 'commander'
+import { logResponse, RequestLogged } from '../../shared/logger'
+import { ResponseToolkit, Request } from '@hapi/hapi'
 
-// exit on critical process' events
-handleCriticalEvents()
-
-// handle script parameters
-const program = new Command(Config.PACKAGE.name)
-program
-  .version(Config.PACKAGE.version)
-  .description('AuthService cli')
-  .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
-  .option('-H, --host <string>', 'listen on host', Config.HOST)
-  .parse(process.argv)
-
-// overload Config with script parameters
-Config.PORT = program.port
-Config.HOST = program.host
-
-// setup & start @hapi server
-ServiceServer.run(Config)
+export default async function onPreHandler (request: Request, h: ResponseToolkit): Promise<symbol> {
+  logResponse(request as RequestLogged)
+  return h.continue
+}

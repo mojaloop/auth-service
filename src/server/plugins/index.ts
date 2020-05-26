@@ -16,16 +16,41 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
+ - Name Surname <name.surname@gatesfoundation.com>
 
- * Paweł Marzec <pawel.marzec@modusbox.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import { logResponse, RequestLogged } from '../shared/logger'
-import { ResponseToolkit, Request } from '@hapi/hapi'
+import Inert from '@hapi/inert'
+import Vision from '@hapi/vision'
+import Blip from 'blipp'
+import { Server } from '@hapi/hapi'
 
-export default async function onPreHandler (request: Request, h: ResponseToolkit): Promise<symbol> {
-  logResponse(request as RequestLogged)
-  return h.continue
+import ErrorHandling from '@mojaloop/central-services-error-handling'
+import Shared from '@mojaloop/central-services-shared'
+import Good from './good'
+import Swagger from './swagger'
+import OpenAPI from './openAPI'
+
+const plugins = [
+  Swagger,
+  Good,
+  OpenAPI,
+  Inert,
+  Vision,
+  Blip,
+  ErrorHandling,
+  Shared.Util.Hapi.HapiEventPlugin,
+  Shared.Util.Hapi.FSPIOPHeaderValidation
+]
+
+async function register (server: Server): Promise<Server> {
+  await server.register(plugins)
+  return server
+}
+
+export default {
+  register,
+  plugins
 }
