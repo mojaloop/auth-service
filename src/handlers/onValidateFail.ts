@@ -16,15 +16,15 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
+
+ * Paweł Marzec <pawel.marzec@modusbox.com>
 
  --------------
  ******/
 
-'use strict'
+import Boom from '@hapi/boom'
+import { Request, Lifecycle, ResponseToolkit } from '@hapi/hapi'
 
-export default class Template {
-  public static add (num1: number, num2: number): number {
-    return num1 + num2
-  }
+export default function onValidateFail (_request: Request, _h: ResponseToolkit, err?: Error | undefined): Lifecycle.ReturnValue {
+  throw Boom.boomify(err as Error)
 }

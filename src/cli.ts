@@ -1,3 +1,5 @@
+#!./node_modules/.bin/ts-node
+
 /*****
  License
  --------------
@@ -22,8 +24,28 @@
  --------------
  ******/
 
+import config from './shared/config'
+import { handleCriticalEvents } from './shared/process'
+import pkg from '../package.json'
 import * as server from './server'
+import { Command } from 'commander'
 
-export {
-  server
+handleCriticalEvents()
+
+const program = new Command(pkg.name)
+
+program
+  .version(pkg.version)
+  .description('AuthService cli')
+  .option('-p, --port <number>', 'listen on port', config.PORT.toString())
+  .option('-H, --host <string>', 'listen on host', config.HOST)
+  .parse(process.argv)
+
+const serviceConfig = {
+  PORT: program.port,
+  HOST: program.host
 }
+
+server
+  .setup(serviceConfig)
+  .then(server.start)

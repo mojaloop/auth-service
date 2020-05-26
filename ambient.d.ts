@@ -22,8 +22,9 @@
  --------------
  ******/
 
-import * as server from './server'
-
-export {
-  server
+// for mojaloop there is lack for @types files
+// to stop typescript complains, we have to declare some modules here
+declare module '@mojaloop/central-services-error-handling'{
+  export function validateRoutes(options?: object): object;
 }
+declare module '@mojaloop/central-services-logger';

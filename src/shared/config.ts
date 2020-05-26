@@ -22,8 +22,26 @@
  --------------
  ******/
 
-import * as server from './server'
+import rc from 'rc'
+import parse from 'parse-strings-in-object'
+import defaultConfig from '../../config/default.json'
 
-export {
-  server
+export interface ServiceConfig {
+
+  // ../server.ts
+  PORT: number;
+  HOST: string;
+
+  // inspect.ts
+  INSPECT?: {
+    DEPTH?: number;
+    SHOW_HIDDEN?: boolean;
+    COLOR?: boolean;
+  };
+}
+
+const RC = parse(rc('AS', defaultConfig)) as ServiceConfig
+
+export default {
+  ...RC
 }

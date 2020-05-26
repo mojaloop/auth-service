@@ -23,39 +23,70 @@
  --------------
  ******/
 
-import { Server, Request } from '@hapi/hapi'
+// workaround for lack of typescript types for mojaloop dependencies
+// eslint-disable-next-line @typescript-eslint/no-triple-slash-reference
+/// <reference path="../ambient.d.ts"/>
+import { validateRoutes } from '@mojaloop/central-services-error-handling'
 
-const host = 'localhost'
-const port = 3000
+// import Path from 'path'
 
-const server: Server = new Server({ host, port })
+import { Server } from '@hapi/hapi'
+import { ServiceConfig } from './shared/config'
+import Handlers from './handlers'
 
-server.route({
-  method: 'GET',
-  path: '/',
-  handler: (/** request: Hapi.Request, h: Hapi.ResponseToolkit **/): string => 'This is the GET route.'
-})
-
-server.route({
-  method: 'POST',
-  path: '/',
-  handler: (request: Request /** ,h: Hapi.ResponseToolkit **/): object => {
-    return {
-      message: 'This is the POST route, the data you sent is attached to this response',
-      data: request.payload
+async function setup (config: ServiceConfig): Promise<Server> {
+  // const openAPI = {
+  //   api: Path.resolve(__dirname, './interface/swagger.json'),
+  //   handlers: Path.resolve(__dirname, './handlers')
+  // }
+  const server: Server = await new Server({
+    host: config.HOST,
+    port: config.PORT,
+    routes: {
+      validate: {
+        options: validateRoutes(),
+        failAction: Handlers.onValidateFail
+      }
     }
-  }
-})
+  })
 
-async function start (): Promise<void> {
+  await server.ext([
+    {
+      type: 'onPreHandler',
+      method: Handlers.onPreHandler
+    }
+  ])
+  // server.route({
+  //   method: 'GET',
+  //   path: '/',
+  //   handler: (_request: Request, _h: ResponseToolkit): string => 'This is the GET route.'
+  // })
+
+  // server.route({
+  //   method: 'POST',
+  //   path: '/',
+  //   handler: (request: Request, _h: ResponseToolkit): object => {
+  //     return {
+  //       message: 'This is the POST route, the data you sent is attached to this response',
+  //       data: request.payload
+  //     }
+  //   }
+  // })
+  return server
+}
+
+async function start (server: Server): Promise<Server> {
   try {
-    const result = await server.start()
-    console.info(`Server running @ ${server.info.uri}`)
-    return result
+    await server.start()
+    console.info(`AuthService is running @ ${server.info.uri}`)
+    return server
   } catch (err) {
     console.error(err)
     process.exit(1)
   }
 }
 
-start()
+export {
+  setup,
+  start
+}
