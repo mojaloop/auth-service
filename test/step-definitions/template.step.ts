@@ -1,41 +1,69 @@
-import { loadFeature, defineFeature } from 'jest-cucumber'
-
-import Template from '../../src/Template'
 import path from 'path'
+import { loadFeature, defineFeature } from 'jest-cucumber'
+import { Server, ServerInjectResponse } from '@hapi/hapi'
+import Config from '../../src/shared/config'
+
+import AuthService from '../../src/server'
 
 const featurePath = path.join(__dirname, '../features/template.scenario.feature')
 const feature = loadFeature(featurePath)
 
 defineFeature(feature, (test): void => {
-  let A: number, B: number, C: number
-  test('Adding two arguments', ({ given, when, then }): void => {
-    given('Template and two arguments: A=1 and B=2', (): void => {
-      A = 1
-      B = 2
+  let server: Server
+  let response: ServerInjectResponse
+
+  afterEach((done): void => {
+    server.events.on('stop', done)
+    server.stop()
+  })
+
+  test('Health Check', ({ given, when, then }): void => {
+    given('AuthService server', async (): Promise<Server> => {
+      server = await AuthService.run(Config)
+      return server
     })
 
-    when('I add A and B', (): void => {
-      C = Template.add(A, B)
+    when('I get \'Health Check\' response', async (): Promise<ServerInjectResponse> => {
+      const request = {
+        method: 'GET',
+        url: '/health'
+      }
+      response = await server.inject(request)
+      return response
     })
 
-    then('The result should be C=3', (): void => {
-      expect(C).toBe(3)
+    then('The status should be \'OK\'', (): void => {
+      interface HealthResponse {
+        status: string;
+        uptime: number;
+        startTime: string;
+        versionNumber: string;
+      }
+      const healthResponse = response.result as HealthResponse
+      expect(response.statusCode).toBe(200)
+      expect(healthResponse.status).toEqual('OK')
+      expect(healthResponse.uptime).toBeGreaterThan(1.0)
     })
   })
 
-  test('Checking index module layout', ({ given, when, then }): void => {
-    let index = {}
-    let indexType = ''
-    given('Index module', (): void => {
-      index = require('../../src/index')
+  test('Hello', ({ given, when, then }): void => {
+    given('AuthService server', async (): Promise<Server> => {
+      server = await AuthService.run(Config)
+      return server
     })
 
-    when('I have default imported Index type', (): void => {
-      indexType = typeof index
+    when('I get \'Hello\' response', async (): Promise<ServerInjectResponse> => {
+      const request = {
+        method: 'GET',
+        url: '/hello'
+      }
+      response = await server.inject(request)
+      return response
     })
 
-    then('The imported Index is type object', (): void => {
-      expect(indexType).toEqual('object')
+    then('I see \'Hello world\'', (): void => {
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toEqual({ hello: 'world' })
     })
   })
 })
