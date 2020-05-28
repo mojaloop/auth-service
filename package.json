@@ -46,7 +46,7 @@
   "author": "lewisdaly",
   "contributors": [
     "Lewis Daly <lewis@vesselstech.com>",
-    "Paweł Marzec <pawel.marzec@modusbox.com>"
+    "Paweł Marzec <<pawel.marzec@modusbox.com>>"
   ],
   "license": "Apache-2.0",
   "bugs": {

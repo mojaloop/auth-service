@@ -16,15 +16,29 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
+ - Name Surname <name.surname@gatesfoundation.com>
 
  * Paweł Marzec <<pawel.marzec@modusbox.com>>
-
  --------------
  ******/
+import Config from '../../src/shared/config'
+import server from '../../src/server'
+jest.mock('../../src/server')
 
-import Boom from '@hapi/boom'
-import { Request, Lifecycle, ResponseToolkit } from '@hapi/hapi'
-
-export default function onValidateFail (_request: Request, _h: ResponseToolkit, err?: Error | undefined): Lifecycle.ReturnValue {
-  throw Boom.boomify(err as Error)
-}
+describe('cli', (): void => {
+  it('should use default port & host', async (): Promise<void> => {
+    const cli = await import('../../src/cli')
+    expect(cli).toBeDefined()
+    expect(server.run).toHaveBeenCalledWith({
+      PACKAGE: Config.PACKAGE,
+      PORT: Config.PORT,
+      HOST: Config.HOST,
+      INSPECT: {
+        DEPTH: 4,
+        SHOW_HIDDEN: false,
+        COLOR: true
+      },
+      _: []
+    })
+  })
+})

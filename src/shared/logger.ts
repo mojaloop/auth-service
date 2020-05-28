@@ -17,12 +17,10 @@
  optionally within square brackets <email>.
  * Gates Foundation
 
- * Paweł Marzec pawel.marzec@modusbox.com
+ * Paweł Marzec <pawel.marzec@modusbox.com>
 
  --------------
  ******/
-
-'use strict'
 
 import logger from '@mojaloop/central-services-logger'
 import inspect from './inspect'
@@ -34,6 +32,7 @@ interface RequestLogged extends Request {
 
 interface ResponseLogged extends ResponseObject {
   source: string;
+  statusCode: number;
 }
 
 function logResponse (request: RequestLogged): void {

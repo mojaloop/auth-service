@@ -17,14 +17,26 @@
  optionally within square brackets <email>.
  * Gates Foundation
 
- * Paweł Marzec <<pawel.marzec@modusbox.com>>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
 
  --------------
  ******/
-
 import Boom from '@hapi/boom'
-import { Request, Lifecycle, ResponseToolkit } from '@hapi/hapi'
+import { Request, ResponseToolkit } from '@hapi/hapi'
 
-export default function onValidateFail (_request: Request, _h: ResponseToolkit, err?: Error | undefined): Lifecycle.ReturnValue {
-  throw Boom.boomify(err as Error)
-}
+import onValidateFail from '../../../../src/server/handlers/onValidateFail'
+
+describe('server/handlers/onValidateFail', (): void => {
+  it('should throw error from Boom.boomify', (): void => {
+    const spyBoomify = jest.spyOn(Boom, 'boomify')
+    const err = new Error('sample error')
+    expect((): void => {
+      onValidateFail(
+        null as unknown as Request,
+        null as unknown as ResponseToolkit,
+        err
+      )
+    }).toThrowError(err)
+    expect(spyBoomify).toBeCalledWith(err)
+  })
+})

@@ -18,12 +18,12 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Paweł Marzec <<pawel.marzec@modusbox.com>>
  --------------
  ******/
 
-import * as server from './server/start'
+import server from './server'
 
-export {
+export default {
   server
 }

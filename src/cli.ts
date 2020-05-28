@@ -20,17 +20,13 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Paweł Marzec <<pawel.marzec@modusbox.com>>
  --------------
  ******/
 
 import Config from './shared/config'
-import { handleCriticalEvents } from './shared/process'
 import ServiceServer from './server'
 import { Command } from 'commander'
-
-// exit on critical process' events
-handleCriticalEvents()
 
 // handle script parameters
 const program = new Command(Config.PACKAGE.name)

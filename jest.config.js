@@ -7,7 +7,7 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.ts'],
   coverageReporters: ['json', 'lcov', 'text'],
-  clearMocks: true,
+  clearMocks: false,
   coverageThreshold: {
     global: {
       statements: 90,
@@ -16,5 +16,5 @@ module.exports = {
       lines: 90
     }
   },
-  reporters: ['jest-junit']
+  reporters: ['jest-junit', 'default']
 }

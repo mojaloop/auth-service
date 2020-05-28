@@ -16,15 +16,15 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
+ - Name Surname <name.surname@gatesfoundation.com>
 
  * Paweł Marzec <<pawel.marzec@modusbox.com>>
-
  --------------
  ******/
 
-import Boom from '@hapi/boom'
-import { Request, Lifecycle, ResponseToolkit } from '@hapi/hapi'
-
-export default function onValidateFail (_request: Request, _h: ResponseToolkit, err?: Error | undefined): Lifecycle.ReturnValue {
-  throw Boom.boomify(err as Error)
-}
+export default (): object => ({
+  inspect: jest.fn((): string => {
+    console.error('inspect-mock is used')
+    return 'inspected-object'
+  })
+})
