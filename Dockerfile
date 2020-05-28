@@ -14,7 +14,7 @@ COPY test /opt/auth-service/
 
 
 FROM node:12.16.1-alpine
-WORKDIR /opt/central-ledger
+WORKDIR /opt/auth-service
 
 # Create empty log file & 
 RUN mkdir ./logs && touch ./logs/combined.log
@@ -33,5 +33,5 @@ COPY --chown=ml-user --from=builder /opt/auth-service/ .
 # cleanup
 RUN npm prune --production
 
-EXPOSE 3000
+EXPOSE 4004
 CMD ["npm", "run", "start"]
