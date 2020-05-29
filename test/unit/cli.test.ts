@@ -18,7 +18,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- * Paweł Marzec <<pawel.marzec@modusbox.com>>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import Config from '../../src/shared/config'

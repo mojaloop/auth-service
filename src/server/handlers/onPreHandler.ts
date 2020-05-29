@@ -17,7 +17,7 @@
  optionally within square brackets <email>.
  * Gates Foundation
 
- * Paweł Marzec <<pawel.marzec@modusbox.com>>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
 
  --------------
  ******/
