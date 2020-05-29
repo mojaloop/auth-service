@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mojaloop/auth-service.git"
+    "url": "git+https://github.com/mojaloop/AuthService.git"
   },
   "keywords": [
     "metrics",

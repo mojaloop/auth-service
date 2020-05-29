@@ -1,11 +1,11 @@
-Feature: AuthService server
+Feature: auth-service server
 
 Scenario: Health Check
-  Given AuthService server
+  Given auth-service server
   When I get 'Health Check' response
   Then The status should be 'OK'
 
 Scenario: Hello
-  Given AuthService server
+  Given auth-service server
   When I get 'Hello' response
   Then I see 'Hello world'

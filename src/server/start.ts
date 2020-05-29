@@ -28,6 +28,6 @@ import Logger from '@mojaloop/central-services-logger'
 
 export default async function start (server: Server): Promise<Server> {
   await server.start()
-  Logger.info(`AuthService is running @ ${server.info.uri}`)
+  Logger.info(`auth-service is running @ ${server.info.uri}`)
   return server
 }

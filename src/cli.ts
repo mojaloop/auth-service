@@ -32,7 +32,7 @@ import { Command } from 'commander'
 const program = new Command(Config.PACKAGE.name)
 program
   .version(Config.PACKAGE.version)
-  .description('AuthService cli')
+  .description('auth-service cli')
   .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
   .option('-H, --host <string>', 'listen on host', Config.HOST)
   .parse(process.argv)

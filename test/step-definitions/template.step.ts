@@ -18,7 +18,7 @@ defineFeature(feature, (test): void => {
   })
 
   test('Health Check', ({ given, when, then }): void => {
-    given('AuthService server', async (): Promise<Server> => {
+    given('auth-service server', async (): Promise<Server> => {
       server = await AuthService.run(Config)
       return server
     })
@@ -47,7 +47,7 @@ defineFeature(feature, (test): void => {
   })
 
   test('Hello', ({ given, when, then }): void => {
-    given('AuthService server', async (): Promise<Server> => {
+    given('auth-service server', async (): Promise<Server> => {
       server = await AuthService.run(Config)
       return server
     })

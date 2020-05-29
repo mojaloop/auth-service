@@ -108,9 +108,9 @@ To run the image with attached the log output to your terminal
 npm run docker:run
 ```
 
-When the image is run you should be able to reach the dockerized _AuthService_ exposed on `http://localhost:4004`.
+When the image is run you should be able to reach the dockerized _auth-service_ exposed on `http://localhost:4004`.
 
-If you already added the `127.0.0.1 auth-service.local` entry in your `/etc/hosts` then the _AuthService_ is reachable on `http://auth-service.local:4004`.
+If you already added the `127.0.0.1 AuthService.local` entry in your `/etc/hosts` then the _auth-service_ is reachable on `http://AuthService.local:4004`.
 
 
 ### external links
