@@ -85,7 +85,7 @@ Generate a new minor release
 npm run release -- --release-as minor
 ```
 
-Generate an unnamed pre-relase
+Generate an unnamed pre-release
 ```bash
 npm run release -- --prerelase
 ```
@@ -95,7 +95,27 @@ Generate the named "alpha" pre-release
 npm run release -- --prerelase alpha
 ```
 
+### Docker setup
+Minimal working Docker image you can find in [Dockerfile](../Dockerfile).
+
+To build the image
+```bash
+npm run docker:build
+```
+
+To run the image with attached the log output to your terminal
+```bash
+npm run docker:run
+```
+
+When the image is run you should be able to reach the dockerized _AuthService_ exposed on `http://localhost:4004`.
+
+If you already added the `127.0.0.1 auth-service.local` entry in your `/etc/hosts` then the _AuthService_ is reachable on `http://auth-service.local:4004`.
+
+
 ### external links
-(about conventional commits)[https://www.conventionalcommits.org/en/v1.0.0/]
-(standard-version)[https://github.com/conventional-changelog/standard-version]
-(conventional-changelog-config-spec)[https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0]
+
+- [about conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- [standard-version](https://github.com/conventional-changelog/standard-version)
+- [conventional-changelog-config-spec](https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0)
+
