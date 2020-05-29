@@ -1,6 +1,6 @@
 {
   "PORT": 4004,
-  "HOST": "localhost",
+  "HOST": "0.0.0.0",
 
   "INSPECT": {
     "DEPTH": 4,
