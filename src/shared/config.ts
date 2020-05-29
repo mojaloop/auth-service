@@ -18,7 +18,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <<pm@eoln.eu>>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
