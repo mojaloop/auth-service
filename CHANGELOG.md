@@ -1,4 +1,30 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [0.1.6](https://github.com/mojaloop/AuthService/compare/v0.1.5...v0.1.6) (2020-05-29)
+
+
+### Features
+
+* **server:** minimal hapi server ([5c0b1f1](https://github.com/mojaloop/AuthService/commit/5c0b1f1a2667d0f25d6b1d60c8b8ec5a89adf271))
+
+
+### Bug Fixes
+
+* email in comments ([af6f537](https://github.com/mojaloop/AuthService/commit/af6f53715544ed3a57b4ae5598f96b683450863a))
+* **Dockerfile:** correct WORKDIR & EXPOSE ([2ca5087](https://github.com/mojaloop/AuthService/commit/2ca50876ad382ce73f4de32764f60de96ea74243))
+
+
+### Maintenance
+
+* **docerkignore:** specify what ignore for image ([ba4b0e7](https://github.com/mojaloop/AuthService/commit/ba4b0e79736166d60412e5faaa62ea9e03d3fc06))
+* **Docker:** additional Docker package scripts ([3c25883](https://github.com/mojaloop/AuthService/commit/3c25883f85ef3143571b3f027224a441b30dec7d))
+* **Dockerfile:** go for node v14.3.0 ([8a91987](https://github.com/mojaloop/AuthService/commit/8a91987718ee4a3511f80f4d1a3ea11021b75439))
+* **eslint:** allow console ([c8aef86](https://github.com/mojaloop/AuthService/commit/c8aef862d371b91fda237ec38057fcdd1085d057))
+
+
+### Documentation
+
+* **README:** add info about local Docker and howto run AuthService ([8ef3d45](https://github.com/mojaloop/AuthService/commit/8ef3d45dabbc5a9d5be451322de0dd8b585f601f))
+
 ### [0.1.5](https://github.com/mojaloop/auth-service/compare/v0.1.4...v0.1.5) (2020-05-22)
 
 
