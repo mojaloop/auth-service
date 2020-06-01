@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [0.1.7](https://github.com/mojaloop/auth-service/compare/v0.1.6...v0.1.7) (2020-06-01)
+
+
+### Maintenance
+
+* audit-resolve ([a33bdb9](https://github.com/mojaloop/auth-service/commit/a33bdb95830015874cf0a27bef2297f78b082e24))
+* **package.json:** fix wrong repository.url ([4b82b1c](https://github.com/mojaloop/auth-service/commit/4b82b1ca4f14b5955dc9ae9040abe2951b47f650))
+
 ### [0.1.6](https://github.com/mojaloop/AuthService/compare/v0.1.5...v0.1.6) (2020-05-29)
 
 
