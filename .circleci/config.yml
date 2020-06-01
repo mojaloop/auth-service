@@ -453,7 +453,6 @@ workflows:
             branches:
               ignore:
                 - /.*/
-
       - license-scan:
           context: org-global
           requires:
@@ -464,7 +463,6 @@ workflows:
             branches:
               ignore:
                 - /.*/
-
       - image-scan:
           context: org-global
           requires:
@@ -475,7 +473,6 @@ workflows:
             branches:
               ignore:
                 - /.*/
-
       # - publish:
       #     context: org-global
       #     requires:
