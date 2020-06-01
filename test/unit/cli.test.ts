@@ -18,12 +18,27 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+import Config from '../../src/shared/config'
+import server from '../../src/server'
+jest.mock('../../src/server')
 
-import server from './server'
-
-export default {
-  server
-}
+describe('cli', (): void => {
+  it('should use default port & host', async (): Promise<void> => {
+    const cli = await import('../../src/cli')
+    expect(cli).toBeDefined()
+    expect(server.run).toHaveBeenCalledWith({
+      PACKAGE: Config.PACKAGE,
+      PORT: Config.PORT,
+      HOST: Config.HOST,
+      INSPECT: {
+        DEPTH: 4,
+        SHOW_HIDDEN: false,
+        COLOR: true
+      },
+      _: []
+    })
+  })
+})

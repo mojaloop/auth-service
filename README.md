@@ -13,5 +13,25 @@ Mojaloop central AuthZ + AuthN service. Currently for FIDO implementation in a M
 
 ## Setup
 
+### Clone repo
+```bash
+git clone git@github.com:mojaloop/AuthService.git
+```
 
+### Improve local DNS resolver
+Add the `127.0.0.1   auth-service.local` entry in your `/etc/hosts` so the _auth-service_ is reachable on `http://auth-service.local:4004`. Elsewhere use `http://localhost:4004`
+
+### Install service dependencies
+```bash
+cd auth-service
+npm ci
+```
+
+### Run local dockerized _auth-service_
+```bash
+npm run docker:build
+npm run docker:run
+```
+
+To check the auth-service health visit [http://auth-service.local:4004/health](http://auth-service.local:4004/health)
 

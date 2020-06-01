@@ -16,14 +16,16 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
+
  --------------
  ******/
 
-import server from './server'
+import { logResponse, RequestLogged } from '../../shared/logger'
+import { ResponseToolkit, Request } from '@hapi/hapi'
 
-export default {
-  server
+export default async function onPreHandler (request: Request, h: ResponseToolkit): Promise<symbol> {
+  logResponse(request as RequestLogged)
+  return h.continue
 }

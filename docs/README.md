@@ -1,7 +1,7 @@
 # auth-service/Docs
 
 Documentation for the auth service
-### BDD
+## BDD
 
 [jest-cucumber](https://github.com/bencompton/jest-cucumber) allows to use `jest` to execute Gherkin scenarios. Thanks to `jest` we are getting also code coverage for BDD Scenarios.
 
@@ -14,7 +14,7 @@ Execute scenarios and report code coverage:
 npm run test:bdd
 ```
 
-### unit testing
+## unit testing
 
 `Jest` setup, which allows to prepare unit tests specified in `test/**/*.(spec|test).ts` files. Coverage report is always generated. If the speed of unit tests will go very slow we will refactor configuration to generate coverage only on demand.
 
@@ -29,7 +29,7 @@ npm run test:junit
 
 There is `mojaloop` convention to use `test/unit` path to keep tests. The placement of test folder should be similar to placement of tested code in `src` folder
 
-### linting
+## linting
 
 [eslint]() setup compatible with javascript [standard](https://standardjs.com/) and dedicated for TypeScript [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint).
   - it is much more flexible
@@ -58,3 +58,64 @@ Corresponding excerpt from package.json:
     "*.{js,ts}": "eslint --cache --fix"
   }
 ```
+
+## Conventional commits:
+
+> __Motivation:__
+> 
+> Using conventional commits helps standardize the format of commit messages and allows automatic generation of [CHANGELOG.md](../CHANGELOG.md) file.
+
+See the available commands
+```bash
+npm run release -- --help
+```
+
+Generate the first release
+```bash
+npm run release -- --first-release
+```
+
+Generate a new release
+```bash
+npm run release
+```
+
+Generate a new minor release
+```bash
+npm run release -- --release-as minor
+```
+
+Generate an unnamed pre-release
+```bash
+npm run release -- --prerelase
+```
+
+Generate the named "alpha" pre-release
+```bash
+npm run release -- --prerelase alpha
+```
+
+### Docker setup
+Minimal working Docker image you can find in [Dockerfile](../Dockerfile).
+
+To build the image
+```bash
+npm run docker:build
+```
+
+To run the image with attached the log output to your terminal
+```bash
+npm run docker:run
+```
+
+When the image is run you should be able to reach the dockerized _auth-service_ exposed on `http://localhost:4004`.
+
+If you already added the `127.0.0.1 auth-service.local` entry in your `/etc/hosts` then the _auth-service_ is reachable on `http://auth-service.local:4004`.
+
+
+### external links
+
+- [about conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- [standard-version](https://github.com/conventional-changelog/standard-version)
+- [conventional-changelog-config-spec](https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0)
+

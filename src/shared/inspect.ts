@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -21,9 +22,20 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+import util from 'util'
+import config from './config'
 
-import server from './server'
+export const defaults = {
+  SHOW_HIDDEN: false,
+  DEPTH: 5,
+  COLOR: true
+}
 
-export default {
-  server
+export default function inspect (subject: any): string {
+  return util.inspect(
+    subject,
+    (config.INSPECT && config.INSPECT.SHOW_HIDDEN) || defaults.SHOW_HIDDEN,
+    (config.INSPECT && config.INSPECT.DEPTH) || defaults.DEPTH,
+    (config.INSPECT && config.INSPECT.COLOR) || defaults.COLOR
+  )
 }

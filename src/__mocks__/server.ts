@@ -18,12 +18,11 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import server from './server'
-
-export default {
-  server
-}
+// mock for server.run
+export default jest.fn((): object => ({
+  run: jest.fn()
+}))

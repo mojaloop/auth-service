@@ -23,16 +23,77 @@
  --------------
  ******/
 
-'use strict'
+import index from '../../src/index'
+import Config from '../../src/shared/config'
+import { Server } from '@hapi/hapi'
 
-import Template from '../../src/Template'
-import * as index from '../../src'
+describe('index', (): void => {
+  it('should have proper layout', (): void => {
+    expect(typeof index.server).toBeDefined()
+    expect(typeof index.server.run).toEqual('function')
+  })
 
-describe('minimal unit test', (): void => {
-  it('should pass', (): void => {
-    // invoke static method
-    expect(Template.add(1, 2)).toBe(3)
-    // module layout test
-    expect(typeof index).toBe('object')
+  describe('api routes', (): void => {
+    let server: Server
+
+    beforeAll(async (): Promise<Server> => {
+      server = await index.server.run(Config)
+      return server
+    })
+
+    afterAll((done): void => {
+      server.events.on('stop', done)
+      server.stop()
+    })
+
+    it('/health', async (): Promise<void> => {
+      interface HealthResponse {
+        status: string;
+        uptime: number;
+        startTime: string;
+        versionNumber: string;
+      }
+
+      const request = {
+        method: 'GET',
+        url: '/health'
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeDefined()
+
+      const result = response.result as HealthResponse
+      expect(result.status).toEqual('OK')
+      expect(result.uptime).toBeGreaterThan(1.0)
+    })
+
+    it('/hello', async (): Promise<void> => {
+      interface HelloResponse {
+        hello: string;
+      }
+
+      const request = {
+        method: 'GET',
+        url: '/hello'
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeDefined()
+
+      const result = response.result as HelloResponse
+      expect(result.hello).toEqual('world')
+    })
+
+    it('/metrics', async (): Promise<void> => {
+      const request = {
+        method: 'GET',
+        url: '/metrics'
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(200)
+    })
   })
 })

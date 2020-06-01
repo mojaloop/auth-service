@@ -18,13 +18,32 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
+ * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+import inspect from '../../../src/shared/inspect'
+import config from '../../../src/shared/config'
+import util from 'util'
 
-'use strict'
+// const inspectSpy = jest.spyOn(util, 'inspect')
+// jest.mock('util')
 
-export default class Template {
-  public static add (num1: number, num2: number): number {
-    return num1 + num2
-  }
-}
+describe('shared/inspect', (): void => {
+  it('should properly call util.inspect', (): void => {
+    const inspectSpy = jest.spyOn(util, 'inspect')
+    const result = inspect({})
+    expect(result).toEqual('{}')
+    expect(inspectSpy).toHaveBeenCalledWith({}, false, 4, true)
+  })
+
+  it('should call util.inspect with defaults', (): void => {
+    // remove config.INSPECT so defaults will be used
+    delete config.INSPECT
+    const inspectSpy = jest.spyOn(util, 'inspect')
+    const result = inspect({})
+
+    expect(config).toBeDefined()
+    expect(result).toEqual('{}')
+    expect(inspectSpy).toHaveBeenCalledWith({}, false, 4, true)
+  })
+})

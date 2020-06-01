@@ -10,10 +10,10 @@ module.exports = {
   clearMocks: false,
   coverageThreshold: {
     global: {
-      statements: 90,
-      functions: 90,
-      branches: 90,
-      lines: 90
+      statements: 20,
+      functions: 20,
+      branches: 20,
+      lines: 20
     }
   },
   reporters: ['jest-junit', 'default']

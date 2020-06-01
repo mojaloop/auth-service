@@ -1,3 +1,5 @@
+#!./node_modules/.bin/ts-node
+
 /*****
  License
  --------------
@@ -22,8 +24,22 @@
  --------------
  ******/
 
-import server from './server'
+import Config from './shared/config'
+import ServiceServer from './server'
+import { Command } from 'commander'
 
-export default {
-  server
-}
+// handle script parameters
+const program = new Command(Config.PACKAGE.name)
+program
+  .version(Config.PACKAGE.version)
+  .description('auth-service cli')
+  .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
+  .option('-H, --host <string>', 'listen on host', Config.HOST)
+  .parse(process.argv)
+
+// overload Config with script parameters
+Config.PORT = program.port
+Config.HOST = program.host
+
+// setup & start @hapi server
+ServiceServer.run(Config)
