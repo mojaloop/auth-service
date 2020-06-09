@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [0.1.8](https://github.com/mojaloop/auth-service/compare/v0.1.7...v0.1.8) (2020-06-09)
+
+
+### Maintenance
+
+* **package.json:** fix description ([45b9cda](https://github.com/mojaloop/auth-service/commit/45b9cda5434e59747fa6095fb94a6ebcadbb0cdb))
+
 ### [0.1.7](https://github.com/mojaloop/auth-service/compare/v0.1.6...v0.1.7) (2020-06-01)
 
 
