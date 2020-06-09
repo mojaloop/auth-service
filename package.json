@@ -1,7 +1,7 @@
 {
   "name": "@mojaloop/auth-service",
   "version": "0.1.7",
-  "description": "Typescript Mojaloop project template",
+  "description": "PISP authorization service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
