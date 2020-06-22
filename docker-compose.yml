@@ -11,8 +11,7 @@ services:
     build:
       context: .
       cache_from:
-        - mojaloop/central-ledger
-        - central-ledger
+        - mojaloop/auth-service:local
     ports:
       - "4004:4004"
     networks:
