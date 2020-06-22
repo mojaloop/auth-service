@@ -6,10 +6,13 @@ networks:
 
 services:
   auth-service:
-    container_name: auth-service
-    context: 
-      build: .
-      image: mojaloop/auth-service:local
+    container_name: as_auth-service
+    image: mojaloop/auth-service:local
+    build:
+      context: .
+      cache_from:
+        - mojaloop/central-ledger
+        - central-ledger
     ports:
       - "4004:4004"
     networks:
@@ -24,7 +27,7 @@ services:
 
   mysql:
     image: mysql/mysql-server
-    container_name: mysql
+    container_name: as_mysql
     ports:
       - "3306:3306"
     volumes:
