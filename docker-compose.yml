@@ -1,0 +1,44 @@
+version: "3.7"
+
+networks:
+  mojaloop-net:
+    name: mojaloop-net
+
+services:
+  auth-service:
+    container_name: auth-service
+    context: 
+      build: .
+      image: mojaloop/auth-service:local
+    ports:
+      - "4004:4004"
+    networks:
+      - mojaloop-net
+    depends_on:
+      - mysql
+    healthcheck:
+      test: wget -q http://172.17.0.1:4004/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+
+  mysql:
+    image: mysql/mysql-server
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/sql-init/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_USER=${DBUSER:-auth-service}
+      - MYSQL_PASSWORD=${DBPASS:-password}
+      - MYSQL_DATABASE=${DBUSER:-auth-service}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
