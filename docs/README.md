@@ -3,21 +3,35 @@
 Documentation for the auth service
 ## Database
 
-The following Figure depicts the Entity Relationship Diagram of the `Consents` table for the authorization service:
+The following Figure depicts the Entity Relationship Diagram of the 
 
 <p align="center">
   <img src="ErDiagram.png">
 </p>
 
-The following table depicts the types of each attribute in our table, algonside their constraints:
+The following table depicts the types of each attribute in the `Consent` table, algonside their constraints:
 
 |Attribute| Represented Internal Type | Constraints|
 |:---------:|:---------------------------:|:------------:|
-|`ID`|BIGINT|Unique - Primary Key|
-|`InitiatorID`|TINYTEXT|Non-Null|
-|`ParticipantID`|TINYTEXT|Non-Null|
-|`Scopes`|JSON|Non-Null|
-|`Credential`|TEXT|(Can be Null)|
+|`id`|VARCHAR(36)|Unique - Primary Key|
+|`initiator_id`|VARCHAR(36)|Non-Null|
+|`participant_id`|VARCHAR(36)|Non-Null|
+|`credential_id`|TEXT|(Can be Null)|
+|`credential_type`|TEXT|(Can be Null)|
+|`credential_status`|TEXT|(Can be Null)|
+|`credential_payload`|TEXT|(Can be Null)|
+|`credential_challenge`|TEXT|(Can be Null)|
+
+The following table depicts the types of each attribute in the `Scope` table:
+
+|Attribute| Represented Internal Type | Constraints|
+|:---------:|:---------------------------:|:------------:|
+|`id`|VARCHAR(36)|Unique - Primary Key|
+|`consent_id`|VARCHAR(36)|Foreign Key referring to the `id` in the consent table|
+|`scope_account`|VARCHAR(36)|Non-Null|
+|`scope_account_number`|VARCHAR(36)|(Can be Null)|
+
+The reason attributes pertaining to `credentials` and `scope_account_number` can be null is because of the communication sequence established in between the `PISP` and the `authorisation-service`. Where, at the point of first contact with the authorisation-service, these fields are not present. They are available during later parts in the sequence of communication in between the two services.
 
 ## BDD
 
