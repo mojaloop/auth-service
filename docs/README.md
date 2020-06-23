@@ -1,6 +1,20 @@
 # auth-service/Docs
 
 Documentation for the auth service
+## Database
+
+![The database Schema](ErDiagram.png?raw=true "Schema")
+
+The following table depicts the types of each attribute in our table, algonside their constraints:
+
+|Attribute| Represented Internal Type | Constraints|
+|---------|---------------------------|------------|
+|`ID`|BIGINT|Unique - Primary Key|
+|`InitiatorID`|TINYTEXT|Non-Null|
+|`ParticipantID`|TINYTEXT|Non-Null|
+|`Scopes`|JSON|Non-Null|
+|`Credential`|TEXT|(Can be Null)|
+
 ## BDD
 
 [jest-cucumber](https://github.com/bencompton/jest-cucumber) allows to use `jest` to execute Gherkin scenarios. Thanks to `jest` we are getting also code coverage for BDD Scenarios.
