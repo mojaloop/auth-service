@@ -35,3 +35,11 @@ npm run docker:run
 
 To check the auth-service health visit [http://auth-service.local:4004/health](http://auth-service.local:4004/health)
 
+### Run locally with database in `docker-compose` 
+
+```bash
+docker-compose up -d mysql
+npm run start
+```
+
+
