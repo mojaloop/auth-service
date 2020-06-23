@@ -13,23 +13,23 @@ The following table depicts the types of each attribute in the `Consent` table a
 
 |Attribute| Represented Internal Type | Constraints| Description |
 |:---------:|:---------------------------:|:------------:|:---------------------------:|
-|`id`|VARCHAR(36)|Unique - Primary Key|Alphanumeric consent ID|
-|`initiator_id`|VARCHAR(32)|Non-Null|Alphanumeric PISP ID|
-|`participant_id`|VARCHAR(32)|Non-Null|Alphanumeric DFSP ID|
-|`credential_id`|INT UNSIGNED|Unique - Non-Null|Unsigned numeric ID - upto 2^32 records|
-|`credential_type`|VARCHAR(16)|Non-Null|Alphanumeric enum value|
-|`credential_status`|VARCHAR(10)|Non-Null|String - `PENDING`/`ACTIVE`|
-|`credential_payload`|TEXT|Can be Null|Public key string|
-|`credential_challenge`|CHAR(128)|Non-Null|Base 64 encoded challenge string|
+|`id`|`VARCHAR(36)`|Unique - Primary Key|Alphanumeric consent ID|
+|`initiator_id`|`VARCHAR(32)`|Non-Null|Alphanumeric PISP ID|
+|`participant_id`|`VARCHAR(32)`|Non-Null|Alphanumeric DFSP ID|
+|`credential_id`|`INT UNSIGNED`|Unique - Non-Null|Unsigned numeric ID - upto 2^32 records|
+|`credential_type`|`VARCHAR(16)`|Non-Null|Alphanumeric enum value|
+|`credential_status`|`VARCHAR(10)`|Non-Null|String - `PENDING`/`ACTIVE`|
+|`credential_payload`|`TEXT`|Can be Null|Public key string|
+|`credential_challenge`|`CHAR(128)`|Non-Null|Base 64 encoded challenge string|
 
 The following table depicts the types of each attribute in the `Scope` table:
 
 |Attribute| Represented Internal Type | Constraints| Description |
 |:---------:|:---------------------------:|:------------:|:---------------------------:|
-|`id`|VARCHAR(36)|Unique - Primary Key|Alphanumeric Scope ID|
-|`consent_id`|VARCHAR(36)|Non-Null - Foreign Key|Foreign Key for `id` in the `Consent` table|
-|`action`|VARCHAR(36)|Non-Null|Account scope (enum) action allowed with corresponding consent|
-|`account_number`|VARCHAR(36)|Non-Null|Account number for associated scope|
+|`id`|`VARCHAR(36)`|Unique - Primary Key|Alphanumeric Scope ID|
+|`consent_id`|`VARCHAR(36)`|Non-Null - Foreign Key|Foreign Key for `id` in the `Consent` table|
+|`action`|`VARCHAR(36)`|Non-Null|Account scope (enum) action allowed with corresponding consent|
+|`account_number`|`VARCHAR(36)`|Non-Null|Account number for associated scope|
 
 Based on [Mojaloop ThirdParty API definition](https://github.com/mojaloop/pisp/blob/7c1b878c720b64bc09f50f13962ebe24e117cc3c/docs/thirdparty-rest-v1.0-OpenApi.yaml) and Sequence Diagrams
 
