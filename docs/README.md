@@ -9,29 +9,31 @@ The following Figure depicts the Entity Relationship Diagram of the auth-service
   <img src="http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/spikerheado1234/auth-service/master/docs/ErDiagram.puml">
 </p>
 
-The following table depicts the types of each attribute in the `Consent` table, algonside their constraints:
+The following table depicts the types of each attribute in the `Consent` table along with the constraints:
 
-|Attribute| Represented Internal Type | Constraints|
-|:---------:|:---------------------------:|:------------:|
-|`id`|VARCHAR(36)|Unique - Primary Key|
-|`initiator_id`|VARCHAR(36)|Non-Null|
-|`participant_id`|VARCHAR(36)|Non-Null|
-|`credential_id`|TEXT|(Can be Null)|
-|`credential_type`|TEXT|(Can be Null)|
-|`credential_status`|TEXT|(Can be Null)|
-|`credential_payload`|TEXT|(Can be Null)|
-|`credential_challenge`|TEXT|(Can be Null)|
+|Attribute| Represented Internal Type | Constraints| Description |
+|:---------:|:---------------------------:|:------------:|:---------------------------:|
+|`id`|VARCHAR(36)|Unique - Primary Key|Alphanumeric consent ID|
+|`initiator_id`|VARCHAR(32)|Non-Null|Alphanumeric PISP ID|
+|`participant_id`|VARCHAR(32)|Non-Null|Alphanumeric DFSP ID|
+|`credential_id`|INT UNSIGNED|Unique - Non-Null|Unsigned numeric ID - upto 2^32 records|
+|`credential_type`|VARCHAR(16)|Non-Null|Alphanumeric enum value|
+|`credential_status`|VARCHAR(10)|Non-Null|String - `PENDING`/`ACTIVE`|
+|`credential_payload`|TEXT|Can be Null|Public key string|
+|`credential_challenge`|CHAR(128)|Non-Null|Base 64 encoded challenge string|
 
 The following table depicts the types of each attribute in the `Scope` table:
 
-|Attribute| Represented Internal Type | Constraints|
-|:---------:|:---------------------------:|:------------:|
-|`id`|VARCHAR(36)|Unique - Primary Key|
-|`consent_id`|VARCHAR(36)|Foreign Key referring to the `id` in the consent table|
-|`scope_account_type`|VARCHAR(36)|Non-Null|
-|`scope_account_number`|VARCHAR(36)|(Can be Null)|
+|Attribute| Represented Internal Type | Constraints| Description |
+|:---------:|:---------------------------:|:------------:|:---------------------------:|
+|`id`|VARCHAR(36)|Unique - Primary Key|Alphanumeric Scope ID|
+|`consent_id`|VARCHAR(36)|Non-Null - Foreign Key|Foreign Key for `id` in the `Consent` table|
+|`action`|VARCHAR(36)|Non-Null|Account scope (enum) action allowed with corresponding consent|
+|`account_number`|VARCHAR(36)|Non-Null|Account number for associated scope|
 
-The reason attributes pertaining to `credentials` and `scope_account_number` can be null is because of the communication sequence established in between the `PISP` and the `authorisation-service`. Where, at the point of first contact with the authorisation-service, these fields are not present. They are available during later parts in the sequence of communication in between the two services.
+Based on [Mojaloop ThirdParty API definition](https://github.com/mojaloop/pisp/blob/7c1b878c720b64bc09f50f13962ebe24e117cc3c/docs/thirdparty-rest-v1.0-OpenApi.yaml) and Sequence Diagrams
+
+The Public key string can be NULL initially when the Auth service receives the request for credential. It's filled in once the signature checks out.
 
 ## BDD
 
