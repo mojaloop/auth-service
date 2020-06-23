@@ -11,7 +11,6 @@ The following Figure depicts the Entity Relationship Diagram of the `Consents` t
 
 The following table depicts the types of each attribute in our table, algonside their constraints:
 
-<center>
 |Attribute| Represented Internal Type | Constraints|
 |:---------:|:---------------------------:|:------------:|
 |`ID`|BIGINT|Unique - Primary Key|
@@ -19,7 +18,6 @@ The following table depicts the types of each attribute in our table, algonside 
 |`ParticipantID`|TINYTEXT|Non-Null|
 |`Scopes`|JSON|Non-Null|
 |`Credential`|TEXT|(Can be Null)|
-</center>
 
 ## BDD
 
