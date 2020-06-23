@@ -3,6 +3,8 @@
 Documentation for the auth service
 ## Database
 
+The following Figure depicts the Entity Relationship Diagram of the `Consents` table for the authorization service.
+
 ![The database Schema](ErDiagram.png?raw=true "Schema")
 
 The following table depicts the types of each attribute in our table, algonside their constraints:
