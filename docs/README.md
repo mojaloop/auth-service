@@ -5,17 +5,21 @@ Documentation for the auth service
 
 The following Figure depicts the Entity Relationship Diagram of the `Consents` table for the authorization service:
 
-![The database Schema](ErDiagram.png?raw=true "Schema")
+<p align="center">
+  <img src="ErDiagram.png">
+</p>
 
 The following table depicts the types of each attribute in our table, algonside their constraints:
 
+<center>
 |Attribute| Represented Internal Type | Constraints|
-|---------|---------------------------|------------|
+|:---------:|:---------------------------:|:------------:|
 |`ID`|BIGINT|Unique - Primary Key|
 |`InitiatorID`|TINYTEXT|Non-Null|
 |`ParticipantID`|TINYTEXT|Non-Null|
 |`Scopes`|JSON|Non-Null|
 |`Credential`|TEXT|(Can be Null)|
+</center>
 
 ## BDD
 
