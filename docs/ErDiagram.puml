@@ -1,6 +1,6 @@
 @startuml
 
-title Authoriasation Service: Entity Relationship Diagram
+title Entity Relationship Diagram 
 ' hide the spot
 hide circle
 
