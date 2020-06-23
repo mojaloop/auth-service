@@ -5,7 +5,7 @@ Documentation for the auth service
 
 The following Figure depicts the Entity Relationship Diagram of the 
 
-![ER-Diagram](link_here)
+![ER-Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/spikerheado1234/auth-service/master/docs/ErDiagram.puml)
 
 The following table depicts the types of each attribute in the `Consent` table, algonside their constraints:
 
