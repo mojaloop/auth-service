@@ -5,9 +5,7 @@ Documentation for the auth service
 
 The following Figure depicts the Entity Relationship Diagram of the 
 
-<p align="center">
-  <img src="ErDiagram.png">
-</p>
+![ER-Diagram](link_here)
 
 The following table depicts the types of each attribute in the `Consent` table, algonside their constraints:
 
@@ -28,7 +26,7 @@ The following table depicts the types of each attribute in the `Scope` table:
 |:---------:|:---------------------------:|:------------:|
 |`id`|VARCHAR(36)|Unique - Primary Key|
 |`consent_id`|VARCHAR(36)|Foreign Key referring to the `id` in the consent table|
-|`scope_account`|VARCHAR(36)|Non-Null|
+|`scope_account_type`|VARCHAR(36)|Non-Null|
 |`scope_account_number`|VARCHAR(36)|(Can be Null)|
 
 The reason attributes pertaining to `credentials` and `scope_account_number` can be null is because of the communication sequence established in between the `PISP` and the `authorisation-service`. Where, at the point of first contact with the authorisation-service, these fields are not present. They are available during later parts in the sequence of communication in between the two services.

@@ -1,0 +1,30 @@
+@startuml
+
+title Authoriasation Service: Entity Relationship Diagram
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "Consent" as e01 {
+  * **id**
+  * initiator_id
+  * participant_id
+  * credential_id
+  * credential_type
+  * credential_status
+  * credential_payload
+  * credential_challenge
+}
+
+entity "Scope" as e02 {
+  * **id**
+  * consent_id
+  * scope_account_type
+  * scope_account_number
+}
+
+
+e01 ||..o{ e02
+@enduml
