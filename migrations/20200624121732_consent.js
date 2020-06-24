@@ -1,13 +1,13 @@
 'use strict'
 
 exports.up = async (knex, Promise) => {
-    return await knex.schema.hasTable('consent').then(function(exists) {
+    return await knex.schema.hasTable('Consent').then(function(exists) {
         if (!exists) {
-          return knex.schema.createTable('consent', (t) => {
+          return knex.schema.createTable('Consent', (t) => {
             t.increments('id').primary().notNullable()
             t.string('initiatorid', 32).notNullable()
             t.string('participantid', 32).notNullable()
-            t.integer('credentialid').notNullable()
+            t.integer('credentialid').unsigned().notNullable()
             t.string('credentialtype', 16).notNullable()
             t.string('credentialstatus', 10).notNullable()
             t.string('credentialpayload').nullable()
@@ -15,8 +15,8 @@ exports.up = async (knex, Promise) => {
           })
         }
     })
-};
+}
 
 exports.down = function(knex, Promise) {
-    return knex.schema.dropTableIfExists('consent')
+    return knex.schema.dropTableIfExists('Consent')
 }
