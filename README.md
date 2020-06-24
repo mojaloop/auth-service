@@ -43,3 +43,17 @@ npm run start
 ```
 
 
+### Updating the OpenApi (Swagger) Spec
+
+We use `multi-file-swagger` to make our swagger files more manageable.
+
+After making changes to the `.yaml` files in `./src/interface/`, update the `swagger.json` file like so:
+
+```bash
+./node_modules/.bin/multi-file-swagger ./src/interface/template.yaml > src/interface/swagger.json
+```
+
+> Note: We will likely want to move to swagger 3.0 at some point, and once we do, we will be able to use the [common api snippets](https://github.com/mojaloop/api-snippets) library to factor out common Mojaloop snippets.
+> Keep track of [#352 - Update to OpenAPI v3](https://app.zenhub.com/workspaces/pisp-5e8457b05580fb04a7fd4878/issues/mojaloop/mojaloop/352)
+
+
