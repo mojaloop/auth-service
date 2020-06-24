@@ -21,8 +21,8 @@ entity "Consent" as e01 {
 entity "Scope" as e02 {
   * **id**
   * consent_id
-  * scope_account_type
-  * scope_account_number
+  * action 
+  * account_number 
 }
 
 
