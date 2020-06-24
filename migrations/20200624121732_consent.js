@@ -4,7 +4,7 @@ exports.up = async (knex, Promise) => {
     return await knex.schema.hasTable('Consent').then(function(exists) {
         if (!exists) {
           return knex.schema.createTable('Consent', (t) => {
-            t.increments('id').primary().notNullable()
+            t.string('id', 32).primary().notNullable()
             t.string('initiatorid', 32).notNullable()
             t.string('participantid', 32).notNullable()
             t.integer('credentialid').unsigned().notNullable()
