@@ -4,7 +4,7 @@ const Config = require('../src/lib/config')
 
 module.exports = {
   client: 'mysql',
-  version: '2.18',
+  version: '5.5',
   connection: Config.DATABASE.connection,
   pool: Config.DATABASE.pool,
   migrations: {
