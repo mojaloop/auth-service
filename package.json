@@ -7,6 +7,9 @@
   "files": [
     "dist"
   ],
+  "config": {
+    "knex": "--knexfile ./config/knexfile.js"
+  },
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit",
     "audit:check": "SHELL=sh check-audit",
@@ -26,7 +29,8 @@
     "test:integration": "echo \"test:integration - TODO...\"",
     "test:junit": "jest --reporters=default --reporters=jest-junit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "migrate:latest": "knex $npm_package_config_knex migrate:latest"
   },
   "husky": {
     "hooks": {
