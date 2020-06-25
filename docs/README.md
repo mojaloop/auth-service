@@ -16,11 +16,11 @@ The following table depicts the types of each attribute in the `Consent` table a
 |`id`|`VARCHAR(36)`|Unique - Primary Key|Alphanumeric consent ID|
 |`initiator_id`|`VARCHAR(32)`|Non-Null|Alphanumeric PISP ID|
 |`participant_id`|`VARCHAR(32)`|Non-Null|Alphanumeric DFSP ID|
-|`credential_id`|`INT UNSIGNED`|Unique - Non-Null|Unsigned numeric ID - upto 2^32 records|
-|`credential_type`|`VARCHAR(16)`|Non-Null|Alphanumeric enum value|
-|`credential_status`|`VARCHAR(10)`|Non-Null|String - `PENDING`/`ACTIVE`|
-|`credential_payload`|`TEXT`|Can be Null|Public key string|
-|`credential_challenge`|`CHAR(128)`|Non-Null|Base 64 encoded challenge string|
+|`credential_id`|`INT UNSIGNED`|Nullable|Unsigned numeric ID - upto 2^32 records|
+|`credential_type`|`VARCHAR(16)`|Nullable|Alphanumeric enum value|
+|`credential_status`|`VARCHAR(10)`|Nullable|String - `PENDING`/`ACTIVE`|
+|`credential_payload`|`TEXT`|Nullable|Public key string|
+|`credential_challenge`|`CHAR(128)`|Nullable|Base 64 encoded challenge string|
 
 The following table depicts the types of each attribute in the `Scope` table:
 
