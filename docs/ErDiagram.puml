@@ -22,7 +22,7 @@ entity "Scope" as e02 {
   * **id**
   * consent_id
   * action 
-  * account_number 
+  * account_id 
 }
 
 
