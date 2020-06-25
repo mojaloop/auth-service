@@ -33,7 +33,7 @@ The following table depicts the types of each attribute in the `Scope` table:
 
 Based on [Mojaloop ThirdParty API definition](https://github.com/mojaloop/pisp/blob/7c1b878c720b64bc09f50f13962ebe24e117cc3c/docs/thirdparty-rest-v1.0-OpenApi.yaml) and Sequence Diagrams
 
-The Public key string can be NULL initially when the Auth service receives the request for credential. It's filled in once the signature checks out.
+The Credential attributes (ID, Type, Status etc.) are NULL when the authentication service initially receives the Consent information from the switch. The Credential information is populated in the following requests as the service receives credential information from the PISP, generates a challenge and verifies it.
 
 ## BDD
 
