@@ -7,7 +7,7 @@ exports.up = async (knex, Promise) => {
             t.increments('id').primary().notNullable()
             t.string('consentid', 32).notNullable()
             t.string('action', 36).notNullable()
-            t.string('accountnumber', 36).notNullable()
+            t.string('accountid', 36).notNullable()
 
             t.foreign('consentid').references('id').inTable('Consent')
           })
