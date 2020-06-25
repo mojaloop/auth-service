@@ -30,7 +30,7 @@ export default {
   plugin: HapiSwagger,
   options: {
     info: {
-      title: 'Event Sidecar Swagger Documentation',
+      title: 'Auth-Service OpenAPI Documentation',
       version: Config.PACKAGE.version
     }
   }
