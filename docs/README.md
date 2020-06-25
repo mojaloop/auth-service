@@ -29,7 +29,7 @@ The following table depicts the types of each attribute in the `Scope` table:
 |`id`|`VARCHAR(36)`|Unique - Primary Key|Alphanumeric Scope ID|
 |`consent_id`|`VARCHAR(36)`|Non-Null - Foreign Key|Foreign Key for `id` in the `Consent` table|
 |`action`|`VARCHAR(36)`|Non-Null|Account scope (enum) action allowed with corresponding consent|
-|`account_number`|`VARCHAR(36)`|Non-Null|Account number for associated scope|
+|`account_id`|`VARCHAR(36)`|Non-Null|Account number for associated scope|
 
 Based on [Mojaloop ThirdParty API definition](https://github.com/mojaloop/pisp/blob/7c1b878c720b64bc09f50f13962ebe24e117cc3c/docs/thirdparty-rest-v1.0-OpenApi.yaml) and Sequence Diagrams
 
