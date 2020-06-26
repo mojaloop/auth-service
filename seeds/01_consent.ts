@@ -29,30 +29,33 @@ import * as Knex from 'knex'
 const consents = [
   {
     id: '123',
-    initiatorid: 'PISPA',
-    participantid: 'DFSPA',
-    credentialtype: null,
-    credentialstatus: null,
-    credentialpayload: null,
-    credentialchallenge: null
+    initiatorId: 'PISPA',
+    participantId: 'DFSPA',
+    credentialId: null,
+    credentialType: null,
+    credentialStatus: null,
+    credentialPayload: null,
+    credentialChallenge: null
   },
   {
     id: '124',
-    initiatorid: 'PISPB',
-    participantid: 'DFSPA',
-    credentialtype: 'FIDO',
-    credentialstatus: 'PENDING',
-    credentialpayload: null,
-    credentialchallenge: 'string_representing_challenge_a'
+    initiatorId: 'PISPB',
+    participantId: 'DFSPA',
+    credentialId: '9876',
+    credentialType: 'FIDO',
+    credentialStatus: 'PENDING',
+    credentialPayload: null,
+    credentialChallenge: 'string_representing_challenge_a'
   },
   {
     id: '125',
-    initiatorid: 'PISPC',
-    participantid: 'DFSPA',
-    credentialtype: 'FIDO',
-    credentialstatus: 'VERIFIED',
-    credentialpayload: 'string_representing_public_key_a',
-    credentialchallenge: 'string_representing_challenge_b'
+    initiatorId: 'PISPC',
+    participantId: 'DFSPA',
+    credentialId: '9875',
+    credentialType: 'FIDO',
+    credentialStatus: 'VERIFIED',
+    credentialPayload: 'string_representing_public_key_a',
+    credentialChallenge: 'string_representing_challenge_b'
   }
 ]
 

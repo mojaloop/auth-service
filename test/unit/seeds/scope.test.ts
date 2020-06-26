@@ -43,7 +43,9 @@ describe('testing scope table', (): void => {
 
   it('should properly select all the entries in the Scope database', async (): Promise<void> => {
     expect(db).toBeDefined()
-    const users: Knex.QueryBuilder[] = await db.from('Scope').select('id')
+    const users: Knex.QueryBuilder[] = await db.from('Scope').select('*')
     expect(users.length).toEqual(3)
+    expect(users[0]).toEqual({ id: 1, consentId: '123', action: 'accounts.getBalance', accountId: '12345-67890' })
+    expect(users[1]).toEqual({ id: 2, consentId: '123', action: 'accounts.transfer', accountId: '12345-67890' })
   })
 })

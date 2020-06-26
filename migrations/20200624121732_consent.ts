@@ -29,13 +29,13 @@ exports.up = async (knex: Knex): Promise<void> => {
     if (!exists) {
       return knex.schema.createTable('Consent', (t: Knex.CreateTableBuilder): void => {
         t.string('id', 32).primary().notNullable()
-        t.string('initiatorid', 32).notNullable()
-        t.string('participantid', 32).notNullable()
-        t.integer('credentialid').unsigned().nullable()
-        t.string('credentialtype', 16).nullable()
-        t.string('credentialstatus', 10).nullable()
-        t.string('credentialpayload').nullable()
-        t.string('credentialchallenge', 128).nullable()
+        t.string('initiatorId', 32).notNullable()
+        t.string('participantId', 32).notNullable()
+        t.integer('credentialId').unsigned().nullable()
+        t.string('credentialType', 16).nullable()
+        t.string('credentialStatus', 10).nullable()
+        t.string('credentialPayload').nullable()
+        t.string('credentialChallenge', 128).nullable()
       })
     }
   })

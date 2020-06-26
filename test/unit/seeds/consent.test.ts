@@ -43,7 +43,10 @@ describe('testing Consent table', (): void => {
 
   it('should properly select all the entries in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
-    const users: Knex.QueryBuilder[] = await db.from('Consent').select('id')
+    const users: Knex.QueryBuilder[] = await db.from('Consent').select('*')
     expect(users.length).toEqual(3)
+    expect(users[0]).toEqual({ id: '123', initiatorId: 'PISPA', participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })
+    expect(users[1]).toEqual({ id: '124', initiatorId: 'PISPB', participantId: 'DFSPA', credentialId: 9876, credentialType: 'FIDO', credentialStatus: 'PENDING', credentialPayload: null, credentialChallenge: 'string_representing_challenge_a' })
+    expect(users[2]).toEqual({ id: '125', initiatorId: 'PISPC', participantId: 'DFSPA', credentialId: 9875, credentialType: 'FIDO', credentialStatus: 'VERIFIED', credentialPayload: 'string_representing_public_key_a', credentialChallenge: 'string_representing_challenge_b' })
   })
 })

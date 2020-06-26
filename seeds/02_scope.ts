@@ -29,21 +29,21 @@ import * as Knex from 'knex'
 const scopes = [
   {
     id: 1,
-    consentid: '123',
+    consentId: '123',
     action: 'accounts.getBalance',
-    accountid: '12345-67890'
+    accountId: '12345-67890'
   },
   {
     id: 2,
-    consentid: '123',
+    consentId: '123',
     action: 'accounts.transfer',
-    accountid: '12345-67890'
+    accountId: '12345-67890'
   },
   {
     id: 3,
-    consentid: '124',
+    consentId: '124',
     action: 'accounts.transfer',
-    accountid: '21345-67890'
+    accountId: '21345-67890'
   }
 ]
 

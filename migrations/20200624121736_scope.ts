@@ -29,11 +29,11 @@ exports.up = async (knex: Knex): Promise<void> => {
     if (!exists) {
       return knex.schema.createTable('Scope', (t: Knex.CreateTableBuilder): void => {
         t.increments('id').primary().notNullable()
-        t.string('consentid', 32).notNullable()
+        t.string('consentId', 32).notNullable()
         t.string('action', 36).notNullable()
-        t.string('accountid', 36).notNullable()
+        t.string('accountId', 36).notNullable()
 
-        t.foreign('consentid').references('id').inTable('Consent')
+        t.foreign('consentId').references('id').inTable('Consent')
       })
     }
   })
