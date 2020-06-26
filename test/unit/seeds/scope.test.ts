@@ -47,5 +47,6 @@ describe('testing scope table', (): void => {
     expect(users.length).toEqual(3)
     expect(users[0]).toEqual({ id: 1, consentId: '123', action: 'accounts.getBalance', accountId: '12345-67890' })
     expect(users[1]).toEqual({ id: 2, consentId: '123', action: 'accounts.transfer', accountId: '12345-67890' })
+    expect(users[2]).toEqual({ id: 3, consentId: '124', action: 'accounts.transfer', accountId: '21345-67890' })
   })
 })
