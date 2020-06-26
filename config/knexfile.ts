@@ -2,7 +2,7 @@ const migrationsDirectory = "../migrations"
 const seedsDirectory = "../seeds"
 import {config} from "../src/lib/config"
 
-module.exports = {
+export const Config = {
   development : {
     client: 'mysql',
     version: '5.5',
@@ -11,11 +11,25 @@ module.exports = {
     migrations: {
       directory: migrationsDirectory,
       tableName: 'auth-service',
-      stub: `${migrationsDirectory}/migration.template`
+      stub: `${migrationsDirectory}/migration.template`,
+      loadExtensions: ['.ts']
     },
     seeds: {
       directory: seedsDirectory,
-      loadExtensions: ['.js']
+      loadExtensions: ['.ts']
     } 
+  },
+  test: {
+    client: "sqlite3",
+    connection: ":memory:",
+    useNullAsDefault: true,
+    migrations: {
+      directory: migrationsDirectory
+    },
+    seeds: {
+      directory: seedsDirectory
+    }
   }
 }
+
+module.exports = Config

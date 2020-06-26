@@ -25,43 +25,34 @@
 
 'use strict'
 
-const consents = [
+const scopes = [
     {
-        id: "123",
-        initiatorid: "PISPA",
-        participantid: "DFSPA",
-        credentialtype: null,
-        credentialstatus: null,
-        credentialpayload: null,
-        credentialchallenge: null 
+        id: 1,
+        consentid: "123",
+        action: "accounts.getBalance",
+        accountid: "12345-67890"
     },
     {
-        id: "124",
-        initiatorid: "PISPB",
-        participantid: "DFSPA",
-        credentialtype: "FIDO",
-        credentialstatus: "PENDING",
-        credentialpayload: null,
-        credentialchallenge: "string_representing_challenge_a" 
+        id: 2,
+        consentid: "123",
+        action: "accounts.transfer",
+        accountid: "12345-67890"
     },
     {
-        id: "125",
-        initiatorid: "PISPC",
-        participantid: "DFSPA",
-        credentialtype: "FIDO",
-        credentialstatus: "VERIFIED",
-        credentialpayload: "string_representing_public_key_a",
-        credentialchallenge: "string_representing_challenge_b"
-    },
+        id: 3,
+        consentid: "124",
+        action: "accounts.transfer",
+        accountid: "21345-67890"
+    }
 ]
 
-exports.seed = async function (knex, Promise) {
+exports.seed = async function (knex: any, _: Promise<any>) {
     try {
-        return knex('Consent').insert(consents)
+        return knex('Scope').insert(scopes)
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') return -1001
         else {
-            console.log(`Uploading seeds for consents has failed with the following error: ${err}`)
+            console.log(`Uploading seeds for scopes has failed with the following error: ${err}`)
             return -1000
         }
     }
