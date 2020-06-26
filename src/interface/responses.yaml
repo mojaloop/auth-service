@@ -1,0 +1,103 @@
+ResponseHealth200:
+    description: OK
+    schema:
+      $ref: '#/definitions/Status'
+ResponseHello200:
+  description: example hello-word response
+  schema:
+    type: object
+    properties:
+      hello:
+        type: string
+Response200:
+  description: OK
+Response202:
+  description: Accepted
+ErrorResponse400:
+  description: 'Bad Request - The application cannot process the request; for example, due to malformed syntax or the payload exceeded size restrictions.'
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse401:
+  description: Unauthorized - The request requires authentication in order to be processed.
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse403:
+  description: Forbidden - The request was denied and will be denied in the future.
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse404:
+  description: Not Found - The resource specified in the URI was not found.
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse405:
+  description: Method Not Allowed - An unsupported HTTP method for the request was used.
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse406:
+  description: Not acceptable - The server is not capable of generating content according to the Accept headers sent in the request. Used in the API to indicate that the server does not support the version that the client is requesting.
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse501:
+  description: Not Implemented - The server does not support the requested service. The client should not retry.
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
+ErrorResponse503:
+  description: 'Service Unavailable - The server is currently unavailable to accept any new service requests. This should be a temporary state, and the client should retry within a reasonable time frame.'
+  headers:
+    Content-Length:
+      description: The Content-Length header field indicates the anticipated size of the payload body. Only sent if there is a body.
+      type: integer
+    Content-Type:
+      description: The Content-Type header indicates the specific version of the API used to send the payload body.
+      type: string
+  schema:
+    $ref: '#/definitions/ErrorInformationResponse'
