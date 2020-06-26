@@ -48,7 +48,7 @@ const scopes = [
 
 exports.seed = async function (knex, Promise) {
     try {
-        return await knex('Scope').insert(scopes)
+        return knex('Scope').insert(scopes)
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') return -1001
         else {

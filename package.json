@@ -30,6 +30,7 @@
     "test:junit": "jest --reporters=default --reporters=jest-junit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
     "watch": "tsc -w",
+    "migrate": "run-s migrate:latest seed:run",
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "seed:run": "knex $npm_package_config_knex seed:run"
   },
@@ -113,6 +114,7 @@
     "hapi-swagger": "^13.0.1",
     "knex": "^0.21.1",
     "mysql": "^2.18.1",
+    "npm-run-all": "^4.1.5",
     "parse-strings-in-object": "^2.0.0",
     "rc": "^1.2.8"
   }

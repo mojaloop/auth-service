@@ -49,24 +49,15 @@ const consents = [
         initiatorid: "PISPC",
         participantid: "DFSPA",
         credentialtype: "FIDO",
-        credentialstatus: "PENDING",
+        credentialstatus: "VERIFIED",
         credentialpayload: "string_representing_public_key_a",
         credentialchallenge: "string_representing_challenge_b"
     },
-    {
-        id: "125",
-        initiatorid: "PISPD",
-        participantid: "DFSPA",
-        credentialtype: "FIDO",
-        credentialstatus: "VERIFIED",
-        credentialpayload: "string_representing_public_key_b",
-        credentialchallenge: "string_representing_challenge_c" 
-    }
 ]
 
 exports.seed = async function (knex, Promise) {
     try {
-        return await knex('Consent').insert(consents)
+        return knex('Consent').insert(consents)
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') return -1001
         else {
