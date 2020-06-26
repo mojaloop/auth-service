@@ -1,6 +1,9 @@
-const RC = require('rc')('AS', require('../../config/default.json'))
+import rc from 'rc'
+import Config from "../../config/default.json"
 
-module.exports = {
+const RC = rc('AS', Config)
+
+export const config = {
     HOSTNAME: RC.HOSTNAME.replace(/\/$/, ''),
     PORT: RC.PORT,
     RUN_MIGRATIONS: !RC.MIGRATIONS.DISABLED,

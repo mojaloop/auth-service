@@ -8,7 +8,7 @@
     "dist"
   ],
   "config": {
-    "knex": "--knexfile ./config/knexfile.js"
+    "knex": "--knexfile ./config/knexfile.ts"
   },
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit",
@@ -30,7 +30,8 @@
     "test:junit": "jest --reporters=default --reporters=jest-junit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
     "watch": "tsc -w",
-    "migrate:latest": "knex $npm_package_config_knex migrate:latest"
+    "migrate:latest": "knex $npm_package_config_knex migrate:latest",
+    "seed:run": "knex $npm_package_config_knex seed:run"
   },
   "husky": {
     "hooks": {
