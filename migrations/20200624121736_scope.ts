@@ -22,24 +22,23 @@
 
  --------------
  ******/
+import * as Knex from 'knex'
 
-'use strict'
+exports.up = async (knex: Knex): Promise<void> => {
+  return await knex.schema.hasTable('Scope').then(function (exists: boolean): Knex.SchemaBuilder | void {
+    if (!exists) {
+      return knex.schema.createTable('Scope', (t: Knex.CreateTableBuilder): void => {
+        t.increments('id').primary().notNullable()
+        t.string('consentid', 32).notNullable()
+        t.string('action', 36).notNullable()
+        t.string('accountid', 36).notNullable()
 
-exports.up = async (knex: any, _: Promise<any>) => {
-    return await knex.schema.hasTable('Scope').then(function(exists: Boolean) {
-        if (!exists) {
-          return knex.schema.createTable('Scope', (t: any) => {
-            t.increments('id').primary().notNullable()
-            t.string('consentid', 32).notNullable()
-            t.string('action', 36).notNullable()
-            t.string('accountid', 36).notNullable()
-
-            t.foreign('consentid').references('id').inTable('Consent')
-          })
-        }
-    })
+        t.foreign('consentid').references('id').inTable('Consent')
+      })
+    }
+  })
 }
 
-exports.down = function(knex: any, _: Promise<any>) {
-    knex.schema.dropTableIfExists('Scope')
+exports.down = function (knex: Knex): Knex.SchemaBuilder {
+  return knex.schema.dropTableIfExists('Scope')
 }

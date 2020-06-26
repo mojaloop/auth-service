@@ -24,21 +24,22 @@
  ******/
 
 'use strict'
-import Config from "../../../config/knexfile"
-import knex from "knex"
+import Config from '../../../config/knexfile'
+import * as Knex from 'knex'
+import knex from 'knex'
 
-describe("testing Consent table", () => {
-    
-    let db: any = null
+describe('testing Consent table', (): void => {
+  let db: knex<unknown[]>
 
-    beforeAll(async () => {
-        db = knex(Config.test)
-        await db.migrate.latest()
-        await db.seed.run()
-    })
+  beforeAll(async (): Promise<void> => {
+    db = knex(Config.test)
+    await db.migrate.latest()
+    await db.seed.run()
+  })
 
-    it("select consent entries", async () => {
-        let users = await db.from("Consent").select("id")
-        expect(users.length).toEqual(3)
-    })
+  it('should properly select all the entries in the Consent table', async (): Promise<void> => {
+    expect(db).toBeDefined()
+    const users: Knex.QueryBuilder[] = await db.from('Consent').select('id')
+    expect(users.length).toEqual(3)
+  })
 })

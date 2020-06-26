@@ -22,26 +22,25 @@
 
  --------------
  ******/
+import * as Knex from 'knex'
 
-'use strict'
-
-exports.up = async (knex: any, _: Promise<any>) => {
-    return await knex.schema.hasTable('Consent').then(function(exists: Boolean) {
-        if (!exists) {
-          return knex.schema.createTable('Consent', (t: any) => {
-            t.string('id', 32).primary().notNullable()
-            t.string('initiatorid', 32).notNullable()
-            t.string('participantid', 32).notNullable()
-            t.integer('credentialid').unsigned().nullable()
-            t.string('credentialtype', 16).nullable()
-            t.string('credentialstatus', 10).nullable()
-            t.string('credentialpayload').nullable()
-            t.string('credentialchallenge', 128).nullable()
-          })
-        }
-    })
+exports.up = async (knex: Knex): Promise<void> => {
+  return await knex.schema.hasTable('Consent').then(function (exists: boolean): Knex.SchemaBuilder | void {
+    if (!exists) {
+      return knex.schema.createTable('Consent', (t: Knex.CreateTableBuilder): void => {
+        t.string('id', 32).primary().notNullable()
+        t.string('initiatorid', 32).notNullable()
+        t.string('participantid', 32).notNullable()
+        t.integer('credentialid').unsigned().nullable()
+        t.string('credentialtype', 16).nullable()
+        t.string('credentialstatus', 10).nullable()
+        t.string('credentialpayload').nullable()
+        t.string('credentialchallenge', 128).nullable()
+      })
+    }
+  })
 }
 
-exports.down = function(knex: any, _: Promise<any>) {
-    return knex.schema.dropTableIfExists('Consent')
+exports.down = function (knex: Knex): Knex.SchemaBuilder {
+  return knex.schema.dropTableIfExists('Consent')
 }

@@ -24,36 +24,37 @@
  ******/
 
 'use strict'
+import * as Knex from 'knex'
 
 const scopes = [
-    {
-        id: 1,
-        consentid: "123",
-        action: "accounts.getBalance",
-        accountid: "12345-67890"
-    },
-    {
-        id: 2,
-        consentid: "123",
-        action: "accounts.transfer",
-        accountid: "12345-67890"
-    },
-    {
-        id: 3,
-        consentid: "124",
-        action: "accounts.transfer",
-        accountid: "21345-67890"
-    }
+  {
+    id: 1,
+    consentid: '123',
+    action: 'accounts.getBalance',
+    accountid: '12345-67890'
+  },
+  {
+    id: 2,
+    consentid: '123',
+    action: 'accounts.transfer',
+    accountid: '12345-67890'
+  },
+  {
+    id: 3,
+    consentid: '124',
+    action: 'accounts.transfer',
+    accountid: '21345-67890'
+  }
 ]
 
-exports.seed = async function (knex: any, _: Promise<any>) {
-    try {
-        return knex('Scope').insert(scopes)
-    } catch (err) {
-        if (err.code === 'ER_DUP_ENTRY') return -1001
-        else {
-            console.log(`Uploading seeds for scopes has failed with the following error: ${err}`)
-            return -1000
-        }
+exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | number {
+  try {
+    return knex('Scope').insert(scopes)
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return -1001
+    else {
+      console.log(`Uploading seeds for scopes has failed with the following error: ${err}`)
+      return -1000
     }
+  }
 }

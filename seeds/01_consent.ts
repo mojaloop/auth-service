@@ -24,45 +24,46 @@
  ******/
 
 'use strict'
+import * as Knex from 'knex'
 
 const consents = [
-    {
-        id: "123",
-        initiatorid: "PISPA",
-        participantid: "DFSPA",
-        credentialtype: null,
-        credentialstatus: null,
-        credentialpayload: null,
-        credentialchallenge: null 
-    },
-    {
-        id: "124",
-        initiatorid: "PISPB",
-        participantid: "DFSPA",
-        credentialtype: "FIDO",
-        credentialstatus: "PENDING",
-        credentialpayload: null,
-        credentialchallenge: "string_representing_challenge_a" 
-    },
-    {
-        id: "125",
-        initiatorid: "PISPC",
-        participantid: "DFSPA",
-        credentialtype: "FIDO",
-        credentialstatus: "VERIFIED",
-        credentialpayload: "string_representing_public_key_a",
-        credentialchallenge: "string_representing_challenge_b"
-    },
+  {
+    id: '123',
+    initiatorid: 'PISPA',
+    participantid: 'DFSPA',
+    credentialtype: null,
+    credentialstatus: null,
+    credentialpayload: null,
+    credentialchallenge: null
+  },
+  {
+    id: '124',
+    initiatorid: 'PISPB',
+    participantid: 'DFSPA',
+    credentialtype: 'FIDO',
+    credentialstatus: 'PENDING',
+    credentialpayload: null,
+    credentialchallenge: 'string_representing_challenge_a'
+  },
+  {
+    id: '125',
+    initiatorid: 'PISPC',
+    participantid: 'DFSPA',
+    credentialtype: 'FIDO',
+    credentialstatus: 'VERIFIED',
+    credentialpayload: 'string_representing_public_key_a',
+    credentialchallenge: 'string_representing_challenge_b'
+  }
 ]
 
-exports.seed = async function (knex: any, _: Promise<any>) {
-    try {
-        return knex('Consent').insert(consents)
-    } catch (err) {
-        if (err.code === 'ER_DUP_ENTRY') return -1001
-        else {
-            console.log(`Uploading seeds for consents has failed with the following error: ${err}`)
-            return -1000
-        }
+exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | number {
+  try {
+    return knex('Consent').insert(consents)
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return -1001
+    else {
+      console.log(`Uploading seeds for consents has failed with the following error: ${err}`)
+      return -1000
     }
+  }
 }

@@ -1,9 +1,9 @@
-'use strict'
+import * as knex from 'knex'
 
-exports.up = async (knex, Promise) => {
+exports.up = async (knex: Knex): Promise<void> => {
 
 }
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex: Knex): Knex.SchemaBuilder {
 
 }

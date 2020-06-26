@@ -24,21 +24,22 @@
  ******/
 
 'use strict'
-import Config from "../../../config/knexfile"
-import knex from "knex"
+import Config from '../../../config/knexfile'
+import knex from 'knex'
+import * as Knex from 'knex'
 
-describe("testing scope table", () => {
-    
-    let db: any = null
+describe('testing scope table', (): void => {
+  let db: knex<unknown[]>
 
-    beforeAll(async () => {
-        db = knex(Config.test)
-        await db.migrate.latest()
-        await db.seed.run()
-    })
+  beforeAll(async (): Promise<void> => {
+    db = knex(Config.test)
+    await db.migrate.latest()
+    await db.seed.run()
+  })
 
-    it("select scope entries", async () => {
-        let users = await db.from("Scope").select("id")
-        expect(users.length).toEqual(3)
-    })
+  it('should properly select all the entries in the Scope database', async (): Promise<void> => {
+    expect(db).toBeDefined()
+    const users: Knex.QueryBuilder[] = await db.from('Scope').select('id')
+    expect(users.length).toEqual(3)
+  })
 })
