@@ -23,12 +23,54 @@
  --------------
  ******/
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { findHello } from '../../model/hello'
-import Domain from '../../domain'
+import db from '../lib/db'
 
-export async function get (_: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const hello = await findHello()
-  const allConsents = await Domain.consent.getConsents();
-  return h.response(hello).code(200)
+/*
+  We are in the database domain here - interact with the database!
+*/
+// this needs to match what we have in our ./migrations
+export interface IConsent {
+  id: string;
+  consentRequestId: string;
+  // TODO: add things
+
 }
+
+
+async function getAllConsents(): Promise<Array<IConsent>> {
+  return db<IConsent>('consent')
+    .select('*')
+}
+
+async function getConsentForId(id: string): Promise<IConsent> {
+  return db<IConsent>('consent')
+    .where({id})
+    .first()
+    .select('*')
+}
+
+async function getAllConsentIds(id: string): Promise<Array<string>> {
+  return db<{id: string}>('consent')
+    .select('id')
+}
+
+// async function getAllAccounts() {
+//   return db('account')
+//     .select('*');
+// }
+
+// async function getAccountForUser(username: string): Promise<AccountModel | undefined> {
+//   return db<AccountModel>('account')
+//     .where({
+//       username,
+//     })
+//     .select('*')
+//     .first()
+// }
+
+export {
+  getAllConsents,
+  getConsentForId,
+  getAllConsentIds,
+};
+

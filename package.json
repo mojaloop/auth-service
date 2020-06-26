@@ -106,6 +106,7 @@
     "commander": "^5.1.0",
     "hapi-openapi": "^2.0.2",
     "hapi-swagger": "^13.0.1",
+    "knex": "^0.21.1",
     "parse-strings-in-object": "^2.0.0",
     "rc": "^1.2.8"
   }
