@@ -1,8 +1,9 @@
 const migrationsDirectory = "../migrations"
 const seedsDirectory = "../seeds"
 import {config} from "../src/lib/config"
+import path from "path"
 
-export const Config = {
+const Config = {
   development : {
     client: 'mysql',
     version: '5.5',
@@ -24,12 +25,16 @@ export const Config = {
     connection: ":memory:",
     useNullAsDefault: true,
     migrations: {
-      directory: migrationsDirectory
+      directory: path.join(__dirname, "../migrations/"),
+      tableName: 'auth-service',
+      loadExtensions: ['.ts']
     },
     seeds: {
-      directory: seedsDirectory
+      directory: path.join(__dirname, "../seeds/"),
+      loadExtensions: ['.ts']
     }
   }
 }
 
+export default Config;
 module.exports = Config

@@ -27,7 +27,7 @@
 import Config from "../../../config/knexfile"
 import knex from "knex"
 
-describe("testing Consent table", () => {
+describe("testing scope table", () => {
     
     let db: any = null
 
@@ -37,8 +37,8 @@ describe("testing Consent table", () => {
         await db.seed.run()
     })
 
-    it("select consent entries", async () => {
-        let users = await db.from("Consent").select("id")
+    it("select scope entries", async () => {
+        let users = await db.from("Scope").select("id")
         expect(users.length).toEqual(3)
     })
 })
