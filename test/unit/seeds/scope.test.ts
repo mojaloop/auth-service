@@ -37,6 +37,10 @@ describe('testing scope table', (): void => {
     await db.seed.run()
   })
 
+  afterAll(async (): Promise<void> => {
+    db.destroy()
+  })
+
   it('should properly select all the entries in the Scope database', async (): Promise<void> => {
     expect(db).toBeDefined()
     const users: Knex.QueryBuilder[] = await db.from('Scope').select('id')
