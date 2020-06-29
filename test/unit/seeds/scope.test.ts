@@ -48,7 +48,7 @@ describe('testing scope table', (): void => {
     expect(users[1]).toEqual({ id: 2, consentId: '123', action: 'accounts.transfer', accountId: '12345-67890' })
     expect(users[2]).toEqual({ id: 3, consentId: '124', action: 'accounts.transfer', accountId: '21345-67890' })
   })
-  it('should properly enforce all the constraints in the Scope table.', async (): Promise<void> => {
+  it('should properly enforce all the constraints in the Scope table', async (): Promise<void> => {
     expect(db).toBeDefined()
     /* Tests Primary key Constraint for id */
     await expect(db.from('Scope').insert({ id: 1, consentId: '125', action: 'accounts.transfer', accountId: '78901-12345' })).rejects.toMatchObject({
