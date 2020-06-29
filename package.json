@@ -33,7 +33,7 @@
     "migrate": "run-s migrate:latest seed:run",
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
-    "seed:run": "knex $npm_package_config_knex seed:run",
+    "seed:run": "knex $npm_package_config_knex seed:run"
   },
   "husky": {
     "hooks": {

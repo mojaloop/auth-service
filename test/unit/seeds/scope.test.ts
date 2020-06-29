@@ -23,7 +23,6 @@
  --------------
  ******/
 
-'use strict'
 import Config from '../../../config/knexfile'
 import knex from 'knex'
 import * as Knex from 'knex'
