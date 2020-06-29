@@ -34,6 +34,31 @@ export interface ServiceConfig {
   PORT: number;
   HOST: string;
 
+  // ../lib/config.
+  HOSTNAME: string;
+  DATABASE?: {
+    ACQUIRE_TIMEOUT_MILLIS: number;
+    CREATE_RETRY_INTERVAL_MILLIS: number;
+    CREATE_TIMEOUT_MILLIS: number;
+    DEBUG: boolean;
+    DESTROY_TIMEOUT_MILLIS: number;
+    DIALECT: string;
+    HOST: string;
+    IDLE_TIMEOUT_MILLIS: number;
+    PASSWORD: string;
+    POOL_MAX_SIZE: number;
+    POOL_MIN_SIZE: number;
+    PORT: number;
+    REAP_INTERVAL_MILLIS: number;
+    SCHEMA: string;
+    USER: string;
+  };
+
+  MIGRATIONS?: {
+    DISABLED: boolean;
+    RUN_DATA_MIGRATIONS: boolean;
+  };
+
   // inspect.ts
   INSPECT?: {
     DEPTH?: number;

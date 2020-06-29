@@ -33,10 +33,32 @@ describe('cli', (): void => {
       PACKAGE: Config.PACKAGE,
       PORT: Config.PORT,
       HOST: Config.HOST,
+      HOSTNAME: Config.HOSTNAME,
       INSPECT: {
         DEPTH: 4,
         SHOW_HIDDEN: false,
         COLOR: true
+      },
+      DATABASE: {
+        ACQUIRE_TIMEOUT_MILLIS: 30000,
+        CREATE_RETRY_INTERVAL_MILLIS: 200,
+        CREATE_TIMEOUT_MILLIS: 30000,
+        DEBUG: false,
+        DESTROY_TIMEOUT_MILLIS: 5000,
+        DIALECT: 'mysql',
+        HOST: 'localhost',
+        IDLE_TIMEOUT_MILLIS: 30000,
+        PASSWORD: 'password',
+        POOL_MAX_SIZE: 10,
+        POOL_MIN_SIZE: 10,
+        PORT: 3306,
+        REAP_INTERVAL_MILLIS: 1000,
+        SCHEMA: 'auth-service',
+        USER: 'auth-service'
+      },
+      MIGRATIONS: {
+        DISABLED: false,
+        RUN_DATA_MIGRATIONS: true
       },
       _: []
     })
