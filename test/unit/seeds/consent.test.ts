@@ -48,4 +48,28 @@ describe('testing Consent table', (): void => {
     expect(users[1]).toEqual({ id: '124', initiatorId: 'PISPB', participantId: 'DFSPA', credentialId: 9876, credentialType: 'FIDO', credentialStatus: 'PENDING', credentialPayload: null, credentialChallenge: 'string_representing_challenge_a' })
     expect(users[2]).toEqual({ id: '125', initiatorId: 'PISPC', participantId: 'DFSPA', credentialId: 9875, credentialType: 'FIDO', credentialStatus: 'VERIFIED', credentialPayload: 'string_representing_public_key_a', credentialChallenge: 'string_representing_challenge_b' })
   })
+
+  it('should properly enforce the constraints in the Consent table', async (): Promise<void> => {
+    expect(db).toBeDefined()
+    /* Tests Primary Key Constraint */
+    await expect(db.from('Consent').insert({ id: '123', initiatorId: 'PISPA', participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+      code: 'SQLITE_CONSTRAINT',
+      errno: 19
+    })
+    /* Tests Non-Nullable constraint for initiatorId */
+    await expect(db.from('Consent').insert({ id: '126', initiatorId: null, participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+      code: 'SQLITE_CONSTRAINT',
+      errno: 19
+    })
+    /* Tests Non-Nullable constraint for participantID */
+    await expect(db.from('Consent').insert({ id: '126', initiatorId: 'PISPA', participantId: null, credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+      code: 'SQLITE_CONSTRAINT',
+      errno: 19
+    })
+    /* Tests Unsigned Int constraint for credentialId */
+    await expect(db.from('Consent').insert({ id: '126', initiatorId: 'PISPA', participantId: null, credentialId: -9876, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+      code: 'SQLITE_CONSTRAINT',
+      errno: 19
+    })
+  })
 })
