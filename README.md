@@ -39,7 +39,7 @@ To check the auth-service health visit [http://auth-service.local:4004/health](h
 
 ```bash
 docker-compose up -d mysql
-npm run migrate:latest
+npm run migrate
 npm run start
 ```
 
