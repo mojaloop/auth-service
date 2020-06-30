@@ -17,7 +17,7 @@ The following table depicts the types of each attribute in the `Consent` table a
 |`initiator_id`|`VARCHAR(32)`|Non-Null|Alphanumeric PISP ID|
 |`participant_id`|`VARCHAR(32)`|Non-Null|Alphanumeric DFSP ID|
 |`created_at`|`TIMESTAMP`|Non-Null|Timestamp of consent creation|
-|`credential_id`|`CHAR(256)`|Nullable|Unsigned numeric ID - upto 2^32 records|
+|`credential_id`|`VARCHAR(256)`|Nullable|Alphanumeric credential ID|
 |`credential_type`|`VARCHAR(16)`|Nullable|Alphanumeric enum value|
 |`credential_status`|`VARCHAR(10)`|Nullable|String - `PENDING`/`ACTIVE`|
 |`credential_payload`|`TEXT`|Nullable|Public key string|
