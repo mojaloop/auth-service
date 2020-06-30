@@ -11,7 +11,7 @@ entity Consent {
   * **id**
   * initiator_id
   * participant_id
-  * time_stamp
+  * created_at 
   * credential_id
   * credential_type
   * credential_status
