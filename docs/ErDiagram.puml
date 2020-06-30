@@ -7,10 +7,11 @@ hide circle
 ' avoid problems with angled crows feet
 skinparam linetype ortho
 
-entity "Consent" as e01 {
+entity "Consent" {
   * **id**
   * initiator_id
   * participant_id
+  * time_stamp
   * credential_id
   * credential_type
   * credential_status
@@ -18,7 +19,7 @@ entity "Consent" as e01 {
   * credential_challenge
 }
 
-entity "Scope" as e02 {
+entity "Scope" {
   * **id**
   * consent_id
   * action 
@@ -26,5 +27,5 @@ entity "Scope" as e02 {
 }
 
 
-e01 ||..o{ e02
+Consent ||..o{ Scope 
 @enduml
