@@ -31,6 +31,7 @@ exports.up = async (knex: Knex): Promise<void> => {
         t.string('id', 32).primary().notNullable()
         t.string('initiatorId', 32).notNullable()
         t.string('participantId', 32).notNullable()
+        t.timestamp('timeStamp').defaultTo(knex.fn.now())
         t.integer('credentialId').unsigned().nullable()
         t.string('credentialType', 16).nullable()
         t.string('credentialStatus', 10).nullable()
