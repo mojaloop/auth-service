@@ -1,6 +1,43 @@
 # auth-service/Docs
 
 Documentation for the auth service
+## Database
+
+The following Figure depicts the Entity Relationship Diagram of the auth-service's schema:
+
+<p align="center">
+  <img src="http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/spikerheado1234/auth-service/master/docs/ErDiagram.puml">
+</p>
+
+The following table depicts the types of each attribute in the `Consent` table along with the constraints:
+
+|Attribute| Represented Internal Type | Constraints| Description |
+|:---------:|:---------------------------:|:------------:|:---------------------------:|
+|`id`|`VARCHAR(36)`|Unique - Primary Key|Alphanumeric consent ID|
+|`initiator_id`|`VARCHAR(32)`|Non-Null|Alphanumeric PISP ID|
+|`participant_id`|`VARCHAR(32)`|Non-Null|Alphanumeric DFSP ID|
+|`created_at`|`TIMESTAMP`|Non-Null|Timestamp of consent creation|
+|`credential_id`|`VARCHAR(256)`|Nullable|Alphanumeric credential ID|
+|`credential_type`|`VARCHAR(16)`|Nullable|Alphanumeric enum value|
+|`credential_status`|`VARCHAR(10)`|Nullable|String - `PENDING`/`ACTIVE`|
+|`credential_payload`|`TEXT`|Nullable|Public key string|
+|`credential_challenge`|`CHAR(128)`|Nullable|Base 64 encoded challenge string|
+
+The following table depicts the types of each attribute in the `Scope` table:
+
+|Attribute| Represented Internal Type | Constraints| Description |
+|:---------:|:---------------------------:|:------------:|:---------------------------:|
+|`id`|`VARCHAR(36)`|Unique - Primary Key|Alphanumeric Scope ID|
+|`consent_id`|`VARCHAR(36)`|Non-Null - Foreign Key|Foreign Key for `id` in the `Consent` table|
+|`action`|`VARCHAR(36)`|Non-Null|Account scope (enum) action allowed with corresponding consent|
+|`account_id`|`VARCHAR(36)`|Non-Null|Account id for associated scope|
+
+Based on [Mojaloop ThirdParty API definition](https://github.com/mojaloop/pisp/blob/7c1b878c720b64bc09f50f13962ebe24e117cc3c/docs/thirdparty-rest-v1.0-OpenApi.yaml) and Sequence Diagrams
+
+The Credential attributes (ID, Type, Status etc.) are NULL when the authentication service initially receives the Consent information from the switch. The Credential information is populated in the following requests as the service receives credential information from the PISP, generates a challenge and verifies it.
+
+We do not require the storing of `credential_signatures` because they are used as one of values to verify the aunthenticity of a user as described in the [fido-alliance](https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-overview-v1.2-ps-20170411.html#authentication-generating-a-signature)
+
 ## BDD
 
 [jest-cucumber](https://github.com/bencompton/jest-cucumber) allows to use `jest` to execute Gherkin scenarios. Thanks to `jest` we are getting also code coverage for BDD Scenarios.

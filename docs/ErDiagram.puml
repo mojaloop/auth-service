@@ -1,0 +1,31 @@
+@startuml
+
+title Entity Relationship Diagram 
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity Consent {
+  * **id**
+  * initiator_id
+  * participant_id
+  * created_at 
+  * credential_id
+  * credential_type
+  * credential_status
+  * credential_payload
+  * credential_challenge
+}
+
+entity Scope {
+  * **id**
+  * consent_id
+  * action 
+  * account_id 
+}
+
+
+Consent ||..o{ Scope 
+@enduml
