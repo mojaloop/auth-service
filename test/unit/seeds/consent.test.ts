@@ -45,8 +45,8 @@ describe('testing Consent table', (): void => {
     const users: Knex.QueryBuilder[] = await db.from('Consent').select('*')
     expect(users.length).toEqual(3)
     expect(users[0]).toMatchObject({ id: '123', initiatorId: 'PISPA', participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })
-    expect(users[1]).toMatchObject({ id: '124', initiatorId: 'PISPB', participantId: 'DFSPA', credentialId: 9876, credentialType: 'FIDO', credentialStatus: 'PENDING', credentialPayload: null, credentialChallenge: 'string_representing_challenge_a' })
-    expect(users[2]).toMatchObject({ id: '125', initiatorId: 'PISPC', participantId: 'DFSPA', credentialId: 9875, credentialType: 'FIDO', credentialStatus: 'VERIFIED', credentialPayload: 'string_representing_public_key_a', credentialChallenge: 'string_representing_challenge_b' })
+    expect(users[1]).toMatchObject({ id: '124', initiatorId: 'PISPB', participantId: 'DFSPA', credentialId: '9876', credentialType: 'FIDO', credentialStatus: 'PENDING', credentialPayload: null, credentialChallenge: 'string_representing_challenge_a' })
+    expect(users[2]).toMatchObject({ id: '125', initiatorId: 'PISPC', participantId: 'DFSPA', credentialId: '9875', credentialType: 'FIDO', credentialStatus: 'VERIFIED', credentialPayload: 'string_representing_public_key_a', credentialChallenge: 'string_representing_challenge_b' })
   })
 
   it('should properly enforce the constraints in the Consent table', async (): Promise<void> => {
@@ -67,7 +67,7 @@ describe('testing Consent table', (): void => {
       errno: 19
     })
     /* Tests Unsigned Int constraint for credentialId */
-    await expect(db.from('Consent').insert({ id: '126', initiatorId: 'PISPA', participantId: null, credentialId: -9876, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+    await expect(db.from('Consent').insert({ id: '126', initiatorId: 'PISPA', participantId: null, credentialId: '-9876', credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
