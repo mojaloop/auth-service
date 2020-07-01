@@ -1,7 +1,7 @@
 import { config } from '../src/lib/config'
 import path from 'path'
-const migrationsDirectory = '../migrations'
-const seedsDirectory = '../seeds'
+const migrationsDirectory = path.join(__dirname, '../migrations')
+const seedsDirectory = path.join(__dirname, '../seeds')
 
 const Config = {
   development: {
