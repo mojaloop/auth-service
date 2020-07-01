@@ -7,8 +7,8 @@ const Config = {
   development: {
     client: 'mysql',
     version: '5.5',
-    connection: config.DATABASE.connection,
-    pool: config.DATABASE.pool,
+    connection: config.get('DATABASE').connection,
+    pool: config.get('DATABASE').pool,
     migrations: {
       directory: migrationsDirectory,
       tableName: 'auth-service',

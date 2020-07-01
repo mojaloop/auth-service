@@ -22,47 +22,47 @@
  --------------
  ******/
 
-import rc from 'rc'
+import convict from 'convict'
 import Config from '../../config/default.json'
 
-const RC = rc('AS', Config)
+const RC = convict(Config)
 
-export const config = {
-  HOSTNAME: RC.HOSTNAME.replace(/\/$/, ''),
-  PORT: RC.PORT,
-  RUN_MIGRATIONS: !RC.MIGRATIONS.DISABLED,
-  RUN_DATA_MIGRATIONS: RC.MIGRATIONS.RUN_DATA_MIGRATIONS,
+export const config = convict({
+  HOSTNAME: (RC.get('HOSTNAME') as string).replace(/\/$/, ''),
+  PORT: RC.get('PORT') as number,
+  RUN_MIGRATIONS: !RC.get('MIGRATIONS').DISABLED,
+  RUN_DATA_MIGRATIONS: RC.get('MIGRATIONS').RUN_DATA_MIGRATIONS as boolean,
   DATABASE: {
-    client: RC.DATABASE.DIALECT,
+    client: RC.get('DATABASE').DIALECT as string,
     connection: {
-      host: RC.DATABASE.HOST.replace(/\/$/, ''),
-      port: RC.DATABASE.PORT,
-      user: RC.DATABASE.USER,
-      password: RC.DATABASE.PASSWORD,
-      database: RC.DATABASE.SCHEMA
+      host: (RC.get('DATABASE').HOST as string).replace(/\/$/, ''),
+      port: RC.get('DATABASE').PORT as number,
+      user: RC.get('DATABASE').USER as string,
+      password: RC.get('DATABASE').PASSWORD as string,
+      database: RC.get('DATABASE').SCHEMA as string
     },
     pool: {
       // minimum size
-      min: RC.DATABASE.POOL_MIN_SIZE,
+      min: RC.get('DATABASE').POOL_MIN_SIZE as number,
       // maximum size
-      max: RC.DATABASE.POOL_MAX_SIZE,
+      max: RC.get('DATABASE').POOL_MAX_SIZE as number,
       // acquire promises are rejected after this many milliseconds
       // if a resource cannot be acquired
-      acquireTimeoutMillis: RC.DATABASE.ACQUIRE_TIMEOUT_MILLIS,
+      acquireTimeoutMillis: RC.get('DATABASE').ACQUIRE_TIMEOUT_MILLIS as number,
       // create operations are cancelled after this many milliseconds
       // if a resource cannot be acquired
-      createTimeoutMillis: RC.DATABASE.CREATE_TIMEOUT_MILLIS,
+      createTimeoutMillis: RC.get('DATABASE').CREATE_TIMEOUT_MILLIS as number,
       // destroy operations are awaited for at most this many milliseconds
       // new resources will be created after this timeout
-      destroyTimeoutMillis: RC.DATABASE.DESTROY_TIMEOUT_MILLIS,
+      destroyTimeoutMillis: RC.get('DATABASE').DESTROY_TIMEOUT_MILLIS as number,
       // free resouces are destroyed after this many milliseconds
-      idleTimeoutMillis: RC.DATABASE.IDLE_TIMEOUT_MILLIS,
+      idleTimeoutMillis: RC.get('DATABASE').IDLE_TIMEOUT_MILLIS as number,
       // how often to check for idle resources to destroy
-      reapIntervalMillis: RC.DATABASE.REAP_INTERVAL_MILLIS,
+      reapIntervalMillis: RC.get('DATABASE').REAP_INTERVAL_MILLIS as number,
       // long long to idle after failed create before trying again
-      createRetryIntervalMillis: RC.DATABASE.CREATE_RETRY_INTERVAL_MILLIS
+      createRetryIntervalMillis: RC.get('DATABASE').CREATE_RETRY_INTERVAL_MILLIS as number
       // ping: function (conn, cb) { conn.query('SELECT 1', cb) }
     },
-    debug: RC.DATABASE.DEBUG
+    debug: RC.get('DATABASE').DEBUG as boolean
   }
-}
+})
