@@ -59,14 +59,14 @@ const consents = [
   }
 ]
 
-exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | number {
+exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | Error {
   try {
     return knex('Consent').insert(consents)
   } catch (err) {
-    if (err.code === 'ER_DUP_ENTRY') return -1001
+    if (err.code === 'ER_DUP_ENTRY') return new Error('-1001')
     else {
       console.log(`Uploading seeds for consents has failed with the following error: ${err}`)
-      return -1000
+      return new Error('-1000')
     }
   }
 }

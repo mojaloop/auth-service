@@ -24,21 +24,17 @@
  ******/
 import * as Knex from 'knex'
 
-exports.up = async (knex: Knex): Promise<void> => {
-  return await knex.schema.hasTable('Consent').then(function (exists: boolean): Knex.SchemaBuilder | void {
-    if (!exists) {
-      return knex.schema.createTable('Consent', (t: Knex.CreateTableBuilder): void => {
-        t.string('id', 32).primary().notNullable()
-        t.string('initiatorId', 32).notNullable()
-        t.string('participantId', 32).notNullable()
-        t.timestamp('createdAt').defaultTo(knex.fn.now())
-        t.string('credentialId', 256).nullable()
-        t.string('credentialType', 16).nullable()
-        t.string('credentialStatus', 10).nullable()
-        t.string('credentialPayload').nullable()
-        t.string('credentialChallenge', 128).nullable()
-      })
-    }
+exports.up = async (knex: Knex): Promise<void | Knex.SchemaBuilder> => {
+  return knex.schema.createTableIfNotExists('Consent', (t: Knex.CreateTableBuilder): Knex.SchemaBuilder | void => {
+    t.string('id', 32).primary().notNullable()
+    t.string('initiatorId', 32).notNullable()
+    t.string('participantId', 32).notNullable()
+    t.timestamp('createdAt').defaultTo(knex.fn.now())
+    t.string('credentialId', 256).nullable()
+    t.string('credentialType', 16).nullable()
+    t.string('credentialStatus', 10).nullable()
+    t.string('credentialPayload').nullable()
+    t.string('credentialChallenge', 128).nullable()
   })
 }
 
