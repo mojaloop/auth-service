@@ -28,19 +28,16 @@ import * as Knex from 'knex'
 
 const scopes = [
   {
-    id: 1,
     consentId: '123',
     action: 'accounts.getBalance',
     accountId: '12345-67890'
   },
   {
-    id: 2,
     consentId: '123',
     action: 'accounts.transfer',
     accountId: '12345-67890'
   },
   {
-    id: 3,
     consentId: '124',
     action: 'accounts.transfer',
     accountId: '21345-67890'
