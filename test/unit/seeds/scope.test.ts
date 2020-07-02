@@ -44,9 +44,24 @@ describe('testing scope table', (): void => {
     expect(db).toBeDefined()
     const users: Knex.QueryBuilder[] = await db.from('Scope').select('*')
     expect(users.length).toEqual(3)
-    expect(users[0]).toEqual({ id: 1, consentId: '123', action: 'accounts.getBalance', accountId: '12345-67890' })
-    expect(users[1]).toEqual({ id: 2, consentId: '123', action: 'accounts.transfer', accountId: '12345-67890' })
-    expect(users[2]).toEqual({ id: 3, consentId: '124', action: 'accounts.transfer', accountId: '21345-67890' })
+    expect(users[0]).toEqual({
+      id: 1,
+      consentId: '123',
+      action: 'accounts.getBalance',
+      accountId: '12345-67890'
+    })
+    expect(users[1]).toEqual({
+      id: 2,
+      consentId: '123',
+      action: 'accounts.transfer',
+      accountId: '12345-67890'
+    })
+    expect(users[2]).toEqual({
+      id: 3,
+      consentId: '124',
+      action: 'accounts.transfer',
+      accountId: '21345-67890'
+    })
   })
 })
 
@@ -66,7 +81,12 @@ describe('testing that constraints are enforced in the Scope table', async (): P
   it('should properly enforce the primary key constraint', async (): Promise<void> => {
     expect(db).toBeDefined()
     /* Tests for duplication */
-    await expect(db.from('Scope').insert({ id: 1, consentId: '125', action: 'accounts.transfer', accountId: '78901-12345' })).rejects.toMatchObject({
+    await expect(db.from('Scope').insert({
+      id: 1,
+      consentId: '125',
+      action: 'accounts.transfer',
+      accountId: '78901-12345'
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
@@ -74,21 +94,36 @@ describe('testing that constraints are enforced in the Scope table', async (): P
   })
   it('should properly enforce the non-nullable constraint for consentId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Scope').insert({ id: 4, consentId: null, action: 'accounts.transfer', accountId: '78901-12345' })).rejects.toMatchObject({
+    await expect(db.from('Scope').insert({
+      id: 4,
+      consentId: null,
+      action: 'accounts.transfer',
+      accountId: '78901-12345'
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
   })
   it('should properly enforce the non-nullable constraint for action', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Scope').insert({ id: 4, consentId: '124', action: null, accountId: '78901-12345' })).rejects.toMatchObject({
+    await expect(db.from('Scope').insert({
+      id: 4,
+      consentId: '124',
+      action: null,
+      accountId: '78901-12345'
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
   })
   it('should properly enforce the non-nullable constraint for accountId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Scope').insert({ id: 4, consentId: '124', action: 'accounts.transfer', accountId: null })).rejects.toMatchObject({
+    await expect(db.from('Scope').insert({
+      id: 4,
+      consentId: '124',
+      action: 'accounts.transfer',
+      accountId: null
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })

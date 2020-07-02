@@ -66,26 +66,62 @@ describe('testing that constraints are enforced in the consent table', async ():
   it('should properly enforce the primary key constraint in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
     /* Tests for duplication */
-    await expect(db.from('Consent').insert({ id: '123', initiatorId: 'PISPA', participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+    await expect(db.from('Consent').insert({
+      id: '123',
+      initiatorId: 'PISPA',
+      participantId: 'DFSPA',
+      credentialId: null,
+      credentialType: null,
+      credentialStatus: null,
+      credentialPayload: null,
+      credentialChallenge: null
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
     /* Tests for non-nullity */
-    await expect(db.from('Consent').insert({ id: null, initiatorId: 'PISPA', participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+    await expect(db.from('Consent').insert({
+      id: null,
+      initiatorId: 'PISPA',
+      participantId: 'DFSPA',
+      credentialId: null,
+      credentialType: null,
+      credentialStatus: null,
+      credentialPayload: null,
+      credentialChallenge: null
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
   })
   it('should properly enforce the non-nullable constraint for initiatorId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({ id: '126', initiatorId: null, participantId: 'DFSPA', credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+    await expect(db.from('Consent').insert({
+      id: '126',
+      initiatorId: null,
+      participantId: 'DFSPA',
+      credentialId: null,
+      credentialType: null,
+      credentialStatus: null,
+      credentialPayload: null,
+      credentialChallenge: null
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
   })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({ id: '126', initiatorId: 'PISPA', participantId: null, credentialId: null, credentialType: null, credentialStatus: null, credentialPayload: null, credentialChallenge: null })).rejects.toMatchObject({
+    await expect(db.from('Consent').insert({
+      id: '126',
+      initiatorId: 'PISPA',
+      participantId: null,
+      credentialId: null,
+      credentialType: null,
+      credentialStatus: null,
+      credentialPayload: null,
+      credentialChallenge: null
+    })).rejects.toMatchObject({
       code: 'SQLITE_CONSTRAINT',
       errno: 19
     })
