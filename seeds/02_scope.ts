@@ -44,7 +44,7 @@ const scopes = [
   }
 ]
 
-exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | Error {
+export function seed (knex: Knex): Knex.QueryBuilder<number[]> | Error {
   try {
     return knex('Scope').insert(scopes)
   } catch (err) {

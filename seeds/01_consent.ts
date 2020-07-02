@@ -59,7 +59,7 @@ const consents = [
   }
 ]
 
-exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | Error {
+export function seed (knex: Knex): Knex.QueryBuilder<number[]> | Error {
   try {
     return knex('Consent').insert(consents)
   } catch (err) {
