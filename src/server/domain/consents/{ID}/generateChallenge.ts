@@ -37,3 +37,26 @@ export const isConsentRequestValid = function (request: Request, consent: Consen
 
   return false
 }
+
+export const genChallenge = async function (request: Request, consent: Consent): Promise<void> {
+  // If there is no pre-existing challenge for the consent id
+  // Generate one and update the database
+  if (consent.credentialChallenge == null) {
+    // Challenge generation
+    const crypto = require('crypto')
+    let challenge = ''
+    crypto.randomBytes(32, (err: Error, buf): void => {
+      if (err) throw err
+      challenge = buf.toString('base64')
+    })
+
+    // TODO Update consent credentials
+
+    // TODO Update in database
+  }
+
+  // Construct body of outgoing request
+
+  // Call PUT consents/{ID}
+  // TODO
+}
