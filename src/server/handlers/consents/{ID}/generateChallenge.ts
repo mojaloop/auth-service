@@ -33,8 +33,8 @@ import { Consent } from '../../../../model/consent'
  * Called by a `PISP`to request a challenge from the `auth-service`, which
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
-export function post (_: Request, h: ResponseToolkit): ResponseObject {
-  const id = _.params.ID
+export function post (request: Request, h: ResponseToolkit): ResponseObject {
+  const id = request.params.ID
 
   // Fetch consent using ID
   let consent: Consent = null
@@ -46,8 +46,8 @@ export function post (_: Request, h: ResponseToolkit): ResponseObject {
 
   // If consent is valid, generate challenge asynchronously
   // and return 202 Success code
-  if (isConsentRequestValid(_, consent)) {
-    genChallenge(_, consent)
+  if (isConsentRequestValid(request, consent)) {
+    genChallenge(request, consent)
     return h.response().code(202)
   } else {
     throw new Error('400')
