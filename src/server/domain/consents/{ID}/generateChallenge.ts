@@ -50,13 +50,47 @@ export const genChallenge = async function (request: Request, consent: Consent):
       challenge = buf.toString('base64')
     })
 
-    // TODO Update consent credentials
+    // Update consent credentials
+    consent.credentialType = 'FIDO'
+    consent.credentialStatus = 'ACTIVE'
+    consent.credentialChallenge = challenge
 
-    // TODO Update in database
+    // Update in database
+    consentDB.updateCredentials(consent)
   }
 
   // Construct body of outgoing request
+  const body = {
+    requestId: consent.id,
+    initiatorId: consent.initiatorId,
+    participantId: consent.participantId,
+    // TODO: Modify Scopes after the model is fleshed out
+    scopes: [
+      {
+        scope: 'account.balanceInquiry',
+        accountId: 'dfspa.alice.1234'
+      },
+      {
+        scope: 'account.sendTransfer',
+        accountId: 'dfspa.alice.1234'
+      },
+      {
+        scope: 'account.sendTransfer',
+        accountId: 'dfspa.alice.5678'
+      }
+    ],
+    credential: {
+      id: null,
+      credentialType: consent.credentialType,
+      credentialStatus: consent.credentialStatus,
+      challenge: {
+        payload: consent.credentialChallenge,
+        signature: null
+      },
+      payload: null
+    }
+  }
 
-  // Call PUT consents/{ID}
+  // Outgoing to PUT consents/{ID}
   // TODO
 }
