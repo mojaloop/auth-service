@@ -1,7 +1,6 @@
 {
   "PORT": 4004,
   "HOST": "0.0.0.0",
-  "HOSTNAME": "http://auth-service",
   "DATABASE": {
     "DIALECT": "mysql",
     "HOST": "localhost",

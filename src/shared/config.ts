@@ -35,7 +35,6 @@ export interface ServiceConfig {
   HOST: string;
 
   // ../lib/config.
-  HOSTNAME: string;
   DATABASE?: {
     ACQUIRE_TIMEOUT_MILLIS: number;
     CREATE_RETRY_INTERVAL_MILLIS: number;

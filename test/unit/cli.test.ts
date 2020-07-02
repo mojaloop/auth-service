@@ -33,7 +33,6 @@ describe('cli', (): void => {
       PACKAGE: Config.PACKAGE,
       PORT: Config.PORT,
       HOST: Config.HOST,
-      HOSTNAME: Config.HOSTNAME,
       INSPECT: {
         DEPTH: 4,
         SHOW_HIDDEN: false,

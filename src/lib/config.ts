@@ -28,7 +28,6 @@ import Config from '../../config/default.json'
 const RC = convict(Config)
 
 export const config = convict({
-  HOSTNAME: (RC.get('HOSTNAME') as string).replace(/\/$/, ''),
   PORT: RC.get('PORT') as number,
   RUN_MIGRATIONS: !RC.get('MIGRATIONS').DISABLED,
   RUN_DATA_MIGRATIONS: RC.get('MIGRATIONS').RUN_DATA_MIGRATIONS as boolean,
