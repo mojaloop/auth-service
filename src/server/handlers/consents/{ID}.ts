@@ -24,7 +24,7 @@
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-export function put (_: Request, h: ResponseToolkit): ResponseObject {
+export function put (request: Request, h: ResponseToolkit): ResponseObject {
 
   // return h.response().code(200)
 }
