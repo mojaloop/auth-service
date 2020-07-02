@@ -1,9 +1,9 @@
 import * as knex from 'knex'
 
-export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
+export function up (knex: Knex): Knex.SchemaBuilder {
 
 }
 
-export async function down (knex: Knex): Promise< void | Knex.SchemaBuilder> {
+export function down (knex: Knex): Knex.SchemaBuilder {
 
 }
