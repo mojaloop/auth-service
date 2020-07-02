@@ -24,7 +24,7 @@
  ******/
 import * as Knex from 'knex'
 
-exports.up = async (knex: Knex): Promise<void | Knex.SchemaBuilder> => {
+export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
   return knex.schema.createTableIfNotExists('Scope', (t: Knex.CreateTableBuilder): Knex.SchemaBuilder | void => {
     t.increments('id').primary().notNullable()
     t.string('consentId', 32).notNullable()
@@ -35,6 +35,6 @@ exports.up = async (knex: Knex): Promise<void | Knex.SchemaBuilder> => {
   })
 }
 
-exports.down = function (knex: Knex): Knex.SchemaBuilder {
+export async function down (knex: Knex): Promise< void | Knex.SchemaBuilder> {
   return knex.schema.dropTableIfExists('Scope')
 }

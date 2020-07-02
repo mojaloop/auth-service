@@ -25,12 +25,12 @@ const Config = {
     connection: ':memory:',
     useNullAsDefault: true,
     migrations: {
-      directory: path.join(__dirname, '../migrations/'),
+      directory: migrationsDirectory,
       tableName: 'auth-service',
       loadExtensions: ['.ts']
     },
     seeds: {
-      directory: path.join(__dirname, '../seeds/'),
+      directory: seedsDirectory,
       loadExtensions: ['.ts']
     }
   }
