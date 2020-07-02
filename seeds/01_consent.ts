@@ -63,10 +63,10 @@ exports.seed = function (knex: Knex): Knex.QueryBuilder<number[]> | Error {
   try {
     return knex('Consent').insert(consents)
   } catch (err) {
-    if (err.code === 'ER_DUP_ENTRY') return new Error('-1001')
+    if (err.code === 'ER_DUP_ENTRY') throw err
     else {
       console.log(`Uploading seeds for consents has failed with the following error: ${err}`)
-      return new Error('-1000')
+      throw err
     }
   }
 }
