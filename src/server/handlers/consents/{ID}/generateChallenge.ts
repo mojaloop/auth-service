@@ -34,7 +34,7 @@ import { Consent } from '../../../../model/consent'
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
 export function post (request: Request, h: ResponseToolkit): ResponseObject {
-  const id = request.params.ID
+  const id = request.params.id
 
   // Fetch consent using ID
   let consent: Consent = null
@@ -47,7 +47,8 @@ export function post (request: Request, h: ResponseToolkit): ResponseObject {
   // If consent is valid, generate challenge asynchronously
   // and return 202 Success code
   if (isConsentRequestValid(request, consent)) {
-    genChallenge(request, consent)
+    // Asynchronous Function
+    genChallenge(request, consent).catch((err): void => { console.warn(err) })
     return h.response().code(202)
   } else {
     throw new Error('400')
