@@ -26,7 +26,7 @@
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
-import { put } from '../../../handlers/consents/{ID}'
+import { putConsentId } from '../../../../shared/requests'
 
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
   if (consent != null &&
@@ -59,38 +59,6 @@ export const genChallenge = async function (request: Request, consent: Consent):
     consentDB.updateCredentials(consent)
   }
 
-  // Construct body of outgoing request
-  const body = {
-    requestId: consent.id,
-    initiatorId: consent.initiatorId,
-    participantId: consent.participantId,
-    // TODO: Modify Scopes after the model is fleshed out
-    scopes: [
-      {
-        scope: 'account.balanceInquiry',
-        accountId: 'dfspa.alice.1234'
-      },
-      {
-        scope: 'account.sendTransfer',
-        accountId: 'dfspa.alice.1234'
-      },
-      {
-        scope: 'account.sendTransfer',
-        accountId: 'dfspa.alice.5678'
-      }
-    ],
-    credential: {
-      id: null,
-      credentialType: consent.credentialType,
-      credentialStatus: consent.credentialStatus,
-      challenge: {
-        payload: consent.credentialChallenge,
-        signature: null
-      },
-      payload: null
-    }
-  }
-
-  // Outgoing to PUT consents/{ID}
-  // TODO
+  // Outgoing call to PUT consents/{ID}
+  putConsentId(consent, request.headers)
 }
