@@ -46,11 +46,10 @@ export function post (request: Request, h: ResponseToolkit): ResponseObject {
 
   // If consent is valid, generate challenge asynchronously
   // and return 202 Success code
-  if (isConsentRequestValid(request, consent)) {
-    // Asynchronous Function
-    genChallenge(request, consent).catch((err): void => { console.warn(err) })
-    return h.response().code(202)
-  } else {
+  if (!isConsentRequestValid(request, consent)) {
     throw new Error('400')
   }
+  // Asynchronous Function
+  genChallenge(request, consent).catch((err): void => { console.warn(err) })
+  return h.response().code(202)
 }
