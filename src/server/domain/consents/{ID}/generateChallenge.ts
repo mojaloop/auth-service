@@ -27,6 +27,7 @@ import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { putConsentId } from '../../../../shared/requests'
+const Crypto = require('crypto')
 
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
   if (consent != null &&
@@ -43,9 +44,8 @@ export const genChallenge = async function (request: Request, consent: Consent):
   // Generate one and update the database
   if (consent.credentialChallenge == null) {
     // Challenge generation
-    const crypto = require('crypto')
     let challenge = ''
-    crypto.randomBytes(32, (err: Error, buf): void => {
+    Crypto.randomBytes(32, (err: Error, buf): void => {
       if (err) throw err
       challenge = buf.toString('base64')
     })
