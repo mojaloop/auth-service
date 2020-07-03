@@ -28,11 +28,12 @@ import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { putConsentId } from '../../../../shared/requests'
 const Crypto = require('crypto')
+const Enum = require('@mojaloop/central-services-shared').Enum
 
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
-  if (consent != null &&
-      (consent.initiatorId === request.params.FSPIOP_Source &&
-      consent.participantId === request.params.FSPIOP_Destination)) {
+  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+
+  if (consent != null && consent.initiatorId === fspiopSource) {
     return true
   }
 
