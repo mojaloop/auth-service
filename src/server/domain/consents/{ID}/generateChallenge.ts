@@ -57,7 +57,7 @@ export const genChallenge = async function (request: Request, consent: Consent):
     consent.credentialChallenge = challenge
 
     // Update in database
-    consentDB.updateCredentials(consent)
+    await consentDB.updateCredentials(consent)
   }
 
   // Outgoing call to PUT consents/{ID}
