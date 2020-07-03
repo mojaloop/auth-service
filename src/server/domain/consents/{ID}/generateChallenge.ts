@@ -61,5 +61,5 @@ export const genChallenge = async function (request: Request, consent: Consent):
   }
 
   // Outgoing call to PUT consents/{ID}
-  putConsentId(consent, request.headers)
+  putConsentId(consent, request.headers).catch((err): void => { console.warn(err) })
 }
