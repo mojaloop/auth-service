@@ -2,6 +2,8 @@
 
 import { putConsents } from '@mojaloop/sdk-standard-components'
 import { Consent } from '../model/consent'
+import { Scope } from '../model/scope'
+import { scopeDb } from '../lib/db'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
 export const putConsentId = async function (consent: Consent, headers): Promise<JSON> {
@@ -10,26 +12,20 @@ export const putConsentId = async function (consent: Consent, headers): Promise<
   headers[Enum.Http.Headers.FSPIOP.SOURCE] = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationId
 
+  // Retrieve scopes
+  let scopes: Scope = null
+  try {
+    scopes = await scopeDb.retrieve(consent.id)
+  } catch (error) {
+    throw new Error(error)
+  }
+
   // Construct body of outgoing request
   const body = {
     requestId: consent.id,
     initiatorId: consent.initiatorId,
     participantId: consent.participantId,
-    // TODO: Modify Scopes after the model is fleshed out
-    scopes: [
-      {
-        scope: 'account.balanceInquiry',
-        accountId: 'dfspa.alice.1234'
-      },
-      {
-        scope: 'account.sendTransfer',
-        accountId: 'dfspa.alice.1234'
-      },
-      {
-        scope: 'account.sendTransfer',
-        accountId: 'dfspa.alice.5678'
-      }
-    ],
+    scopes,
     credential: {
       id: null,
       credentialType: consent.credentialType,
