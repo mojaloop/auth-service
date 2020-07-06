@@ -33,11 +33,7 @@ const Enum = require('@mojaloop/central-services-shared').Enum
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
-  if (consent && consent.initiatorId === fspiopSource) {
-    return true
-  }
-
-  return false
+  return (consent && consent.initiatorId === fspiopSource)
 }
 
 export const genChallenge = async function (request: Request, consent: Consent): Promise<void> {
