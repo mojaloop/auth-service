@@ -33,23 +33,27 @@ import { Consent } from '../../../../model/consent'
  * Called by a `PISP`to request a challenge from the `auth-service`, which
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
-export function post (request: Request, h: ResponseToolkit): ResponseObject {
+export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
 
   // Fetch consent using ID
   let consent: Consent = null
   try {
-    consent = consentDB.retrieve(id)
+    consent = await consentDB.retrieve(id)
   } catch (error) {
     throw new Error('Invalid Consent Lookup')
   }
 
-  // If consent is valid, generate challenge asynchronously
-  // and return 202 Success code
+  // If consent is invalid, throw error
   if (!isConsentRequestValid(request, consent)) {
     throw new Error('400')
   }
-  // Asynchronous Function
-  genChallenge(request, consent).catch((err): void => { console.warn(err) })
-  return h.response().code(202)
+
+  // Asynchronously generate challenge
+  try {
+    genChallenge(request, consent)
+  } catch (error) {
+    console.warn(error)
+  }
+  return h.response().code(202) // Suceess code
 }
