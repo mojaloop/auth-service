@@ -86,10 +86,7 @@ describe('testing that constraints are enforced in the Scope table', async (): P
       consentId: '125',
       action: 'accounts.transfer',
       accountId: '78901-12345'
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
     /* Test for non-nullability is not possible since column is set to increment and will thus be populated by a value if null. */
   })
   it('should properly enforce the non-nullable constraint for consentId', async (): Promise<void> => {
@@ -99,10 +96,7 @@ describe('testing that constraints are enforced in the Scope table', async (): P
       consentId: null,
       action: 'accounts.transfer',
       accountId: '78901-12345'
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for action', async (): Promise<void> => {
     expect(db).toBeDefined()
@@ -111,10 +105,7 @@ describe('testing that constraints are enforced in the Scope table', async (): P
       consentId: '124',
       action: null,
       accountId: '78901-12345'
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for accountId', async (): Promise<void> => {
     expect(db).toBeDefined()
@@ -123,9 +114,6 @@ describe('testing that constraints are enforced in the Scope table', async (): P
       consentId: '124',
       action: 'accounts.transfer',
       accountId: null
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
   })
 })

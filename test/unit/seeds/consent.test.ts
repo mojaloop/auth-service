@@ -102,10 +102,7 @@ describe('testing that constraints are enforced in the consent table', async ():
       credentialStatus: null,
       credentialPayload: null,
       credentialChallenge: null
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
     /* Tests for non-nullity */
     await expect(db.from('Consent').insert({
       id: null,
@@ -116,10 +113,7 @@ describe('testing that constraints are enforced in the consent table', async ():
       credentialStatus: null,
       credentialPayload: null,
       credentialChallenge: null
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for initiatorId', async (): Promise<void> => {
     expect(db).toBeDefined()
@@ -132,10 +126,7 @@ describe('testing that constraints are enforced in the consent table', async ():
       credentialStatus: null,
       credentialPayload: null,
       credentialChallenge: null
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
     expect(db).toBeDefined()
@@ -148,9 +139,6 @@ describe('testing that constraints are enforced in the consent table', async ():
       credentialStatus: null,
       credentialPayload: null,
       credentialChallenge: null
-    })).rejects.toMatchObject({
-      code: 'SQLITE_CONSTRAINT',
-      errno: 19
-    })
+    })).rejects.toThrow()
   })
 })
