@@ -18,20 +18,23 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Ahan Gupta <ahangupta.96@gmail.com>
 
  --------------
  ******/
+import * as Knex from 'knex'
 
-import HapiSwagger from 'hapi-swagger'
-import Config from '../../shared/config'
+export function up (knex: Knex): Knex.SchemaBuilder {
+  return knex.schema.createTableIfNotExists('Scope', (t: Knex.CreateTableBuilder): void => {
+    t.increments('id').primary().notNullable()
+    t.string('consentId', 32).notNullable()
+    t.string('action', 36).notNullable()
+    t.string('accountId', 36).notNullable()
 
-export default {
-  plugin: HapiSwagger,
-  options: {
-    info: {
-      title: 'Auth-Service OpenAPI Documentation',
-      version: Config.PACKAGE.version
-    }
-  }
+    t.foreign('consentId').references('id').inTable('Consent')
+  })
+}
+
+export function down (knex: Knex): Knex.SchemaBuilder {
+  return knex.schema.dropTableIfExists('Scope')
 }

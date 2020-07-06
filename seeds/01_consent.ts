@@ -18,20 +18,47 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Ahan Gupta <ahangupta.96@gmail.com>
 
  --------------
  ******/
 
-import HapiSwagger from 'hapi-swagger'
-import Config from '../../shared/config'
+'use strict'
+import * as Knex from 'knex'
 
-export default {
-  plugin: HapiSwagger,
-  options: {
-    info: {
-      title: 'Auth-Service OpenAPI Documentation',
-      version: Config.PACKAGE.version
-    }
+const consents = [
+  {
+    id: '123',
+    initiatorId: 'PISPA',
+    participantId: 'DFSPA',
+    credentialId: null,
+    credentialType: null,
+    credentialStatus: null,
+    credentialPayload: null,
+    credentialChallenge: null
+  },
+  {
+    id: '124',
+    initiatorId: 'PISPB',
+    participantId: 'DFSPA',
+    credentialId: '9876',
+    credentialType: 'FIDO',
+    credentialStatus: 'PENDING',
+    credentialPayload: null,
+    credentialChallenge: 'string_representing_challenge_a'
+  },
+  {
+    id: '125',
+    initiatorId: 'PISPC',
+    participantId: 'DFSPA',
+    credentialId: '9875',
+    credentialType: 'FIDO',
+    credentialStatus: 'VERIFIED',
+    credentialPayload: 'string_representing_public_key_a',
+    credentialChallenge: 'string_representing_challenge_b'
   }
+]
+
+export function seed (knex: Knex): Knex.QueryBuilder<number[]> {
+  return knex('Consent').insert(consents)
 }

@@ -1,0 +1,9 @@
+import * as knex from 'knex'
+
+export function up (knex: Knex): Knex.SchemaBuilder {
+
+}
+
+export function down (knex: Knex): Knex.SchemaBuilder {
+
+}

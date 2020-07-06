@@ -18,20 +18,32 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Ahan Gupta <ahangupta.96@gmail.com>
 
  --------------
  ******/
 
-import HapiSwagger from 'hapi-swagger'
-import Config from '../../shared/config'
+'use strict'
+import * as Knex from 'knex'
 
-export default {
-  plugin: HapiSwagger,
-  options: {
-    info: {
-      title: 'Auth-Service OpenAPI Documentation',
-      version: Config.PACKAGE.version
-    }
+const scopes = [
+  {
+    consentId: '123',
+    action: 'accounts.getBalance',
+    accountId: '12345-67890'
+  },
+  {
+    consentId: '123',
+    action: 'accounts.transfer',
+    accountId: '12345-67890'
+  },
+  {
+    consentId: '124',
+    action: 'accounts.transfer',
+    accountId: '21345-67890'
   }
+]
+
+export function seed (knex: Knex): Knex.QueryBuilder<number[]> {
+  return knex('Scope').insert(scopes)
 }
