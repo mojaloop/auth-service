@@ -37,7 +37,18 @@ export const isConsentRequestValid = function (request: Request, consent: Consen
   return (consent && consent.initiatorId === fspiopSource)
 }
 
-export const genChallenge = async function (request: Request, consent: Consent): Promise<void> {
+async function generateChallengeValue (): Promise<string> {
+  const randBytes = promisify(randomBytes)
+  try {
+    const buf = await randBytes(32)
+    const challenge = buf.toString('base64')
+    return challenge
+  } catch (error) {
+    throw new Error('Error in Generating Challenge Value')
+  }
+}
+
+export async function generateChallenge (request: Request, consent: Consent): Promise<void> {
   // If there is a pre-existing challenge for the consent id
   // Make outgoing call to PUT consents/{ID}
   if (consent.credentialChallenge) {
@@ -50,14 +61,7 @@ export const genChallenge = async function (request: Request, consent: Consent):
   }
 
   // Challenge generation
-  const randBytes = promisify(randomBytes)
-  let challenge = ''
-  try {
-    const buf = await randBytes(32)
-    challenge = buf.toString('base64')
-  } catch (error) {
-    console.error(error)
-  }
+  const challenge = await generateChallengeValue()
 
   // Update consent credentials
   consent.credentialType = 'FIDO'

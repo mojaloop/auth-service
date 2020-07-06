@@ -22,7 +22,7 @@
 
  --------------
  ******/
-import { genChallenge, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
+import { generateChallenge, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
@@ -51,7 +51,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
 
   // Asynchronously generate challenge
   try {
-    genChallenge(request, consent)
+    generateChallenge(request, consent)
   } catch (error) {
     console.warn(error)
   }
