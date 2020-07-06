@@ -56,7 +56,7 @@ export const genChallenge = async function (request: Request, consent: Consent):
 
   // Update consent credentials
   consent.credentialType = 'FIDO'
-  consent.credentialStatus = 'ACTIVE'
+  consent.credentialStatus = 'PENDING'
   consent.credentialChallenge = challenge
 
   // Update in database
