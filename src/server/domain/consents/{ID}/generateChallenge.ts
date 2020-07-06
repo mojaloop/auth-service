@@ -27,7 +27,8 @@ import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { putConsentId } from '../../../../shared/requests'
-const Crypto = require('crypto')
+import { promisify } from 'util'
+import { randomBytes } from 'crypto'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
@@ -47,12 +48,16 @@ export const genChallenge = async function (request: Request, consent: Consent):
     }
     return
   }
+
   // Challenge generation
+  const randBytes = promisify(randomBytes)
   let challenge = ''
-  Crypto.randomBytes(32, (err: Error, buf): void => {
-    if (err) throw err
+  try {
+    const buf = await randBytes(32)
     challenge = buf.toString('base64')
-  })
+  } catch (error) {
+    console.error(error)
+  }
 
   // Update consent credentials
   consent.credentialType = 'FIDO'
