@@ -18,20 +18,26 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Ahan Gupta <ahangupta.96@gmail.com>
 
  --------------
  ******/
+import * as Knex from 'knex'
 
-import HapiSwagger from 'hapi-swagger'
-import Config from '../../shared/config'
+export function up (knex: Knex): Knex.SchemaBuilder {
+  return knex.schema.createTableIfNotExists('Consent', (t: Knex.CreateTableBuilder): void => {
+    t.string('id', 32).primary().notNullable()
+    t.string('initiatorId', 32).notNullable()
+    t.string('participantId', 32).notNullable()
+    t.timestamp('createdAt').defaultTo(knex.fn.now())
+    t.string('credentialId', 256).nullable()
+    t.string('credentialType', 16).nullable()
+    t.string('credentialStatus', 10).nullable()
+    t.string('credentialPayload').nullable()
+    t.string('credentialChallenge', 128).nullable()
+  })
+}
 
-export default {
-  plugin: HapiSwagger,
-  options: {
-    info: {
-      title: 'Auth-Service OpenAPI Documentation',
-      version: Config.PACKAGE.version
-    }
-  }
+export function down (knex: Knex): Knex.SchemaBuilder {
+  return knex.schema.dropTableIfExists('Consent')
 }
