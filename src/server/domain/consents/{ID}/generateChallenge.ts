@@ -33,7 +33,7 @@ const Enum = require('@mojaloop/central-services-shared').Enum
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
-  if (consent != null && consent.initiatorId === fspiopSource) {
+  if (consent && consent.initiatorId === fspiopSource) {
     return true
   }
 
@@ -41,25 +41,35 @@ export const isConsentRequestValid = function (request: Request, consent: Consen
 }
 
 export const genChallenge = async function (request: Request, consent: Consent): Promise<void> {
-  // If there is no pre-existing challenge for the consent id
-  // Generate one and update the database
-  if (consent.credentialChallenge == null) {
-    // Challenge generation
-    let challenge = ''
-    Crypto.randomBytes(32, (err: Error, buf): void => {
-      if (err) throw err
-      challenge = buf.toString('base64')
-    })
-
-    // Update consent credentials
-    consent.credentialType = 'FIDO'
-    consent.credentialStatus = 'ACTIVE'
-    consent.credentialChallenge = challenge
-
-    // Update in database
-    await consentDB.updateCredentials(consent)
+  // If there is a pre-existing challenge for the consent id
+  // Make outgoing call to PUT consents/{ID}
+  if (consent.credentialChallenge) {
+    try {
+      putConsentId(consent, request.headers)
+    } catch (error) {
+      console.warn(error)
+    }
+    return
   }
+  // Challenge generation
+  let challenge = ''
+  Crypto.randomBytes(32, (err: Error, buf): void => {
+    if (err) throw err
+    challenge = buf.toString('base64')
+  })
+
+  // Update consent credentials
+  consent.credentialType = 'FIDO'
+  consent.credentialStatus = 'ACTIVE'
+  consent.credentialChallenge = challenge
+
+  // Update in database
+  await consentDB.updateCredentials(consent)
 
   // Outgoing call to PUT consents/{ID}
-  putConsentId(consent, request.headers).catch((err): void => { console.warn(err) })
+  try {
+    putConsentId(consent, request.headers)
+  } catch (error) {
+    console.warn(error)
+  }
 }
