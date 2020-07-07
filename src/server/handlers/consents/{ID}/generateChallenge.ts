@@ -26,6 +26,7 @@ import { generateChallenge, isConsentRequestValid } from '../../../domain/consen
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
+import { Logger } from '@mojaloop/central-services-logger'
 
 /** The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a
  * credential for the given Consent object. The `{ID}` in the URI should
@@ -41,6 +42,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   try {
     consent = await consentDB.retrieve(id)
   } catch (error) {
+    Logger.error('Error in retrieving consent')
     throw new Error('Invalid Consent Lookup')
   }
 
@@ -53,7 +55,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   try {
     generateChallenge(request, consent)
   } catch (error) {
-    console.warn(error)
+    Logger.error(error)
   }
   return h.response().code(202) // Success code
 }

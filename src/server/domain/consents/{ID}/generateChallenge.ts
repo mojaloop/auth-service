@@ -29,6 +29,7 @@ import { Consent } from '../../../../model/consent'
 import { putConsentId } from '../../../../shared/requests'
 import { promisify } from 'util'
 import { randomBytes } from 'crypto'
+import { Logger } from '@mojaloop/central-services-logger'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
 /**
@@ -89,7 +90,8 @@ export async function generateChallenge (request: Request, consent: Consent): Pr
     try {
       putConsentId(consent, request.headers)
     } catch (error) {
-      console.warn(error)
+      Logger.info('Error in making outgoing call to PUT/consents/' + consent.id)
+      throw error
     }
     return
   }
@@ -104,6 +106,7 @@ export async function generateChallenge (request: Request, consent: Consent): Pr
   try {
     putConsentId(consent, request.headers)
   } catch (error) {
-    console.warn(error)
+    Logger.info('Error in making outgoing call to PUT/consents/' + consent.id)
+    throw error
   }
 }
