@@ -6,7 +6,7 @@ import { Scope } from '../model/scope'
 import { scopeDb } from '../lib/db'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
-export const putConsentId = async function (consent: Consent, headers): Promise<JSON> {
+export async function putConsentId (consent: Consent, headers): Promise<void> {
   // Switch SOURCE and DESTINATION in headers
   const destinationId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   headers[Enum.Http.Headers.FSPIOP.SOURCE] = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -14,11 +14,7 @@ export const putConsentId = async function (consent: Consent, headers): Promise<
 
   // Retrieve scopes
   let scopes: Scope = null
-  try {
-    scopes = await scopeDb.retrieve(consent.id)
-  } catch (error) {
-    throw new Error(error)
-  }
+  scopes = await scopeDb.retrieve(consent.id)
 
   // Construct body of outgoing request
   const body = {
@@ -38,5 +34,5 @@ export const putConsentId = async function (consent: Consent, headers): Promise<
     }
   }
   // Use sdk-standard-components library to send request
-  return putConsents(body, destinationId, consent.id, headers)
+  putConsents(body, destinationId, consent.id, headers)
 }
