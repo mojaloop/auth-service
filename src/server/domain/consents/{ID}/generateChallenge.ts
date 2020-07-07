@@ -31,12 +31,23 @@ import { promisify } from 'util'
 import { randomBytes } from 'crypto'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
+/**
+ * Validates whether generate challenge request is valid
+ * by comparing consent ID sent matches with existing consent in table
+ * and if source ID matches initiator ID
+ * @param request: request received from PISP
+ * @param consent: Consent object
+ */
 export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
   return (consent && consent.initiatorId === fspiopSource)
 }
 
+/**
+ * Helper function which uses the crypto library to generate
+ * a secure random challenge string (Base 64 encoding)
+ */
 async function generateChallengeValue (): Promise<string> {
   const randBytes = promisify(randomBytes)
   try {
@@ -48,6 +59,14 @@ async function generateChallengeValue (): Promise<string> {
   }
 }
 
+/**
+ * Generates a 32 byte challenge string and makes outgoing call to PUT consents/{ID}
+ * If there is already a challenge generated for the Consent object, makes PUT call directly
+ * Else, generates a challenge, updates Consent credentials in database and
+ * then makes outgoing PUT call
+ * @param request: request received from PISP
+ * @param consent: Consent object
+ */
 export async function generateChallenge (request: Request, consent: Consent): Promise<void> {
   // If there is a pre-existing challenge for the consent id
   // Make outgoing call to PUT consents/{ID}

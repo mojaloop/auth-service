@@ -55,5 +55,5 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   } catch (error) {
     console.warn(error)
   }
-  return h.response().code(202) // Suceess code
+  return h.response().code(202) // Success code
 }
