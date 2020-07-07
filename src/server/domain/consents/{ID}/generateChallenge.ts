@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 20202 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -48,7 +48,7 @@ export const isConsentRequestValid = function (request: Request, consent: Consen
  * Helper function which uses the crypto library to generate
  * a secure random challenge string (Base 64 encoding)
  */
-async function generateChallengeValue (): Promise<string> {
+export async function generateChallengeValue (): Promise<string> {
   const randBytes = promisify(randomBytes)
   try {
     const buf = await randBytes(32)
@@ -57,6 +57,21 @@ async function generateChallengeValue (): Promise<string> {
   } catch (error) {
     throw new Error('Error in Generating Challenge Value')
   }
+}
+
+/**
+ * Assigns credentials to given consent object and updates in the database
+ * Returns updated consent object
+ */
+export async function updateCredential (consent: Consent, challenge: string, credentialType: string, credentialStatus: string): Consent {
+  // Update consent credentials
+  consent.credentialType = credentialType
+  consent.credentialStatus = credentialStatus
+  consent.credentialChallenge = challenge
+
+  // Update in database
+  await consentDB.updateCredentials(consent)
+  return consent
 }
 
 /**
@@ -82,13 +97,8 @@ export async function generateChallenge (request: Request, consent: Consent): Pr
   // Challenge generation
   const challenge = await generateChallengeValue()
 
-  // Update consent credentials
-  consent.credentialType = 'FIDO'
-  consent.credentialStatus = 'PENDING'
-  consent.credentialChallenge = challenge
-
-  // Update in database
-  await consentDB.updateCredentials(consent)
+  // Updating credentials with generated challenge
+  consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
 
   // Outgoing call to PUT consents/{ID}
   try {
