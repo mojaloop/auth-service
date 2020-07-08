@@ -24,14 +24,18 @@
  ******/
 import * as Knex from 'knex'
 
-export function up (knex: Knex): Knex.SchemaBuilder {
-  return knex.schema.createTableIfNotExists('Scope', (t: Knex.CreateTableBuilder): void => {
-    t.increments('id').primary().notNullable()
-    t.string('consentId', 32).notNullable()
-    t.string('action', 36).notNullable()
-    t.string('accountId', 36).notNullable()
+export async function up (knex: Knex): Promise<Knex.SchemaBuilder | void> {
+  return knex.schema.hasTable('Scope').then((exists: boolean): Knex.SchemaBuilder | void => {
+    if (!exists) {
+      return knex.schema.createTable('Scope', (t: Knex.CreateTableBuilder): void => {
+        t.increments('id').primary().notNullable()
+        t.string('consentId', 32).notNullable()
+        t.string('action', 36).notNullable()
+        t.string('accountId', 36).notNullable()
 
-    t.foreign('consentId').references('id').inTable('Consent')
+        t.foreign('consentId').references('id').inTable('Consent')
+      })
+    }
   })
 }
 
