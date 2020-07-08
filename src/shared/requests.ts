@@ -26,6 +26,7 @@ import { putConsents } from '@mojaloop/sdk-standard-components'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { scopeDb } from '../lib/db'
+import { Request } from '@hapi/hapi'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
 /**
@@ -33,14 +34,14 @@ const Enum = require('@mojaloop/central-services-shared').Enum
  * @param consent Consent object with credential challenge, type and status
  * @param headers headers from PISP generate challenge request
  */
-export async function putConsentId (consent: Consent, headers): Promise<void> {
+export async function putConsentId (consent: Consent, headers): Promise<Request> {
   // Switch SOURCE and DESTINATION in headers
   const destinationId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   headers[Enum.Http.Headers.FSPIOP.SOURCE] = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationId
 
   // Retrieve scopes
-  const scopes = await scopeDb.retrieve(consent.id)
+  const scopes: Scope[] = await scopeDb.retrieve(consent.id)
 
   // Construct body of outgoing request
   const body = {
@@ -60,7 +61,7 @@ export async function putConsentId (consent: Consent, headers): Promise<void> {
     }
   }
   // Use sdk-standard-components library to send request
-  putConsents(body, destinationId, consent.id, headers)
+  return putConsents(body, destinationId, consent.id, headers)
 
   // TODO: Figure if I need to return something here or deal with anything
 }
