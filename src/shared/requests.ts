@@ -26,7 +26,6 @@ import { putConsents } from '@mojaloop/sdk-standard-components'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { scopeDb } from '../lib/db'
-import { Request } from '@hapi/hapi'
 const Enum = require('@mojaloop/central-services-shared').Enum
 
 /**
