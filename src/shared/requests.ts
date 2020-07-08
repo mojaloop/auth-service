@@ -34,7 +34,10 @@ const Enum = require('@mojaloop/central-services-shared').Enum
  * @param consent Consent object with credential challenge, type and status
  * @param headers headers from PISP generate challenge request
  */
-export async function putConsentId (consent: Consent, headers): Promise<Request> {
+
+// TODO: Figure out return type of putConsents() and assign type accordingly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function putConsentId (consent: Consent, headers): Promise<any> {
   // Switch SOURCE and DESTINATION in headers
   const destinationId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   headers[Enum.Http.Headers.FSPIOP.SOURCE] = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

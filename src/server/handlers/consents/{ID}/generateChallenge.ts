@@ -55,8 +55,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   // Asynchronously deals with generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
   try {
-    // TODO: Error-Handling might need some reform, also depending on exact return type
-    //       of putConsentId, might need to change anon asyc callback's return type
+    // TODO: Error-Handling - Should we remove the inner try/catch block?
 
     setImmediate(async (): Promise<void> => {
       // If there is no pre-existing challenge for the consent id
