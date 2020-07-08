@@ -23,35 +23,24 @@
  --------------
  ******/
 
-import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../lib/db'
-import { Consent } from '../../../../model/consent'
-const Enum = require('@mojaloop/central-services-shared').Enum
+import * as util from 'util'
+import * as crypto from 'crypto'
+import { Logger } from '@mojaloop/central-services-logger'
+
+// Async promisified randomBytes function
+const randBytes = util.promisify(crypto.randomBytes)
 
 /**
- * Validates whether generate challenge request is valid
- * by comparing consent ID sent matches with existing consent in table
- * and if source ID matches initiator ID
- * @param request: request received from PISP
- * @param consent: Consent object
+ * Helper function which uses the crypto library to generate
+ * a secure random challenge string (Base 64 encoding) of given size
+ * @param size Integer value of how many bytes should generated, 32 by default
  */
-export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
-  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-
-  return (consent && consent.initiatorId === fspiopSource)
-}
-
-/**
- * Assigns credentials to given consent object and updates in the database
- * Returns updated consent object
- */
-export async function updateCredential (consent: Consent, challenge: string, credentialType: string, credentialStatus: string): Consent {
-  // Update consent credentials
-  consent.credentialType = credentialType
-  consent.credentialStatus = credentialStatus
-  consent.credentialChallenge = challenge
-
-  // Update in database
-  await consentDB.updateCredentials(consent)
-  return consent
+export async function generateChallenge (size: number = 32): Promise<string> {
+  try {
+    const buf = await randBytes(Math.round(Math.abs(size)))
+    return buf.toString('base64')
+  } catch (error) {
+    Logger.error('Unable to generate challenge string')
+    throw error
+  }
 }

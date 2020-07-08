@@ -22,7 +22,8 @@
 
  --------------
  ******/
-import { generateChallengeValue, updateCredential, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
+import { updateCredential, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
+import { generateChallenge } from '../../../../secure/auth'
 import { putConsentId } from '../../../../shared/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
@@ -62,7 +63,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
       // Generate one and update database
       if (!consent.credentialChallenge) {
         // Challenge generation
-        const challenge = await generateChallengeValue()
+        const challenge = await generateChallenge()
 
         // Updating credentials with generated challenge
         consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
