@@ -22,7 +22,8 @@
 
  --------------
  ******/
-import { generateChallenge, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
+import { generateChallengeValue, updateCredential, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
+import { putConsentId } from '../../../../shared/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
@@ -51,11 +52,36 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
     throw new Error('400')
   }
 
-  // Asynchronously generate challenge
+  // Asynchronously deals with generating challenge, updating consent db
+  //  and making outgoing PUT consent/{ID} call
   try {
-    generateChallenge(request, consent)
+    // TODO: Error-Handling might need some reform, also depending on exact return type
+    //       of putConsentId, might need to change anon asyc callback's return type
+
+    setImmediate(async (): Promise<void> => {
+      // If there is no pre-existing challenge for the consent id
+      // Generate one and update database
+      if (!consent.credentialChallenge) {
+        // Challenge generation
+        const challenge = await generateChallengeValue()
+
+        // Updating credentials with generated challenge
+        consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
+      }
+
+      // Outgoing call to PUT consents/{ID}
+      try {
+        putConsentId(consent, request.headers)
+      } catch (error) {
+        Logger.error('Error in making outgoing call to PUT/consents/' + consent.id)
+        throw error
+      }
+    })
   } catch (error) {
     Logger.error(error)
+    throw error
   }
-  return h.response().code(202) // Success code
+
+  // Return Success code informing source: request received
+  return h.response().code(202)
 }

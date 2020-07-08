@@ -26,7 +26,6 @@
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
-import { putConsentId } from '../../../../shared/requests'
 import { promisify } from 'util'
 import { randomBytes } from 'crypto'
 import { Logger } from '@mojaloop/central-services-logger'
@@ -73,40 +72,4 @@ export async function updateCredential (consent: Consent, challenge: string, cre
   // Update in database
   await consentDB.updateCredentials(consent)
   return consent
-}
-
-/**
- * Generates a 32 byte challenge string and makes outgoing call to PUT consents/{ID}
- * If there is already a challenge generated for the Consent object, makes PUT call directly
- * Else, generates a challenge, updates Consent credentials in database and
- * then makes outgoing PUT call
- * @param request: request received from PISP
- * @param consent: Consent object
- */
-export async function generateChallenge (request: Request, consent: Consent): Promise<void> {
-  // If there is a pre-existing challenge for the consent id
-  // Make outgoing call to PUT consents/{ID}
-  if (consent.credentialChallenge) {
-    try {
-      putConsentId(consent, request.headers)
-    } catch (error) {
-      Logger.info('Error in making outgoing call to PUT/consents/' + consent.id)
-      throw error
-    }
-    return
-  }
-
-  // Challenge generation
-  const challenge = await generateChallengeValue()
-
-  // Updating credentials with generated challenge
-  consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
-
-  // Outgoing call to PUT consents/{ID}
-  try {
-    putConsentId(consent, request.headers)
-  } catch (error) {
-    Logger.info('Error in making outgoing call to PUT/consents/' + consent.id)
-    throw error
-  }
 }
