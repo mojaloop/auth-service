@@ -53,8 +53,7 @@ export async function generateChallengeValue (): Promise<string> {
   const randBytes = promisify(randomBytes)
   try {
     const buf = await randBytes(32)
-    const challenge = buf.toString('base64')
-    return challenge
+    return buf.toString('base64')
   } catch (error) {
     Logger.error('Unable to generate challenge string')
     throw error
