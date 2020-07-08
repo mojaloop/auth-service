@@ -64,6 +64,4 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
   }
   // Use sdk-standard-components library to send request
   return putConsents(body, destinationId, consent.id, headers)
-
-  // TODO: Figure if I need to return something here or deal with anything
 }
