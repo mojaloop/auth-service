@@ -8,6 +8,6 @@ describe('Challenge Generation', (): void => {
 
   it('Should return a 64 byte string', async (): Promise<void> => {
     const challenge = await generate(64)
-    expect(Buffer.byteLength(challenge, 'base64')).toBe(32)
+    expect(Buffer.byteLength(challenge, 'base64')).toBe(64)
   })
 })
