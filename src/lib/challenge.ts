@@ -23,6 +23,10 @@
  --------------
  ******/
 
+/* istanbul ignore file */
+
+// Flag to igore BDD testing, which will be dealt with in a later ticket
+
 import util from 'util'
 import crypto from 'crypto'
 import { Logger } from '@mojaloop/central-services-logger'
