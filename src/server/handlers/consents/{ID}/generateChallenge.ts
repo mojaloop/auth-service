@@ -55,28 +55,22 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
 
   // Asynchronously deals with generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
-
   setImmediate(async (): Promise<void> => {
     try {
       // If there is no pre-existing challenge for the consent id
       // Generate one and update database
       if (!consent.credentialChallenge) {
-      // Challenge generation
+        // Challenge generation
         const challenge = await generate()
 
         // Updating credentials with generated challenge
         consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
       }
-    } catch (error) {
-      Logger.push(error)
-      throw error
-    }
 
-    // Outgoing call to PUT consents/{ID}
-    try {
+      // Outgoing call to PUT consents/{ID}
       putConsentId(consent, request.headers)
     } catch (error) {
-      Logger.push(error).error('Error in making outgoing call to PUT/consents/' + consent.id)
+      Logger.push(error).error('Error: Outgoing call with challenge credential NOT made to  PUT consent/' + id)
       throw error
     }
   })
