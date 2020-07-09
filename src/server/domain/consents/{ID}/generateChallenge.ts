@@ -26,7 +26,7 @@
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
-const Enum = require('@mojaloop/central-services-shared').Enum
+import { Enum } from '@mojaloop/central-services-shared'
 
 /**
  * Validates whether generate challenge request is valid
