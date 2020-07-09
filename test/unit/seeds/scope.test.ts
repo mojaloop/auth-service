@@ -65,7 +65,7 @@ describe('testing scope table', (): void => {
   })
 })
 
-describe('testing that constraints are enforced in the Scope table', async (): Promise<void> => {
+describe('testing that constraints are enforced in the Scope table', (): void => {
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
