@@ -34,7 +34,12 @@ export async function up (knex: Knex): Promise<Knex.SchemaBuilder | void> {
           t.string('action', 36).notNullable()
           t.string('accountId', 36).notNullable()
 
-          t.foreign('consentId').references('id').inTable('Consent')
+          // Updating Consent table's id updates foreign key consentID
+          // Deleting Consent table's id deletes associated scopes
+          t.foreign('consentId').references('id')
+            .inTable('Consent')
+            .onUpdate('CASCADE')
+            .onDelete('CASCADE')
         })
       }
     })

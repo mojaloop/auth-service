@@ -37,5 +37,3 @@ const Config = {
 }
 
 export default Config
-/* Export is required to expose config to knex to seed and migrate containerised local mysql instance */
-module.exports = Config
