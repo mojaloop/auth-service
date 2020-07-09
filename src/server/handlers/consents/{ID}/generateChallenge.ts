@@ -56,34 +56,30 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   // Asynchronously deals with generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
 
-  // remove try catch
-
-  try {
-    // TODO: Error-Handling - Should we remove the inner try/catch block?
-
-    setImmediate(async (): Promise<void> => {
+  setImmediate(async (): Promise<void> => {
+    try {
       // If there is no pre-existing challenge for the consent id
       // Generate one and update database
       if (!consent.credentialChallenge) {
-        // Challenge generation
+      // Challenge generation
         const challenge = await generate()
 
         // Updating credentials with generated challenge
         consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
       }
+    } catch (error) {
+      Logger.push(error)
+      throw error
+    }
 
-      // Outgoing call to PUT consents/{ID}
-      try {
-        putConsentId(consent, request.headers)
-      } catch (error) {
-        Logger.push(error).error('Error in making outgoing call to PUT/consents/' + consent.id)
-        throw error
-      }
-    })
-  } catch (error) {
-    Logger.push(error).error(error)
-    throw error
-  }
+    // Outgoing call to PUT consents/{ID}
+    try {
+      putConsentId(consent, request.headers)
+    } catch (error) {
+      Logger.push(error).error('Error in making outgoing call to PUT/consents/' + consent.id)
+      throw error
+    }
+  })
 
   // Return Success code informing source: request received
   return h.response().code(202)
