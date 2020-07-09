@@ -44,7 +44,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   try {
     consent = await consentDB.retrieve(id)
   } catch (error) {
-    Logger.error('Error in retrieving consent')
+    Logger.push(error).error('Error in retrieving consent')
     throw error
   }
 
@@ -76,12 +76,12 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
       try {
         putConsentId(consent, request.headers)
       } catch (error) {
-        Logger.error('Error in making outgoing call to PUT/consents/' + consent.id)
+        Logger.push(error).error('Error in making outgoing call to PUT/consents/' + consent.id)
         throw error
       }
     })
   } catch (error) {
-    Logger.error(error)
+    Logger.push(error).error(error)
     throw error
   }
 
