@@ -22,11 +22,10 @@
 
  --------------
  ******/
-import { Request, ResponseToolkit } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { updateCredential, isConsentRequestValid } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
-import { resolve } from 'path'
 
 /*
  * Mock Request Resources
