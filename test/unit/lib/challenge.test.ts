@@ -1,4 +1,4 @@
-import { generate } from "../../../src/lib/challenge"
+import { generate } from '../../../src/lib/challenge'
 
 describe('Challenge Generation', (): void => {
   it('Should return a 32 byte string', async (): Promise<void> => {
