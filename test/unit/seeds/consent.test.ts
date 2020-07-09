@@ -77,7 +77,7 @@ describe('testing Consent table', (): void => {
   })
 })
 
-describe('testing that constraints are enforced in the consent table', async (): Promise<void> => {
+describe('testing that constraints are enforced in the consent table', (): void => {
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
