@@ -53,14 +53,14 @@ export async function generate (size: number = 32): Promise<string> {
   }
 }
 
-/**
+/*
  * Helper function to validate signatures using public key
  * @param challenge Base64 challenge string
  * @param signature Base64 sign string
  * @param publicKey Base64/PEM Public key string for verification
  */
 export async function verifySign (challenge: string, signature: string, publicKey: string): Promise<boolean> {
-  const verifier: crypto.Verify = crypto.createVerify('RSA-SHA256')
+  const verifier: crypto.Verify = crypto.createVerify('SHA256')
 
   verifier.update(challenge)
 
