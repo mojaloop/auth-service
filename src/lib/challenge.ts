@@ -19,13 +19,17 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Raman Mangla <ramanmangla@google.com>
 
  --------------
  ******/
 
 /* istanbul ignore file */
 
-// Flag to igore BDD testing, which will be dealt with in a later ticket
+/**
+ * Flag to ignore BDD testing, which will be dealt
+ * with in a later ticket
+ */
 
 import util from 'util'
 import crypto from 'crypto'
@@ -47,4 +51,23 @@ export async function generate (size: number = 32): Promise<string> {
     Logger.push(error).error('Unable to generate challenge string')
     throw error
   }
+}
+
+/*
+ * Helper function to validate signatures using public key
+ */
+export async function verify (challenge: string, signature: string, key: string): Promise<boolean> {
+  // const challengeBuffer = Buffer.from(challenge, 'base64')
+  // const signatureBuffer = Buffer.from(signature, 'base64')
+
+  // return crypto.verify(signAlgorithm, challengeBuffer, key, signatureBuffer)
+  // const verify = crypto.createVerify('RSA-SHA256')
+  // verify.update(challenge, 'utf8')
+  // return verify.verify(key, signature)
+
+  const verifier: crypto.Verify = crypto.createVerify('sha256')
+
+  verifier.update(challenge)
+
+  return verifier.verify(key, signature, 'base64')
 }
