@@ -26,7 +26,7 @@
 
 /* istanbul ignore file */
 
-/**
+/*
  * Flag to ignore BDD testing, which will be dealt
  * with in a later ticket
  */
@@ -56,7 +56,7 @@ export async function generate (size: number = 32): Promise<string> {
 /*
  * Helper function to validate signatures using public key
  */
-export async function verify (challenge: string, signature: string, key: string): Promise<boolean> {
+export async function verifySign (challenge: string, signature: string, key: string): Promise<boolean> {
   // const challengeBuffer = Buffer.from(challenge, 'base64')
   // const signatureBuffer = Buffer.from(signature, 'base64')
 
