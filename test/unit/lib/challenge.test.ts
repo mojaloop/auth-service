@@ -29,40 +29,73 @@ describe('Challenge Generation', (): void => {
 })
 
 describe('Signature Verification', (): void => {
-  it('verifies correct signature', async (): Promise<void> => {
-    // const privateKey: string = '-----BEGIN RSA PRIVATE KEY-----\n' +
-    //   'MIICXQIBAAKBgQDCtTEic76GBqUetJ1XXrrWZcxd8vJr2raWRqBjbGpSzLqa3YLv\n' +
-    //   'VxVeK49iSlI+5uLX/2WFJdhKAWoqO+03oH4TDSupolzZrwMFSylxGwR5jPmoNHDM\n' +
-    //   'S3nnzUkBtdr3NCfq1C34fQV0iUGdlPtJaiiTBQPMt4KUcQ1TaazB8TzhqwIDAQAB\n' +
-    //   'AoGAM8WeBP0lwdluelWoKJ0lrPBwgOKilw8W0aqB5y3ir5WEYL1ZnW5YXivS+l2s\n' +
-    //   'tNELrEdapSbE9hieNBCvKMViABQXj4DRw5Dgpfz6Hc8XIzoEl68DtxL313EyouZD\n' +
-    //   'jOiOGWW5UTBatLh05Fa5rh0FbZn8GsHrA6nhz4Fg2zGzpyECQQDi8rN6qhjEk5If\n' +
-    //   '+fOBT+kjHZ/SLrH6OIeAJ+RYstjOfS0bWiM9Wvrhtr7DZkIUA5JNsmeANUGlCrQ2\n' +
-    //   'cBJU2cJJAkEA26HyehCmnCkCjit7s8g3MdT0ys5WvrAFO6z3+kCbCAsGS+34EgnF\n' +
-    //   'yz8dDdfUYP410R5+9Cs/RkYesqindsvEUwJBALCmQVXFeKnqQ99n60ZIMSwILxKn\n' +
-    //   'Dhm6Tp5Obssryt5PSQD1VGC5pHZ0jGAEBIMXlJWtvCprScFxZ3zIFzy8kyECQQDB\n' +
-    //   'lUhHVo3DblIWRTVPDNW5Ul5AswW6JSM3qgkXxgHfYPg3zJOuMnbn4cUWAnnq06VT\n' +
-    //   'oHF9fPDUW9GK3yRbjNaJAkAB2Al6yY0KUhYLtWoEpQ40HlATbhNel2cn5WNs6Y5F\n' +
-    //   '2hedvWdhS/zLzbtbSlOegp00d2/7IBghAfjAc3DE9DZw\n' +
-    //   '-----END RSA PRIVATE KEY-----'
+  // Repeat test with different keys
+  for (let index = 0; index < 4; index++) {
+    it('verifies correct signature - EC Key', async (): Promise<void> => {
+      const keyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
+      })
 
-    // const publicKey: string = '-----BEGIN PUBLIC KEY-----\n' +
-    //   'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCtTEic76GBqUetJ1XXrrWZcxd\n' +
-    //   '8vJr2raWRqBjbGpSzLqa3YLvVxVeK49iSlI+5uLX/2WFJdhKAWoqO+03oH4TDSup\n' +
-    //   'olzZrwMFSylxGwR5jPmoNHDMS3nnzUkBtdr3NCfq1C34fQV0iUGdlPtJaiiTBQPM\n' +
-    //   't4KUcQ1TaazB8TzhqwIDAQAB\n' +
-    //   '-----END PUBLIC KEY-----'
+      const challenge = 'Crypto Auth service Yay!'
+      const signer = crypto.createSign('SHA256')
 
-    const keyPair = crypto.generateKeyPairSync('ec', {
-      namedCurve: 'secp256k1', // Allowed by FIDO spec
-      publicKeyEncoding: {
-        type: 'spki', // Key infrasructure
-        format: 'pem' // Encoding format
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-      }
+      signer.update(challenge)
+
+      const sign = signer.sign(keyPair.privateKey, 'base64')
+
+      expect(await verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
+    })
+  }
+
+  // Repeat test with different keys
+  for (let index = 0; index < 4; index++) {
+    it('returns false on incorrect signature - wrong EC key', async (): Promise<void> => {
+      const realKeyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
+      })
+
+      const fakeKeyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
+      })
+
+      const challenge = 'Crypto Auth service Yay!'
+      const signer = crypto.createSign('SHA256')
+
+      signer.update(challenge)
+
+      const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+
+      expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    })
+  }
+
+  it('verifies correct signature - RSA Key', async (): Promise<void> => {
+    const realKeyPair = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048 // Key length in bits
     })
 
     const challenge = 'Crypto Auth service Yay!'
@@ -70,25 +103,36 @@ describe('Signature Verification', (): void => {
 
     signer.update(challenge)
 
-    const sign = signer.sign(keyPair.privateKey, 'base64')
+    const sign = signer.sign(realKeyPair.privateKey, 'base64')
 
-    expect(await verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
+    expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(true)
   })
 
-  it('returns false on incorrect signature', async (): Promise<void> => {
-    const realKeyPair = crypto.generateKeyPairSync('ec', {
-      namedCurve: 'secp256k1', // Allowed by FIDO spec
-      publicKeyEncoding: {
-        type: 'spki', // Key infrasructure
-        format: 'pem' // Encoding format
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-      }
+  it('returns false on incorrect signature - RSA Key', async (): Promise<void> => {
+    const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048 // Key length in bits
     })
 
-    const fakeKeyPair = crypto.generateKeyPairSync('ec', {
+    const realKeyPair = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048 // Key length in bits
+    })
+
+    const challenge = 'Crypto Auth service Yay!'
+    const signer = crypto.createSign('SHA256')
+
+    signer.update(challenge)
+
+    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+
+    expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+  })
+
+  it('returns false on key algorithm mismatch', async (): Promise<void> => {
+    const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048 // Key length in bits
+    })
+
+    const realKeyPair = crypto.generateKeyPairSync('ec', {
       namedCurve: 'secp256k1', // Allowed by FIDO spec
       publicKeyEncoding: {
         type: 'spki', // Key infrasructure
