@@ -70,3 +70,5 @@ export function verifySign (
 
   return verifier.verify(publicKey, signature, 'base64')
 }
+
+// Can createVerify be declared once in a beforeEach or global?

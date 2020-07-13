@@ -29,79 +29,131 @@ describe('Challenge Generation', (): void => {
 })
 
 describe('Signature Verification', (): void => {
-  // Repeat test with different keys
-  for (let index = 0; index < 4; index++) {
-    it('verifies correct signature - EC Key', (): void => {
-      const keyPair = crypto.generateKeyPairSync('ec', {
-        namedCurve: 'secp256k1', // Allowed by FIDO spec
-        publicKeyEncoding: {
-          type: 'spki', // Key infrasructure
-          format: 'pem' // Encoding format
-        },
-        privateKeyEncoding: {
-          type: 'pkcs8',
-          format: 'pem'
-        }
-      })
+  let challenge: string
+  let signer: crypto.Signer
 
-      const challenge = 'Crypto Auth service Yay!'
-      const signer = crypto.createSign('SHA256')
+  beforeEach((): void => {
+    challenge = 'Crypto Auth service Yay!'
+    signer = crypto.createSign('SHA256')
 
-      signer.update(challenge)
+    signer.update(challenge)
+  })
 
-      const sign = signer.sign(keyPair.privateKey, 'base64')
-
-      expect(verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
+  it('verifies correct signature - EC Key', (): void => {
+    const keyPair = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'secp256k1', // Allowed by FIDO spec
+      publicKeyEncoding: {
+        type: 'spki', // Key infrasructure
+        format: 'pem' // Encoding format
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
     })
-  }
 
-  // Repeat test with different keys
-  for (let index = 0; index < 4; index++) {
-    it('returns false on incorrect signature - wrong EC key', (): void => {
-      const realKeyPair = crypto.generateKeyPairSync('ec', {
-        namedCurve: 'secp256k1', // Allowed by FIDO spec
-        publicKeyEncoding: {
-          type: 'spki', // Key infrasructure
-          format: 'pem' // Encoding format
-        },
-        privateKeyEncoding: {
-          type: 'pkcs8',
-          format: 'pem'
-        }
-      })
+    const sign = signer.sign(keyPair.privateKey, 'base64')
 
-      const fakeKeyPair = crypto.generateKeyPairSync('ec', {
-        namedCurve: 'secp256k1', // Allowed by FIDO spec
-        publicKeyEncoding: {
-          type: 'spki', // Key infrasructure
-          format: 'pem' // Encoding format
-        },
-        privateKeyEncoding: {
-          type: 'pkcs8',
-          format: 'pem'
-        }
-      })
+    expect(verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
+  })
 
-      const challenge = 'Crypto Auth service Yay!'
-      const signer = crypto.createSign('SHA256')
-
-      signer.update(challenge)
-
-      const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
-
-      expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+  // Using another challenge message
+  it('verifies correct signature - EC Key', (): void => {
+    const keyPair = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'secp256k1', // Allowed by FIDO spec
+      publicKeyEncoding: {
+        type: 'spki', // Key infrasructure
+        format: 'pem' // Encoding format
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
     })
-  }
+
+    // Need another Sign object instead of updating the outer one
+    // because of parallel test runs
+    const anotherChallenge = 'This is a different message'
+    const anotherSigner = crypto.createSign('SHA256')
+
+    anotherSigner.update(anotherChallenge)
+
+    const sign = anotherSigner.sign(keyPair.privateKey, 'base64')
+
+    expect(verifySign(anotherChallenge, sign, keyPair.publicKey)).toEqual(true)
+  })
+
+  it('returns false on incorrect signature - wrong EC key', (): void => {
+    const realKeyPair = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'secp256k1', // Allowed by FIDO spec
+      publicKeyEncoding: {
+        type: 'spki', // Key infrasructure
+        format: 'pem' // Encoding format
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    })
+
+    const fakeKeyPair = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'secp256k1', // Allowed by FIDO spec
+      publicKeyEncoding: {
+        type: 'spki', // Key infrasructure
+        format: 'pem' // Encoding format
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    })
+
+    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+
+    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+  })
+
+  it('returns false on incorrect signature - wrong challenge', (): void => {
+    const realKeyPair = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'secp256k1', // Allowed by FIDO spec
+      publicKeyEncoding: {
+        type: 'spki', // Key infrasructure
+        format: 'pem' // Encoding format
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    })
+
+    const fakeKeyPair = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'secp256k1', // Allowed by FIDO spec
+      publicKeyEncoding: {
+        type: 'spki', // Key infrasructure
+        format: 'pem' // Encoding format
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    })
+
+    // Need another Sign object instead of updating the outer one
+    // because of parallel test runs
+    const anotherChallenge = 'This is a different message'
+    const anotherSigner = crypto.createSign('SHA256')
+
+    anotherSigner.update(anotherChallenge)
+
+    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+
+    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+  })
 
   it('verifies correct signature - RSA Key', (): void => {
     const realKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
-
-    const challenge = 'Crypto Auth service Yay!'
-    const signer = crypto.createSign('SHA256')
-
-    signer.update(challenge)
 
     const sign = signer.sign(realKeyPair.privateKey, 'base64')
 
@@ -116,11 +168,6 @@ describe('Signature Verification', (): void => {
     const realKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
-
-    const challenge = 'Crypto Auth service Yay!'
-    const signer = crypto.createSign('SHA256')
-
-    signer.update(challenge)
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
 
@@ -143,11 +190,6 @@ describe('Signature Verification', (): void => {
         format: 'pem'
       }
     })
-
-    const challenge = 'Crypto Auth service Yay!'
-    const signer = crypto.createSign('SHA256')
-
-    signer.update(challenge)
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
 
