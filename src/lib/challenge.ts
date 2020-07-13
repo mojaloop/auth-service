@@ -57,7 +57,7 @@ export async function generate (size: number = 32): Promise<string> {
  * Helper function to validate signatures using public key
  * @param challenge Base64 challenge string
  * @param signature Base64 sign string
- * @param publicKey Base64 RSA/EC:sec256k1 key string or KeyObject for verification
+ * @param publicKey Base64 RSA/EC:secp256k1 key string or KeyObject for verification
  */
 export async function verifySign (
   challenge: string,
