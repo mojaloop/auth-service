@@ -25,6 +25,7 @@
 import { createAndStoreConsent, isRequestValid } from '../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Logger } from '@mojaloop/central-services-logger'
+import Joi from '@hapi/joi'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and validation of a consentRequest.
@@ -32,9 +33,33 @@ import { Logger } from '@mojaloop/central-services-logger'
 export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   // If consent request is invalid, throw error
   // TODO: Is there a need for this or just JOI validation
-  if (!isRequestValid(request)) {
-    throw new Error('400')
+
+  const schema = Joi.object().keys({
+    id: Joi.string(),
+    requestId: Joi.string(),
+    initiatorId: Joi.string(),
+    participantId: Joi.string(),
+    scopes: Joi.array().items(
+      Joi.object({
+        accountId: Joi.string(),
+        actions: Joi.array().items(Joi.string())
+      })
+    ),
+    credential: Joi.string().validate(null)
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  try {
+    schema.validateAsync(request.payload)
+  } catch (error) {
+    Logger.push(error).error('Error: Unable to create/store consent')
+    throw error
+    // INSTEAD OF THROWING error should I return NON-202 response?
   }
+
+  // if (!isRequestValid(request)) {
+  //   throw new Error('400')
+  // }
 
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
