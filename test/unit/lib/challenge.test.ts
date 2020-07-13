@@ -28,6 +28,7 @@ describe('Challenge Generation', (): void => {
   })
 })
 
+// Each test generates a random key pair
 describe('Signature Verification', (): void => {
   let challenge: string
   let signer: crypto.Signer

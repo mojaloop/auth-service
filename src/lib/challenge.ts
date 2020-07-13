@@ -63,12 +63,15 @@ export function verifySign (
   challenge: string,
   signature: string,
   publicKey: string | crypto.KeyObject): boolean {
-  // Hash using SHA256
-  const verifier: crypto.Verify = crypto.createVerify('SHA256')
+  try {
+    // Hash using SHA256
+    const verifier: crypto.Verify = crypto.createVerify('SHA256')
 
-  verifier.update(challenge)
+    verifier.update(challenge)
 
-  return verifier.verify(publicKey, signature, 'base64')
+    return verifier.verify(publicKey, signature, 'base64')
+  } catch (error) {
+    Logger.push(error).error('Unable to verify signature')
+    throw error
+  }
 }
-
-// Can createVerify be declared once in a beforeEach or global?
