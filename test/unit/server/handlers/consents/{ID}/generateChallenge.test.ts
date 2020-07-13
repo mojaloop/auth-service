@@ -29,6 +29,14 @@ import { post } from '../../../../../../src/server/handlers/consents/{ID}/genera
 import { putConsentId } from '../../../../../../src/shared/requests'
 import { updateCredential } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 
+// const mockRequests = jest.mock('../../../../../../src/shared/requests', (): object => {
+//   return { putConsentId: jest.fn((): Promise<number> => Promise.resolve(202)) }
+// })
+
+// Declaring Mocks
+const mockPutConsentId = jest.fn(putConsentId)
+const mockUpdateCredential = jest.fn(updateCredential)
+
 /*
  * Mock Request + Response Resources
  */
@@ -87,14 +95,14 @@ const completeConsent: Consent = {
 
 const nullConsent: Consent = null
 
-// Declaring Mocks
-const mockPutConsentId = putConsentId as jest.Mock
-const mockUpdateCredential = updateCredential as jest.Mock
-
 describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   beforeAll((): void => {
     mockUpdateCredential.mockResolvedValue(completeConsent)
-    mockPutConsentId.mockResolvedValue(null)
+    // mockPutConsentId.mockResolvedValue(null)
+    // mockRequests.putConsentId = jest.fn().mockResolvedValueOnce(null)
+    mockPutConsentId.mockResolvedValue(2)
+
+    // mockRequests.putConsentId = jest.fn((): Promise<any> => Promise.resolve(null))
   })
 
   it('Should return 202 success code', (): void => {
