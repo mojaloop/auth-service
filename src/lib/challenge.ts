@@ -32,7 +32,7 @@
  */
 
 import util from 'util'
-import crypto, { KeyObject } from 'crypto'
+import crypto from 'crypto'
 import { Logger } from '@mojaloop/central-services-logger'
 
 // Async promisified randomBytes function
@@ -53,16 +53,16 @@ export async function generate (size: number = 32): Promise<string> {
   }
 }
 
-/*
+/**
  * Helper function to validate signatures using public key
- * @param challenge Base64 challenge string
+ * @param challenge UTF-8 challenge string
  * @param signature Base64 sign string
  * @param publicKey Base64 RSA/EC:secp256k1 key string or KeyObject for verification
  */
-export async function verifySign (
+export function verifySign (
   challenge: string,
   signature: string,
-  publicKey: string | KeyObject): Promise<boolean> {
+  publicKey: string | crypto.KeyObject): boolean {
   // Hash using SHA256
   const verifier: crypto.Verify = crypto.createVerify('SHA256')
 

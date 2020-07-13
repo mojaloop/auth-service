@@ -31,7 +31,7 @@ describe('Challenge Generation', (): void => {
 describe('Signature Verification', (): void => {
   // Repeat test with different keys
   for (let index = 0; index < 4; index++) {
-    it('verifies correct signature - EC Key', async (): Promise<void> => {
+    it('verifies correct signature - EC Key', (): void => {
       const keyPair = crypto.generateKeyPairSync('ec', {
         namedCurve: 'secp256k1', // Allowed by FIDO spec
         publicKeyEncoding: {
@@ -51,13 +51,13 @@ describe('Signature Verification', (): void => {
 
       const sign = signer.sign(keyPair.privateKey, 'base64')
 
-      expect(await verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
+      expect(verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
     })
   }
 
   // Repeat test with different keys
   for (let index = 0; index < 4; index++) {
-    it('returns false on incorrect signature - wrong EC key', async (): Promise<void> => {
+    it('returns false on incorrect signature - wrong EC key', (): void => {
       const realKeyPair = crypto.generateKeyPairSync('ec', {
         namedCurve: 'secp256k1', // Allowed by FIDO spec
         publicKeyEncoding: {
@@ -89,11 +89,11 @@ describe('Signature Verification', (): void => {
 
       const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
 
-      expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+      expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
     })
   }
 
-  it('verifies correct signature - RSA Key', async (): Promise<void> => {
+  it('verifies correct signature - RSA Key', (): void => {
     const realKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
@@ -105,10 +105,10 @@ describe('Signature Verification', (): void => {
 
     const sign = signer.sign(realKeyPair.privateKey, 'base64')
 
-    expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(true)
+    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(true)
   })
 
-  it('returns false on incorrect signature - RSA Key', async (): Promise<void> => {
+  it('returns false on incorrect signature - RSA Key', (): void => {
     const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
@@ -124,10 +124,10 @@ describe('Signature Verification', (): void => {
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
 
-    expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
   })
 
-  it('returns false on key algorithm mismatch', async (): Promise<void> => {
+  it('returns false on key algorithm mismatch', (): void => {
     const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
@@ -151,6 +151,6 @@ describe('Signature Verification', (): void => {
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
 
-    expect(await verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
   })
 })
