@@ -178,7 +178,7 @@ describe('src/model/consent', (): void => {
       const consent: Consent = await consentDB.retrieve(completeConsent.id)
 
       // Assertion
-      expect(consent.createdAt).toEqual(expect.anything())
+      expect(consent.createdAt).toEqual(expect.any(String))
       expect(consent).toEqual(expect.objectContaining(completeConsent))
     })
 

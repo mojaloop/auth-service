@@ -58,18 +58,18 @@ export class ScopeDB {
     this.Db = dbInstance
   }
 
-  // Add Scope resource
-  public async register (scope: Scope): Promise<number> {
+  // Add a single Scope or an array of Scopes
+  public async register (scopes: Scope | Scope[]): Promise<number> {
     // Returns array containing number of inserted rows
     const insertCount: number[] = await this
       .Db<Scope>('Scope')
-      .insert(scope)
+      .insert(scopes)
 
     return insertCount[0]
   }
 
   // Retrieve Scopes by Consent ID
-  public async retrieve (consentId: string): Promise<Scope[]> {
+  public async retrieveAll (consentId: string): Promise<Scope[]> {
     const scopes: Scope[] = await this
       .Db<Scope>('Scope')
       .select('*')
@@ -83,7 +83,7 @@ export class ScopeDB {
   }
 
   // Delete Scopes by Consent ID
-  public async delete (consentId: string): Promise<number> {
+  public async deleteAll (consentId: string): Promise<number> {
     const deleteCount: number = await this
       .Db<Scope>('Scope')
       .where({ consentId: consentId })
