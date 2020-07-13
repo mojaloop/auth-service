@@ -22,7 +22,7 @@
 
  --------------
  ******/
-import { createAndStoreConsent, isRequestValid } from '../domain/consents'
+import { createAndStoreConsent } from '../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Logger } from '@mojaloop/central-services-logger'
 import Joi from '@hapi/joi'
@@ -56,10 +56,6 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
     throw error
     // INSTEAD OF THROWING error should I return NON-202 response?
   }
-
-  // if (!isRequestValid(request)) {
-  //   throw new Error('400')
-  // }
 
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
