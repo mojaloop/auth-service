@@ -2,7 +2,8 @@
 
 /*
  * This flag is to ignore BDD testing for model
- * which will be addressed in a future ticket
+ * which will be addressed in the future in
+ * ticket #354
  */
 
 /*****
@@ -65,14 +66,6 @@ export interface Consent {
 export class ConsentDB {
   // Knex instance
   private Db: Knex
-  // Nullable fields which don't allow for explicit null upsert
-  private static nullProtectedProps: Record<string, boolean> = {
-    credentialId: true,
-    credentialType: true,
-    credentialStatus: true,
-    credentialPayload: true,
-    credentialChallenge: true
-  }
 
   public constructor (dbInstance: Knex) {
     this.Db = dbInstance
@@ -89,22 +82,13 @@ export class ConsentDB {
   }
 
   // Update Consent credential
-  // Only non-null Consent fields are updated
+  // No validation against Null or illegal updates in models
   public async updateCredentials (consent: Consent): Promise<number> {
-    const validatedConsent = {}
-
-    for (const key in consent) {
-      // Only allow nullProtectedFields with non-null values for update
-      if (ConsentDB.nullProtectedProps[key] && (consent as unknown as Record<string, boolean>)[key]) {
-        (validatedConsent as Record<string, boolean>)[key] = (consent as unknown as Record<string, boolean>)[key]
-      }
-    }
-
     // Returns number of updated rows
     const updateCount: number = await this
       .Db<Consent>('Consent')
       .where({ id: consent.id })
-      .update(validatedConsent)
+      .update(consent)
 
     // Ensure that the caller knows that the resource does not exist
     if (updateCount === 0) {
