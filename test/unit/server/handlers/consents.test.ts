@@ -22,10 +22,7 @@
 
  --------------
  ******/
-import { Request } from '@hapi/hapi'
-import { consentDb, scopeDb } from '../../../../src/lib/db'
-import { Consent } from '../../../../src/model/consent'
-import { Scope } from '../../../../src/model/scope'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { post } from '../../../../src/server/handlers/consents'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
 
@@ -44,6 +41,10 @@ const request: Request = {
     id: '1234'
   },
   payload: {
+    id: '1234',
+    requestId: '475234',
+    initiatorId: 'pispa',
+    participantId: 'sfsfdf23',
     scopes: [
       {
         accountId: '3423',
@@ -53,32 +54,106 @@ const request: Request = {
         accountId: '232345',
         actions: ['acc.accessSaving']
       }
-    ]
+    ],
+    credential: null
   }
 }
 
 // @ts-ignore
-const requestNoHeaders: Request = {
+const requestInvalid: Request = {
+  headers: {
+    fspiopsource: 'pisp-2342-2233',
+    fspiopdestination: 'dfsp-3333-2123'
+  },
   params: {
     id: '1234'
+  },
+  payload: {
+    id: '1234',
+    requestId: 42323,
+    initiatorId: 'pispa',
+    participantId: 'sfsfdf23',
+    scopes: [
+      {
+        accountId: '3423',
+        actions: ['acc.getMoney', 'acc.sendMoney']
+      },
+      {
+        accountId: '232345',
+        actions: ['acc.accessSaving']
+      }
+    ],
+    credential: null
   }
 }
 
-/*
- * Mock Consent Resources
- */
-const partialConsent: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123'
+// @ts-ignore
+const requestInvalid2: Request = {
+  headers: {
+    fspiopsource: 'pisp-2342-2233',
+    fspiopdestination: 'dfsp-3333-2123'
+  },
+  params: {
+    id: '1234'
+  },
+  payload: {
+    id: '1234',
+    requestId: 42323,
+    initiatorId: 'pispa',
+    participantId: 'sfsfdf23'
+  }
 }
 
-
-const nullConsent: Consent = null
+// @ts-ignore
+const h: ResponseToolkit = {
+  response: (): ResponseObject => {
+    const code = function (num: number): number {
+      return num
+    }
+    return code as unknown as ResponseObject
+  }
+}
 
 describe('server/handlers/consents', (): void => {
+  beforeAll((): void => {
+    mockStoreConsent.mockResolvedValue()
+  })
 
-  it('Should throw an error', async (): Promise<void> => {
-    // TODO: Fill out
+  it('Should return 202 success code', async (): Promise<void> => {
+    const response = await post(
+      request as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(202))
+    expect(mockStoreConsent).toHaveBeenCalled()
+  })
+
+  it('Should return 400 code due to invalid request', async (): Promise<void> => {
+    const response = await post(
+      requestInvalid as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(400))
+
+    expect(mockStoreConsent).not.toHaveBeenCalled()
+  })
+
+  it('Should also return 400 code due to invalid request', async (): Promise<void> => {
+    const response = await post(
+      requestInvalid2 as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(400))
+
+    expect(mockStoreConsent).not.toHaveBeenCalled()
+  })
+
+  it('Should throw an error due to error in creating/storing consent and scopes', (): void => {
+    mockStoreConsent.mockRejectedValueOnce(new Error('Error Registering Consent'))
+    expect(async (): Promise<void> => {
+      await post(request as Request, h as ResponseToolkit)
+    }).toThrowError()
+
+    expect(mockStoreConsent).toHaveBeenCalled()
   })
 })

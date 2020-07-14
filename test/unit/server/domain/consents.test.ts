@@ -23,12 +23,12 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-// import { consentDb, scopeDb } from '../../../../src/lib/db'
-import { Consent } from '../../../../src/model/consent'
-import { Scope } from '../../../../src/model/scope'
+import { consentDb, scopeDb } from '../../../../src/lib/db'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
 
-const mockDbs = jest.mock('../../../../src/lib/db')
+// Declare Mocks
+const mockRegisterConsent = jest.fn(consentDb.register)
+const mockRegisterScopes = jest.fn(scopeDb.register)
 
 /*
  * Mock Request Resources
@@ -41,45 +41,52 @@ const request: Request = {
   },
   params: {
     id: '1234'
+  },
+  payload: {
+    scopes: [
+      {
+        accountId: '3423',
+        actions: ['acc.getMoney', 'acc.sendMoney']
+      },
+      {
+        accountId: '232345',
+        actions: ['acc.accessSaving']
+      }
+    ]
   }
 }
-
-// @ts-ignore
-const requestNoHeaders: Request = {
-  params: {
-    id: '1234'
-  }
-}
-
-/*
- * Mock Consent Resources
- */
-const partialConsent: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123'
-}
-
-const partialConsent2: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2234',
-  participantId: 'dfsp-3333-2123'
-}
-
-const completeConsent: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  credentialId: '123',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
-const nullConsent: Consent = null
 
 describe('server/domain/consents', (): void => {
-  it('Should throw an error', async (): Promise<void> => {
-    // TODO: FIll out
+  beforeAll((): void => {
+    mockRegisterConsent.mockResolvedValue(null)
+    mockRegisterScopes.mockResolvedValue(null)
+  })
+  it('Should return nothing and no errors thrown', async (): Promise<void> => {
+    expect(async (): Promise<void> => {
+      await createAndStoreConsent(request)
+    }).not.toThrowError()
+
+    expect(mockRegisterConsent).toHaveBeenCalled()
+    expect(mockRegisterScopes).toHaveBeenCalled()
+  })
+
+  it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
+    mockRegisterConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
+    expect(async (): Promise<void> => {
+      await createAndStoreConsent(request)
+    }).toThrowError()
+
+    expect(mockRegisterConsent).toHaveBeenCalled()
+    expect(mockRegisterScopes).not.toHaveBeenCalled()
+  })
+
+  it('Should throw an error due to error in registering Scopes', async (): Promise<void> => {
+    mockRegisterScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
+    expect(async (): Promise<void> => {
+      await createAndStoreConsent(request)
+    }).toThrowError()
+
+    expect(mockRegisterConsent).toHaveBeenCalled()
+    expect(mockRegisterScopes).toHaveBeenCalled()
   })
 })
