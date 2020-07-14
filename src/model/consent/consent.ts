@@ -72,6 +72,7 @@ export class ConsentDB {
   }
 
   // Add initial Consent parameters
+  // Error bubbles up in case of primary key violation
   public async register (consent: Consent): Promise<number> {
     // Returns array containing number of inserted rows
     const insertCount: number[] = await this
@@ -81,9 +82,9 @@ export class ConsentDB {
     return insertCount[0]
   }
 
-  // Update Consent credential
+  // Update Consent
   // No validation against Null or illegal updates in models
-  public async updateCredentials (consent: Consent): Promise<number> {
+  public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
     const updateCount: number = await this
       .Db<Consent>('Consent')

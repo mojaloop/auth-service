@@ -140,14 +140,14 @@ describe('src/model/consent', (): void => {
     })
   })
 
-  describe('updateCredentials', (): void => {
-    it('updates credentials for existing consent', async (): Promise<void> => {
+  describe('update', (): void => {
+    it('updates data fields for existing consent', async (): Promise<void> => {
       // Inserting record to update
       await Db<Consent>('Consent')
         .insert(partialConsent)
 
       // Action
-      await consentDB.updateCredentials(completeConsent)
+      await consentDB.update(completeConsent)
 
       // Assertion
       const consents: Consent[] = await Db<Consent>('Consent')
@@ -163,7 +163,7 @@ describe('src/model/consent', (): void => {
 
     it('throws an error for a non-existent consent', async (): Promise<void> => {
       // Action
-      await expect(consentDB.updateCredentials(completeConsent))
+      await expect(consentDB.update(completeConsent))
         .rejects.toThrowError('NotFoundError: Consent for ConsentId 1234')
     })
   })
