@@ -2,8 +2,9 @@
 
 /*
  * This flag is to ignore BDD testing for model
- * which will be addressed in a future ticket
- */
+ * which will be addressed in the future in
+ * ticket #354
+ * /
 
 /*****
  License
