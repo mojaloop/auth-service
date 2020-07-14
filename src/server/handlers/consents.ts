@@ -31,8 +31,6 @@ import Joi from '@hapi/joi'
  * Called by `DFSP` after the successful creation and validation of a consentRequest.
  */
 export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  // If consent request is invalid, throw error
-  // TODO: Is there a need for this or just JOI validation
 
   const schema = Joi.object().keys({
     id: Joi.string(),
@@ -49,12 +47,10 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  try {
-    schema.validateAsync(request.payload)
-  } catch (error) {
-    Logger.push(error).error('Error: Unable to create/store consent')
-    throw error
-    // INSTEAD OF THROWING error should I return NON-202 response?
+  const { error, value } = schema.validate(request.payload)
+  if (error) {
+    Logger.push(error).error('Error: Invalid Request ')
+    return h.response().code(400)
   }
 
   // Asynchronously deals with creation and storing of consents and scope
