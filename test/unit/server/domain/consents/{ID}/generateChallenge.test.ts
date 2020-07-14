@@ -27,6 +27,8 @@ import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { updateCredential, isConsentRequestValid } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 
+const mockConsentDBUpdate = jest.fn(consentDB.updateCredentials)
+
 /*
  * Mock Request Resources
  */
@@ -99,12 +101,12 @@ describe('Request Validation', (): void => {
 // Tests for updateCredential
 describe('Updating Consent', (): void => {
   it('Should return a consent object with filled out credentials', async (): Promise<void> => {
-    const mockConsentDBUpdate = consentDB.updateCredentials as jest.Mock
     mockConsentDBUpdate.mockImplementation((): Promise<void> => { return Promise.resolve(completeConsent) })
 
     const challenge = 'xyhdushsoa82w92mzs='
     const updatedConsent = await updateCredential(partialConsent, challenge, 'FIDO', 'PENDING')
 
+    expect(mockConsentDBUpdate).toHaveBeenCalled()
     expect(updatedConsent).toEqual(completeConsent)
   })
 })

@@ -26,7 +26,7 @@ import { putConsents } from '@mojaloop/sdk-standard-components'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { scopeDb } from '../lib/db'
-const Enum = require('@mojaloop/central-services-shared').Enum
+import { Enum } from '@mojaloop/central-services-shared'
 
 /**
  * Builds body of outgoing request and makes PUT consents/{ID} call to server
@@ -44,6 +44,13 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
 
   // Retrieve scopes
   const scopes: Scope[] = await scopeDb.retrieve(consent.id)
+
+  // TODO: Reformat scopes to match what external handler wants
+  // Modifying scopes
+  // const scopes: Scope[] = []
+
+  // scopesRetrieved.forEach((scope: Scope): void => {
+  // })
 
   // Construct body of outgoing request
   const body = {
@@ -63,5 +70,6 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
     }
   }
   // Use sdk-standard-components library to send request
-  return putConsents(body, destinationId, consent.id, headers)
+  // TODO: Remove headers?
+  return putConsents(consent.id, body, destinationId, headers)
 }
