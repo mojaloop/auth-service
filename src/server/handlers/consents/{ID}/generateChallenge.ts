@@ -50,7 +50,8 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
 
   // If consent is invalid, throw error
   if (!isConsentRequestValid(request, consent)) {
-    throw new Error('400')
+    // throw new Error('400')
+    return h.response().code(400)
   }
 
   // Asynchronously deals with generating challenge, updating consent db
