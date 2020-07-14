@@ -54,8 +54,9 @@ describe('Signature Verification', (): void => {
     })
 
     const sign = signer.sign(keyPair.privateKey, 'base64')
+    const verified = verifySign(challenge, sign, keyPair.publicKey)
 
-    expect(verifySign(challenge, sign, keyPair.publicKey)).toEqual(true)
+    expect(verified).toEqual(true)
   })
 
   // Using another challenge message
@@ -80,8 +81,9 @@ describe('Signature Verification', (): void => {
     anotherSigner.update(anotherChallenge)
 
     const sign = anotherSigner.sign(keyPair.privateKey, 'base64')
+    const verified = verifySign(anotherChallenge, sign, keyPair.publicKey)
 
-    expect(verifySign(anotherChallenge, sign, keyPair.publicKey)).toEqual(true)
+    expect(verified).toEqual(true)
   })
 
   it('returns false on incorrect signature - wrong EC key', (): void => {
@@ -110,8 +112,9 @@ describe('Signature Verification', (): void => {
     })
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
 
-    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    expect(verified).toEqual(false)
   })
 
   it('returns false on incorrect signature - wrong challenge', (): void => {
@@ -147,8 +150,9 @@ describe('Signature Verification', (): void => {
     anotherSigner.update(anotherChallenge)
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
 
-    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    expect(verified).toEqual(false)
   })
 
   it('verifies correct signature - RSA Key', (): void => {
@@ -157,8 +161,9 @@ describe('Signature Verification', (): void => {
     })
 
     const sign = signer.sign(realKeyPair.privateKey, 'base64')
+    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
 
-    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(true)
+    expect(verified).toEqual(true)
   })
 
   it('returns false on incorrect signature - RSA Key', (): void => {
@@ -171,8 +176,9 @@ describe('Signature Verification', (): void => {
     })
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
 
-    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    expect(verified).toEqual(false)
   })
 
   it('returns false on key algorithm mismatch', (): void => {
@@ -193,7 +199,8 @@ describe('Signature Verification', (): void => {
     })
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
 
-    expect(verifySign(challenge, sign, realKeyPair.publicKey)).toEqual(false)
+    expect(verified).toEqual(false)
   })
 })

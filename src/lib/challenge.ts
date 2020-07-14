@@ -27,8 +27,9 @@
 /* istanbul ignore file */
 
 /*
- * Flag to ignore BDD testing, which will be dealt
- * with in a later ticket
+ * This flag is to ignore BDD testing for model
+ * which will be addressed in the future in
+ * ticket #354
  */
 
 import util from 'util'
