@@ -50,8 +50,8 @@ import Knex from 'knex'
  */
 export interface Consent {
   id: string;
-  initiatorId: string;
-  participantId: string;
+  initiatorId?: string;
+  participantId?: string;
   credentialId?: string;
   credentialType?: string;
   credentialStatus?: string;
