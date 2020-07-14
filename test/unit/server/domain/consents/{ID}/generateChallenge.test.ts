@@ -75,7 +75,8 @@ const completeConsent: Consent = {
 
 const nullConsent: Consent = null
 
-describe('server/handlers/domain/{ID}/generateChallenge', (): void => {
+// Tests for isConsentRequestValid
+describe('Request Validation', (): void => {
   it('Should return true', (): void => {
     expect(isConsentRequestValid(request, partialConsent)).toBe(true)
   })
@@ -93,7 +94,10 @@ describe('server/handlers/domain/{ID}/generateChallenge', (): void => {
       isConsentRequestValid(requestNoHeaders as Request, partialConsent2)
     }).toThrowError()
   })
+})
 
+// Tests for updateCredential
+describe('Updating Consent', (): void => {
   it('Should return a consent object with filled out credentials', async (): Promise<void> => {
     const mockConsentDBUpdate = consentDB.updateCredentials as jest.Mock
     mockConsentDBUpdate.mockImplementation((): Promise<void> => { return Promise.resolve(completeConsent) })
