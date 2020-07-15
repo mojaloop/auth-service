@@ -43,14 +43,26 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
   headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationId
 
   // Retrieve scopes
-  const scopes: Scope[] = await scopeDb.retrieve(consent.id)
+  const scopesRetrieved: Scope[] = await scopeDb.retrieve(consent.id)
 
-  // TODO: Reformat scopes to match what external handler wants
-  // Modifying scopes
-  // const scopes: Scope[] = []
+  // Reformat scopes to match what external handler wants
+  const temp = {}
 
-  // scopesRetrieved.forEach((scope: Scope): void => {
-  // })
+  scopesRetrieved.forEach((scope: Scope): void => {
+    const accountId: string = scope.accountId
+    if (Object.prototype.hasOwnProperty.call(temp, scope.accountId)) {
+      temp[accountId].actions.push(scope.action)
+    } else {
+      temp[accountId] = {
+        id: scope.id,
+        consentId: consent.id,
+        accountId,
+        actions: [scope.action]
+      }
+    }
+  })
+
+  const scopes: Scope[] = Object.values(temp)
 
   // Construct body of outgoing request
   const body = {
