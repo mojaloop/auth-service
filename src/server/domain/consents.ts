@@ -4,7 +4,6 @@ import { Scope } from '../../model/scope'
 import { Consent } from '../../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
 
-// TODO: Understand format scopes are sent and how they should be reformatted before registering
 export async function createAndStoreConsent (request: Request): Promise<void> {
   const payload = request.payload
 
@@ -32,5 +31,6 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
     await scopesDb.register(scopesArray)
   } catch (error) {
     Logger.push(error).error('Error: Unable to create/store consent and scope')
+    throw error
   }
 }
