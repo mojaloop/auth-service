@@ -23,11 +23,11 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../lib/db'
+import { consentDB as consentDb } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { updateCredential, isConsentRequestValid } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 
-const mockConsentDBUpdate = jest.fn(consentDB.updateCredentials)
+const mockConsentDbUpdate = jest.fn(consentDb.updateCredentials)
 
 /*
  * Mock Request Resources
@@ -77,6 +77,8 @@ const completeConsent: Consent = {
 
 const nullConsent: Consent = null
 
+const challenge = 'xyhdushsoa82w92mzs='
+
 // Tests for isConsentRequestValid
 describe('Request Validation', (): void => {
   it('Should return true', (): void => {
@@ -101,12 +103,21 @@ describe('Request Validation', (): void => {
 // Tests for updateCredential
 describe('Updating Consent', (): void => {
   it('Should return a consent object with filled out credentials', async (): Promise<void> => {
-    mockConsentDBUpdate.mockImplementation((): Promise<void> => { return Promise.resolve(completeConsent) })
+    mockConsentDbUpdate.mockImplementation((): Promise<void> => { return Promise.resolve(completeConsent) })
 
-    const challenge = 'xyhdushsoa82w92mzs='
     const updatedConsent = await updateCredential(partialConsent, challenge, 'FIDO', 'PENDING')
 
-    expect(mockConsentDBUpdate).toHaveBeenCalled()
+    expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
     expect(updatedConsent).toEqual(completeConsent)
+  })
+
+  it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
+    mockConsentDbUpdate.mockRejectedValue(new Error('Error updating Database'))
+
+    expect(async (): Promise<void> => {
+      await updateCredential(partialConsent, challenge, 'FIDO', 'PENDING')
+    }).toThrowError()
+
+    expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
   })
 })
