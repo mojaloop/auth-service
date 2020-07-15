@@ -44,7 +44,6 @@ export function isConsentRequestValid (
   request: Request,
   consent: Consent): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-
   return (consent && consent.initiatorId === fspiopSource)
 }
 
