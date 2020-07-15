@@ -41,9 +41,9 @@ describe('index', (): void => {
       return server
     })
 
-    afterAll((done): void => {
+    afterAll(async (done): Promise<void> => {
       server.events.on('stop', done)
-      server.stop()
+      await server.stop()
     })
 
     it('/health', async (): Promise<void> => {
