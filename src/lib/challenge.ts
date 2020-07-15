@@ -23,12 +23,16 @@
  --------------
  ******/
 
-import * as util from 'util'
-import * as crypto from 'crypto'
+/* istanbul ignore file */
+
+// Flag to igore BDD testing, which will be dealt with in a later ticket
+
+import util from 'util'
+import crypto from 'crypto'
 import { Logger } from '@mojaloop/central-services-logger'
 
 // Async promisified randomBytes function
-const randBytes = util.promisify(crypto.randomBytes)
+const randomBytesAsync = util.promisify(crypto.randomBytes)
 
 /**
  * Helper function which uses the crypto library to generate
@@ -37,10 +41,10 @@ const randBytes = util.promisify(crypto.randomBytes)
  */
 export async function generate (size: number = 32): Promise<string> {
   try {
-    const buf = await randBytes(Math.round(Math.abs(size)))
+    const buf = await randomBytesAsync(Math.round(Math.abs(size)))
     return buf.toString('base64')
   } catch (error) {
-    Logger.error('Unable to generate challenge string')
+    Logger.push(error).error('Unable to generate challenge string')
     throw error
   }
 }
