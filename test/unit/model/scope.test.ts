@@ -31,6 +31,7 @@ import Knex from 'knex'
 import Config from '../../../config/knexfile'
 import ScopeDB, { Scope } from '../../../src/model/scope'
 import { Consent } from '../../../src/model/consent'
+import { NotFoundError } from '../../../src/model/errors'
 
 /*
  * Mock Consent Resource
@@ -150,7 +151,7 @@ describe('src/model/scope', (): void => {
 
       // Action
       await expect(scopeDB.retrieveAll(partialConsent.id))
-        .rejects.toThrowError('NotFoundError: Scope for ConsentId 1234')
+        .rejects.toThrowError(NotFoundError)
     })
   })
 
@@ -192,7 +193,7 @@ describe('src/model/scope', (): void => {
 
       // Action
       await expect(scopeDB.deleteAll(partialConsent.id))
-        .rejects.toThrowError('NotFoundError: Scope for ConsentId 1234')
+        .rejects.toThrowError(NotFoundError)
     })
   })
 })
