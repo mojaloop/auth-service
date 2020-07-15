@@ -23,7 +23,7 @@
  --------------
  ******/
 import { updateCredential, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
-import { generateChallenge } from '../../../../secure/auth'
+import { generate } from '../../../../lib/challenge'
 import { putConsentId } from '../../../../shared/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
@@ -55,6 +55,9 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
 
   // Asynchronously deals with generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
+
+  // remove try catch
+
   try {
     // TODO: Error-Handling - Should we remove the inner try/catch block?
 
@@ -63,7 +66,7 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
       // Generate one and update database
       if (!consent.credentialChallenge) {
         // Challenge generation
-        const challenge = await generateChallenge()
+        const challenge = await generate()
 
         // Updating credentials with generated challenge
         consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
