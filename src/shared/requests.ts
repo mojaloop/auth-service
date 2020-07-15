@@ -60,8 +60,6 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
       temp[accountId].actions.push(scope.action)
     } else {
       temp[accountId] = {
-        id: scope.id,
-        consentId: consent.id,
         accountId,
         actions: [scope.action]
       }
