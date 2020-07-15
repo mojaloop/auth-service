@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the 'License') and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -23,11 +28,12 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB as consentDb } from '../../../../lib/db'
-import { Consent } from '../../../../model/consent'
+import { consentDB as consentDb } from '../../../../../../src/lib/db'
+import { Consent } from '../../../../../../src/model/consent'
+// eslint-disable-next-line max-len
 import { updateCredential, isConsentRequestValid } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 
-const mockConsentDbUpdate = jest.fn(consentDb.updateCredentials)
+const mockConsentDbUpdate = jest.fn(consentDb.update)
 
 /*
  * Mock Request Resources
@@ -102,15 +108,18 @@ describe('Request Validation', (): void => {
 
 // Tests for updateCredential
 describe('Updating Consent', (): void => {
+  // eslint-disable-next-line max-len
   it('Should return a consent object with filled out credentials', async (): Promise<void> => {
-    mockConsentDbUpdate.mockImplementation((): Promise<void> => { return Promise.resolve(completeConsent) })
+    mockConsentDbUpdate.mockResolvedValueOnce(3)
 
-    const updatedConsent = await updateCredential(partialConsent, challenge, 'FIDO', 'PENDING')
+    const updatedConsent = await updateCredential(
+      partialConsent, challenge, 'FIDO', 'PENDING')
 
     expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
     expect(updatedConsent).toEqual(completeConsent)
   })
 
+  // eslint-disable-next-line max-len
   it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
     mockConsentDbUpdate.mockRejectedValue(new Error('Error updating Database'))
 

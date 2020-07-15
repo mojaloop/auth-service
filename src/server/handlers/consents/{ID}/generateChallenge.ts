@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the 'License') and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -22,6 +27,7 @@
 
  --------------
  ******/
+// eslint-disable-next-line max-len
 import { updateCredential, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
 import { generate } from '../../../../lib/challenge'
 import { putConsentId } from '../../../../shared/requests'
@@ -36,11 +42,12 @@ import { Logger } from '@mojaloop/central-services-logger'
  * Called by a `PISP`to request a challenge from the `auth-service`, which
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
-export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+export async function post (
+  request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
 
   // Fetch consent using ID
-  let consent: Consent = null
+  let consent: Consent = null as unknown as Consent
   try {
     consent = await consentDB.retrieve(id)
   } catch (error) {
@@ -65,13 +72,16 @@ export async function post (request: Request, h: ResponseToolkit): Promise<Respo
         const challenge = await generate()
 
         // Updating credentials with generated challenge
-        consent = await updateCredential(consentDB, challenge, 'FIDO', 'PENDING')
+        consent = await updateCredential(consent, challenge, 'FIDO', 'PENDING')
       }
 
       // Outgoing call to PUT consents/{ID}
       putConsentId(consent, request.headers)
     } catch (error) {
-      Logger.push(error).error('Error: Outgoing call with challenge credential NOT made to  PUT consent/' + id)
+      Logger
+        .push(error)
+        // eslint-disable-next-line max-len
+        .error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
       throw error
     }
   })

@@ -1,10 +1,16 @@
+/* eslint-disable max-len */
 /*****
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the 'License') and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -23,8 +29,8 @@
  --------------
  ******/
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
-import { consentDb } from '../../../../lib/db'
-import { Consent } from '../../../../model/consent'
+import { consentDB } from '../../../../../../src/lib/db'
+import { Consent } from '../../../../../../src/model/consent'
 import { post } from '../../../../../../src/server/handlers/consents/{ID}/generateChallenge'
 import { putConsentId } from '../../../../../../src/shared/requests'
 import { generate } from '../../../../../../src/lib/challenge'
@@ -39,7 +45,7 @@ const mockPutConsentId = jest.fn(putConsentId)
 const mockUpdateCredential = jest.fn(updateCredential)
 const mockGenerate = jest.fn(generate)
 const mockIsConsentRequestValid = jest.fn(isConsentRequestValid)
-const mockConsentDbRetrieve = jest.fn(consentDb.retrieve)
+const mockConsentDbRetrieve = jest.fn(consentDB.retrieve)
 
 /*
  * Mock Request + Response Resources
@@ -91,7 +97,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     mockUpdateCredential.mockResolvedValue(completeConsent)
     mockGenerate.mockResolvedValue('xyhdushsoa82w92mzs=')
     mockIsConsentRequestValid.mockReturnValue(true)
-    mockConsentDbRetrieve.mockResolvedValue()
+    mockConsentDbRetrieve.mockResolvedValue(partialConsent)
     mockPutConsentId.mockResolvedValue(2)
 
     // mockPutConsentId.mockResolvedValue(null)

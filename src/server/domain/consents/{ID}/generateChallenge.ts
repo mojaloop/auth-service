@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the 'License') and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -35,7 +40,9 @@ import { Enum } from '@mojaloop/central-services-shared'
  * @param request: request received from PISP
  * @param consent: Consent object
  */
-export const isConsentRequestValid = function (request: Request, consent: Consent): boolean {
+export function isConsentRequestValid (
+  request: Request,
+  consent: Consent): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
   return (consent && consent.initiatorId === fspiopSource)
@@ -45,13 +52,17 @@ export const isConsentRequestValid = function (request: Request, consent: Consen
  * Assigns credentials to given consent object and updates in the database
  * Returns updated consent object
  */
-export async function updateCredential (consent: Consent, challenge: string, credentialType: string, credentialStatus: string): Consent {
+export async function updateCredential (
+  consent: Consent,
+  challenge: string,
+  credentialType: string,
+  credentialStatus: string): Promise<Consent> {
   // Update consent credentials
   consent.credentialType = credentialType
   consent.credentialStatus = credentialStatus
   consent.credentialChallenge = challenge
 
   // Update in database
-  await consentDB.updateCredentials(consent)
+  await consentDB.update(consent)
   return consent
 }
