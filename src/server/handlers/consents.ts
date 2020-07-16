@@ -37,34 +37,14 @@
 import { createAndStoreConsent } from '../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Logger } from '@mojaloop/central-services-logger'
-import Joi from '@hapi/joi'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and
  * validation of a consentRequest.
  */
-export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const schema = Joi.object().keys({
-    id: Joi.string(),
-    requestId: Joi.string(),
-    initiatorId: Joi.string(),
-    participantId: Joi.string(),
-    scopes: Joi.array().items(
-      Joi.object({
-        accountId: Joi.string(),
-        actions: Joi.array().items(Joi.string())
-      })
-    ),
-    credential: Joi.string().validate(null)
-  })
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { error, value } = schema.validate(request.payload)
-  if (error) {
-    Logger.push(error).error('Error: Invalid Request ')
-    return h.response().code(400)
-  }
-
+export async function post (
+  request: Request,
+  h: ResponseToolkit): Promise<ResponseObject> {
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
