@@ -26,14 +26,15 @@
     "test:bdd": "jest --config './jest.bdd.config.js' --testMatch '**/test/step-definitions/**/*.step.ts'",
     "test:coverage": "jest --coverage --coverageThreshold='{}'",
     "test:coverage-check": "jest --coverage",
-    "test:integration": "echo \"test:integration - TODO...\"",
+    "test:integration": "jest --testMatch '**/test/integration/**/*.(test|spec).ts'",
     "test:junit": "jest --reporters=default --reporters=jest-junit",
     "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
     "watch": "tsc -w",
     "migrate": "run-s migrate:latest seed:run",
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
-    "seed:run": "knex $npm_package_config_knex seed:run"
+    "seed:run": "knex $npm_package_config_knex seed:run",
+    "wait-4-docker": "node ./scripts/_wait4_all.js"
   },
   "husky": {
     "hooks": {

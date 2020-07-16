@@ -5,21 +5,21 @@ WORKDIR /opt/auth-service
 RUN apk add --no-cache -t build-dependencies git make gcc g++ python libtool autoconf automake \
     && cd $(npm root -g)/npm \
     && npm config set unsafe-perm true \
-    && npm install -g node-gyp 
+    && npm install -g node-gyp
 
 # Copy across package.json and package-lock.json
 COPY package.json package-lock.json* ./
 RUN npm ci
 # check in .dockerignore what is skipped during copy
-COPY . .
+COPY . /opt/auth-service
 
-# Create empty log file & 
+# Create empty log file &
 RUN mkdir ./logs && touch ./logs/combined.log
 
 # link stdout to the application log file
 RUN ln -sf /dev/stdout ./logs/combined.log
 
-# USER node 
+# USER node
 # copy bundle
 # COPY --chown=node --from=builder /opt/auth-service/ .
 
