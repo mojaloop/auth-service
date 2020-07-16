@@ -32,6 +32,9 @@ import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
+// eslint-disable-next-line max-len
+import SDKStandardComponents, { ThirdpartyRequests } from '@mojaloop/sdk-standard-components'
+import { logResponse } from '../../../../shared/logger'
 
 /**
  * Validates whether generate challenge request is valid
@@ -64,4 +67,46 @@ export async function updateCredential (
   // Update in database
   await consentDB.update(consent)
   return consent
+}
+
+/**
+ * Builds body of outgoing request and makes PUT consents/{ID} call to server
+ * @param consent Consent object with credential challenge, type and status
+ * @param headers headers from PISP generate challenge request
+ */
+export async function putConsentId (
+  consent: Consent,
+  request: Request):
+  Promise<SDKStandardComponents.GenericRequestResponse | undefined> {
+  // Instantiate ThirdPartyRequests Object
+  const config = {
+    logger: logResponse,
+    dfspId: request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
+    jwsSign: true,
+    tls: undefined
+
+  }
+
+  const thirdPartyRequest = new ThirdpartyRequests(config)
+
+  // Construct body of outgoing request
+  const body = {
+    requestId: consent.id,
+    initiatorId: consent.initiatorId as string,
+    participantId: consent.participantId as string,
+    scopes,
+    credential: {
+      id: null,
+      credentialType: consent.credentialType,
+      status: consent.credentialStatus,
+      challenge: {
+        payload: consent.credentialChallenge,
+        signature: null
+      },
+      payload: null
+    }
+  }
+  // Use sdk-standard-components library to send request
+  return thirdPartyRequest.putConsents(
+    consent.id, body, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
 }

@@ -28,9 +28,8 @@
  --------------
  ******/
 // eslint-disable-next-line max-len
-import { updateCredential, isConsentRequestValid } from '../../../domain/consents/{ID}/generateChallenge'
+import { updateCredential, isConsentRequestValid, putConsentId } from '../../../domain/consents/{ID}/generateChallenge'
 import { generate } from '../../../../lib/challenge'
-import { putConsentId } from '../../../../shared/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
@@ -76,13 +75,13 @@ export async function post (
       }
 
       // Outgoing call to PUT consents/{ID}
-      putConsentId(consent, request.headers)
+      putConsentId(consent, request)
     } catch (error) {
       Logger
         .push(error)
         // eslint-disable-next-line max-len
         .error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
-      throw error
+      // TODO: Decide on error handling HERE
     }
   })
 
