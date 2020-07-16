@@ -29,7 +29,34 @@
 
 // import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
+// interface AuthPayload {
+//   consentId: string;
+//   sourceAccountId: string;
+//   status: string;
+//   challenge: string;
+//   value: string;
+// }
+
 // export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-//   // Return Success code informing source: request received
-//   return h.response().code(202)
+// TODO: request validation for headers and payload structure (non existent/extra fields)
+
+// const payload: AuthPayload = request.payload
+
+// Validate against null fields
+// Validate status - PENDING
+
+// Check if consent exists and retrieve consent data
+// Check for presence of key, verified key status
+
+// Check if scope exists and matches out for the consent
+
+// validate signature
+
+// Return Success code informing source: request received
+// return h.response().code(202)
+
+// Using setImmediate
+// error handling
+
+// PUT request to switch
 // }
