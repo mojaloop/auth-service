@@ -27,10 +27,11 @@
 
  --------------
  ******/
-import { putConsents } from '@mojaloop/sdk-standard-components'
+import { ThirdpartyRequests } from '@mojaloop/sdk-standard-components'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { scopeDb } from '../lib/db'
+import { logResponse } from './logger'
 import { Enum } from '@mojaloop/central-services-shared'
 
 /**
@@ -42,6 +43,17 @@ import { Enum } from '@mojaloop/central-services-shared'
 // TODO: Figure out return type of putConsents() and assign type accordingly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function putConsentId (consent: Consent, headers): Promise<any> {
+  // Instantiate ThirdPartyRequests Object
+  const config = {
+    logger: logResponse,
+    dfspId: headers[Enum.Http.Headers.FSPIOP.SOURCE],
+    jwsSign: true,
+    tls: undefined
+
+  }
+
+  const thirdPartyRequest = new ThirdpartyRequests(config)
+
   // Switch SOURCE and DESTINATION in headers
   const destinationId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   // eslint-disable-next-line max-len
@@ -71,13 +83,13 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
   // Construct body of outgoing request
   const body = {
     requestId: consent.id,
-    initiatorId: consent.initiatorId,
-    participantId: consent.participantId,
+    initiatorId: consent.initiatorId as string,
+    participantId: consent.participantId as string,
     scopes,
     credential: {
       id: null,
       credentialType: consent.credentialType,
-      credentialStatus: consent.credentialStatus,
+      status: consent.credentialStatus,
       challenge: {
         payload: consent.credentialChallenge,
         signature: null
@@ -86,6 +98,5 @@ export async function putConsentId (consent: Consent, headers): Promise<any> {
     }
   }
   // Use sdk-standard-components library to send request
-  // TODO: Remove headers?
-  return putConsents(consent.id, body, destinationId, headers)
+  return thirdPartyRequest.putConsents(consent.id, body, destinationId)
 }
