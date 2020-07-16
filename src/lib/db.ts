@@ -31,6 +31,7 @@ import Knex from 'knex'
 import Config from '../../config/knexfile'
 import ConsentDB from '../model/consent'
 
+// TODO: dynamically set this!
 const Db: Knex = Knex(Config.test)
 const consentDB: ConsentDB = new ConsentDB(Db)
 

@@ -24,6 +24,8 @@ services:
       retries: 30
       interval: 15s
     # command: [ "tail", "-f", "/dev/null" ]
+    volumes:
+      - ./docker/auth-service/:/opt/auth-service/config/
 
   mysql:
     image: mysql/mysql-server
