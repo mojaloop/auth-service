@@ -40,14 +40,25 @@ import { consentDB, scopesDB } from '../../lib/db'
 import { Scope } from '../../model/scope'
 import { Consent } from '../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
+import { Enum } from '@mojaloop/central-services-shared'
+
+/**
+   * Validates whether request is valid
+   * by comparing if source header matches participant ID
+   * @param request: request received from switch
+   */
+export function isRequestValid (request: Request): boolean {
+  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  return (request.payload.participantId === fspiopSource)
+}
 
 export async function createAndStoreConsent (request: Request): Promise<void> {
   const payload = request.payload
 
   const consent: Consent = {
-    id: request.params.id,
-    initiatorId: request.params.initiatorId,
-    participantId: request.params.participantId
+    id: request.payload.id,
+    initiatorId: request.payload.initiatorId,
+    participantId: request.payload.participantId
   }
 
   const scopesArray: Scope[] = []

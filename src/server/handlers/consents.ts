@@ -34,7 +34,7 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { createAndStoreConsent } from '../domain/consents'
+import { createAndStoreConsent, isRequestValid } from '../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Logger } from '@mojaloop/central-services-logger'
 
@@ -45,6 +45,10 @@ import { Logger } from '@mojaloop/central-services-logger'
 export async function post (
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
+  // Validate request
+  if (!isRequestValid(request)) {
+    return h.response().code(400)
+  }
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
