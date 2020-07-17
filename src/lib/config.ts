@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -19,6 +20,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
 
  --------------
  ******/
@@ -30,6 +32,7 @@ const RC = convict(Config)
 
 export const config = convict({
   PORT: RC.get('PORT') as number,
+  PARTICIPANT_ID: RC.get('PARTICIPANT_ID') as string,
   RUN_MIGRATIONS: !RC.get('MIGRATIONS').DISABLED,
   RUN_DATA_MIGRATIONS: RC.get('MIGRATIONS').RUN_DATA_MIGRATIONS as boolean,
   DATABASE: {

@@ -30,11 +30,10 @@
 
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
+import { thirdPartyRequest } from '../../../../lib/requests'
 import { Consent } from '../../../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
-// eslint-disable-next-line max-len
-import SDKStandardComponents, { ThirdpartyRequests } from '@mojaloop/sdk-standard-components'
-import { logResponse } from '../../../../shared/logger'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
 /**
  * Validates whether generate challenge request is valid
@@ -78,17 +77,6 @@ export async function putConsentId (
   consent: Consent,
   request: Request):
   Promise<SDKStandardComponents.GenericRequestResponse | undefined> {
-  // Instantiate ThirdPartyRequests Object
-  const config = {
-    logger: logResponse,
-    dfspId: request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
-    jwsSign: true,
-    tls: undefined
-
-  }
-
-  const thirdPartyRequest = new ThirdpartyRequests(config)
-
   // Construct body of outgoing request
   const body = {
     requestId: consent.id,
