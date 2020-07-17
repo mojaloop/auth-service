@@ -91,15 +91,11 @@ const nullConsent: Consent = null
 
 const challenge = 'xyhdushsoa82w92mzs='
 
-const retrievedScopes = [{
-  id: '123234',
-  consentId: '1234',
+const outputScopes = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
 {
-  id: '234',
-  consentId: '1234',
   accountId: 'as22',
   actions: ['account.getAccess']
 }
@@ -157,7 +153,7 @@ describe('Requests', (): void => {
     request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = '1234'
     request.headers[Enum.Http.Headers.FSPIOP.DESTINATION] = '5678'
     mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
-    mockRetrieveScopes.mockResolvedValue(retrievedScopes)
+    mockRetrieveScopes.mockResolvedValue(outputScopes)
   })
 
   // TODO: Remove one of the first 2 tests

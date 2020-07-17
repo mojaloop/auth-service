@@ -87,7 +87,6 @@ const completeConsent: Consent = {
 
 const challenge = 'xyhdushsoa82w92mzs='
 
-
 describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   beforeAll((): void => {
     mockUpdateCredential.mockResolvedValue(completeConsent)
