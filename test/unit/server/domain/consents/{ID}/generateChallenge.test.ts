@@ -28,12 +28,18 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB as consentDb } from '../../../../../../src/lib/db'
+import { consentDB, retrieveScopes } from '../../../../../../src/lib/db'
 import { Consent } from '../../../../../../src/model/consent'
+import { thirdPartyRequest } from '../../../../../../src/lib/requests'
 // eslint-disable-next-line max-len
-import { updateCredential, isConsentRequestValid } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+import { updateCredential, isConsentRequestValid, putConsentId } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+import { Enum } from '@mojaloop/central-services-shared'
+import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
 
-const mockConsentDbUpdate = jest.fn(consentDb.update)
+// Declaring Mock Functions
+const mockPutConsents = jest.fn(thirdPartyRequest.putConsents)
+const mockRetrieveScopes = jest.fn(retrieveScopes)
+const mockConsentDbUpdate = jest.fn(consentDB.update)
 
 /*
  * Mock Request Resources
@@ -85,6 +91,20 @@ const nullConsent: Consent = null
 
 const challenge = 'xyhdushsoa82w92mzs='
 
+const retrievedScopes = [{
+  id: '123234',
+  consentId: '1234',
+  accountId: 'as2342',
+  actions: ['account.getAccess', 'account.transferMoney']
+},
+{
+  id: '234',
+  consentId: '1234',
+  accountId: 'as22',
+  actions: ['account.getAccess']
+}
+]
+
 // Tests for isConsentRequestValid
 describe('Request Validation', (): void => {
   it('Should return true', (): void => {
@@ -128,5 +148,45 @@ describe('Updating Consent', (): void => {
     }).toThrowError()
 
     expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
+  })
+})
+
+// Tests for putConsentId
+describe('Requests', (): void => {
+  beforeAll((): void => {
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = '1234'
+    request.headers[Enum.Http.Headers.FSPIOP.DESTINATION] = '5678'
+    mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
+    mockRetrieveScopes.mockResolvedValue(retrievedScopes)
+  })
+
+  // TODO: Remove one of the first 2 tests
+  it('Should not throw an error', (): void => {
+    expect(async (): Promise<void> => {
+      await putConsentId(completeConsent, request)
+    }).not.toThrowError()
+  })
+
+  it('Should return 1', async (): Promise<void> => {
+    expect(await putConsentId(completeConsent, request)).toBe(1)
+  })
+
+  it('Should throw an error as request is null value', (): void => {
+    expect(async (): Promise<void> => {
+      await putConsentId(completeConsent, null)
+    }).toThrowError()
+  })
+
+  it('Should throw an error as consent is null value', (): void => {
+    expect(async (): Promise<void> => {
+      await putConsentId(nullConsent, request)
+    }).toThrowError()
+  })
+
+  it('Should throw an error as putConsents() throws an error', (): void => {
+    mockPutConsents.mockRejectedValue(new Error('Test Error'))
+    expect(async (): Promise<void> => {
+      await putConsentId(completeConsent, request)
+    }).toThrowError()
   })
 })
