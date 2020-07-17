@@ -38,6 +38,7 @@
 import Knex from 'knex'
 import Config from '../../../config/knexfile'
 import ConsentDB, { Consent } from '../../../src/model/consent'
+import { NotFoundError } from '../../../src/model/errors'
 
 /*
  * Mock Consent Resources
@@ -158,7 +159,9 @@ describe('src/model/consent', (): void => {
         .insert(partialConsent)
 
       // Action
-      await consentDB.update(completeConsent)
+      const updateCount: number = await consentDB.update(completeConsent)
+
+      expect(updateCount).toEqual(1)
 
       // Assertion
       const consents: Consent[] = await Db<Consent>('Consent')
@@ -175,7 +178,7 @@ describe('src/model/consent', (): void => {
     it('throws an error for a non-existent consent', async (): Promise<void> => {
       // Action
       await expect(consentDB.update(completeConsent))
-        .rejects.toThrowError('NotFoundError: Consent for ConsentId 1234')
+        .rejects.toThrowError(NotFoundError)
     })
   })
 
@@ -196,7 +199,7 @@ describe('src/model/consent', (): void => {
     it('throws an error for a non-existent consent', async (): Promise<void> => {
       // Action
       await expect(consentDB.retrieve(completeConsent.id))
-        .rejects.toThrowError('NotFoundError: Consent for ConsentId 1234')
+        .rejects.toThrowError(NotFoundError)
     })
   })
 
@@ -216,7 +219,9 @@ describe('src/model/consent', (): void => {
       expect(consents.length).toEqual(1)
 
       // Action
-      await consentDB.delete(completeConsent.id)
+      const deleteCount: number = await consentDB.delete(completeConsent.id)
+
+      expect(deleteCount).toEqual(1)
 
       // Assertion
       consents = await Db<Consent>('Consent')
@@ -231,7 +236,7 @@ describe('src/model/consent', (): void => {
     it('throws an error for a non-existent consent', async (): Promise<void> => {
       // Action
       await expect(consentDB.delete(completeConsent.id))
-        .rejects.toThrowError('NotFoundError: Consent for ConsentId 1234')
+        .rejects.toThrowError(NotFoundError)
     })
 
     it('deletes associated scopes on deleting a consent', async (): Promise<void> => {
@@ -261,7 +266,9 @@ describe('src/model/consent', (): void => {
       expect(scopes.length).toEqual(2)
 
       // Action
-      await consentDB.delete(completeConsent.id)
+      const deleteCount: number = await consentDB.delete(completeConsent.id)
+
+      expect(deleteCount).toEqual(1)
 
       scopes = await Db('Scope')
         .select('*')
