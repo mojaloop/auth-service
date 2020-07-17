@@ -31,21 +31,27 @@ import Knex from 'knex'
 import Config from '../../../config/knexfile'
 import ScopeDB, { Scope } from '../../../src/model/scope'
 import { Consent } from '../../../src/model/consent'
-import { NotFoundError } from '../../../src/model/errors'
+import { NotFoundError, IllegalOperationError } from '../../../src/model/errors'
 
 /*
- * Mock Consent Resource
+ * Mock Consent Resources
  */
-const partialConsent: Consent = {
+const partialConsent1: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123'
 }
 
+const partialConsent2: Consent = {
+  id: '948',
+  initiatorId: 'pisp-2342-2013',
+  participantId: 'dfsp-3333-2773'
+}
+
 /*
  * Mock Scope Resources
  */
-const tempScope: Scope = {
+const tempScope1: Scope = {
   consentId: '1234',
   action: 'transfer',
   accountId: 'sjdn-3333-2123'
@@ -54,6 +60,12 @@ const tempScope: Scope = {
 const tempScope2: Scope = {
   consentId: '1234',
   action: 'balance',
+  accountId: 'sjdn-q333-2123'
+}
+
+const tempScope3: Scope = {
+  consentId: '1234',
+  action: 'saving',
   accountId: 'sjdn-q333-2123'
 }
 
@@ -81,76 +93,88 @@ describe('src/model/scope', (): void => {
   beforeEach(async (): Promise<void> => {
     await Db<Consent>('Consent').del()
     await Db<Scope>('Scope').del()
+    await Db<Consent>('Consent')
+      .insert([partialConsent1, partialConsent2])
   })
 
-  describe('register', (): void => {
+  describe('insert', (): void => {
     it('adds scope for an existing consent to the database', async (): Promise<void> => {
-      // Setup
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
+      const inserted: boolean = await scopeDB.insert(tempScope1)
 
-      await scopeDB.register(tempScope)
+      // Return type check
+      expect(inserted).toEqual(true)
 
       // Assertion
       const scopes: Scope[] = await Db<Scope>('Scope')
         .select('*')
         .where({
-          consentId: partialConsent.id
+          consentId: partialConsent1.id
         })
 
       expect(scopes.length).toEqual(1)
       expect(scopes[0].id).toEqual(expect.any(Number))
-      expect(scopes[0]).toEqual(expect.objectContaining(tempScope))
+      expect(scopes[0]).toEqual(expect.objectContaining(tempScope1))
     })
 
     it('adds multiple scopes for an existing consent to the database', async (): Promise<void> => {
-      // Setup
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
+      const inserted: boolean = await scopeDB.insert([tempScope1, tempScope2, tempScope3])
 
-      await scopeDB.register([tempScope, tempScope2])
+      // Return type check
+      expect(inserted).toEqual(true)
 
       // Assertion
       const scopes: Scope[] = await Db<Scope>('Scope')
         .select('*')
         .where({
-          consentId: partialConsent.id
+          consentId: partialConsent1.id
         })
 
-      expect(scopes.length).toEqual(2)
+      expect(scopes.length).toEqual(3)
       expect(scopes[0].consentId === scopes[1].consentId).toEqual(true)
+      expect(scopes[1].consentId === scopes[2].consentId).toEqual(true)
       expect(scopes[0].action !== scopes[1].action).toEqual(true)
+      expect(scopes[1].action !== scopes[2].action).toEqual(true)
     })
 
-    it('returns an error on adding a scope for a non-existent consent', async (): Promise<void> => {
-      await expect(scopeDB.register(tempScope)).rejects.toThrowError()
+    it('throws an error on adding a scope for a non-existent consent', async (): Promise<void> => {
+      await Db<Consent>('Consent').del()
+      await expect(scopeDB.insert(tempScope1)).rejects.toThrow()
+    })
+
+    it('throws an error on inserting empty scopes array', async (): Promise<void> => {
+      await expect(scopeDB.insert([]))
+        .rejects.toThrowError(IllegalOperationError)
     })
   })
 
   describe('retrieveAll', (): void => {
     it('retrieves only existing scopes from the database', async (): Promise<void> => {
       // Setup
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
       await Db<Scope>('Scope')
-        .insert(tempScope)
+        .insert([tempScope1, tempScope2, tempScope3])
 
       // Action
-      const scopes: Scope[] = await scopeDB.retrieveAll(tempScope.consentId)
+      const scopes: Scope[] = await scopeDB.retrieveAll(tempScope1.consentId)
 
       // Assertion
-      expect(scopes.length).toEqual(1)
+      expect(scopes.length).toEqual(3)
       expect(scopes[0].id).toEqual(expect.any(Number))
-      expect(scopes[0]).toEqual(expect.objectContaining(tempScope))
+      expect(scopes[1].id).toEqual(expect.any(Number))
+      expect(scopes[2].id).toEqual(expect.any(Number))
+      expect(scopes[0].consentId === scopes[1].consentId).toEqual(true)
+      expect(scopes[1].consentId === scopes[2].consentId).toEqual(true)
+      expect(scopes[0].action !== scopes[1].action).toEqual(true)
+      expect(scopes[1].action !== scopes[2].action).toEqual(true)
     })
 
-    it('throws an error on retrieving of non-existent scopes', async (): Promise<void> => {
-      // Setup
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
+    it('throws an error on retrieving non-existent scopes for an existing consent', async (): Promise<void> => {
+      await expect(scopeDB.retrieveAll(partialConsent1.id))
+        .rejects.toThrowError(NotFoundError)
+    })
 
-      // Action
-      await expect(scopeDB.retrieveAll(partialConsent.id))
+    it('throws an error on retrieving non-existent scopes for a non-existent consent', async (): Promise<void> => {
+      await Db<Consent>('Consent').del()
+      await expect(scopeDB.retrieveAll(partialConsent1.id))
         .rejects.toThrowError(NotFoundError)
     })
   })
@@ -158,41 +182,40 @@ describe('src/model/scope', (): void => {
   describe('deleteAll', (): void => {
     it('deletes only existing scopes from the database', async (): Promise<void> => {
       // Setup
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
       await Db<Scope>('Scope')
-        .insert(tempScope)
-      await Db<Scope>('Scope')
-        .insert(tempScope2)
+        .insert([tempScope1, tempScope2])
 
       let scopes: Scope[] = await Db<Scope>('Scope')
         .select('*')
         .where({
-          consentId: tempScope.consentId
+          consentId: tempScope1.consentId
         })
 
       expect(scopes.length).toEqual(2)
 
       // Action
-      await scopeDB.deleteAll(tempScope.consentId)
+      const deleteCount: number = await scopeDB.deleteAll(tempScope1.consentId)
+
+      expect(deleteCount).toEqual(2)
 
       // Assertion
       scopes = await Db<Scope>('Scope')
         .select('*')
         .where({
-          consentId: tempScope.consentId
+          consentId: tempScope1.consentId
         })
 
       expect(scopes.length).toEqual(0)
     })
 
-    it('throws an error on deleting non-existent scopes', async (): Promise<void> => {
-      // Setup
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
+    it('throws an error on deleting non-existent scopes for an existing consent', async (): Promise<void> => {
+      await expect(scopeDB.deleteAll(partialConsent1.id))
+        .rejects.toThrowError(NotFoundError)
+    })
 
-      // Action
-      await expect(scopeDB.deleteAll(partialConsent.id))
+    it('throws an error on deleting non-existent scopes for a non-existent consent', async (): Promise<void> => {
+      await Db<Consent>('Consent').del()
+      await expect(scopeDB.deleteAll(partialConsent1.id))
         .rejects.toThrowError(NotFoundError)
     })
   })

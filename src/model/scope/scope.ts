@@ -36,7 +36,7 @@
  ******/
 
 import Knex from 'knex'
-import { NotFoundError } from '../errors'
+import { NotFoundError, IllegalOperationError } from '../errors'
 
 /*
 * Interface for Scope resource type
@@ -60,13 +60,17 @@ export class ScopeDB {
   }
 
   // Add a single Scope or an array of Scopes
-  public async register (scopes: Scope | Scope[]): Promise<number> {
-    // Returns array containing number of inserted rows
-    const insertCount: number[] = await this
+  public async insert (scopes: Scope | Scope[]): Promise<boolean> {
+    if (Array.isArray(scopes) && scopes.length === 0) {
+      throw new IllegalOperationError('Scope')
+    }
+
+    // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
+    await this
       .Db<Scope>('Scope')
       .insert(scopes)
 
-    return insertCount[0]
+    return true
   }
 
   // Retrieve Scopes by Consent ID
