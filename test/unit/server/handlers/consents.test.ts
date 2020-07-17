@@ -123,41 +123,47 @@ describe('server/handlers/consents', (): void => {
     mockStoreConsent.mockResolvedValue()
   })
 
-  it('Should return 202 success code', async (): Promise<void> => {
-    const response = await post(
-      request as Request,
-      h as ResponseToolkit
-    )
-    expect(response).toBe(h.response().code(202))
-    expect(mockStoreConsent).toHaveBeenCalled()
-  })
+  it('Should return 202 success code',
+    async (): Promise<void> => {
+      const response = await post(
+        request as Request,
+        h as ResponseToolkit
+      )
+      expect(response).toBe(h.response().code(202))
+      expect(mockStoreConsent).toHaveBeenCalledWith(request)
+    })
 
-  it('Should return 400 code due to invalid request', async (): Promise<void> => {
-    const response = await post(
-      requestInvalid as Request,
-      h as ResponseToolkit
-    )
-    expect(response).toBe(h.response().code(400))
+  it('Should return 400 code due to invalid request',
+    async (): Promise<void> => {
+      const response = await post(
+        requestInvalid as Request,
+        h as ResponseToolkit
+      )
+      expect(response).toBe(h.response().code(400))
 
-    expect(mockStoreConsent).not.toHaveBeenCalled()
-  })
+      expect(mockStoreConsent).not.toHaveBeenCalled()
+    })
 
-  it('Should also return 400 code due to invalid request', async (): Promise<void> => {
-    const response = await post(
-      requestInvalid2 as Request,
-      h as ResponseToolkit
-    )
-    expect(response).toBe(h.response().code(400))
+  it('Should also return 400 code due to invalid request',
+    async (): Promise<void> => {
+      const response = await post(
+        requestInvalid2 as Request,
+        h as ResponseToolkit
+      )
+      expect(response).toBe(h.response().code(400))
 
-    expect(mockStoreConsent).not.toHaveBeenCalled()
-  })
+      expect(mockStoreConsent).not.toHaveBeenCalled()
+    })
 
-  it('Should throw an error due to error in creating/storing consent and scopes', (): void => {
-    mockStoreConsent.mockRejectedValueOnce(new Error('Error Registering Consent'))
-    expect(async (): Promise<void> => {
-      await post(request as Request, h as ResponseToolkit)
-    }).toThrowError()
+  it('Should throw an error due to error in creating/storing consent & scopes',
+    (): void => {
+      mockStoreConsent
+        .mockRejectedValueOnce(new Error('Error Registering Consent'))
 
-    expect(mockStoreConsent).toHaveBeenCalled()
-  })
+      expect(async (): Promise<void> => {
+        await post(request as Request, h as ResponseToolkit)
+      }).toThrowError()
+
+      expect(mockStoreConsent).toHaveBeenCalledWith(request)
+    })
 })
