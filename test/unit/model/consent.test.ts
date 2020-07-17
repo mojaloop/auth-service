@@ -83,12 +83,12 @@ describe('src/model/consent', (): void => {
     await Db<Consent>('Consent').del()
   })
 
-  describe('register', (): void => {
+  describe('insert', (): void => {
     it('adds consent with partial info to the database', async (): Promise<void> => {
       // Action
-      const numInserted: number = await consentDB.register(partialConsent)
+      const inserted: boolean = await consentDB.insert(partialConsent)
 
-      expect(numInserted).toEqual(1)
+      expect(inserted).toEqual(true)
 
       // Assertion
       const consents: Consent[] = await Db<Consent>('Consent')
@@ -110,9 +110,11 @@ describe('src/model/consent', (): void => {
       })
     })
 
-    it('returns an error on adding a consent with existing consentId', async (): Promise<void> => {
+    it('throws an error on adding a consent with existing consentId', async (): Promise<void> => {
       // Action
-      await consentDB.register(partialConsent)
+      const inserted: boolean = await consentDB.insert(partialConsent)
+
+      expect(inserted).toEqual(true)
 
       // Assertion
       const consents: Consent[] = await Db<Consent>('Consent')
@@ -135,8 +137,17 @@ describe('src/model/consent', (): void => {
       })
 
       // Fail primary key constraint
-      await expect(consentDB.register(partialConsent))
-        .rejects.toThrowError()
+      await expect(consentDB.insert(partialConsent))
+        .rejects.toThrow()
+    })
+
+    it('throws an error on adding consent without an id', async (): Promise<void> => {
+      // Action
+      await expect(consentDB.insert({
+        id: null as unknown as string,
+        initiatorId: '494949',
+        participantId: '3030303'
+      })).rejects.toThrow()
     })
   })
 
