@@ -31,7 +31,7 @@ import Knex from 'knex'
 import Config from '../../../config/knexfile'
 import ScopeDB, { Scope } from '../../../src/model/scope'
 import { Consent } from '../../../src/model/consent'
-import { NotFoundError, IllegalOperationError } from '../../../src/model/errors'
+import { NotFoundError } from '../../../src/model/errors'
 
 /*
  * Mock Consent Resources
@@ -141,9 +141,19 @@ describe('src/model/scope', (): void => {
       await expect(scopeDB.insert(tempScope1)).rejects.toThrow()
     })
 
-    it('throws an error on inserting empty scopes array', async (): Promise<void> => {
-      await expect(scopeDB.insert([]))
-        .rejects.toThrowError(IllegalOperationError)
+    it('returns without affecting the DB on inserting empty scopes array', async (): Promise<void> => {
+      // Assertion
+      const scopesInitial: Scope[] = await Db<Scope>('Scope')
+        .select('*')
+
+      const inserted: boolean = await scopeDB.insert([])
+
+      const scopesAfter: Scope[] = await Db<Scope>('Scope')
+        .select('*')
+
+      expect(inserted).toEqual(true)
+      // No effect on the DB
+      expect(scopesInitial.length === scopesAfter.length)
     })
   })
 

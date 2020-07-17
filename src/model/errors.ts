@@ -33,10 +33,3 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError'
   }
 }
-
-export class IllegalOperationError extends Error {
-  public constructor (resource: string) {
-    super(`IllegalOperationError: Cannot insert empty array of ${resource}`)
-    this.name = 'IllegalOperationError'
-  }
-}

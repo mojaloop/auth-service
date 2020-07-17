@@ -36,7 +36,7 @@
  ******/
 
 import Knex from 'knex'
-import { NotFoundError, IllegalOperationError } from '../errors'
+import { NotFoundError } from '../errors'
 
 /*
 * Interface for Scope resource type
@@ -61,8 +61,12 @@ export class ScopeDB {
 
   // Add a single Scope or an array of Scopes
   public async insert (scopes: Scope | Scope[]): Promise<boolean> {
+    // To avoid inconsistencies between DBs, we define a standard
+    // way to deal with empty arrays.
+    // We just return true because an empty array was anyways
+    // not going to affect the DB.
     if (Array.isArray(scopes) && scopes.length === 0) {
-      throw new IllegalOperationError('Scope')
+      return true
     }
 
     // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
@@ -83,7 +87,7 @@ export class ScopeDB {
     // Not dinguishing between a Consent that exists
     // with 0 scopes and a Consent that does not exist
     if (scopes.length === 0) {
-      throw new NotFoundError('Consent\'s Scopes', consentId)
+      throw new NotFoundError('Consent Scopes', consentId)
     }
 
     return scopes
@@ -99,7 +103,7 @@ export class ScopeDB {
     // Not dinguishing between a Consent that exists
     // with 0 scopes and a Consent that does not exist
     if (deleteCount === 0) {
-      throw new NotFoundError('Consent\'s Scopes', consentId)
+      throw new NotFoundError('Consent Scopes', consentId)
     }
 
     return deleteCount
