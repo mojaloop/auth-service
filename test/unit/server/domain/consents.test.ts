@@ -47,6 +47,9 @@ const request: Request = {
     id: '1234'
   },
   payload: {
+    id: '1234',
+    participantId: 'auth121',
+    initiatorId: 'pispa',
     scopes: [
       {
         accountId: '3423',
@@ -60,6 +63,15 @@ const request: Request = {
   }
 }
 
+const consent = {
+  id: '1234',
+  participantId: 'auth121',
+  initiatorId: 'pispa'
+}
+
+// TODO: Fill out
+const inputScopes = [{}]
+
 describe('server/domain/consents', (): void => {
   beforeAll((): void => {
     mockRegisterConsent.mockResolvedValue(null)
@@ -70,8 +82,8 @@ describe('server/domain/consents', (): void => {
       await createAndStoreConsent(request)
     }).not.toThrowError()
 
-    expect(mockRegisterConsent).toHaveBeenCalled()
-    expect(mockRegisterScopes).toHaveBeenCalled()
+    expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
+    expect(mockRegisterScopes).toHaveBeenCalledWith(inputScopes)
   })
 
   it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
@@ -80,7 +92,7 @@ describe('server/domain/consents', (): void => {
       await createAndStoreConsent(request)
     }).toThrowError()
 
-    expect(mockRegisterConsent).toHaveBeenCalled()
+    expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
     expect(mockRegisterScopes).not.toHaveBeenCalled()
   })
 
@@ -90,7 +102,7 @@ describe('server/domain/consents', (): void => {
       await createAndStoreConsent(request)
     }).toThrowError()
 
-    expect(mockRegisterConsent).toHaveBeenCalled()
-    expect(mockRegisterScopes).toHaveBeenCalled()
+    expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
+    expect(mockRegisterScopes).toHaveBeenCalled(inputScopes)
   })
 })
