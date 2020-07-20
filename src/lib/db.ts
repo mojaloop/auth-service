@@ -30,7 +30,7 @@
 import Knex from 'knex'
 import Config from '../../config/knexfile'
 import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import {ScopeDB, Scope} from '../model/scope'
 const Db: Knex = Knex(Config.test)
 const consentDB: ConsentDB = new ConsentDB(Db)
 
@@ -43,7 +43,8 @@ export async function retrieveScopes (id: string): Promise<Scope[]> {
 
   scopesRetrieved.forEach((scope: Scope): void => {
     const accountId: string = scope.accountId
-    if (scope.accountId in scopeDictionary) {
+
+    if (accountId in scopeDictionary) {
       scopeDictionary[accountId].actions.push(scope.action)
     } else {
       scopeDictionary[accountId] = {
