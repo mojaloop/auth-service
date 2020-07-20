@@ -161,7 +161,7 @@ describe('Signature Verification', (): void => {
     expect(verified).toEqual(false)
   })
 
-  it('verifies correct signature - RSA Key', (): void => {
+  it('verifies correct signature - RSA 2048 Key', (): void => {
     const realKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
@@ -172,7 +172,16 @@ describe('Signature Verification', (): void => {
     expect(verified).toEqual(true)
   })
 
-  it('returns false on incorrect signature - RSA Key', (): void => {
+  // Using a correct hardcoded key, challenge and sign triplet
+  it('verifies correct signature - hardcoded RSA 2048 key', (): void => {
+    const { message, signature, keyPair } = Credential.RSA
+
+    const verified = verifySign(message, signature, keyPair.public)
+
+    expect(verified).toEqual(true)
+  })
+
+  it('returns false on signature based on wrong key - RSA 2048 Key', (): void => {
     const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048 // Key length in bits
     })
@@ -183,6 +192,21 @@ describe('Signature Verification', (): void => {
 
     const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
     const verified = verifySign(challenge, sign, realKeyPair.publicKey)
+
+    expect(verified).toEqual(false)
+  })
+
+  // Using a hardcoded key, challenge and sign triplet
+  it('returns false for signature based on wrong challenge - hardcoded RSA 2048 key', (): void => {
+    const { message, keyPair } = Credential.RSA
+
+    const anotherChallenge = 'This is a different message'
+    const anotherSigner = crypto.createSign('SHA256')
+
+    anotherSigner.update(anotherChallenge)
+
+    const sign = signer.sign(keyPair.private, 'base64')
+    const verified = verifySign(message, sign, keyPair.public)
 
     expect(verified).toEqual(false)
   })
