@@ -123,6 +123,10 @@ describe('server/handlers/consents', (): void => {
     mockStoreConsent.mockResolvedValue()
   })
 
+  beforeEach((): void => {
+    jest.useFakeTimers()
+  })
+
   it('Should return 202 success code',
     async (): Promise<void> => {
       const response = await post(
@@ -131,6 +135,7 @@ describe('server/handlers/consents', (): void => {
       )
       expect(response).toBe(h.response().code(202))
       expect(mockStoreConsent).toHaveBeenCalledWith(request)
+      expect(setImmediate).toHaveBeenCalled()
     })
 
   it('Should return 400 code due to invalid request',
@@ -151,19 +156,19 @@ describe('server/handlers/consents', (): void => {
         h as ResponseToolkit
       )
       expect(response).toBe(h.response().code(400))
-
+      expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
     })
 
   it('Should throw an error due to error in creating/storing consent & scopes',
-    (): void => {
+    async (): Promise<void> => {
       mockStoreConsent
         .mockRejectedValueOnce(new Error('Error Registering Consent'))
 
-      expect(async (): Promise<void> => {
-        await post(request as Request, h as ResponseToolkit)
-      }).toThrowError()
+      const response = await post(request as Request, h as ResponseToolkit)
+      expect(response).toBe(h.response().code(202))
 
+      expect(setImmediate).toThrowError()
       expect(mockStoreConsent).toHaveBeenCalledWith(request)
     })
 })
