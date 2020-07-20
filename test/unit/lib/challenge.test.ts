@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import Logger from '@mojaloop/central-services-logger'
 import Credential from './credential'
 import { generate, verifySign } from '../../../src/lib/challenge'
 
@@ -150,6 +151,8 @@ describe('Signature Verification', (): void => {
   it('returns false for signature based on wrong challenge - hardcoded EC Key (secp256k1)', (): void => {
     const { message, keyPair } = Credential.EC
 
+    // Need another Sign object instead of updating the outer one
+    // because of parallel test runs
     const anotherChallenge = 'This is a different message'
     const anotherSigner = crypto.createSign('SHA256')
 
@@ -200,6 +203,8 @@ describe('Signature Verification', (): void => {
   it('returns false for signature based on wrong challenge - hardcoded RSA 2048 key', (): void => {
     const { message, keyPair } = Credential.RSA
 
+    // Need another Sign object instead of updating the outer one
+    // because of parallel test runs
     const anotherChallenge = 'This is a different message'
     const anotherSigner = crypto.createSign('SHA256')
 
@@ -211,26 +216,39 @@ describe('Signature Verification', (): void => {
     expect(verified).toEqual(false)
   })
 
-  it('returns false on key algorithm mismatch', (): void => {
-    const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 2048 // Key length in bits
+  it('properly uses crypto functions and handles exceptions', (): void => {
+    const { message, keyPair } = Credential.RSA
+
+    // Setting up mocks
+    const createVerifySpy = jest.spyOn(crypto, 'createVerify').mockImplementationOnce((): crypto.Verify => {
+      throw new Error('Unable to create Verify in mock')
     })
 
-    const realKeyPair = crypto.generateKeyPairSync('ec', {
-      namedCurve: 'secp256k1', // Allowed by FIDO spec
-      publicKeyEncoding: {
-        type: 'spki', // Key infrasructure
-        format: 'pem' // Encoding format
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-      }
-    })
+    const loggerPushSpy = jest.spyOn(Logger, 'push')
+    const loggerErrorSpy = jest.spyOn(Logger, 'error').mockImplementation((): void => {})
 
-    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
-    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
+    // Setting up the signature
+    const anotherChallenge = 'This is a different message'
+    const anotherSigner = crypto.createSign('SHA256')
 
-    expect(verified).toEqual(false)
+    anotherSigner.update(anotherChallenge)
+
+    const sign = signer.sign(keyPair.private, 'base64')
+
+    // Assertions
+    expect((): void => {
+      verifySign(message, sign, keyPair.public)
+    }).toThrowError('Unable to create Verify in mock')
+
+    // Verify that crypto function is called correctly
+    expect(createVerifySpy).toHaveBeenCalledWith('SHA256')
+    expect(createVerifySpy).toHaveBeenCalledTimes(1)
+
+    // Verify that logger functions are called correctly
+    expect(loggerPushSpy).toHaveBeenCalledWith(new Error('Unable to create Verify in mock'))
+    expect(loggerPushSpy).toHaveBeenCalledTimes(1)
+
+    expect(loggerErrorSpy).toHaveBeenCalledTimes(1)
+    expect(loggerErrorSpy).toHaveBeenCalledWith('Unable to verify signature')
   })
 })

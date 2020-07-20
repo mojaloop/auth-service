@@ -34,7 +34,7 @@
 
 import util from 'util'
 import crypto from 'crypto'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 
 // Async promisified randomBytes function
 const randomBytesAsync = util.promisify(crypto.randomBytes)
@@ -75,6 +75,7 @@ export function verifySign (
 
     return verifier.verify(publicKey, signature, 'base64')
   } catch (error) {
+    Logger.push(error)
     Logger.error('Unable to verify signature')
     throw error
   }
