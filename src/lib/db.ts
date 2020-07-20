@@ -34,6 +34,11 @@ import {ScopeDB, Scope} from '../model/scope'
 const Db: Knex = Knex(Config.test)
 const consentDB: ConsentDB = new ConsentDB(Db)
 
+/**
+ * Retrieves scopes from database, reformats object structure, removing
+ * scope & consent ids, and returns array of scopes
+ * @param id Consent id
+ */
 export async function retrieveScopes (id: string): Promise<Scope[]> {
   // Retrieve scopes
   const scopesRetrieved: Scope[] = await scopeDB.retrieve(id)
