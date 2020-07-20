@@ -32,7 +32,7 @@ describe('Challenge Generation', (): void => {
 /*
  * Signature Verification Unit Tests
  *
- * Currently, the tests focus on RSA and ECDSA:secp256k1 keys.
+ * Currently, the tests focus on RSA 2048 and ECDSA:secp256k1 keys.
  * Support for additional keys can be extended further.
  */
 describe('Signature Verification', (): void => {
@@ -42,8 +42,10 @@ describe('Signature Verification', (): void => {
 
   beforeEach((): void => {
     challenge = 'Crypto Auth service Yay!'
+    // Digest Algorithm
     signer = crypto.createSign('SHA256')
 
+    // Hash challenge using SHA256
     signer.update(challenge)
   })
 

@@ -60,7 +60,7 @@ export async function generate (size: number = 32): Promise<string> {
  * @param signature Base64 sign string
  * @param publicKey PEM Base64 Public key string or KeyObject for verification
  *
- * Currently, the implementation focuses on RSA and ECDSA:secp256k1 keys.
+ * Currently, the implementation focuses on RSA 2048 and ECDSA:secp256k1 keys.
  * Support for additional keys can be extended further.
  */
 export function verifySign (
