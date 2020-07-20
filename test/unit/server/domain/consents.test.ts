@@ -103,6 +103,6 @@ describe('server/domain/consents', (): void => {
     }).toThrowError()
 
     expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
-    expect(mockRegisterScopes).toHaveBeenCalled(inputScopes)
+    expect(mockRegisterScopes).toHaveBeenCalledWith(inputScopes)
   })
 })
