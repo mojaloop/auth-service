@@ -37,14 +37,32 @@
 //   value: string;
 // }
 
+// @ts-ignore
 // export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-// TODO: request validation for headers and payload structure (non existent/extra fields)
+// TODO: request validation for headers and
+// payload structure (non existent/extra fields)
 
 // const payload: AuthPayload = request.payload
+// let consent: Consent
 
 // Validate against null fields
-// Validate status - PENDING
+// for (const key in payload) {
+//   if (payload[key as keyof AuthPayload] == null) {
+// Incorrect payload - return error?
+//   }
+// }
 
+// Validate incoming status
+// if (payload.status !== 'PENDING') {
+// Incorrect payload - return error?
+// }
+
+// try {
+//   consent = await consentDB.retrieve(id)
+// } catch (error) {
+//   Logger.push(error).error('Error in retrieving consent')
+//   throw error
+// }
 // Check if consent exists and retrieve consent data
 // Check for presence of key, verified key status
 
