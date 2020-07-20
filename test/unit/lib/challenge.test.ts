@@ -216,7 +216,7 @@ describe('Signature Verification', (): void => {
     expect(verified).toEqual(false)
   })
 
-  it('properly uses crypto functions and handles exceptions', (): void => {
+  it('properly uses crypto.createVerify function and handles exceptions', (): void => {
     const { message, keyPair } = Credential.RSA
 
     // Setting up mocks
@@ -225,6 +225,8 @@ describe('Signature Verification', (): void => {
     })
 
     const loggerPushSpy = jest.spyOn(Logger, 'push')
+    // Mocking `Logger.error` because it indirectly calls
+    // Logger.push and we want to only test usage of Logger's interface
     const loggerErrorSpy = jest.spyOn(Logger, 'error').mockImplementation((): void => {})
 
     // Setting up the signature
