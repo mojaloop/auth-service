@@ -19,6 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
+
  --------------
  ******/
 
@@ -38,7 +39,8 @@ export const config = convict({
       port: RC.get('DATABASE').PORT as number,
       user: RC.get('DATABASE').USER as string,
       password: RC.get('DATABASE').PASSWORD as string,
-      database: RC.get('DATABASE').SCHEMA as string
+      database: RC.get('DATABASE').SCHEMA as string,
+      timezone: 'UTC'
     },
     pool: {
       // minimum size
