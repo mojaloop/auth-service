@@ -24,38 +24,46 @@
  ******/
 
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { consentDB } from '../../../lib/db'
 import { Consent } from '../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { isChallengeCorrect, saveCredential } from '../../domain/consents/{ID}'
+import { retrieveValidConsent, updateConsentCredential, putConsents } from '../../domain/consents/{ID}'
+import { IncorrectChallengeError } from '../../domain/errors'
+import { verifySign } from '../../../lib/challenge'
 
 export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
   /* The incoming signature from the PISP. */
-  const requestSignature = request.payload.credential.challenge.signature
+  const signature = request.payload.credential.challenge.signature
   /* The incoming public key from the PISP. */
-  const requestPayload = request.payload.credential.payload
+  const publicKey = request.payload.credential.payload
   /* The incoming challenge from the PISP. */
-  const requestChallenge = request.payload.credential.challenge.payload
+  const challenge = request.payload.credential.challenge.payload
   /* The incoming credential id from the PISP. */
   const requestCredentialId = request.payload.credential.id
   let consent: Consent
 
   try {
-    consent = await consentDB.retrieve(id)
-    isChallengeCorrect(consent, requestChallenge)
-
-    /* TODO, additional signature validation check should be inserted here. Awaiting the PR with the function. */
+    consent = await retrieveValidConsent(id, challenge)
   } catch (error) {
+    if (error instanceof IncorrectChallengeError) {
+      Logger.push(error)
+      return h.response().code(400)
+    }
     Logger.push(error).error('Error in retrieving consent')
     throw error
   }
 
   setImmediate(async (): Promise<void> => {
     try {
-      await saveCredential(requestCredentialId, 'VERIFIED', requestPayload, consent)
+      if (!verifySign(challenge, signature, publicKey)) {
+        Logger.push({ consentId: id }).error('Invalid Challenge')
+        /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number PUT_TICKET_HERE */
+        return
+      }
+      await updateConsentCredential(requestCredentialId, 'VERIFIED', publicKey, consent)
 
-      /* TODO, make outbound call to PUT consents/{ID} */
+      /* Outbound PUT consents/{ID} call */
+      putConsents(consent, signature, publicKey, request)
     } catch (error) {
       Logger.push(error).error('Error: Outgoing call with challenge credential NOT made to PUT consents/' + id)
       throw error
