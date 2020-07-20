@@ -92,20 +92,4 @@ export class ScopeDB {
 
     return scopes
   }
-
-  // Delete Scopes by Consent ID
-  public async deleteAll (consentId: string): Promise<number> {
-    const deleteCount: number = await this
-      .Db<Scope>('Scope')
-      .where({ consentId })
-      .del()
-
-    // Not dinguishing between a Consent that exists
-    // with 0 scopes and a Consent that does not exist
-    if (deleteCount === 0) {
-      throw new NotFoundError('Consent Scopes', consentId)
-    }
-
-    return deleteCount
-  }
 }

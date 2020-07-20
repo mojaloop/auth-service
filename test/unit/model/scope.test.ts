@@ -188,45 +188,4 @@ describe('src/model/scope', (): void => {
         .rejects.toThrowError(NotFoundError)
     })
   })
-
-  describe('deleteAll', (): void => {
-    it('deletes only existing scopes from the database', async (): Promise<void> => {
-      // Setup
-      await Db<Scope>('Scope')
-        .insert([tempScope1, tempScope2])
-
-      let scopes: Scope[] = await Db<Scope>('Scope')
-        .select('*')
-        .where({
-          consentId: tempScope1.consentId
-        })
-
-      expect(scopes.length).toEqual(2)
-
-      // Action
-      const deleteCount: number = await scopeDB.deleteAll(tempScope1.consentId)
-
-      expect(deleteCount).toEqual(2)
-
-      // Assertion
-      scopes = await Db<Scope>('Scope')
-        .select('*')
-        .where({
-          consentId: tempScope1.consentId
-        })
-
-      expect(scopes.length).toEqual(0)
-    })
-
-    it('throws an error on deleting non-existent scopes for an existing consent', async (): Promise<void> => {
-      await expect(scopeDB.deleteAll(partialConsent1.id))
-        .rejects.toThrowError(NotFoundError)
-    })
-
-    it('throws an error on deleting non-existent scopes for a non-existent consent', async (): Promise<void> => {
-      await Db<Consent>('Consent').del()
-      await expect(scopeDB.deleteAll(partialConsent1.id))
-        .rejects.toThrowError(NotFoundError)
-    })
-  })
 })
