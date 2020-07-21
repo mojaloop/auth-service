@@ -27,54 +27,92 @@
  --------------
  ******/
 
-// import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import Logger from '@mojaloop/central-services-logger'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Consent } from '../../../../../model/consent'
+import { consentDB } from '../../../../../lib/db'
+import { NotFoundError } from '../../../../../model/errors'
 
-// interface AuthPayload {
-//   consentId: string;
-//   sourceAccountId: string;
-//   status: string;
-//   challenge: string;
-//   value: string;
-// }
+interface AuthPayload {
+  consentId: string;
+  sourceAccountId: string;
+  status: string;
+  challenge: string;
+  value: string;
+}
 
 // @ts-ignore
-// export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-// TODO: request validation for headers and
-// payload structure (non existent/extra fields)
+export async function post (
+  request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  // TODO: request validation for headers and
+  // payload structure (non existent/extra fields)
 
-// const payload: AuthPayload = request.payload
-// let consent: Consent
+  // Use Joi here?
+  // Is request validation done internally?
 
-// Validate against null fields
-// for (const key in payload) {
-//   if (payload[key as keyof AuthPayload] == null) {
-// Incorrect payload - return error?
-//   }
-// }
+  const payload: AuthPayload = request.payload as AuthPayload
 
-// Validate incoming status
-// if (payload.status !== 'PENDING') {
-// Incorrect payload - return error?
-// }
+  // Validate against null fields
+  for (const key in payload) {
+    if (payload[key as keyof AuthPayload] == null) {
+      // Incorrect payload
+      return h.response().code(400)
+    }
+  }
 
-// try {
-//   consent = await consentDB.retrieve(id)
-// } catch (error) {
-//   Logger.push(error).error('Error in retrieving consent')
-//   throw error
-// }
-// Check if consent exists and retrieve consent data
-// Check for presence of key, verified key status
+  // Validate incoming status
+  if (payload.status !== 'PENDING') {
+    // Incorrect payload
+    return h.response().code(400)
+  }
 
-// Check if scope exists and matches out for the consent
+  let consent: Consent
 
-// validate signature
+  // Check if consent exists and retrieve consent data
+  try {
+    consent = await consentDB.retrieve(payload.consentId)
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not retrieve consent')
 
-// Return Success code informing source: request received
-// return h.response().code(202)
+    if (error instanceof NotFoundError) {
+      return h.response().code(404)
+    }
 
-// Using setImmediate
-// error handling
+    return h.response().code(400)
+  }
 
-// PUT request to switch
-// }
+  // Check for presence of key, verified key status
+  if (consent.credentialStatus === 'ACTIVE' && consent.credentialPayload !== null) {
+    // TODO: Is this the correct error code? or just 400
+    return h.response().code(401)
+  }
+
+  // TODO: Check if scope exists and matches out for the consent
+
+  // If everything checks out, delay processing to the next
+  // event loop cycle and return successful acknowledgement
+  // of a correct request
+  setImmediate((): void => {
+    try {
+      // Do any required conversions: check for any quote object format to UTF8 conversions
+      // Verify signature
+      // const isVerified = verifySign(payload.challenge, payload.value, consent.credentialPayload)
+
+      // Check what to do if verification fails: leave status as PENDING?
+      // if (isVerified) {
+      //   payload.status = 'VERIFIED'
+      // }
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Could not verify signature')
+
+      // TODO: Inform Switch that there is some problem on server side
+    }
+
+    // TODO: PUT request to switch
+  })
+
+  // Request acknowledgement: received and processing it
+  return h.response().code(202)
+}
