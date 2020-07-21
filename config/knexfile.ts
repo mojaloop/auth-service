@@ -33,6 +33,9 @@ const Config = {
       directory: seedsDirectory,
       loadExtensions: ['.ts']
     }
+  },
+  production: {
+    // TODO, fill out production attributes accordingly.
   }
 }
 

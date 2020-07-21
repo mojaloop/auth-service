@@ -24,6 +24,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Ahan Gupta <ahangupta.96@gmail.com>
  --------------
  ******/
 
@@ -32,11 +33,28 @@ import Config from '../../config/knexfile'
 import ConsentDB from '../model/consent'
 import ScopeDB from '../model/scope'
 
+<<<<<<< HEAD
 // TODO: dynamically set this!
 const Db: Knex = Knex(Config.test)
 const consentDB: ConsentDB = new ConsentDB(Db)
 const scopeDB: ScopeDB = new ScopeDB(Db)
+=======
+function getKnexInstance (): Knex {
+  let Db: Knex
+  if (process.env.NODE_ENV === 'test') {
+    Db = Knex(Config.test as object)
+  } else if (process.env.NODE_ENV === 'development') {
+    Db = Knex(Config.development as object)
+  } else if (process.env.NODE_ENV === 'production') {
+    Db = Knex(Config.production as object)
+  } else {
+    throw new Error('Unable to configure knex object.')
+  }
+  return Db
+}
+>>>>>>> setup(integration): setup integration tests for consents and scopes seeds and migrations
 
+const consentDB: ConsentDB = new ConsentDB(getKnexInstance())
 export {
   consentDB,
   scopeDB

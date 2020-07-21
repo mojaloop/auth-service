@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process')
+import { execSync } from 'child_process'
 
 /**
  * @file _wait4_all.js
@@ -10,7 +10,7 @@ const { execSync } = require('child_process')
 // Define the docker-compose containers you want to monitor here
 const expectedContainers = [
   'as_auth-service',
-  'as_mysql',
+  'as_mysql'
 ]
 
 let retries = 15
@@ -49,18 +49,17 @@ async function main () {
   }
 }
 
-
 /**
  * @function areAllServicesHealthy
  * @description Get Update the service status, and sleep for `waitTimeMs` if the services aren't healthy
  * @param {*} waitingMap
  * @returns boolean
  */
-async function areAllServicesHealthy(waitingMap) {
+async function areAllServicesHealthy (waitingMap) {
   await updateServiceStatus(waitingMap)
 
   if (isSystemHealthy(waitingMap)) {
-    return true;
+    return true
   }
 
   if (isSystemFailing(waitingMap)) {
@@ -121,7 +120,7 @@ function isSystemFailing (waitingMap) {
  * @param {'healthy' | 'unhealthy' | 'starting'} status
  * @returns {Array<string>}
  */
-function getServicesForStatus(waitingMap, status) {
+function getServicesForStatus (waitingMap, status) {
   return Object
     .keys(waitingMap)
     .filter(k => waitingMap[k] === status)
@@ -137,4 +136,3 @@ async function sleep (timeMs) {
 }
 
 main()
-
