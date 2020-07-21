@@ -36,34 +36,6 @@ const Db: Knex = Knex(Config.test)
 const consentDB: ConsentDB = new ConsentDB(Db)
 const scopeDB: ScopeDB = new ScopeDB(Db)
 
-/**
- * Retrieves scopes from database, reformats object structure, removing
- * scope & consent ids, and returns array of scopes
- * @param id Consent id
- */
-export async function retrieveScopes (id: string): Promise<Scope[]> {
-  // Retrieve scopes
-  const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
-
-  // Reformat scopes to match what external handler wants
-  const scopeDictionary = {}
-
-  scopesRetrieved.forEach((scope: Scope): void => {
-    const accountId: string = scope.accountId
-
-    if (!(accountId in scopeDictionary)) {
-      scopeDictionary[accountId] = {
-        accountId,
-        actions: []
-      }
-    }
-    scopeDictionary[accountId].actions.push(scope.action)
-
-  })
-
-  return Object.values(scopeDictionary)
-}
-
 export {
   consentDB,
   scopeDB
