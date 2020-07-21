@@ -31,8 +31,8 @@ import { consentDB, scopeDB } from '../../../../src/lib/db'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
 
 // Declare Mocks
-const mockRegisterConsent = jest.fn(consentDB.register)
-const mockRegisterScopes = jest.fn(scopeDB.register)
+const mockRegisterConsent = jest.fn(consentDB.insert)
+const mockRegisterScopes = jest.fn(scopeDB.insert)
 
 /*
  * Mock Request Resources
