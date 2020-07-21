@@ -31,9 +31,11 @@
 import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../domain/consents/{ID}/generateChallenge'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { consentDB } from '../../../../lib/db'
+import { consentDB, scopeDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
+import { convertScopesToExternal } from '../../../../lib/scopes'
+import { Scope } from '../../../../model/scope'
 
 /** The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a
  * credential for the given Consent object. The `{ID}` in the URI should
@@ -75,8 +77,12 @@ export async function post (
           consent, challengeValue, 'FIDO', 'PENDING')
       }
 
+      // Retrieve Scopes
+      const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
+      const scopes = convertScopesToExternal(scopesRetrieved)
+
       // Outgoing call to PUT consents/{ID}
-      putConsentId(consent, request)
+      putConsentId(consent, request, scopes)
     } catch (error) {
       Logger.push(error)
       // eslint-disable-next-line max-len

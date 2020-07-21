@@ -34,6 +34,7 @@ import { thirdPartyRequest } from '../../../../lib/requests'
 import { Consent } from '../../../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { ExternalScope } from '../../../../lib/scopes'
 
 /**
  * Validates whether generate challenge request is valid
@@ -75,7 +76,8 @@ export async function updateConsentCredential (
  */
 export async function putConsentId (
   consent: Consent,
-  request: Request):
+  request: Request,
+  scopes: ExternalScope[]):
   Promise<SDKStandardComponents.GenericRequestResponse | undefined> {
   // Construct body of outgoing request
   const body = {
