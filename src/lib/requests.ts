@@ -31,6 +31,7 @@
  ******/
 
 import { config } from './config'
+// @ts-ignore
 import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
 
 // Config file to instantiate ThirdPartyRequest object
