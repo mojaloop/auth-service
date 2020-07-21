@@ -29,7 +29,7 @@
  ******/
 // eslint-disable-next-line max-len
 import { updateCredential, isConsentRequestValid, putConsentId } from '../../../domain/consents/{ID}/generateChallenge'
-import { generate } from '../../../../lib/challenge'
+import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
@@ -50,7 +50,8 @@ export async function post (
   try {
     consent = await consentDB.retrieve(id)
   } catch (error) {
-    Logger.push(error).error('Error in retrieving consent')
+    Logger.push(error)
+    Logger.error('Error in retrieving consent')
     throw error
   }
 
@@ -68,19 +69,19 @@ export async function post (
       // Generate one and update database
       if (!consent.credentialChallenge) {
         // Challenge generation
-        const challenge = await generate()
+        const challengeValue = await challenge.generate()
 
         // Updating credentials with generated challenge
-        consent = await updateCredential(consent, challenge, 'FIDO', 'PENDING')
+        consent = await updateCredential(
+          consent, challengeValue, 'FIDO', 'PENDING')
       }
 
       // Outgoing call to PUT consents/{ID}
       putConsentId(consent, request)
     } catch (error) {
-      Logger
-        .push(error)
-        // eslint-disable-next-line max-len
-        .error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
+      Logger.push(error)
+      // eslint-disable-next-line max-len
+      Logger.error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
       // TODO: Decide on error handling HERE
     }
   })
