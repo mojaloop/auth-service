@@ -27,16 +27,7 @@
  --------------
  ******/
 
-import Knex from 'knex'
-import Config from '../../config/knexfile'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
-
-const Db: Knex = Knex(Config.test)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
-
 export {
-  consentDB,
-  scopeDB
-}
+  Scope,
+  ScopeDB as default
+} from './scope'
