@@ -57,7 +57,6 @@ export async function post (
 
   // If consent is invalid, throw error
   if (!isConsentRequestInitiatedByValidSource(request, consent)) {
-    // throw new Error('400')
     return h.response().code(400)
   }
 
