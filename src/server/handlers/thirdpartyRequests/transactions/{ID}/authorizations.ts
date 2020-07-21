@@ -44,7 +44,7 @@ interface AuthPayload {
 // @ts-ignore
 export async function post (
   request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  // TODO: request validation for headers and
+  // TODO: request validation for headers, source and
   // payload structure (non existent/extra fields)
 
   // Use Joi here?
@@ -60,7 +60,7 @@ export async function post (
     }
   }
 
-  // Validate incoming status
+  // Validate incoming transaction status
   if (payload.status !== 'PENDING') {
     // Incorrect payload
     return h.response().code(400)
@@ -108,6 +108,7 @@ export async function post (
       Logger.error('Could not verify signature')
 
       // TODO: Inform Switch that there is some problem on server side
+      // Should this just be the PUT request or something else?
     }
 
     // TODO: PUT request to switch
