@@ -57,13 +57,13 @@ export async function generate (size: number = 32): Promise<string> {
 /**
  * Helper function to validate signatures using public key
  * @param challenge UTF-8 challenge string
- * @param signature Base64 sign string
+ * @param signature Base64 signature string
  * @param publicKey PEM Base64 Public key string or KeyObject for verification
  *
  * Currently, the implementation focuses on RSA 2048 and ECDSA:secp256k1 keys.
  * Support for additional keys can be extended further.
  */
-export function verifySign (
+export function verifySignature (
   challenge: string,
   signature: string,
   publicKey: string | crypto.KeyObject): boolean {

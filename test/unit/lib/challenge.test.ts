@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import Logger from '@mojaloop/central-services-logger'
 import Credential from './credential'
-import { generate, verifySign } from '../../../src/lib/challenge'
+import { generate, verifySignature } from '../../../src/lib/challenge'
 
 describe('Challenge Generation', (): void => {
   it('Should return a 32 byte string by default', async (): Promise<void> => {
@@ -63,17 +63,17 @@ describe('Signature Verification', (): void => {
       }
     })
 
-    const sign = signer.sign(keyPair.privateKey, 'base64')
-    const verified = verifySign(challenge, sign, keyPair.publicKey)
+    const signature = signer.sign(keyPair.privateKey, 'base64')
+    const verified = verifySignature(challenge, signature, keyPair.publicKey)
 
     expect(verified).toEqual(true)
   })
 
-  // Using a correct hardcoded key, challenge and sign triplet
+  // Using a correct hardcoded key, challenge and signature triplet
   it('verifies correct signature - hardcoded EC Key (secp256k1)', (): void => {
     const { message, signature, keyPair } = Credential.EC
 
-    const verified = verifySign(message, signature, keyPair.public)
+    const verified = verifySignature(message, signature, keyPair.public)
 
     expect(verified).toEqual(true)
   })
@@ -103,8 +103,8 @@ describe('Signature Verification', (): void => {
       }
     })
 
-    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
-    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
+    const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
 
     expect(verified).toEqual(false)
   })
@@ -141,13 +141,13 @@ describe('Signature Verification', (): void => {
 
     anotherSigner.update(anotherChallenge)
 
-    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
-    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
+    const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
 
     expect(verified).toEqual(false)
   })
 
-  // Using a hardcoded key, challenge and sign triplet
+  // Using a hardcoded key, challenge and signature triplet
   it('returns false for signature based on wrong challenge - hardcoded EC Key (secp256k1)', (): void => {
     const { message, keyPair } = Credential.EC
 
@@ -158,8 +158,8 @@ describe('Signature Verification', (): void => {
 
     anotherSigner.update(anotherChallenge)
 
-    const sign = signer.sign(keyPair.private, 'base64')
-    const verified = verifySign(message, sign, keyPair.public)
+    const signature = signer.sign(keyPair.private, 'base64')
+    const verified = verifySignature(message, signature, keyPair.public)
 
     expect(verified).toEqual(false)
   })
@@ -169,17 +169,17 @@ describe('Signature Verification', (): void => {
       modulusLength: 2048 // Key length in bits
     })
 
-    const sign = signer.sign(realKeyPair.privateKey, 'base64')
-    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
+    const signature = signer.sign(realKeyPair.privateKey, 'base64')
+    const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
 
     expect(verified).toEqual(true)
   })
 
-  // Using a correct hardcoded key, challenge and sign triplet
+  // Using a correct hardcoded key, challenge and signature triplet
   it('verifies correct signature - hardcoded RSA 2048 key', (): void => {
     const { message, signature, keyPair } = Credential.RSA
 
-    const verified = verifySign(message, signature, keyPair.public)
+    const verified = verifySignature(message, signature, keyPair.public)
 
     expect(verified).toEqual(true)
   })
@@ -193,13 +193,13 @@ describe('Signature Verification', (): void => {
       modulusLength: 2048 // Key length in bits
     })
 
-    const sign = signer.sign(fakeKeyPair.privateKey, 'base64')
-    const verified = verifySign(challenge, sign, realKeyPair.publicKey)
+    const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
+    const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
 
     expect(verified).toEqual(false)
   })
 
-  // Using a hardcoded key, challenge and sign triplet
+  // Using a hardcoded key, challenge and signature triplet
   it('returns false for signature based on wrong challenge - hardcoded RSA 2048 key', (): void => {
     const { message, keyPair } = Credential.RSA
 
@@ -210,8 +210,8 @@ describe('Signature Verification', (): void => {
 
     anotherSigner.update(anotherChallenge)
 
-    const sign = signer.sign(keyPair.private, 'base64')
-    const verified = verifySign(message, sign, keyPair.public)
+    const signature = signer.sign(keyPair.private, 'base64')
+    const verified = verifySignature(message, signature, keyPair.public)
 
     expect(verified).toEqual(false)
   })
@@ -235,11 +235,11 @@ describe('Signature Verification', (): void => {
 
     anotherSigner.update(anotherChallenge)
 
-    const sign = signer.sign(keyPair.private, 'base64')
+    const signature = signer.sign(keyPair.private, 'base64')
 
     // Assertions
     expect((): void => {
-      verifySign(message, sign, keyPair.public)
+      verifySignature(message, signature, keyPair.public)
     }).toThrowError('Unable to create Verify in mock')
 
     // Verify that crypto function is called correctly
