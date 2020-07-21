@@ -56,7 +56,13 @@ export async function retrieveScopes (id: string): Promise<Scope[]> {
         accountId,
         actions: [scope.action]
       }
+    if (!(accountId in scopeDictionary)) {
+      scopeDictionary[accountId] = {
+        accountId, actions: []
+      }
     }
+    scopeDictionary[accountId].actions.push(scope.action)
+
   })
 
   return Object.values(scopeDictionary)
