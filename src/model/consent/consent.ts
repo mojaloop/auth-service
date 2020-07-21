@@ -38,8 +38,8 @@
 /*
  * Unlike MySQL, SQLite (testing DB) doesn't support Timestamp type natively.
  * It returns ISO strings using the inbuilt Date() function.
- * Thus, typecasting of MySQL Timestamp to Date object for insertion/retrieval
- * for 'createdAt' field and testing for the same may be required in future.
+ * Thus, return value for MySQL Timestamp as Date object for insertion/retrieval
+ * of 'createdAt' field may need to be tested in the future.
  */
 
 import { NotFoundError } from '../errors'
@@ -73,13 +73,13 @@ export class ConsentDB {
 
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
-  public async register (consent: Consent): Promise<number> {
-    // Returns array containing number of inserted rows
-    const insertCount: number[] = await this
+  public async insert (consent: Consent): Promise<boolean> {
+    // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
+    await this
       .Db<Consent>('Consent')
       .insert(consent)
 
-    return insertCount[0]
+    return true
   }
 
   // Update Consent

@@ -19,6 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
 
@@ -33,6 +34,9 @@ export interface ServiceConfig {
   // ../server.ts
   PORT: number;
   HOST: string;
+
+  // TODO: Comment
+  PARTICIPANT_ID: string;
 
   // ../lib/config.
   DATABASE?: {

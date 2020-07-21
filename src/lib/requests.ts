@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -24,19 +25,34 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+
  --------------
  ******/
+/* istanbul ignore file */
+// Testing will be covered in PR #11
 
-import Knex from 'knex'
-import Config from '../../config/knexfile'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import { config } from './config'
+// @ts-ignore
+import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
 
-const Db: Knex = Knex(Config.test)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
+// Config file to instantiate ThirdPartyRequest object
+const configRequest: BaseRequestConfigType = {
+  dfspId: config.get('PARTICIPANT_ID') as string,
+  logger: new Logger(),
+  // TODO: Decide on below later - Handled in future ticket #361
+  jwsSign: false,
+  tls: {
+    outbound: {
+      mutualTLS: {
+        enabled: false
+      }
+    }
+  }
+
+}
+const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
 
 export {
-  consentDB,
-  scopeDB
+  thirdPartyRequest
 }
