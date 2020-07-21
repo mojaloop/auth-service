@@ -29,14 +29,18 @@
 
  --------------
  ******/
+/* istanbul ignore file */
+// Testing will be covered in PR #11
 
 import { config } from './config'
+// @ts-ignore
 import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
 
+// Config file to instantiate ThirdPartyRequest object
 const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
   logger: new Logger(),
-  // TODO: Decide on below later
+  // TODO: Decide on below later - Handled in future ticket #361
   jwsSign: false,
   tls: {
     outbound: {

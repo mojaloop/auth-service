@@ -24,17 +24,22 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Raman Mangla <ramanmangla@google.com>
 
  --------------
  ******/
 
 /* istanbul ignore file */
 
-// Flag to igore BDD testing, which will be dealt with in a later ticket
+/*
+ * This flag is to ignore BDD testing for model
+ * which will be addressed in the future in
+ * ticket #354
+ */
 
 import util from 'util'
 import crypto from 'crypto'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 
 // Async promisified randomBytes function
 const randomBytesAsync = util.promisify(crypto.randomBytes)
@@ -51,6 +56,33 @@ export async function generate (size: number = 32): Promise<string> {
   } catch (error) {
     Logger.push(error)
     Logger.error('Unable to generate challenge string')
+    throw error
+  }
+}
+
+/**
+ * Helper function to validate signatures using public key
+ * @param challenge UTF-8 challenge string
+ * @param signature Base64 signature string
+ * @param publicKey PEM Base64 Public key string or KeyObject for verification
+ *
+ * Currently, the implementation focuses on RSA 2048 and ECDSA:secp256k1 keys.
+ * Support for additional keys can be extended further.
+ */
+export function verifySignature (
+  challenge: string,
+  signature: string,
+  publicKey: string | crypto.KeyObject): boolean {
+  try {
+    // Digest Algorithm
+    const verifier: crypto.Verify = crypto.createVerify('SHA256')
+    // Hashing the challenge string
+    verifier.update(challenge)
+
+    return verifier.verify(publicKey, signature, 'base64')
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Unable to verify signature')
     throw error
   }
 }
