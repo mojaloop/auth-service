@@ -42,7 +42,7 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
  * @param request: request received from PISP
  * @param consent: Consent object
  */
-export function isConsentRequestValid (
+export function isConsentRequestInitiatedByValidSource (
   request: Request,
   consent: Consent): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -53,7 +53,7 @@ export function isConsentRequestValid (
  * Assigns credentials to given consent object and updates in the database
  * Returns updated consent object
  */
-export async function updateCredential (
+export async function updateConsentCredential (
   consent: Consent,
   challenge: string,
   credentialType: string,

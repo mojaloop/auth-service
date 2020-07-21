@@ -28,7 +28,7 @@
  --------------
  ******/
 // eslint-disable-next-line max-len
-import { updateCredential, isConsentRequestValid, putConsentId } from '../../../domain/consents/{ID}/generateChallenge'
+import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../domain/consents/{ID}/generateChallenge'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB } from '../../../../lib/db'
@@ -56,7 +56,7 @@ export async function post (
   }
 
   // If consent is invalid, throw error
-  if (!isConsentRequestValid(request, consent)) {
+  if (!isConsentRequestInitiatedByValidSource(request, consent)) {
     // throw new Error('400')
     return h.response().code(400)
   }
@@ -72,7 +72,7 @@ export async function post (
         const challengeValue = await challenge.generate()
 
         // Updating credentials with generated challenge
-        consent = await updateCredential(
+        consent = await updateConsentCredential(
           consent, challengeValue, 'FIDO', 'PENDING')
       }
 
