@@ -36,11 +36,12 @@
  ******/
 
 import { Request } from '@hapi/hapi'
-import { consentDB, scopesDB } from '../../lib/db'
+import { consentDB, scopeDB } from '../../lib/db'
 import { Scope } from '../../model/scope'
 import { Consent } from '../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
+import { ExternalScope } from '../../lib/scopes'
 
 /**
    * Validates whether request is valid
@@ -63,10 +64,11 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
 
   const scopesArray: Scope[] = []
 
-  payload.scopes.forEach((element: object): void => {
+  payload.scopes.forEach((element: ExternalScope): void => {
     const accountId = element.accountId
-    element.actions.forEach((action: object): void => {
+    element.actions.forEach((action: string): void => {
       const scope = {
+        consentId: consent.id,
         accountId,
         action
       }
@@ -75,10 +77,10 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
   })
 
   try {
-    await consentDB.register(consent)
-    await scopesDB.register(scopesArray)
+    await consentDB.insert(consent)
+    await scopeDB.insert(scopesArray)
   } catch (error) {
-    Logger.push(error).error('Error: Unable to create/store consent and scope')
+    Logger.push(error).error('Error: Unable to store consent and scopes')
     throw error
   }
 }
