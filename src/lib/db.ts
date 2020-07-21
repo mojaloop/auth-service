@@ -43,7 +43,7 @@ const scopeDB: ScopeDB = new ScopeDB(Db)
  */
 export async function retrieveScopes (id: string): Promise<Scope[]> {
   // Retrieve scopes
-  const scopesRetrieved: Scope[] = await scopeDB.retrieve(id)
+  const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
 
   // Reformat scopes to match what external handler wants
   const scopeDictionary = {}
