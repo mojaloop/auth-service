@@ -29,6 +29,8 @@
 
  --------------
  ******/
+/* istanbul ignore file */
+// Testing will be covered in PR #11
 
 import { config } from './config'
 // @ts-ignore
