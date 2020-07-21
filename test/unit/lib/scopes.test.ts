@@ -28,27 +28,30 @@
  --------------
  ******/
 
-import { retrieveScopes, scopeDB } from '../../../src/lib/db'
+import { Scope } from '../../../src/model/scope/scope'
+import { ExternalScope, convertScopesToExternal } from '../../../src/lib/scopes'
 
-const mockScopeDBRetrieve = jest.fn(scopeDB.retrieve)
-
-const retrievedScopes = [{
-  id: '123234',
+const retrievedScopes: Scope[] = [{
+  id: 123234,
   consentId: '1234',
   accountId: 'as2342',
-  actions: ['account.getAccess', 'account.transferMoney']
+  action: 'account.getAccess'
 },
 {
-  id: '234',
+  id: 232234,
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.transferMoney'
+},
+{
+  id: 234,
   consentId: '1234',
   accountId: 'as22',
-  actions: ['account.getAccess']
+  action: 'account.getAccess'
 }
 ]
 
-const consentId = '1234'
-
-const outputScopes = [{
+const outputScopes: ExternalScope[] = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
@@ -60,18 +63,9 @@ const outputScopes = [{
 
 // TODO: Add more tests
 describe('Scope Retrieval/Formatting', (): void => {
-  beforeAll((): void => {
-    mockScopeDBRetrieve.mockResolvedValue(retrievedScopes)
-  })
-  it('Should return formatted scopes', async (): Promise<void> => {
-    const scopes = await retrieveScopes(consentId)
+
+  it('Should return formatted scopes', (): void => {
+    const scopes = convertScopesToExternal(retrievedScopes)
     expect(scopes).toBe(outputScopes)
   })
-
-  it('Should throw an error if error in scope retrieval',
-    async (): Promise<void> => {
-      expect(async (): Promise<void> => {
-        await retrieveScopes(consentId)
-      }).toThrowError()
-    })
 })
