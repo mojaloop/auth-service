@@ -49,16 +49,10 @@ export async function retrieveScopes (id: string): Promise<Scope[]> {
   scopesRetrieved.forEach((scope: Scope): void => {
     const accountId: string = scope.accountId
 
-    if (accountId in scopeDictionary) {
-      scopeDictionary[accountId].actions.push(scope.action)
-    } else {
-      scopeDictionary[accountId] = {
-        accountId,
-        actions: [scope.action]
-      }
     if (!(accountId in scopeDictionary)) {
       scopeDictionary[accountId] = {
-        accountId, actions: []
+        accountId,
+        actions: []
       }
     }
     scopeDictionary[accountId].actions.push(scope.action)
