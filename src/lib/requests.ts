@@ -40,7 +40,7 @@ import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk
 const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
   logger: new Logger(),
-  // TODO: Decide on below later
+  // TODO: Decide on below later - Handled in future ticket #361
   jwsSign: false,
   tls: {
     outbound: {
