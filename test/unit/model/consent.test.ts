@@ -60,6 +60,27 @@ const completeConsent: Consent = {
   credentialPayload: 'dwuduwd&e2idjoj0w'
 }
 
+const consentWithOnlyUpdateFields: Consent = {
+  id: '1234',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs',
+  credentialPayload: 'dwuduwd&e2idjoj0w'
+}
+
+const conflictingConsent: Consent = {
+  id: '1234',
+  // Conflicting initiatorId and participantId
+  initiatorId: 'pisp-0000-1133',
+  participantId: 'dfs-1233-5623',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'ACTIVE',
+  credentialChallenge: 'xyhdushsoa82w92mzs',
+  credentialPayload: 'dwuduwd&e2idjoj0w'
+}
+
 /*
  * Consent Resource Model Unit Tests
  */
@@ -153,13 +174,13 @@ describe('src/model/consent', (): void => {
   })
 
   describe('update', (): void => {
-    it('updates data fields for existing consent', async (): Promise<void> => {
+    it('updates existing consent from a consent having only required fields', async (): Promise<void> => {
       // Inserting record to update
       await Db<Consent>('Consent')
         .insert(partialConsent)
 
       // Action
-      const updateCount: number = await consentDB.update(completeConsent)
+      const updateCount: number = await consentDB.update(consentWithOnlyUpdateFields)
 
       expect(updateCount).toEqual(1)
 
@@ -172,7 +193,71 @@ describe('src/model/consent', (): void => {
 
       expect(consents[0].id).toEqual(partialConsent.id)
       expect(consents[0].createdAt).toEqual(expect.any(String))
-      expect(consents[0]).toEqual(expect.objectContaining(completeConsent))
+      expect(consents[0]).toEqual(expect.objectContaining(consentWithOnlyUpdateFields))
+    })
+
+    it('updates existing consent with only non-conflicting fields from a consent', async (): Promise<void> => {
+      // Inserting record to update
+      await Db<Consent>('Consent')
+        .insert(partialConsent)
+
+      // Action
+      const updateCount: number = await consentDB.update(conflictingConsent)
+
+      expect(updateCount).toEqual(1)
+
+      // Assertion
+      const consents: Consent[] = await Db<Consent>('Consent')
+        .select('*')
+        .where({
+          id: completeConsent.id
+        })
+
+      expect(consents[0].createdAt).toEqual(expect.any(String))
+
+      // Conflicting fields (initiatorId and participantId) are still the same
+      expect(consents[0]).toEqual(expect.objectContaining(partialConsent))
+
+      // Rest of the fields are updated
+      expect(consents[0].credentialStatus).toEqual(conflictingConsent.credentialStatus)
+      expect(consents[0].credentialType).toEqual(conflictingConsent.credentialType)
+      expect(consents[0].credentialPayload).toEqual(conflictingConsent.credentialPayload)
+      expect(consents[0].credentialId).toEqual(conflictingConsent.credentialId)
+      expect(consents[0].credentialChallenge).toEqual(conflictingConsent.credentialChallenge)
+    })
+
+    it('updates credentialStatus if it is not NULL but also not ACTIVE', async (): Promise<void> => {
+      // Inserting record to update
+      await Db<Consent>('Consent')
+        .insert(completeConsent)
+
+      // Action
+      const updateCount: number = await consentDB.update(conflictingConsent)
+
+      expect(updateCount).toEqual(1)
+
+      // Assertion
+      const consents: Consent[] = await Db<Consent>('Consent')
+        .select('*')
+        .where({
+          id: completeConsent.id
+        })
+
+      expect(consents[0].createdAt).toEqual(expect.any(String))
+
+      // Conflicting fields (initiatorId and participantId) are still the same
+      expect(consents[0].initiatorId).toEqual(completeConsent.initiatorId)
+      expect(consents[0].participantId).toEqual(completeConsent.participantId)
+
+      // Even other fields are still the same
+      expect(consents[0].id).toEqual(completeConsent.id)
+      expect(consents[0].credentialType).toEqual(completeConsent.credentialType)
+      expect(consents[0].credentialPayload).toEqual(completeConsent.credentialPayload)
+      expect(consents[0].credentialId).toEqual(completeConsent.credentialId)
+      expect(consents[0].credentialChallenge).toEqual(completeConsent.credentialChallenge)
+
+      // credentialStatus is updated to 'ACTIVE'
+      expect(consents[0].credentialStatus).toEqual('ACTIVE')
     })
 
     it('throws an error for a non-existent consent', async (): Promise<void> => {

@@ -83,15 +83,13 @@ export class ConsentDB {
   }
 
   // Update Consent
-  // No validation against Null or illegal updates in models
+  // Only validating against updating existing fields
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
-    // const updateCount: number = await this
-    //   .Db<Consent>('Consent')
-    //   .where({ id: consent.id })
-    //   .update(consent)
-
-    const updateCount = await this.Db.transaction(async (trx: Knex.Transaction): Promise<number> => {
+    // Transaction to make the update atomic
+    return this.Db.transaction(async (trx): Promise<number> => {
+      // Transaction is rolled back automatically if there is
+      // an error and the returned promise is rejected
       const consents: Consent[] = await trx<Consent>('Consent')
         .select('*')
         .where({ id: consent.id })
@@ -104,12 +102,17 @@ export class ConsentDB {
       const existingConsent = consents[0]
       const updatedConsent: Consent = { ...consent }
 
+      // Cannot update fields once they have been added properly to the DB
       for (const key in consent) {
-        if (existingConsent[key as keyof Consent] !== null) {
+        // Only include the fields which are NULL in the DB
+        // Include credentialStatus even if NON-NULL but ensure that it is not 'ACTIVE'
+        if ((existingConsent[key as keyof Consent] !== null && key !== 'credentialStatus') ||
+            (key === 'credentialStatus' && existingConsent[key as keyof Consent] === 'ACTIVE')) {
           delete updatedConsent[key as keyof Consent]
         }
       }
 
+      // If there are no fields that can be updated
       if (Object.keys(updatedConsent).length === 0) {
         return 0
       }
@@ -118,13 +121,6 @@ export class ConsentDB {
         .where({ id: consent.id })
         .update(updatedConsent)
     })
-
-    // // Ensure that the caller knows that the resource does not exist
-    // if (updateCount === 0) {
-    //   throw new NotFoundError('Consent', consent.id)
-    // }
-
-    return updateCount
   }
 
   // Retrieve Consent by ID (unique)
