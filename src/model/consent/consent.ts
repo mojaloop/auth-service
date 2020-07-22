@@ -86,15 +86,43 @@ export class ConsentDB {
   // No validation against Null or illegal updates in models
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
-    const updateCount: number = await this
-      .Db<Consent>('Consent')
-      .where({ id: consent.id })
-      .update(consent)
+    // const updateCount: number = await this
+    //   .Db<Consent>('Consent')
+    //   .where({ id: consent.id })
+    //   .update(consent)
 
-    // Ensure that the caller knows that the resource does not exist
-    if (updateCount === 0) {
-      throw new NotFoundError('Consent', consent.id)
-    }
+    const updateCount = await this.Db.transaction(async (trx: Knex.Transaction): Promise<number> => {
+      const consents: Consent[] = await trx<Consent>('Consent')
+        .select('*')
+        .where({ id: consent.id })
+        .limit(1)
+
+      if (consents.length === 0) {
+        throw new NotFoundError('Consent', consent.id)
+      }
+
+      const existingConsent = consents[0]
+      const updatedConsent: Consent = { ...consent }
+
+      for (const key in consent) {
+        if (existingConsent[key as keyof Consent] !== null) {
+          delete updatedConsent[key as keyof Consent]
+        }
+      }
+
+      if (Object.keys(updatedConsent).length === 0) {
+        return 0
+      }
+
+      return trx<Consent>('Consent')
+        .where({ id: consent.id })
+        .update(updatedConsent)
+    })
+
+    // // Ensure that the caller knows that the resource does not exist
+    // if (updateCount === 0) {
+    //   throw new NotFoundError('Consent', consent.id)
+    // }
 
     return updateCount
   }
