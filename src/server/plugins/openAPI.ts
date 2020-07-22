@@ -1,3 +1,6 @@
+/* To ignore from integration and BDD testing, addressed in #354 and #368 */
+/* istanbul ignore file */
+
 import Path from 'path'
 import HapiOpenAPI from 'hapi-openapi'
 

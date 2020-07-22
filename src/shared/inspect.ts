@@ -1,3 +1,6 @@
+/* To ignore from integration and BDD testing, addressed in #354 and #368 */
+/* istanbul ignore file */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
