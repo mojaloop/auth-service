@@ -29,10 +29,13 @@
 import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../src/lib/db'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
+import * as ScopeFunction from '../../../../src/lib/scopes'
 
 // Declare Mocks
-const mockRegisterConsent = jest.spyOn(consentDB, 'insert')
-const mockRegisterScopes = jest.spyOn(scopeDB, 'insert')
+const mockInsertConsent = jest.spyOn(consentDB, 'insert')
+const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
+const mockConvertExternalToScope = jest.spyOn(
+  ScopeFunction, 'convertExternalToScope')
 
 /*
  * Mock Request Resources
@@ -50,15 +53,14 @@ const request: Request = {
     id: '1234',
     participantId: 'auth121',
     initiatorId: 'pispa',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
+    scopes: [{
+      accountId: 'as2342',
+      actions: ['account.getAccess', 'account.transferMoney']
+    },
+    {
+      accountId: 'as22',
+      actions: ['account.getAccess']
+    }
     ]
   }
 }
@@ -70,39 +72,72 @@ const consent = {
 }
 
 // TODO: Fill out
-const inputScopes = [{}]
+const externalScopes = [{
+  accountId: 'as2342',
+  actions: ['account.getAccess', 'account.transferMoney']
+},
+{
+  accountId: 'as22',
+  actions: ['account.getAccess']
+}
+]
+
+const scopes = [{
+  id: 123234,
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.getAccess'
+},
+{
+  id: 232234,
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.transferMoney'
+},
+{
+  id: 234,
+  consentId: '1234',
+  accountId: 'as22',
+  action: 'account.getAccess'
+}
+]
 
 describe('server/domain/consents', (): void => {
   beforeAll((): void => {
-    mockRegisterConsent.mockResolvedValue(true)
-    mockRegisterScopes.mockResolvedValue(true)
+    mockInsertConsent.mockResolvedValue(true)
+    mockInsertScopes.mockResolvedValue(true)
+    mockConvertExternalToScope.mockReturnValue(scopes)
   })
+
   it('Should return nothing and no errors thrown', async (): Promise<void> => {
     expect(async (): Promise<void> => {
       await createAndStoreConsent(request)
     }).not.toThrowError()
 
-    expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
-    expect(mockRegisterScopes).toHaveBeenCalledWith(inputScopes)
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
+    expect(mockInsertConsent).toHaveBeenCalledWith(consent)
+    expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
 
   it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
-    mockRegisterConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
+    mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
     expect(async (): Promise<void> => {
       await createAndStoreConsent(request)
     }).toThrowError()
 
-    expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
-    expect(mockRegisterScopes).not.toHaveBeenCalled()
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
+    expect(mockInsertConsent).toHaveBeenCalledWith(consent)
+    expect(mockInsertScopes).not.toHaveBeenCalled()
   })
 
   it('Should throw an error due to error in registering Scopes', async (): Promise<void> => {
-    mockRegisterScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
+    mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
     expect(async (): Promise<void> => {
       await createAndStoreConsent(request)
     }).toThrowError()
 
-    expect(mockRegisterConsent).toHaveBeenCalledWith(consent)
-    expect(mockRegisterScopes).toHaveBeenCalledWith(inputScopes)
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
+    expect(mockInsertConsent).toHaveBeenCalledWith(consent)
+    expect(mockInsertScopes).toHaveBeenCalledWith(inputScopes)
   })
 })
