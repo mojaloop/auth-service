@@ -30,8 +30,10 @@
 import Logger from '@mojaloop/central-services-logger'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent } from '../../../../../model/consent'
-import { consentDB } from '../../../../../lib/db'
+import { Scope } from '../../../../../model/scope'
+import { consentDB, scopeDB } from '../../../../../lib/db'
 import { NotFoundError } from '../../../../../model/errors'
+import { verifySignature } from '../../../../../lib/challenge'
 
 interface AuthPayload {
   consentId: string;
@@ -51,6 +53,8 @@ export async function post (
   // Is request validation done internally?
 
   const payload: AuthPayload = request.payload as AuthPayload
+  let consent: Consent
+  let scopes: Scope[]
 
   // Validate against null fields
   for (const key in payload) {
@@ -65,8 +69,6 @@ export async function post (
     // Incorrect payload
     return h.response().code(400)
   }
-
-  let consent: Consent
 
   // Check if consent exists and retrieve consent data
   try {
@@ -84,25 +86,56 @@ export async function post (
 
   // Check for presence of key, verified key status
   if (consent.credentialStatus === 'ACTIVE' && consent.credentialPayload !== null) {
-    // TODO: Is this the correct error code? or just 400
+    // TODO: Is this the correct error code for key not existing? or just 400
     return h.response().code(401)
   }
 
-  // TODO: Check if scope exists and matches out for the consent
+  // Check if scope exists and matches with consent
+  try {
+    scopes = await scopeDB.retrieveAll(payload.consentId)
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not retrieve scope')
+
+    if (error instanceof NotFoundError) {
+      return h.response().code(404)
+    }
+
+    return h.response().code(400)
+  }
+
+  let scopeExists = false
+
+  for (const scope of scopes) {
+    if (scope.accountId === payload.sourceAccountId) {
+      scopeExists = true
+      break
+    }
+  }
+
+  if (!scopeExists) {
+    return h.response().code(404)
+  }
 
   // If everything checks out, delay processing to the next
   // event loop cycle and return successful acknowledgement
   // of a correct request
   setImmediate((): void => {
     try {
-      // Do any required conversions: check for any quote object format to UTF8 conversions
+      // Do any required conversions
+      // Check for any quote object format to UTF8 conversions
       // Verify signature
-      // const isVerified = verifySign(payload.challenge, payload.value, consent.credentialPayload)
+      const isVerified = verifySignature(
+        payload.challenge,
+        payload.value,
+        consent.credentialPayload as string
+      )
+
+      if (isVerified) {
+        payload.status = 'VERIFIED'
+      }
 
       // Check what to do if verification fails: leave status as PENDING?
-      // if (isVerified) {
-      //   payload.status = 'VERIFIED'
-      // }
     } catch (error) {
       Logger.push(error)
       Logger.error('Could not verify signature')
