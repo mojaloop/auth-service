@@ -29,10 +29,14 @@
 import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../src/lib/db'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
+import { Logger } from '@mojaloop/central-services-logger'
+
 import * as ScopeFunction from '../../../../src/lib/scopes'
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'push')
 const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
 const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
@@ -71,7 +75,6 @@ const consent = {
   initiatorId: 'pispa'
 }
 
-// TODO: Fill out
 const externalScopes = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
@@ -107,6 +110,8 @@ describe('server/domain/consents', (): void => {
     mockInsertConsent.mockResolvedValue(true)
     mockInsertScopes.mockResolvedValue(true)
     mockConvertExternalToScope.mockReturnValue(scopes)
+    mockLoggerError.mockReturnValue(null)
+    mockLoggerPush.mockReturnValue(null)
   })
 
   it('Should return nothing and no errors thrown', async (): Promise<void> => {
@@ -121,9 +126,7 @@ describe('server/domain/consents', (): void => {
 
   it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
     mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
-    expect(async (): Promise<void> => {
-      await createAndStoreConsent(request)
-    }).toThrowError()
+    expect(await createAndStoreConsent(request)).rejects.toThrowError()
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
@@ -132,12 +135,10 @@ describe('server/domain/consents', (): void => {
 
   it('Should throw an error due to error in registering Scopes', async (): Promise<void> => {
     mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
-    expect(async (): Promise<void> => {
-      await createAndStoreConsent(request)
-    }).toThrowError()
+    expect(await createAndStoreConsent(request)).rejects.toThrowError()
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
-    expect(mockInsertScopes).toHaveBeenCalledWith(inputScopes)
+    expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
 })
