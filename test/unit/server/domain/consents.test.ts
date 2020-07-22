@@ -31,8 +31,8 @@ import { consentDB, scopeDB } from '../../../../src/lib/db'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
 
 // Declare Mocks
-const mockRegisterConsent = jest.fn(consentDB.insert)
-const mockRegisterScopes = jest.fn(scopeDB.insert)
+const mockRegisterConsent = jest.spyOn(consentDB, 'insert')
+const mockRegisterScopes = jest.spyOn(scopeDB, 'insert')
 
 /*
  * Mock Request Resources
@@ -74,8 +74,8 @@ const inputScopes = [{}]
 
 describe('server/domain/consents', (): void => {
   beforeAll((): void => {
-    mockRegisterConsent.mockResolvedValue(null)
-    mockRegisterScopes.mockResolvedValue(null)
+    mockRegisterConsent.mockResolvedValue(true)
+    mockRegisterScopes.mockResolvedValue(true)
   })
   it('Should return nothing and no errors thrown', async (): Promise<void> => {
     expect(async (): Promise<void> => {
