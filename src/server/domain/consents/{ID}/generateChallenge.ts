@@ -36,6 +36,16 @@ import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { ExternalScope } from '../../../../lib/scopes'
 
+/*
+ * Interface for Consent Credential resource type
+ */
+export interface ConsentCredential {
+  credentialType: string;
+  credentialStatus: string;
+  credentialPayload?: string | undefined;
+  credentialChallenge: string;
+}
+
 /**
  * Validates whether generate challenge request is valid
  * by comparing consent ID sent matches with existing consent in table
@@ -56,13 +66,11 @@ export function isConsentRequestInitiatedByValidSource (
  */
 export async function updateConsentCredential (
   consent: Consent,
-  challenge: string,
-  credentialType: string,
-  credentialStatus: string): Promise<Consent> {
+  credential: ConsentCredential): Promise<Consent> {
   // Update consent credentials
-  consent.credentialType = credentialType
-  consent.credentialStatus = credentialStatus
-  consent.credentialChallenge = challenge
+  consent.credentialType = credential.credentialType
+  consent.credentialStatus = credential.credentialStatus
+  consent.credentialChallenge = credential.credentialChallenge
 
   // Update in database
   await consentDB.update(consent)
@@ -87,9 +95,10 @@ export async function putConsentId (
     scopes,
     credential: {
       id: null,
-      credentialType: consent.credentialType,
-      status: consent.credentialStatus,
+      credentialType: consent.credentialType as 'FIDO',
+      status: consent.credentialStatus as 'PENDING',
       challenge: {
+        // TODO: Ask Lewis about array buffer
         payload: consent.credentialChallenge,
         signature: null
       },

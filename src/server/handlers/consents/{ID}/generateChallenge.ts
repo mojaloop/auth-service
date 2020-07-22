@@ -28,7 +28,7 @@
  --------------
  ******/
 // eslint-disable-next-line max-len
-import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../domain/consents/{ID}/generateChallenge'
+import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId, ConsentCredential } from '../../../domain/consents/{ID}/generateChallenge'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../lib/db'
@@ -73,8 +73,12 @@ export async function post (
         const challengeValue = await challenge.generate()
 
         // Updating credentials with generated challenge
-        consent = await updateConsentCredential(
-          consent, challengeValue, 'FIDO', 'PENDING')
+        const credential: ConsentCredential = {
+          credentialChallenge: challengeValue,
+          credentialStatus: 'PENDING',
+          credentialType: 'FIDO'
+        }
+        consent = await updateConsentCredential(consent, credential)
       }
 
       // Retrieve Scopes
