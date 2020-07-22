@@ -31,7 +31,7 @@
 import { Scope } from '../../../src/model/scope/scope'
 import { ExternalScope, convertScopesToExternal } from '../../../src/lib/scopes'
 
-const retrievedScopes: Scope[] = [{
+const scopes: Scope[] = [{
   id: 123234,
   consentId: '1234',
   accountId: 'as2342',
@@ -51,7 +51,7 @@ const retrievedScopes: Scope[] = [{
 }
 ]
 
-const outputScopes: ExternalScope[] = [{
+const externalScope: ExternalScope[] = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
@@ -62,10 +62,8 @@ const outputScopes: ExternalScope[] = [{
 ]
 
 // TODO: Add more tests
-describe('Scope Retrieval/Formatting', (): void => {
-
-  it('Should return formatted scopes', (): void => {
-    const scopes = convertScopesToExternal(retrievedScopes)
-    expect(scopes).toBe(outputScopes)
+describe('Scope Convert Scopes to ExternalScopes', (): void => {
+  it('Should return Scope array when input ExternalScope array', (): void => {
+    expect(convertScopesToExternal(scopes)).toStrictEqual(externalScope)
   })
 })

@@ -50,11 +50,13 @@ export function convertScopesToExternal (
     const accountId: string = scope.accountId
 
     if (!(accountId in scopeDictionary)) {
+      // @ts-ignore
       scopeDictionary[accountId] = {
         accountId,
         actions: []
       }
     }
+    // @ts-ignore
     scopeDictionary[accountId].actions.push(scope.action)
   })
 
