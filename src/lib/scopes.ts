@@ -34,6 +34,12 @@ export interface ExternalScope {
   actions: string[];
 }
 
+/**
+ * Takes input of array of ExternalScope objects
+ * Reformats and returns array of Scope objects
+ * @param externalScopes Array of ExternalScope objects received
+ * @param consentId Id of Consent to which scopes belong
+ */
 export function convertExternalToScope (
   externalScopes: ExternalScope[], consentId: string): Scope[] {
   const scopes: Scope[] = []
