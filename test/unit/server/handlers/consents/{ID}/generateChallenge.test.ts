@@ -60,10 +60,11 @@ const request: Request = {
 // @ts-ignore
 const h: ResponseToolkit = {
   response: (): ResponseObject => {
-    const code = function (num: number): number {
-      return num
-    }
-    return code as unknown as ResponseObject
+    return {
+      code: (num: number): ResponseObject => {
+        return num as unknown as ResponseObject
+      }
+    } as unknown as ResponseObject
   }
 }
 
