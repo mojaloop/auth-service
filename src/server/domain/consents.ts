@@ -39,7 +39,7 @@ import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../lib/db'
 import { Scope } from '../../model/scope'
 import { Consent } from '../../model/consent'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { ExternalScope, convertExternalToScope } from '../../lib/scopes'
 

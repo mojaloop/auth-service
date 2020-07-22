@@ -93,21 +93,21 @@ const requestInvalid: Request = {
 }
 
 // @ts-ignore
-const requestInvalid2: Request = {
-  headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: 42323,
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23'
-  }
-}
+// const requestInvalid2: Request = {
+//   headers: {
+//     fspiopsource: 'pisp-2342-2233',
+//     fspiopdestination: 'dfsp-3333-2123'
+//   },
+//   params: {
+//     id: '1234'
+//   },
+//   payload: {
+//     id: '1234',
+//     requestId: 42323,
+//     initiatorId: 'pispa',
+//     participantId: 'sfsfdf23'
+//   }
+// }
 
 // @ts-ignore
 const h: ResponseToolkit = {
@@ -137,28 +137,19 @@ describe('server/handlers/consents', (): void => {
         h as ResponseToolkit
       )
       expect(response).toBe(202)
-      // expect(mockStoreConsent).toHaveBeenCalledWith(request)
-      // expect(setImmediate).toHaveBeenCalled()
+      jest.runAllImmediates()
+      expect(mockStoreConsent).toHaveBeenCalledWith(request)
+      expect(setImmediate).toHaveBeenCalled()
     })
 
   it('Should return 400 code due to invalid request',
     async (): Promise<void> => {
+      mockIsRequestValid.mockReturnValueOnce(false)
+
       const response = await post(
         requestInvalid as Request,
         h as ResponseToolkit
       )
-      expect(response).toBe(400)
-
-      expect(mockStoreConsent).not.toHaveBeenCalled()
-    })
-
-  it('Should also return 400 code due to invalid request',
-    async (): Promise<void> => {
-      const response = await post(
-        requestInvalid2 as Request,
-        h as ResponseToolkit
-      )
-
       expect(response).toBe(400)
       expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
@@ -166,13 +157,13 @@ describe('server/handlers/consents', (): void => {
 
   it('Should throw an error due to error in creating/storing consent & scopes',
     async (): Promise<void> => {
-      mockStoreConsent
-        .mockRejectedValueOnce(new Error('Error Registering Consent'))
+      mockStoreConsent.mockRejectedValueOnce(new Error('Error Registering Consent'))
 
       const response = await post(request as Request, h as ResponseToolkit)
       expect(response).toBe(202)
+      jest.runAllImmediates()
 
-      expect(setImmediate).toThrowError()
+      expect(setImmediate).rejects.toThrowError()
       expect(mockStoreConsent).toHaveBeenCalledWith(request)
     })
 })

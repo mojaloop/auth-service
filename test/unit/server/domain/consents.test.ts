@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -29,14 +30,14 @@
 import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../src/lib/db'
 import { createAndStoreConsent } from '../../../../src/server/domain/consents'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 
 import * as ScopeFunction from '../../../../src/lib/scopes'
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
 const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
@@ -119,7 +120,7 @@ describe('server/domain/consents', (): void => {
       await createAndStoreConsent(request)
     }).not.toThrowError()
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
@@ -128,7 +129,7 @@ describe('server/domain/consents', (): void => {
     mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
     expect(await createAndStoreConsent(request)).rejects.toThrowError()
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
     expect(mockInsertScopes).not.toHaveBeenCalled()
   })
@@ -137,7 +138,7 @@ describe('server/domain/consents', (): void => {
     mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
     expect(await createAndStoreConsent(request)).rejects.toThrowError()
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes)
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
