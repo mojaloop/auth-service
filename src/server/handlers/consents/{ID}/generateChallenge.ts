@@ -33,7 +33,7 @@ import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 import { convertScopesToExternal } from '../../../../lib/scopes'
 import { Scope } from '../../../../model/scope'
 
