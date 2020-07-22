@@ -41,7 +41,7 @@ import { Scope } from '../../model/scope'
 import { Consent } from '../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
-import { ExternalScope } from '../../lib/scopes'
+import { ExternalScope, convertExternalToScope } from '../../lib/scopes'
 
 interface PostConsentPayload {
   id: string;
@@ -70,23 +70,11 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
     participantId: payload.participantId
   }
 
-  const scopesArray: Scope[] = []
-
-  payload.scopes.forEach((element: ExternalScope): void => {
-    const accountId = element.accountId
-    element.actions.forEach((action: string): void => {
-      const scope = {
-        consentId: consent.id,
-        accountId,
-        action
-      }
-      scopesArray.push(scope)
-    })
-  })
+  const scopes: Scope[] = convertExternalToScope(payload.scopes, consent.id)
 
   try {
     await consentDB.insert(consent)
-    await scopeDB.insert(scopesArray)
+    await scopeDB.insert(scopes)
   } catch (error) {
     Logger.push(error)
     Logger.error('Error: Unable to store consent and scopes')

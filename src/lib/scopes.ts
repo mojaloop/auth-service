@@ -27,7 +27,27 @@
  --------------
  ******/
 
+import { Scope } from '../model/scope'
+
 export interface ExternalScope {
   accountId: string;
   actions: string[];
+}
+
+export function convertExternalToScope (
+  externalScopes: ExternalScope[], consentId: string): Scope[] {
+  const scopes: Scope[] = []
+
+  externalScopes.forEach((element: ExternalScope): void => {
+    const accountId = element.accountId
+    element.actions.forEach((action: string): void => {
+      const scope = {
+        consentId,
+        accountId,
+        action
+      }
+      scopes.push(scope)
+    })
+  })
+  return scopes
 }
