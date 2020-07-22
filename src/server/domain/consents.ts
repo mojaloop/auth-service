@@ -54,10 +54,9 @@ export function isRequestValid (request: Request): boolean {
 }
 
 export async function createAndStoreConsent (request: Request): Promise<void> {
-  const payload = request.payload
-
+  const payload = request.payload as object
   const consent: Consent = {
-    id: request.payload.id,
+    id: payload.id,
     initiatorId: request.payload.initiatorId,
     participantId: request.payload.participantId
   }
@@ -80,7 +79,8 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
     await consentDB.insert(consent)
     await scopeDB.insert(scopesArray)
   } catch (error) {
-    Logger.push(error).error('Error: Unable to store consent and scopes')
+    Logger.push(error)
+    Logger.error('Error: Unable to store consent and scopes')
     throw error
   }
 }

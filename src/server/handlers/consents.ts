@@ -54,7 +54,8 @@ export async function post (
     try {
       await createAndStoreConsent(request)
     } catch (error) {
-      Logger.push(error).error('Error: Unable to create/store consent')
+      Logger.push(error)
+      Logger.error('Error: Unable to create/store consent')
       // TODO: Decide what to do with this error.
     }
   })
