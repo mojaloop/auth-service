@@ -31,6 +31,7 @@ describe('cli', (): void => {
     expect(cli).toBeDefined()
     expect(server.run).toHaveBeenCalledWith({
       PACKAGE: Config.PACKAGE,
+      PARTICIPANT_ID: Config.PARTICIPANT_ID,
       PORT: Config.PORT,
       HOST: Config.HOST,
       INSPECT: {
