@@ -43,7 +43,6 @@ interface AuthPayload {
   value: string;
 }
 
-// @ts-ignore
 export async function post (
   request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   // TODO: request validation for headers, source and
@@ -51,6 +50,7 @@ export async function post (
 
   // Use Joi here?
   // Is request validation done internally?
+  // Need to update ThirdPartyAuthorizationRequests YAML for body schema?
 
   const payload: AuthPayload = request.payload as AuthPayload
   let consent: Consent
@@ -58,7 +58,7 @@ export async function post (
 
   // Validate against null fields
   for (const key in payload) {
-    if (payload[key as keyof AuthPayload] == null) {
+    if (payload[key as keyof AuthPayload] === null) {
       // Incorrect payload
       return h.response().code(400)
     }
@@ -122,8 +122,7 @@ export async function post (
   // of a correct request
   setImmediate((): void => {
     try {
-      // Do any required conversions
-      // Check for any quote object format to UTF8 conversions
+      // Is quote object format UTF8 string or is conversion required?
       // Verify signature
       const isVerified = verifySignature(
         payload.challenge,
@@ -136,15 +135,15 @@ export async function post (
       }
 
       // Check what to do if verification fails: leave status as PENDING?
+
+      // TODO: PUT request to switch
     } catch (error) {
       Logger.push(error)
       Logger.error('Could not verify signature')
 
-      // TODO: Inform Switch that there is some problem on server side
-      // Should this just be the PUT request or something else?
+      // TODO: Inform Switch that there is some problem on server side or
+      // Should this just throw an error?
     }
-
-    // TODO: PUT request to switch
   })
 
   // Request acknowledgement: received and processing it
