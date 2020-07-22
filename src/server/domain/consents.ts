@@ -43,22 +43,31 @@ import { Logger } from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { ExternalScope } from '../../lib/scopes'
 
+interface PostConsentPayload {
+  id: string;
+  initiatorId: string;
+  participantId: string;
+  scopes: ExternalScope[];
+  credential: null;
+}
+
 /**
    * Validates whether request is valid
    * by comparing if source header matches participant ID
    * @param request: request received from switch
    */
 export function isRequestValid (request: Request): boolean {
+  const payload = request.payload as PostConsentPayload
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  return (request.payload.participantId === fspiopSource)
+  return (payload.participantId === fspiopSource)
 }
 
 export async function createAndStoreConsent (request: Request): Promise<void> {
-  const payload = request.payload as object
+  const payload = request.payload as PostConsentPayload
   const consent: Consent = {
     id: payload.id,
-    initiatorId: request.payload.initiatorId,
-    participantId: request.payload.participantId
+    initiatorId: payload.initiatorId,
+    participantId: payload.participantId
   }
 
   const scopesArray: Scope[] = []
