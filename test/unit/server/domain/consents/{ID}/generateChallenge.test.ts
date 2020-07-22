@@ -28,18 +28,21 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB, retrieveScopes } from '../../../../../../src/lib/db'
+import { consentDB } from '../../../../../../src/lib/db'
 import { Consent } from '../../../../../../src/model/consent'
 import { thirdPartyRequest } from '../../../../../../src/lib/requests'
 // eslint-disable-next-line max-len
-import { updateCredential, isConsentRequestValid, putConsentId } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
+import Logger from '@mojaloop/central-services-logger'
 import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
+import { ExternalScope } from '../../../../../../src/lib/scopes'
 
 // Declaring Mock Functions
-const mockPutConsents = jest.fn(thirdPartyRequest.putConsents)
-const mockRetrieveScopes = jest.fn(retrieveScopes)
-const mockConsentDbUpdate = jest.fn(consentDB.update)
+const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
+const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
 
 /*
  * Mock Request Resources
@@ -89,9 +92,15 @@ const completeConsent: Consent = {
 
 const nullConsent: Consent = null
 
-const challenge = 'xyhdushsoa82w92mzs='
+const credential = {
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
 
-const outputScopes = [{
+// const challenge = 'xyhdushsoa82w92mzs='
+
+const externalScopes: ExternalScope[] = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
@@ -101,88 +110,90 @@ const outputScopes = [{
 }
 ]
 
-// Tests for isConsentRequestValid
-describe('Request Validation', (): void => {
-  it('Should return true', (): void => {
-    expect(isConsentRequestValid(request, partialConsent)).toBe(true)
-  })
-
-  it('Should return false because consent is null', (): void => {
-    expect(isConsentRequestValid(request, nullConsent)).toBe(false)
-  })
-
-  it('Should return false because initiator ID does not match', (): void => {
-    expect(isConsentRequestValid(request, partialConsent2)).toBe(false)
-  })
-
-  it('Should throw an error as request headers are missing', (): void => {
-    expect((): void => {
-      isConsentRequestValid(requestNoHeaders as Request, partialConsent2)
-    }).toThrowError()
-  })
-})
-
-// Tests for updateCredential
-describe('Updating Consent', (): void => {
-  // eslint-disable-next-line max-len
-  it('Should return a consent object with filled out credentials', async (): Promise<void> => {
-    mockConsentDbUpdate.mockResolvedValueOnce(3)
-
-    const updatedConsent = await updateCredential(
-      partialConsent, challenge, 'FIDO', 'PENDING')
-
-    expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
-    expect(updatedConsent).toEqual(completeConsent)
-  })
-
-  // eslint-disable-next-line max-len
-  it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
-    mockConsentDbUpdate.mockRejectedValue(new Error('Error updating Database'))
-
-    expect(async (): Promise<void> => {
-      await updateCredential(partialConsent, challenge, 'FIDO', 'PENDING')
-    }).toThrowError()
-
-    expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
-  })
-})
-
-// Tests for putConsentId
-describe('Requests', (): void => {
+describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   beforeAll((): void => {
-    request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = '1234'
-    request.headers[Enum.Http.Headers.FSPIOP.DESTINATION] = '5678'
-    mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
-    mockRetrieveScopes.mockResolvedValue(outputScopes)
+    mockLoggerPush.mockImplementation((): void => {})
+    mockLoggerError.mockImplementation((): void => {})
   })
 
-  // TODO: Remove one of the first 2 tests
-  it('Should not throw an error', (): void => {
-    expect(async (): Promise<void> => {
-      await putConsentId(completeConsent, request)
-    }).not.toThrowError()
+  // Tests for isConsentRequestInitiatedByValidSource
+  describe('Request Validation', (): void => {
+    it('Should return true', (): void => {
+      expect(isConsentRequestInitiatedByValidSource(request, partialConsent)).toBe(true)
+    })
+
+    it('Should return false because consent is null', (): void => {
+      expect(isConsentRequestInitiatedByValidSource(request, nullConsent)).toBe(false)
+    })
+
+    it('Should return false because initiator ID does not match', (): void => {
+      expect(isConsentRequestInitiatedByValidSource(request, partialConsent2)).toBe(false)
+    })
+
+    it('Should throw an error as request headers are missing', (): void => {
+      expect((): void => {
+        isConsentRequestInitiatedByValidSource(requestNoHeaders as Request, partialConsent2)
+      }).toThrowError()
+    })
   })
 
-  it('Should return 1', async (): Promise<void> => {
-    expect(await putConsentId(completeConsent, request)).toBe(1)
+  // Tests for updateConsentCredential
+  describe('Updating Consent', (): void => {
+  // eslint-disable-next-line max-len
+    it('Should return a consent object with filled out credentials', async (): Promise<void> => {
+      mockConsentDbUpdate.mockResolvedValueOnce(3)
+
+      const updatedConsent = await updateConsentCredential(partialConsent, credential)
+
+      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
+      expect(updatedConsent).toEqual(completeConsent)
+    })
+
+    // eslint-disable-next-line max-len
+    it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
+      mockConsentDbUpdate.mockRejectedValue(new Error('Error updating Database'))
+
+      expect(await updateConsentCredential(partialConsent, credential)).rejects.toThrowError()
+
+      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
+    })
   })
 
-  it('Should throw an error as request is null value', (): void => {
-    expect(async (): Promise<void> => {
-      await putConsentId(completeConsent, null)
-    }).toThrowError()
-  })
+  // Tests for putConsentId
+  describe('Requests', (): void => {
+    beforeAll((): void => {
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = '1234'
+      request.headers[Enum.Http.Headers.FSPIOP.DESTINATION] = '5678'
+      mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
+    })
 
-  it('Should throw an error as consent is null value', (): void => {
-    expect(async (): Promise<void> => {
-      await putConsentId(nullConsent, request)
-    }).toThrowError()
-  })
+    // TODO: Remove one of the first 2 tests
+    it('Should not throw an error', (): void => {
+      expect(async (): Promise<void> => {
+        await putConsentId(completeConsent, request, externalScopes)
+      }).not.toThrowError()
+    })
 
-  it('Should throw an error as putConsents() throws an error', (): void => {
-    mockPutConsents.mockRejectedValue(new Error('Test Error'))
-    expect(async (): Promise<void> => {
-      await putConsentId(completeConsent, request)
-    }).toThrowError()
+    it('Should return 1', async (): Promise<void> => {
+      expect(await putConsentId(completeConsent, request, externalScopes)).toBe(1)
+    })
+
+    it('Should throw an error as request is null value', async (): Promise<void> => {
+      expect(async (): Promise<void> => {
+        await putConsentId(completeConsent, null as Request, externalScopes)
+      }).toThrowError()
+    })
+
+    it('Should throw an error as consent is null value', async (): Promise<void> => {
+      expect(async (): Promise<void> => {
+        await putConsentId(nullConsent, request, externalScopes)
+      }).toThrowError()
+    })
+
+    it('Should throw an error as putConsents() throws an error', async (): Promise<void> => {
+      mockPutConsents.mockRejectedValue(new Error('Test Error'))
+      expect(await putConsentId(completeConsent, request, externalScopes)).rejects.toThrowError()
+    })
   })
-})
+}
+)
