@@ -32,15 +32,15 @@ import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { consentDB } from '../../../../../../src/lib/db'
 import { Consent } from '../../../../../../src/model/consent'
 import { post } from '../../../../../../src/server/handlers/consents/{ID}/generateChallenge'
-import { generate } from '../../../../../../src/lib/challenge'
-import { updateCredential, isConsentRequestValid, putConsentId } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+import * as Challenge from '../../../../../../src/lib/challenge'
+import * as Domain from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 
 // Declaring Mocks
-const mockPutConsentId = jest.fn(putConsentId)
-const mockUpdateCredential = jest.fn(updateCredential)
-const mockGenerate = jest.fn(generate)
-const mockIsConsentRequestValid = jest.fn(isConsentRequestValid)
-const mockConsentDbRetrieve = jest.fn(consentDB.retrieve)
+const mockPutConsentId = jest.spyOn(Domain, 'putConsentId')
+const mockUpdateCredential = jest.spyOn(Domain, 'updateConsentCredential')
+const mockGenerate = jest.spyOn(Challenge, 'generate')
+const mockIsConsentRequestValid = jest.spyOn(Domain, 'isConsentRequestInitiatedByValidSource')
+const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 
 /*
  * Mock Request + Response Resources
@@ -93,11 +93,8 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     mockGenerate.mockResolvedValue('xyhdushsoa82w92mzs=')
     mockIsConsentRequestValid.mockReturnValue(true)
     mockConsentDbRetrieve.mockResolvedValue(partialConsent)
-    mockPutConsentId.mockResolvedValue(2)
+    mockPutConsentId.mockResolvedValue(null)
 
-    // mockPutConsentId.mockResolvedValue(null)
-    // mockRequests.putConsentId = jest.fn().mockResolvedValueOnce(null)
-    // mockRequests.putConsentId = jest.fn((): Promise<any> => Promise.resolve(null))
   })
 
   it('Should return 202 success code', async (): Promise<void> => {
