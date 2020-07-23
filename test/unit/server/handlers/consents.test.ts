@@ -29,9 +29,12 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { post } from '../../../../src/server/handlers/consents'
 import * as Domain from '../../../../src/server/domain/consents'
+import Logger from '@mojaloop/central-services-logger'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
 const mockIsRequestValid = jest.spyOn(Domain, 'isRequestValid')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
 
 /*
  * Mock Request Resources
@@ -124,10 +127,13 @@ describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
     mockIsRequestValid.mockReturnValue(true)
     mockStoreConsent.mockResolvedValue()
+    mockLoggerError.mockReturnValue(null)
+    mockLoggerPush.mockReturnValue(null)
+    jest.useFakeTimers()
   })
 
   beforeEach((): void => {
-    jest.useFakeTimers()
+    jest.clearAllTimers()
   })
 
   it('Should return 202 success code',
@@ -151,6 +157,7 @@ describe('server/handlers/consents', (): void => {
         h as ResponseToolkit
       )
       expect(response).toBe(400)
+      // jest.runAllImmediates()
       expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
     })
@@ -163,7 +170,7 @@ describe('server/handlers/consents', (): void => {
       expect(response).toBe(202)
       jest.runAllImmediates()
 
-      expect(setImmediate).rejects.toThrowError()
+      // expect(setImmediate).rejects.toThrowError()
       expect(mockStoreConsent).toHaveBeenCalledWith(request)
     })
 })
