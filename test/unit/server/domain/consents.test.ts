@@ -115,6 +115,10 @@ describe('server/domain/consents', (): void => {
     mockLoggerPush.mockReturnValue(null)
   })
 
+  beforeEach(():void => {
+    jest.clearAllMocks()
+  })
+
   it('Should return nothing and no errors thrown', async (): Promise<void> => {
     await expect(createAndStoreConsent(request)).resolves.toBe(undefined)
 

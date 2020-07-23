@@ -28,7 +28,7 @@
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { post } from '../../../../src/server/handlers/consents'
-import * as Domain from '../../../../src/server/domain/consents'
+import * as Domain from '../../../../src/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
@@ -134,6 +134,7 @@ describe('server/handlers/consents', (): void => {
 
   beforeEach((): void => {
     jest.clearAllTimers()
+    jest.clearAllMocks()
   })
 
   it('Should return 202 success code',
@@ -157,6 +158,7 @@ describe('server/handlers/consents', (): void => {
         h as ResponseToolkit
       )
       expect(response).toBe(400)
+      expect(mockIsRequestValid).toHaveBeenCalledWith(requestInvalid)
       // jest.runAllImmediates()
       expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
