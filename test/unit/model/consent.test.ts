@@ -213,17 +213,18 @@ describe('src/model/consent', (): void => {
           id: completeConsent.id
         })
 
-      expect(consents[0].createdAt).toEqual(expect.any(String))
-
-      // Conflicting fields (initiatorId and participantId) are still the same
-      expect(consents[0]).toEqual(expect.objectContaining(partialConsent))
-
-      // Rest of the fields are updated
-      expect(consents[0].credentialStatus).toEqual(conflictingConsent.credentialStatus)
-      expect(consents[0].credentialType).toEqual(conflictingConsent.credentialType)
-      expect(consents[0].credentialPayload).toEqual(conflictingConsent.credentialPayload)
-      expect(consents[0].credentialId).toEqual(conflictingConsent.credentialId)
-      expect(consents[0].credentialChallenge).toEqual(conflictingConsent.credentialChallenge)
+      expect(consents[0]).toEqual(expect.objectContaining({
+        // Conflicting fields (initiatorId and participantId) are still the same
+        ...partialConsent,
+        // SQLite string date type
+        createdAt: expect.any(String),
+        // Rest of the fields are updated
+        credentialId: conflictingConsent.credentialId,
+        credentialStatus: conflictingConsent.credentialStatus,
+        credentialType: conflictingConsent.credentialType,
+        credentialPayload: conflictingConsent.credentialPayload,
+        credentialChallenge: conflictingConsent.credentialChallenge
+      }))
     })
 
     it('updates credentialStatus if it is not NULL but also not ACTIVE', async (): Promise<void> => {
@@ -243,21 +244,13 @@ describe('src/model/consent', (): void => {
           id: completeConsent.id
         })
 
-      expect(consents[0].createdAt).toEqual(expect.any(String))
-
-      // Conflicting fields (initiatorId and participantId) are still the same
-      expect(consents[0].initiatorId).toEqual(completeConsent.initiatorId)
-      expect(consents[0].participantId).toEqual(completeConsent.participantId)
-
-      // Even other fields are still the same
-      expect(consents[0].id).toEqual(completeConsent.id)
-      expect(consents[0].credentialType).toEqual(completeConsent.credentialType)
-      expect(consents[0].credentialPayload).toEqual(completeConsent.credentialPayload)
-      expect(consents[0].credentialId).toEqual(completeConsent.credentialId)
-      expect(consents[0].credentialChallenge).toEqual(completeConsent.credentialChallenge)
-
-      // credentialStatus is updated to 'ACTIVE'
-      expect(consents[0].credentialStatus).toEqual('ACTIVE')
+      expect(consents[0]).toEqual(expect.objectContaining({
+        // Conflicting fields (initiatorId and participantId) are still the same
+        // Even other fields are the same
+        ...completeConsent,
+        // credentialStatus is updated to 'ACTIVE'
+        credentialStatus: 'ACTIVE'
+      }))
     })
 
     it('throws an error for a non-existent consent', async (): Promise<void> => {

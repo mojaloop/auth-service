@@ -102,12 +102,13 @@ export class ConsentDB {
       const existingConsent = consents[0]
       const updatedConsent: Consent = { ...consent }
 
-      // Cannot update fields once they have been added properly to the DB
+      // Prepare a new Consent with only allowable updates
+      // * Cannot update Non-NULL fields in the DB
+      // * Field credentialStatus can be updated even
+      //   if when it is NON-NULL but not 'ACTIVE
       for (const key in consent) {
-        // Only include the fields which are NULL in the DB
-        // Include credentialStatus even if NON-NULL but ensure that it is not 'ACTIVE'
         if ((existingConsent[key as keyof Consent] !== null && key !== 'credentialStatus') ||
-            (key === 'credentialStatus' && existingConsent[key as keyof Consent] === 'ACTIVE')) {
+            (key === 'credentialStatus' && existingConsent.credentialStatus === 'ACTIVE')) {
           delete updatedConsent[key as keyof Consent]
         }
       }
