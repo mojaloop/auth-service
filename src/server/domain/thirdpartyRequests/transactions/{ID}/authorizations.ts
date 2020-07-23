@@ -26,3 +26,46 @@
  - Raman Mangla <ramanmangla@google.com>
  --------------
  ******/
+
+import { Consent } from '../../../../../model/consent'
+import { Scope } from '../../../../../model/scope'
+
+export interface AuthPayload {
+  consentId: string;
+  sourceAccountId: string;
+  status: string;
+  challenge: string;
+  value: string;
+}
+
+// Validate against null fields
+export function hasNullFields (payload: AuthPayload): boolean {
+  for (const key in payload) {
+    if (payload[key as keyof AuthPayload] === null) {
+      return true
+    }
+  }
+
+  return false
+}
+
+// Validate payload status
+export function hasCorrectStatus (payload: AuthPayload): boolean {
+  return payload.status === 'PENDING'
+}
+
+// Check for existence of an active Consent key
+export function hasActiveConsentKey (consent: Consent): boolean {
+  return consent.credentialStatus === 'ACTIVE' && consent.credentialPayload !== null
+}
+
+// Check for matching Consent scope
+export function hasMatchingScope (consentScopes: Scope[], payload: AuthPayload): boolean {
+  for (const scope of consentScopes) {
+    if (scope.accountId === payload.sourceAccountId) {
+      return true
+    }
+  }
+
+  return false
+}

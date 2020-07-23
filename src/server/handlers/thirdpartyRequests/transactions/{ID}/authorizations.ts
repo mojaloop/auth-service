@@ -28,47 +28,44 @@
  ******/
 
 import Logger from '@mojaloop/central-services-logger'
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import Enum from '@mojaloop/central-services-shared'
 import { Consent } from '../../../../../model/consent'
 import { Scope } from '../../../../../model/scope'
 import { consentDB, scopeDB } from '../../../../../lib/db'
 import { NotFoundError } from '../../../../../model/errors'
 import { verifySignature } from '../../../../../lib/challenge'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import {
+  AuthPayload,
+  hasNullFields,
+  hasCorrectStatus,
+  hasActiveConsentKey,
+  hasMatchingScope
+} from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
-interface AuthPayload {
-  consentId: string;
-  sourceAccountId: string;
-  status: string;
-  challenge: string;
-  value: string;
-}
-
+// @ts-ignore
 export async function post (
   request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   // TODO: request validation for headers, source and
   // payload structure (non existent/extra fields)
-
-  // Use Joi here?
+  // TODO: use JOI for these 2 validations?
   // Is request validation done internally?
   // Need to update ThirdPartyAuthorizationRequests YAML for body schema?
 
   const payload: AuthPayload = request.payload as AuthPayload
+
+  // TODO: use JOI for these 2 validations?
+  // Validate against payload null fields
+  if (hasNullFields(payload)) {
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+  }
+
+  // Validate incoming status
+  if (!hasCorrectStatus(payload)) {
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+  }
+
   let consent: Consent
-  let scopes: Scope[]
-
-  // Validate against null fields
-  for (const key in payload) {
-    if (payload[key as keyof AuthPayload] === null) {
-      // Incorrect payload
-      return h.response().code(400)
-    }
-  }
-
-  // Validate incoming transaction status
-  if (payload.status !== 'PENDING') {
-    // Incorrect payload
-    return h.response().code(400)
-  }
 
   // Check if consent exists and retrieve consent data
   try {
@@ -78,43 +75,39 @@ export async function post (
     Logger.error('Could not retrieve consent')
 
     if (error instanceof NotFoundError) {
-      return h.response().code(404)
+      return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
-    return h.response().code(400)
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
-  // Check for presence of key, verified key status
-  if (consent.credentialStatus === 'ACTIVE' && consent.credentialPayload !== null) {
-    // TODO: Is this the correct error code for key not existing? or just 400
-    return h.response().code(401)
-  }
+  let consentScopes: Scope[]
 
-  // Check if scope exists and matches with consent
+  // Retrieve scopes for the consent
   try {
-    scopes = await scopeDB.retrieveAll(payload.consentId)
+    consentScopes = await scopeDB.retrieveAll(payload.consentId)
   } catch (error) {
     Logger.push(error)
     Logger.error('Could not retrieve scope')
 
     if (error instanceof NotFoundError) {
-      return h.response().code(404)
+      return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
-    return h.response().code(400)
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
-  let scopeExists = false
-
-  for (const scope of scopes) {
-    if (scope.accountId === payload.sourceAccountId) {
-      scopeExists = true
-      break
-    }
+  // Check if the request scope matches with the consent
+  if (!hasMatchingScope(consentScopes, payload)) {
+    return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
   }
 
-  if (!scopeExists) {
-    return h.response().code(404)
+  // Check for presence of an active key
+  if (!hasActiveConsentKey(consent)) {
+    //
+    // TODO: Is this the correct error code for key not existing? or just 400
+    //
+    return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
   }
 
   // If everything checks out, delay processing to the next
@@ -122,7 +115,7 @@ export async function post (
   // of a correct request
   setImmediate((): void => {
     try {
-      // Is quote object format UTF8 string or is conversion required?
+      // TODO: Is quote object format UTF8 string or is conversion required?
       // Verify signature
       const isVerified = verifySignature(
         payload.challenge,
@@ -134,7 +127,7 @@ export async function post (
         payload.status = 'VERIFIED'
       }
 
-      // Check what to do if verification fails: leave status as PENDING?
+      // TODO: Check what to do if verification fails: leave status as PENDING?
 
       // TODO: PUT request to switch
     } catch (error) {
@@ -147,5 +140,5 @@ export async function post (
   })
 
   // Request acknowledgement: received and processing it
-  return h.response().code(202)
+  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
