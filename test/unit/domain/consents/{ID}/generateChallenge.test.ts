@@ -32,7 +32,7 @@ import { consentDB } from '../../../../../../src/lib/db'
 import { Consent } from '../../../../../../src/model/consent'
 import { thirdPartyRequest } from '../../../../../../src/lib/requests'
 // eslint-disable-next-line max-len
-import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../../../../src/domain/consents/{ID}/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
@@ -114,6 +114,10 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     mockLoggerError.mockImplementation((): void => {})
   })
 
+  beforeEach((): void => {
+    jest.clearAllMocks()
+  })
+
   // Tests for isConsentRequestInitiatedByValidSource
   describe('Request Validation', (): void => {
     it('Should return true', (): void => {
@@ -174,14 +178,12 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     })
 
     it('Should throw an error as consent is null value', async (): Promise<void> => {
-      expect(async (): Promise<void> => {
-        await putConsentId(null as unknown as Consent, request, externalScopes)
-      }).toThrowError()
+      await expect(putConsentId(null as unknown as Consent, request, externalScopes)).rejects.toThrow()
     })
 
     it('Should throw an error as putConsents() throws an error', async (): Promise<void> => {
       mockPutConsents.mockRejectedValue(new Error('Test Error'))
-      expect(await putConsentId(completeConsent, request, externalScopes)).rejects.toThrowError()
+      await expect(putConsentId(completeConsent, request, externalScopes)).rejects.toThrowError('Test Error')
     })
   })
 }

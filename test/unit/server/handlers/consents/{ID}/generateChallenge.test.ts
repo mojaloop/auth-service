@@ -143,6 +143,13 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     mockLoggerPush.mockReturnValue(null)
     mockLoggerError.mockReturnValue(null)
     mockScopeDbRetrieve.mockResolvedValue(scopes)
+
+    jest.useFakeTimers()
+  })
+
+  beforeEach((): void => {
+    jest.clearAllTimers()
+    jest.clearAllMocks()
   })
 
   it('Should return 202 success code', async (): Promise<void> => {
@@ -151,7 +158,9 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       h as ResponseToolkit
     )
     expect(response).toBe(h.response().code(202))
+    jest.runAllImmediates()
 
+    expect(setImmediate).toHaveBeenCalled()
     expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
@@ -165,6 +174,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       await post(request as Request, h as ResponseToolkit)
     }).toThrowError()
 
+    expect(setImmediate).not.toHaveBeenCalled()
     expect(mockIsConsentRequestValid).not.toHaveBeenCalled()
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).not.toHaveBeenCalled()
@@ -191,7 +201,9 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   it('Should throw an error due to error in challenge generation', async (): Promise<void> => {
     mockGenerate.mockRejectedValueOnce(new Error('Error generating challenge'))
     expect(await post(request as Request, h as ResponseToolkit)).rejects.toThrowError()
+    jest.runAllImmediates()
 
+    expect(setImmediate).toHaveBeenCalled()
     expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
@@ -202,7 +214,9 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   it('Should throw an error due to error updating credentials in database', async (): Promise<void> => {
     mockUpdateConsentCredential.mockRejectedValueOnce(new Error('Error updating db'))
     expect(await post(request as Request, h as ResponseToolkit)).rejects.toThrowError()
+    jest.runAllImmediates()
 
+    expect(setImmediate).toHaveBeenCalled()
     expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
@@ -213,7 +227,9 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   it('Should throw an error due to error in PUT consents/{id}', async (): Promise<void> => {
     mockPutConsentId.mockRejectedValueOnce(new Error('Could not establish connection'))
     expect(await post(request as Request, h as ResponseToolkit)).rejects.toThrowError()
+    jest.runAllImmediates()
 
+    expect(setImmediate).toHaveBeenCalled()
     expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
