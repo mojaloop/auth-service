@@ -2,8 +2,9 @@
 
 /*
  * This flag is to ignore BDD testing for model
- * which will be addressed in a future ticket
- */
+ * which will be addressed in the future in
+ * ticket #354
+ * /
 
 /*****
  License
@@ -59,13 +60,21 @@ export class ScopeDB {
   }
 
   // Add a single Scope or an array of Scopes
-  public async register (scopes: Scope | Scope[]): Promise<number> {
-    // Returns array containing number of inserted rows
-    const insertCount: number[] = await this
+  public async insert (scopes: Scope | Scope[]): Promise<boolean> {
+    // To avoid inconsistencies between DBs, we define a standard
+    // way to deal with empty arrays.
+    // We just return true because an empty array was anyways
+    // not going to affect the DB.
+    if (Array.isArray(scopes) && scopes.length === 0) {
+      return true
+    }
+
+    // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
+    await this
       .Db<Scope>('Scope')
       .insert(scopes)
 
-    return insertCount[0]
+    return true
   }
 
   // Retrieve Scopes by Consent ID
@@ -73,26 +82,14 @@ export class ScopeDB {
     const scopes: Scope[] = await this
       .Db<Scope>('Scope')
       .select('*')
-      .where({ consentId: consentId })
+      .where({ consentId })
 
+    // Not dinguishing between a Consent that exists
+    // with 0 scopes and a Consent that does not exist
     if (scopes.length === 0) {
-      throw new NotFoundError('Scope', consentId)
+      throw new NotFoundError('Consent Scopes', consentId)
     }
 
     return scopes
-  }
-
-  // Delete Scopes by Consent ID
-  public async deleteAll (consentId: string): Promise<number> {
-    const deleteCount: number = await this
-      .Db<Scope>('Scope')
-      .where({ consentId: consentId })
-      .del()
-
-    if (deleteCount === 0) {
-      throw new NotFoundError('Scope', consentId)
-    }
-
-    return deleteCount
   }
 }

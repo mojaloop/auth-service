@@ -2,7 +2,8 @@
 
 /*
  * This flag is to ignore BDD testing for model
- * which will be addressed in a future ticket
+ * which will be addressed in the future in
+ * ticket #354
  */
 
 /*****
@@ -37,8 +38,8 @@
 /*
  * Unlike MySQL, SQLite (testing DB) doesn't support Timestamp type natively.
  * It returns ISO strings using the inbuilt Date() function.
- * Thus, typecasting of MySQL Timestamp to Date object for insertion/retrieval
- * for 'createdAt' field and testing for the same may be required in future.
+ * Thus, return value for MySQL Timestamp as Date object for insertion/retrieval
+ * of 'createdAt' field may need to be tested in the future.
  */
 
 import { NotFoundError } from '../errors'
@@ -49,8 +50,8 @@ import Knex from 'knex'
  */
 export interface Consent {
   id: string;
-  initiatorId: string;
-  participantId: string;
+  initiatorId?: string;
+  participantId?: string;
   credentialId?: string;
   credentialType?: string;
   credentialStatus?: string;
@@ -65,46 +66,30 @@ export interface Consent {
 export class ConsentDB {
   // Knex instance
   private Db: Knex
-  // Nullable fields which don't allow for explicit null upsert
-  private static nullProtectedProps: Record<string, boolean> = {
-    credentialId: true,
-    credentialType: true,
-    credentialStatus: true,
-    credentialPayload: true,
-    credentialChallenge: true
-  }
 
   public constructor (dbInstance: Knex) {
     this.Db = dbInstance
   }
 
   // Add initial Consent parameters
-  public async register (consent: Consent): Promise<number> {
-    // Returns array containing number of inserted rows
-    const insertCount: number[] = await this
+  // Error bubbles up in case of primary key violation
+  public async insert (consent: Consent): Promise<boolean> {
+    // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
+    await this
       .Db<Consent>('Consent')
       .insert(consent)
 
-    return insertCount[0]
+    return true
   }
 
-  // Update Consent credential
-  // Only non-null Consent fields are updated
-  public async updateCredentials (consent: Consent): Promise<number> {
-    const validatedConsent = {}
-
-    for (const key in consent) {
-      // Only allow nullProtectedFields with non-null values for update
-      if (ConsentDB.nullProtectedProps[key] && (consent as unknown as Record<string, boolean>)[key]) {
-        (validatedConsent as Record<string, boolean>)[key] = (consent as unknown as Record<string, boolean>)[key]
-      }
-    }
-
+  // Update Consent
+  // No validation against Null or illegal updates in models
+  public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
     const updateCount: number = await this
       .Db<Consent>('Consent')
       .where({ id: consent.id })
-      .update(validatedConsent)
+      .update(consent)
 
     // Ensure that the caller knows that the resource does not exist
     if (updateCount === 0) {

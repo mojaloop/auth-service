@@ -1,6 +1,7 @@
 {
   "PORT": 4004,
   "HOST": "0.0.0.0",
+  "PARTICIPANT_ID": "auth_service",
   "DATABASE": {
     "DIALECT": "mysql",
     "HOST": "localhost",

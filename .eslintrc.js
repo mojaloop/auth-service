@@ -33,6 +33,7 @@ module.exports = {
     'cucumber/expression-type': 2,
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
     'cucumber/no-arrow-functions': 2,
+    'max-len': ["warn", { "code": 80 }]
   },
   overrides: [
     {
