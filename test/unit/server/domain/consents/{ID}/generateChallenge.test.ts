@@ -32,7 +32,11 @@ import { consentDB } from '../../../../../../src/lib/db'
 import { Consent } from '../../../../../../src/model/consent'
 import { thirdPartyRequest } from '../../../../../../src/lib/requests'
 // eslint-disable-next-line max-len
-import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+import {
+  updateConsentCredential,
+  isConsentRequestInitiatedByValidSource,
+  putConsentId 
+} from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
