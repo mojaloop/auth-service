@@ -116,9 +116,7 @@ describe('server/domain/consents', (): void => {
   })
 
   it('Should return nothing and no errors thrown', async (): Promise<void> => {
-    expect(async (): Promise<void> => {
-      await createAndStoreConsent(request)
-    }).not.toThrowError()
+    await expect(createAndStoreConsent(request)).resolves.toBe(undefined)
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
@@ -127,7 +125,7 @@ describe('server/domain/consents', (): void => {
 
   it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
     mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
-    expect(await createAndStoreConsent(request)).rejects.toThrowError()
+    await expect(createAndStoreConsent(request)).rejects.toThrowError('Unable to Register Consent')
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
@@ -136,7 +134,7 @@ describe('server/domain/consents', (): void => {
 
   it('Should throw an error due to error in registering Scopes', async (): Promise<void> => {
     mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
-    expect(await createAndStoreConsent(request)).rejects.toThrowError()
+    await expect(createAndStoreConsent(request)).rejects.toThrowError('Unable to Register Scopes')
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
