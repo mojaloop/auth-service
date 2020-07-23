@@ -29,12 +29,12 @@
  ******/
 
 import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../lib/db'
-import { thirdPartyRequest } from '../../../../lib/requests'
-import { Consent } from '../../../../model/consent'
+import { consentDB } from '../../../lib/db'
+import { thirdPartyRequest } from '../../../lib/requests'
+import { Consent } from '../../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
-import { ExternalScope } from '../../../../lib/scopes'
+import { ExternalScope } from '../../../lib/scopes'
 
 /*
  * Interface for Consent Credential resource type
