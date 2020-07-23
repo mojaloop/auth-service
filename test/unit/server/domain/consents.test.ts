@@ -29,7 +29,7 @@
  ******/
 import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../src/lib/db'
-import { createAndStoreConsent } from '../../../../src/server/domain/consents'
+import { createAndStoreConsent } from '../../../../src/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
 import * as ScopeFunction from '../../../../src/lib/scopes'
