@@ -144,13 +144,35 @@ ThirdPartyAuthorizationRequest:
   title: ThirdPartyAuthorizationRequest
   type: object
   description: The Request object for verifying an authorization
-  # TODO: finish me!!!
   properties:
     challenge: 
       type: string
-      description: The original Challenge Object as a JSON string
+      description: The original Challenge (Quote response) object as a JSON string
+    value:
+      type: string
+      description: The signed Challenge (quote response) object as base64 encoded string 
+    consentId:
+      allOf:
+        - $ref: '#/definitions/CorrelationId'
+      description: >
+        Common ID between the PISP and FSP for the Consent object
+        decided by the DFSP who creates the Consent
+    sourceAccountId:
+      allOf:
+        - $ref: '#/definitions/AccountId'
+    status:
+      type: string
+      enum:
+        - PENDING
+        - VERIFIED
+      description: The transaction signature verification status
+
   required:
     - challenge
+    - value
+    - consentId
+    - sourceAccountId
+    - status
 
 
 # TODO: 
