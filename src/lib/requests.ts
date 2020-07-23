@@ -30,7 +30,7 @@
  --------------
  ******/
 /* istanbul ignore file */
-// Testing will be covered in PR #11
+// Testing will be covered in Ticket #354
 
 import { config } from './config'
 // @ts-ignore
