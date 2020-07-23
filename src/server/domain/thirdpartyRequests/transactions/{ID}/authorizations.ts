@@ -30,6 +30,9 @@
 import { Consent } from '../../../../../model/consent'
 import { Scope } from '../../../../../model/scope'
 
+/*
+ * Interface for incoming payload
+ */
 export interface AuthPayload {
   consentId: string;
   sourceAccountId: string;
@@ -38,7 +41,9 @@ export interface AuthPayload {
   value: string;
 }
 
-// Validate against null fields
+/*
+ * Domain function to validate against NULL fields
+ */
 export function hasNullFields (payload: AuthPayload): boolean {
   for (const key in payload) {
     if (payload[key as keyof AuthPayload] === null) {
@@ -49,18 +54,28 @@ export function hasNullFields (payload: AuthPayload): boolean {
   return false
 }
 
-// Validate payload status
+/*
+ * Domain function to validate payload status
+ */
 export function hasCorrectStatus (payload: AuthPayload): boolean {
   return payload.status === 'PENDING'
 }
 
-// Check for existence of an active Consent key
+/*
+ * Domain function to check for existence of an active Consent key
+ */
 export function hasActiveConsentKey (consent: Consent): boolean {
-  return consent.credentialStatus === 'ACTIVE' && consent.credentialPayload !== null
+  return consent.credentialStatus === 'ACTIVE' &&
+    consent.credentialPayload !== null
 }
 
-// Check for matching Consent scope
-export function hasMatchingScope (consentScopes: Scope[], payload: AuthPayload): boolean {
+/*
+ * Domain function to check for matching Consent scope
+ */
+export function hasMatchingScope (
+  consentScopes: Scope[],
+  payload: AuthPayload): boolean {
+  // Check if any scope matches
   for (const scope of consentScopes) {
     if (scope.accountId === payload.sourceAccountId) {
       return true

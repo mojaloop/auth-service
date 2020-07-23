@@ -43,14 +43,21 @@ import {
   hasMatchingScope
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
-// @ts-ignore
+/*
+ * The HTTP request `POST /thirdpartyRequests/transactions/{ID}/authorizations`
+ * is used to check auhtorization of the PISP for a transaction identified
+ * by {ID}.
+ * It verifies the user's signature on the quote using the associated Consent's
+ * public key. It is used by the Switch to verify transactions.
+ * The response is sent using outgoing request
+ * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
+ */
 export async function post (
   request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   // TODO: request validation for headers, source and
   // payload structure (non existent/extra fields)
   // TODO: use JOI for these 2 validations?
   // Is request validation done internally?
-  // Need to update ThirdPartyAuthorizationRequests YAML for body schema?
 
   const payload: AuthPayload = request.payload as AuthPayload
 
