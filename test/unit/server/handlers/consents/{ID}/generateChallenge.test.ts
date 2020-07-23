@@ -37,6 +37,7 @@ import * as Domain from '../../../../../../src/server/domain/consents/{ID}/gener
 import * as ScopeFunctions from '../../../../../../src/lib/scopes'
 import Logger from '@mojaloop/central-services-logger'
 import { Scope } from '../../../../../../src/model/scope'
+import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
 
 // Declaring Mocks
 const mockPutConsentId = jest.spyOn(Domain, 'putConsentId')
@@ -137,7 +138,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     mockGenerate.mockResolvedValue(challenge)
     mockIsConsentRequestValid.mockReturnValue(true)
     mockConsentDbRetrieve.mockResolvedValue(partialConsent)
-    mockPutConsentId.mockResolvedValue(null)
+    mockPutConsentId.mockResolvedValue(1 as unknown as GenericRequestResponse)
     mockConvertScopesToExternal.mockReturnValue(externalScopes)
     mockLoggerPush.mockReturnValue(null)
     mockLoggerError.mockReturnValue(null)

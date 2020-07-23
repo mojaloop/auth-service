@@ -90,8 +90,6 @@ const completeConsent: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
-const nullConsent: Consent = null
-
 const credential = {
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
@@ -123,7 +121,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     })
 
     it('Should return false because consent is null', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(request, nullConsent)).toBe(false)
+      expect(isConsentRequestInitiatedByValidSource(request, null as unknown as Consent)).toBe(false)
     })
 
     it('Should return false because initiator ID does not match', (): void => {
@@ -153,7 +151,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
       mockConsentDbUpdate.mockRejectedValue(new Error('Error updating Database'))
 
-      expect(await updateConsentCredential(partialConsent, credential)).rejects.toThrowError()
+      await expect(updateConsentCredential(partialConsent, credential)).rejects.toThrowError('Error updating Database')
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
     })
@@ -167,26 +165,17 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
       mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
     })
 
-    // TODO: Remove one of the first 2 tests
-    it('Should not throw an error', (): void => {
-      expect(async (): Promise<void> => {
-        await putConsentId(completeConsent, request, externalScopes)
-      }).not.toThrowError()
-    })
-
-    it('Should return 1', async (): Promise<void> => {
+    it('Should resolve successfully and return 1', async (): Promise<void> => {
       expect(await putConsentId(completeConsent, request, externalScopes)).toBe(1)
     })
 
     it('Should throw an error as request is null value', async (): Promise<void> => {
-      expect(async (): Promise<void> => {
-        await putConsentId(completeConsent, null as Request, externalScopes)
-      }).toThrowError()
+      await expect(putConsentId(completeConsent, null as unknown as Request, externalScopes)).rejects.toThrow()
     })
 
     it('Should throw an error as consent is null value', async (): Promise<void> => {
       expect(async (): Promise<void> => {
-        await putConsentId(nullConsent, request, externalScopes)
+        await putConsentId(null as unknown as Consent, request, externalScopes)
       }).toThrowError()
     })
 

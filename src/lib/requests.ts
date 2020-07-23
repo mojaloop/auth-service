@@ -33,13 +33,15 @@
 // Testing will be covered in Ticket #354
 
 import { config } from './config'
+import { ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
+import Logger from '@mojaloop/central-services-logger'
 // @ts-ignore
-import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
+// import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
 
 // Config file to instantiate ThirdPartyRequest object
 const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
-  logger: new Logger(),
+  logger: Logger,
   // TODO: Decide on below later - Handled in future ticket #361
   jwsSign: false,
   tls: {
@@ -48,7 +50,10 @@ const configRequest: BaseRequestConfigType = {
         enabled: false
       }
     }
-  }
+  },
+  // Ask Lewis about Below - where should I get it?
+  // Also if it's optional why is there an error when I don't provide it???
+  // jwsSigningKey: 'test key'
 
 }
 const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)

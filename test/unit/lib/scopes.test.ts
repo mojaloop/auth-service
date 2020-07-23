@@ -28,7 +28,7 @@
  --------------
  ******/
 
-import { Scope } from '../../../src/model/scope/scope'
+import { Scope } from '../../../src/model/scope'
 import { ExternalScope, convertScopesToExternal } from '../../../src/lib/scopes'
 
 const scopes: Scope[] = [{
