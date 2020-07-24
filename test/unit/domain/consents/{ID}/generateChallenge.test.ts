@@ -28,15 +28,15 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../../../src/lib/db'
-import { Consent } from '../../../../../../src/model/consent'
-import { thirdPartyRequest } from '../../../../../../src/lib/requests'
+import { consentDB } from '../../../../../src/lib/db'
+import { Consent } from '../../../../../src/model/consent'
+import { thirdPartyRequest } from '../../../../../src/lib/requests'
 // eslint-disable-next-line max-len
-import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../../../../src/domain/consents/{ID}/generateChallenge'
+import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId } from '../../../../../src/domain/consents/{ID}/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
-import { ExternalScope } from '../../../../../../src/lib/scopes'
+import { ExternalScope } from '../../../../../src/lib/scopes'
 
 // Declaring Mock Functions
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
@@ -110,8 +110,8 @@ const externalScopes: ExternalScope[] = [{
 
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   beforeAll((): void => {
-    mockLoggerPush.mockImplementation((): void => {})
-    mockLoggerError.mockImplementation((): void => {})
+    mockLoggerPush.mockImplementation((): boolean => { return true })
+    mockLoggerError.mockImplementation((): boolean => { return true })
   })
 
   beforeEach((): void => {

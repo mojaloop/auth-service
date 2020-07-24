@@ -51,6 +51,7 @@ const configRequest: BaseRequestConfigType = {
       }
     }
   }
+  // jwsSigningKey: 'test key REPLACE'
   // Ask Lewis about Below - where should I get it?
   // Also if it's optional why is there an error when I don't provide it???
   // jwsSigningKey: 'test key'
