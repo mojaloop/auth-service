@@ -45,10 +45,9 @@ import {
 
 /*
  * The HTTP request `POST /thirdpartyRequests/transactions/{ID}/authorizations`
- * is used to check auhtorization of the PISP for a transaction identified
- * by {ID}.
- * It verifies the user's signature on the quote using the associated Consent's
- * public key. It is used by the Switch to verify transactions.
+ * is used to authorize the PISP transaction identified by {ID}.
+ * The Switch uses it to verify the user's signature on
+ * the quote using the associated Consent's public key.
  * The response is sent using outgoing request
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
@@ -57,11 +56,10 @@ export async function post (
   // TODO: request validation for headers, source and
   // payload structure (non existent/extra fields)
   // TODO: use JOI for these 2 validations?
-  // Is request validation done internally?
+  // Or Is request validation done internally?
 
   const payload: AuthPayload = request.payload as AuthPayload
 
-  // TODO: use JOI for these 2 validations?
   // Validate against payload null fields
   if (hasNullFields(payload)) {
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
