@@ -38,9 +38,9 @@ import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   AuthPayload,
   hasNullFields,
-  hasCorrectStatus,
+  isPendingPayload,
   hasActiveConsentKey,
-  hasMatchingScope
+  hasMatchingScopeForPayload
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
@@ -53,10 +53,7 @@ import {
  */
 export async function post (
   request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  // TODO: request validation for headers, source and
   // payload structure (non existent/extra fields)
-  // TODO: use JOI for these 2 validations?
-  // Or Is request validation done internally?
 
   const payload: AuthPayload = request.payload as AuthPayload
 
@@ -65,8 +62,8 @@ export async function post (
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
-  // Validate incoming status
-  if (!hasCorrectStatus(payload)) {
+  // Validate incoming payload status
+  if (!isPendingPayload(payload)) {
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
@@ -103,16 +100,13 @@ export async function post (
   }
 
   // Check if the request scope matches with the consent
-  if (!hasMatchingScope(consentScopes, payload)) {
+  if (!hasMatchingScopeForPayload(consentScopes, payload)) {
     return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
   }
 
   // Check for presence of an active key
   if (!hasActiveConsentKey(consent)) {
-    //
-    // TODO: Is this the correct error code for key not existing? or just 400
-    //
-    return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
   // If everything checks out, delay processing to the next

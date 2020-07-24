@@ -32,9 +32,9 @@ import { Scope } from '../../../../../../../src/model/scope'
 import {
   AuthPayload,
   hasNullFields,
-  hasCorrectStatus,
+  isPendingPayload,
   hasActiveConsentKey,
-  hasMatchingScope
+  hasMatchingScopeForPayload
 } from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
@@ -72,7 +72,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
     })
   })
 
-  describe('hasCorrectStatus', (): void => {
+  describe('isPendingPayload', (): void => {
     it('returns true for \'PENDING\' payload status', async (): Promise<void> => {
       const pendingPayload: AuthPayload = {
         consentId: '1223abcd',
@@ -82,7 +82,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         value: 'dwuduwd&e2idjoj0w'
       }
 
-      const correctStatus = hasCorrectStatus(pendingPayload)
+      const correctStatus = isPendingPayload(pendingPayload)
 
       expect(correctStatus).toEqual(true)
     })
@@ -96,7 +96,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         value: 'dwuduwd&e2idjoj0w'
       }
 
-      const correctStatus = hasCorrectStatus(verifiedPayload)
+      const correctStatus = isPendingPayload(verifiedPayload)
 
       expect(correctStatus).toEqual(false)
     })
@@ -155,7 +155,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
     })
   })
 
-  describe('hasMatchingScope', (): void => {
+  describe('  hasMatchingScopeForPayload', (): void => {
     it('returns true if the payload scope matches an associated consent scope', async (): Promise<void> => {
       const payload: AuthPayload = {
         consentId: '1223abcd',
@@ -186,7 +186,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         }
       ]
 
-      const scopeMatch = hasMatchingScope(consentScopes, payload)
+      const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 
       expect(scopeMatch).toEqual(true)
     })
@@ -221,7 +221,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         }
       ]
 
-      const scopeMatch = hasMatchingScope(consentScopes, payload)
+      const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 
       expect(scopeMatch).toEqual(false)
     })

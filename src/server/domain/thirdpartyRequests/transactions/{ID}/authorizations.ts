@@ -57,7 +57,7 @@ export function hasNullFields (payload: AuthPayload): boolean {
 /*
  * Domain function to validate payload status
  */
-export function hasCorrectStatus (payload: AuthPayload): boolean {
+export function isPendingPayload (payload: AuthPayload): boolean {
   return payload.status === 'PENDING'
 }
 
@@ -65,14 +65,14 @@ export function hasCorrectStatus (payload: AuthPayload): boolean {
  * Domain function to check for existence of an active Consent key
  */
 export function hasActiveConsentKey (consent: Consent): boolean {
-  return consent.credentialStatus === 'ACTIVE' &&
-    consent.credentialPayload !== null
+  return (consent.credentialStatus === 'ACTIVE' &&
+    consent.credentialPayload !== null)
 }
 
 /*
  * Domain function to check for matching Consent scope
  */
-export function hasMatchingScope (
+export function hasMatchingScopeForPayload (
   consentScopes: Scope[],
   payload: AuthPayload): boolean {
   // Check if any scope matches
