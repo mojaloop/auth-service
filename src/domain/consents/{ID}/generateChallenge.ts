@@ -42,7 +42,7 @@ import { ExternalScope } from '../../../lib/scopes'
 export interface ConsentCredential {
   credentialType: string;
   credentialStatus: string;
-  credentialPayload?: string | undefined;
+  credentialPayload?: string | null;
   credentialChallenge: string;
 }
 
@@ -98,7 +98,6 @@ export async function putConsentId (
       credentialType: consent.credentialType as 'FIDO',
       status: consent.credentialStatus as 'PENDING',
       challenge: {
-        // TODO: Ask Lewis about array buffer
         payload: consent.credentialChallenge,
         signature: null
       },
