@@ -227,7 +227,7 @@ describe('src/model/consent', (): void => {
       }))
     })
 
-    it('updates credentialStatus if it is not NULL but also not ACTIVE', async (): Promise<void> => {
+    it('updates credentialStatus if it is not null but also not ACTIVE', async (): Promise<void> => {
       // Inserting record to update
       await Db<Consent>('Consent')
         .insert(completeConsent)

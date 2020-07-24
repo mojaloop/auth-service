@@ -83,7 +83,6 @@ export class ConsentDB {
   }
 
   // Update Consent
-  // Only validating against updating existing fields
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
     // Transaction to make the update atomic
@@ -99,25 +98,33 @@ export class ConsentDB {
         throw new NotFoundError('Consent', consent.id)
       }
 
-      const existingConsent = consents[0]
-      const updatedConsent: Consent = { ...consent }
+      const existingConsent: Consent = consents[0]
+      const updatedConsent: Record<string, string | Date> = {}
 
       // Prepare a new Consent with only allowable updates
-      // * Cannot update Non-NULL fields in the DB
-      // * Field credentialStatus can be updated even
-      //   if when it is NON-NULL but not 'ACTIVE
-      for (const key in consent) {
-        if ((existingConsent[key as keyof Consent] !== null && key !== 'credentialStatus') ||
-            (key === 'credentialStatus' && existingConsent.credentialStatus === 'ACTIVE')) {
-          delete updatedConsent[key as keyof Consent]
+      Object.keys(existingConsent).forEach((key): void => {
+        const value: string | Date =
+          existingConsent[key as keyof Consent] as string | Date
+
+        // Cannot overwrite an `ACTIVE` credentialStatus
+        if (key === 'credentialStatus' && value === 'ACTIVE') {
+          return
         }
-      }
+
+        // Cannot overwrite non-null fields
+        if (value !== null && key !== 'credentialStatus') {
+          return
+        }
+
+        updatedConsent[key] = consent[key as keyof Consent] as string | Date
+      })
 
       // If there are no fields that can be updated
       if (Object.keys(updatedConsent).length === 0) {
         return 0
       }
 
+      console.log(updatedConsent)
       return trx<Consent>('Consent')
         .where({ id: consent.id })
         .update(updatedConsent)
