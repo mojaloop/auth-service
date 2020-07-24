@@ -52,7 +52,8 @@ export async function generate (size: number = 32): Promise<string> {
     const buf = await randomBytesAsync(Math.round(Math.abs(size)))
     return buf.toString('base64')
   } catch (error) {
-    Logger.push(error).error('Unable to generate challenge string')
+    Logger.push(error)
+    Logger.error('Unable to generate challenge string')
     throw error
   }
 }

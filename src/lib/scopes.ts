@@ -1,6 +1,4 @@
-/* To ignore from integration and BDD testing, addressed in #354 and #368 */
-/* istanbul ignore file */
-
+/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -26,46 +24,38 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
- - Ahan Gupta <ahangupta.96@gmail.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
 
-import Knex from 'knex'
-import Config from '../../config/knexfile'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import { Scope } from '../model/scope'
 
-function getKnexInstance (): Knex {
-  let Db: Knex
-  switch (process.env.NOD_ENV) {
-    case 'test': {
-      Db = Knex(Config.test as object)
-      break
-    }
-
-    case 'development': {
-      Db = Knex(Config.development as object)
-      break
-    }
-
-    case 'production': {
-      Db = Knex(Config.production as object)
-      break
-    }
-
-    default: {
-      throw new Error('Unexpected environment encountered.')
-    }
-  }
-  return Db
+/**
+ * Interface for scope objects received from external source by handler
+ * or to be sent in an outgoing call
+ */
+export interface ExternalScope {
+  accountId: string;
+  actions: string[];
 }
 
-const knexInstance: Knex = getKnexInstance()
-const consentDB: ConsentDB = new ConsentDB(knexInstance)
-const scopeDB: ScopeDB = new ScopeDB(knexInstance)
+/**
+ * Takes input of array of ExternalScope objects
+ * Reformats and returns array of Scope objects
+ * @param externalScopes Array of ExternalScope objects received
+ * @param consentId Id of Consent to which scopes belong
+ */
+export function convertExternalToScope (
+  externalScopes: ExternalScope[], consentId: string): Scope[] {
+  const scopes: Scope[] = externalScopes.map(
+    (element: ExternalScope): Scope[] =>
+      element.actions.map((action: string): Scope => ({
+        consentId,
+        accountId: element.accountId,
+        action
+      })
+      )
+  ).flat()
 
-export {
-  consentDB,
-  scopeDB
+  return scopes
 }

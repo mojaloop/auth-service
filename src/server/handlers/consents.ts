@@ -1,5 +1,10 @@
-/* To ignore from integration and BDD testing, addressed in #354 and #368 */
 /* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing for model
+ * which will be addressed in the future in
+ * ticket #354
+ */
 
 /*****
  License
@@ -26,46 +31,35 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
- - Ahan Gupta <ahangupta.96@gmail.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
+import { createAndStoreConsent, isPostConsentRequestValid } from '../../domain/consents'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import Logger from '@mojaloop/central-services-logger'
 
-import Knex from 'knex'
-import Config from '../../config/knexfile'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
-
-function getKnexInstance (): Knex {
-  let Db: Knex
-  switch (process.env.NOD_ENV) {
-    case 'test': {
-      Db = Knex(Config.test as object)
-      break
-    }
-
-    case 'development': {
-      Db = Knex(Config.development as object)
-      break
-    }
-
-    case 'production': {
-      Db = Knex(Config.production as object)
-      break
-    }
-
-    default: {
-      throw new Error('Unexpected environment encountered.')
-    }
+/** The HTTP request `POST /consents` is used to create a consent object.
+ * Called by `DFSP` after the successful creation and
+ * validation of a consentRequest.
+ */
+export async function post (
+  request: Request,
+  h: ResponseToolkit): Promise<ResponseObject> {
+  // Validate request
+  if (!isPostConsentRequestValid(request)) {
+    return h.response().code(400)
   }
-  return Db
-}
+  // Asynchronously deals with creation and storing of consents and scope
+  setImmediate(async (): Promise<void> => {
+    try {
+      await createAndStoreConsent(request)
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Error: Unable to create/store consent')
+      // TODO: Decide what to do with this error. (TICKET #355)
+    }
+  })
 
-const knexInstance: Knex = getKnexInstance()
-const consentDB: ConsentDB = new ConsentDB(knexInstance)
-const scopeDB: ScopeDB = new ScopeDB(knexInstance)
-
-export {
-  consentDB,
-  scopeDB
+  // Return Success code informing source: request received
+  return h.response().code(202)
 }
