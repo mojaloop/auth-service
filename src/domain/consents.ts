@@ -56,7 +56,7 @@ interface PostConsentPayload {
  * by comparing if source header matches participant ID
  * @param request: request received from switch
  */
-export function isRequestValid (request: Request): boolean {
+export function isPostConsentRequestValid (request: Request): boolean {
   const payload = request.payload as PostConsentPayload
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
   return (payload.participantId === fspiopSource)
