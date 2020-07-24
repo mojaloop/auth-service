@@ -37,8 +37,8 @@ import { verifySignature } from '../../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   AuthPayload,
-  hasNullFields,
   isPendingPayload,
+  isValidatedPayload,
   hasActiveConsentKey,
   hasMatchingScopeForPayload
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
@@ -52,13 +52,12 @@ import {
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
 export async function post (
-  request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  // payload structure (non existent/extra fields)
-
+  request: Request,
+  h: ResponseToolkit): Promise<ResponseObject> {
   const payload: AuthPayload = request.payload as AuthPayload
 
-  // Validate against payload null fields
-  if (hasNullFields(payload)) {
+  // Validate payload schema: all fields exist and no null fields
+  if (!isValidatedPayload(payload)) {
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 

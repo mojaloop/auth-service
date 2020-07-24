@@ -42,16 +42,30 @@ export interface AuthPayload {
 }
 
 /*
- * Domain function to validate against NULL fields
+ * Domain function to validate request payload schema
  */
-export function hasNullFields (payload: AuthPayload): boolean {
-  for (const key in payload) {
-    if (payload[key as keyof AuthPayload] === null) {
-      return true
+export function isValidatedPayload (payload: AuthPayload): boolean {
+  const properties = [
+    'consentId',
+    'sourceAccountId',
+    'status',
+    'challenge',
+    'value'
+  ]
+
+  for (const prop of properties) {
+    // Check that property exists
+    if (!Object.prototype.hasOwnProperty.call(payload, prop)) {
+      return false
+    }
+
+    // Check that property is not null
+    if (payload[prop as keyof AuthPayload] === null) {
+      return false
     }
   }
 
-  return false
+  return true
 }
 
 /*
