@@ -60,9 +60,10 @@ const externalScope = [{
 }
 ]
 
-// TODO: Add more tests
 describe('Scope Convert ExternalScope to Scope', (): void => {
-  it('Should return Scope array when input ExternalScope array', (): void => {
-    expect(ScopeFunctions.convertExternalToScope(externalScope, consentId)).toStrictEqual(scopes)
-  })
+  it('Should return Scope array when input ExternalScope array',
+    (): void => {
+      expect(ScopeFunctions.convertExternalToScope(externalScope, consentId))
+        .toStrictEqual(scopes)
+    })
 })
