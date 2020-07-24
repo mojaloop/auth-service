@@ -38,7 +38,6 @@ import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   AuthPayload,
   isPendingPayload,
-  isValidatedPayload,
   hasActiveConsentKey,
   hasMatchingScopeForPayload
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
@@ -54,12 +53,12 @@ import {
 export async function post (
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  const payload: AuthPayload = request.payload as AuthPayload
+  // Hapi-OpenAPI plugin validates the payload schema for
+  // existence of all properties and their value types according
+  // to the OpenAPI specification. It also ensures non-null
+  // payload values.
 
-  // Validate payload schema: all fields exist and no null fields
-  if (!isValidatedPayload(payload)) {
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-  }
+  const payload: AuthPayload = request.payload as AuthPayload
 
   // Validate incoming payload status
   if (!isPendingPayload(payload)) {

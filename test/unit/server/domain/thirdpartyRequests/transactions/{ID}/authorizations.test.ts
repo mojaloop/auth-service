@@ -31,7 +31,6 @@ import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
 import {
   AuthPayload,
-  isValidatedPayload,
   isPendingPayload,
   hasActiveConsentKey,
   hasMatchingScopeForPayload
@@ -42,48 +41,6 @@ import {
  * Domain Unit Tests
  */
 describe('Incoming POST Transaction Authorization Domain', (): void => {
-  describe('isValidatedPayload', (): void => {
-    it('returns true when all payload fields exist with non-null values', async (): Promise<void> => {
-      const payloadWithoutNulls: AuthPayload = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: 'PENDING',
-        challenge: 'xyhdushsoa82w92mzs',
-        value: 'dwuduwd&e2idjoj0w'
-      }
-
-      const hasNulls = isValidatedPayload(payloadWithoutNulls)
-
-      expect(hasNulls).toEqual(false)
-    })
-
-    it('returns false for null fields in the payload', async (): Promise<void> => {
-      const payloadWithNulls: AuthPayload = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: null as unknown as string,
-        challenge: null as unknown as string,
-        value: 'dwuduwd&e2idjoj0w'
-      }
-
-      const hasNulls = isValidatedPayload(payloadWithNulls)
-
-      expect(hasNulls).toEqual(true)
-    })
-
-    it('returns false for payload with missing fields', async (): Promise<void> => {
-      const payloadWithoutFields = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: 'PENDING'
-      }
-
-      const isValidated = isValidatedPayload(payloadWithoutFields as AuthPayload)
-
-      expect(isValidated).toEqual(false)
-    })
-  })
-
   describe('isPendingPayload', (): void => {
     it('returns true for \'PENDING\' payload status', async (): Promise<void> => {
       const pendingPayload: AuthPayload = {
