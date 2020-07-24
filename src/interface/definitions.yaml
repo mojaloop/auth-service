@@ -152,14 +152,12 @@ ThirdPartyAuthorizationRequest:
       type: string
       description: The signed Challenge (quote response) object as base64 encoded string 
     consentId:
-      allOf:
-        - $ref: '#/definitions/CorrelationId'
+      - $ref: '#/definitions/CorrelationId'
       description: >
         Common ID between the PISP and FSP for the Consent object
         decided by the DFSP who creates the Consent
     sourceAccountId:
-      allOf:
-        - $ref: '#/definitions/AccountId'
+      - $ref: '#/definitions/AccountId'
     status:
       type: string
       enum:
