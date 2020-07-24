@@ -48,7 +48,13 @@ export function convertExternalToScope (
   externalScopes: ExternalScope[], consentId: string): Scope[] {
   const scopes: Scope[] = []
 
-  externalScopes.forEach((element: ExternalScope): void => {
+  const scopes: Scope[] = [].concat(externalScopes.map(
+     (element: ExternalScope): Scopes[] => element.actions.map((action: string): Scope => ({
+            consentId,
+            accountId: element.accountId,
+            action
+     })
+  ))
     const accountId = element.accountId
     element.actions.forEach((action: string): void => {
       const scope = {
