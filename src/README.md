@@ -7,6 +7,7 @@
   > there is one extra file kept outside! : `/ambient.d.ts`. More info about below.
 
 - `src/interface` is where the `Swagger` OpenAPI definitions reside
+- `src/domain` mirrors structure of `server/handlers` and is used to separate business logic
 - `src/model` is used to separate the domain code
 - `src/server` the HTTP @hapi server setup 
   > [/src/server/README.md](server/README.md)

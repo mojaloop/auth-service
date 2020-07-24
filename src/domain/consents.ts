@@ -62,6 +62,11 @@ export function isRequestValid (request: Request): boolean {
   return (payload.participantId === fspiopSource)
 }
 
+/**
+ * Builds internal Consent and Scope objects from request payload
+ * Stores the objects in the database
+ * @param request request received from switch
+ */
 export async function createAndStoreConsent (request: Request): Promise<void> {
   const payload = request.payload as PostConsentPayload
   const consent: Consent = {

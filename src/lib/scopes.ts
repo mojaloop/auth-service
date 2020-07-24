@@ -29,6 +29,10 @@
 
 import { Scope } from '../model/scope'
 
+/**
+ * Interface for scope objects received from external source by handler
+ * or to be sent in an outgoing call
+ */
 export interface ExternalScope {
   accountId: string;
   actions: string[];

@@ -56,7 +56,7 @@ export async function post (
     } catch (error) {
       Logger.push(error)
       Logger.error('Error: Unable to create/store consent')
-      // TODO: Decide what to do with this error.
+      // TODO: Decide what to do with this error. (TICKET #355)
     }
   })
 
