@@ -121,7 +121,8 @@ describe('server/handlers/consents', (): void => {
 
   it('Should throw an error due to error in creating/storing consent & scopes',
     async (): Promise<void> => {
-      mockStoreConsent.mockRejectedValueOnce(new Error('Error Registering Consent'))
+      mockStoreConsent.mockRejectedValueOnce(
+        new Error('Error Registering Consent'))
 
       const response = await post(request as Request, h as ResponseToolkit)
       expect(response).toBe(202)

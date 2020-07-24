@@ -115,7 +115,7 @@ describe('server/domain/consents', (): void => {
     mockLoggerPush.mockReturnValue(null)
   })
 
-  beforeEach(():void => {
+  beforeEach((): void => {
     jest.clearAllMocks()
   })
 
