@@ -43,7 +43,7 @@ import {
  */
 describe('Incoming POST Transaction Authorization Domain', (): void => {
   describe('isValidatedPayload', (): void => {
-    it('returns true when all payload fields exist with non-NULL values', async (): Promise<void> => {
+    it('returns true when all payload fields exist with non-null values', async (): Promise<void> => {
       const payloadWithoutNulls: AuthPayload = {
         consentId: '1223abcd',
         sourceAccountId: '2222-322d-d2k2',
@@ -115,7 +115,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
   })
 
   describe('hasActiveConsentKey', (): void => {
-    it('returns true non-NULL and \'ACTIVE\' consent credential', async (): Promise<void> => {
+    it('returns true non-null and \'ACTIVE\' consent credential', async (): Promise<void> => {
       const activeConsent: Consent = {
         id: '1234',
         initiatorId: 'pisp-2342-2233',
@@ -132,7 +132,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
       expect(activeKey).toEqual(true)
     })
 
-    it('returns false for NULL consent credential key', async (): Promise<void> => {
+    it('returns false for null consent credential key', async (): Promise<void> => {
       const nullConsent: Consent = {
         id: '1234',
         initiatorId: 'pisp-2342-2233',
