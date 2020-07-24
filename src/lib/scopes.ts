@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -27,7 +28,7 @@
  --------------
  ******/
 
-import { Scope } from '../model/scope'
+import ScopeDB, { Scope } from '../model/scope'
 
 /**
  * Interface for scope objects received from external source by handler
@@ -46,24 +47,29 @@ export interface ExternalScope {
  */
 export function convertExternalToScope (
   externalScopes: ExternalScope[], consentId: string): Scope[] {
-  const scopes: Scope[] = []
-
-  const scopes: Scope[] = [].concat(externalScopes.map(
-     (element: ExternalScope): Scopes[] => element.actions.map((action: string): Scope => ({
-            consentId,
-            accountId: element.accountId,
-            action
-     })
-  ))
-    const accountId = element.accountId
-    element.actions.forEach((action: string): void => {
-      const scope = {
+  // const scopes: Scope[] = ([] as Scope[]).concat((...externalScopes.map(
+  //   (element: ExternalScope): Scope[] => element.actions.map((action: string): Scope => ({
+  //     consentId,
+  //     accountId: element.accountId,
+  //     action
+  //   })
+  //   )
+  // )) as Scope[]
+  // )
+  const scopesArray: Scope[][] = externalScopes.map(
+    (element: ExternalScope): Scope[] =>
+      element.actions.map((action: string): Scope => ({
         consentId,
-        accountId,
+        accountId: element.accountId,
         action
-      }
-      scopes.push(scope)
-    })
+      })
+      )
+  )
+
+  const scopes: Scope[] = []
+  scopesArray.forEach((scopeArray: Scope[]): void => {
+    scopes.push(...scopeArray)
   })
+
   return scopes
 }
