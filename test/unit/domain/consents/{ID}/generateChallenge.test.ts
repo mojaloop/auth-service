@@ -36,7 +36,7 @@ import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
   putConsentId
-} from '../../../../../../src/server/domain/consents/{ID}/generateChallenge'
+} from '../../../../../src/domain/consents/{ID}/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
