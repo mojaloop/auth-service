@@ -68,51 +68,6 @@ const request: Request = {
 }
 
 // @ts-ignore
-const requestInvalid: Request = {
-  headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: 42323,
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: null
-  }
-}
-
-// @ts-ignore
-// const requestInvalid2: Request = {
-//   headers: {
-//     fspiopsource: 'pisp-2342-2233',
-//     fspiopdestination: 'dfsp-3333-2123'
-//   },
-//   params: {
-//     id: '1234'
-//   },
-//   payload: {
-//     id: '1234',
-//     requestId: 42323,
-//     initiatorId: 'pispa',
-//     participantId: 'sfsfdf23'
-//   }
-// }
-
-// @ts-ignore
 const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
@@ -154,12 +109,12 @@ describe('server/handlers/consents', (): void => {
       mockIsRequestValid.mockReturnValueOnce(false)
 
       const response = await post(
-        requestInvalid as Request,
+        request as Request,
         h as ResponseToolkit
       )
       expect(response).toBe(400)
-      expect(mockIsRequestValid).toHaveBeenCalledWith(requestInvalid)
-      // jest.runAllImmediates()
+      expect(mockIsRequestValid).toHaveBeenCalledWith(request)
+
       expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
     })
@@ -172,7 +127,8 @@ describe('server/handlers/consents', (): void => {
       expect(response).toBe(202)
       jest.runAllImmediates()
 
-      // expect(setImmediate).rejects.toThrowError()
-      expect(mockStoreConsent).toHaveBeenCalledWith(request)
+      expect(setImmediate).toHaveBeenCalled()
+      expect(mockStoreConsent).toHaveBeenLastCalledWith(request)
+      expect(mockStoreConsent).not.toHaveLastReturnedWith('')
     })
 })

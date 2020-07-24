@@ -36,7 +36,7 @@
  ******/
 import { createAndStoreConsent, isRequestValid } from '../../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and
