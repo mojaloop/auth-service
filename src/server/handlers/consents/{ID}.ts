@@ -26,9 +26,9 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent } from '../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, updateConsentCredential, putConsents } from '../../domain/consents/{ID}'
+import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential } from '../../domain/consents/{ID}'
 import { IncorrectChallengeError } from '../../domain/errors'
-import { verifySign } from '../../../lib/challenge'
+import { verifySignature } from '../../../lib/challenge'
 
 export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
@@ -55,12 +55,17 @@ export async function put (request: Request, h: ResponseToolkit): Promise<Respon
 
   setImmediate(async (): Promise<void> => {
     try {
-      if (!verifySign(challenge, signature, publicKey)) {
+      if (!verifySignature(challenge, signature, publicKey)) {
         Logger.push({ consentId: id }).error('Invalid Challenge')
         /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number PUT_TICKET_HERE */
         return
       }
-      await updateConsentCredential(requestCredentialId, 'VERIFIED', publicKey, consent)
+      const credential: ConsentCredential = {
+        credentialId: requestCredentialId,
+        credentialStatus: 'VERIFIED',
+        credentialPayload: publicKey
+      }
+      await updateConsentCredential(consent, credential)
 
       /* Outbound PUT consents/{ID} call */
       putConsents(consent, signature, publicKey, request)

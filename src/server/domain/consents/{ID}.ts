@@ -26,10 +26,17 @@ import { Consent } from '../../../model/consent'
 import { Scope } from '../../../model/scope'
 import { consentDB, scopeDB } from '../../../lib/db'
 import { IncorrectChallengeError } from '../errors'
-import { ThirdpartyRequests, PutConsentsRequest, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
+import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
+import { thirdPartyRequest } from '../../../lib/requests'
 import { Enum } from '@mojaloop/central-services-shared'
-import { logResponse } from '../../../shared/logger'
 import { Request } from '@hapi/hapi'
+import { ExternalScope, convertScopesToExternal } from '../../../lib/scopes'
+
+export interface ConsentCredential {
+  credentialId: string;
+  credentialStatus: 'PENDING' | 'VERIFIED';
+  credentialPayload: string;
+}
 
 export async function retrieveValidConsent (consentId: string, requestChallenge: string): Promise<Consent> {
   const consent: Consent = await consentDB.retrieve(consentId)
@@ -47,33 +54,26 @@ export async function retrieveValidConsent (consentId: string, requestChallenge:
  * @param requestCredentialPayload incoming request's credential Payload.
  * @param consent Consent resource corresponding to incoming request's Consent Id.
  */
-export async function updateConsentCredential (requestCredentialId: string, requestCredentialStatus: string,
-  requestCredentialPayload: string, consent: Consent): Promise<number> {
-  consent.credentialId = requestCredentialId
-  consent.credentialStatus = requestCredentialStatus
-  consent.credentialPayload = requestCredentialPayload
-  return consentDB.updateCredentials(consent)
+export async function updateConsentCredential (consent: Consent, credential: ConsentCredential): Promise<number> {
+  consent.credentialId = credential.credentialId
+  consent.credentialStatus = credential.credentialStatus
+  consent.credentialPayload = credential.credentialPayload
+  return consentDB.update(consent)
 }
 
 export async function putConsents (consent: Consent, signature: string, publicKey: string, request: Request): Promise<void> {
-  const config: BaseRequestConfigType = {
-    logger: logResponse,
-    dfspId: request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
-    jwsSign: true,
-    tls: undefined
-  }
-  const requests = new ThirdpartyRequests(config)
   /* Retrieve the scopes pertinent to this consentId and populate the scopes accordingly. */
   const scopes: Scope[] = await scopeDB.retrieveAll(consent.id)
+  const externalScopes: ExternalScope[] = convertScopesToExternal(scopes)
   const consentBody: PutConsentsRequest = {
     requestId: consent.id,
     initiatorId: consent.initiatorId as string,
     participantId: consent.participantId as string,
-    scopes: scopes,
+    scopes: externalScopes,
     credential: {
-      id: consent.credentialId,
-      credentialType: consent.credentialType,
-      status: consent.credentialStatus,
+      id: consent.credentialId as string,
+      credentialType: consent.credentialType as 'FIDO',
+      status: consent.credentialStatus as 'VERIFIED',
       challenge: {
         payload: consent.credentialChallenge,
         signature: signature
@@ -81,6 +81,6 @@ export async function putConsents (consent: Consent, signature: string, publicKe
       payload: publicKey
     }
   }
-  const destParticipantId = request.headers[Enum.HTTP.Headers.FSPIOP.SOURCE]
-  requests.putConsents(consent.id, consentBody, destParticipantId)
+  const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  thirdPartyRequest.putConsents(consent.id, consentBody, destParticipantId)
 }
