@@ -124,7 +124,6 @@ export class ConsentDB {
         return 0
       }
 
-      console.log(updatedConsent)
       return trx<Consent>('Consent')
         .where({ id: consent.id })
         .update(updatedConsent)
