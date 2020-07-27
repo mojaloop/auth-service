@@ -28,7 +28,7 @@
  --------------
  ******/
 
-import ScopeDB, { Scope } from '../model/scope'
+import { Scope } from '../model/scope'
 
 /**
  * Interface for scope objects received from external source by handler
@@ -47,16 +47,7 @@ export interface ExternalScope {
  */
 export function convertExternalToScope (
   externalScopes: ExternalScope[], consentId: string): Scope[] {
-  // const scopes: Scope[] = ([] as Scope[]).concat((...externalScopes.map(
-  //   (element: ExternalScope): Scope[] => element.actions.map((action: string): Scope => ({
-  //     consentId,
-  //     accountId: element.accountId,
-  //     action
-  //   })
-  //   )
-  // )) as Scope[]
-  // )
-  const scopesArray: Scope[][] = externalScopes.map(
+  const scopes: Scope[] = ([] as Scope[]).concat(...externalScopes.map(
     (element: ExternalScope): Scope[] =>
       element.actions.map((action: string): Scope => ({
         consentId,
@@ -64,12 +55,7 @@ export function convertExternalToScope (
         action
       })
       )
-  )
-
-  const scopes: Scope[] = []
-  scopesArray.forEach((scopeArray: Scope[]): void => {
-    scopes.push(...scopeArray)
-  })
+  ))
 
   return scopes
 }
