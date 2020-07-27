@@ -89,7 +89,6 @@ const completeConsent: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
-  credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs='

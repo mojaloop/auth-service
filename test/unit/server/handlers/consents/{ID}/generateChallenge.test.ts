@@ -88,7 +88,7 @@ const completeConsent: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
-  credentialId: '123',
+  // credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs='
@@ -169,13 +169,18 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockPutConsentId).toHaveBeenCalledWith(completeConsent, request, externalScopes)
   })
 
-  it('Should throw an error due to consent retrieval error', async (): Promise<void> => {
+  it('Should return 400 code due to consent retrieval error', async (): Promise<void> => {
     mockConsentDbRetrieve.mockRejectedValueOnce(new Error('Id does not exist in database'))
-    await expect(post(request as Request, h as ResponseToolkit))
-      .rejects.toThrowError('Id does not exist in database')
+    mockIsConsentRequestValid.mockReturnValueOnce(false)
+
+    const response = await post(
+      request as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(400))
 
     expect(setImmediate).not.toHaveBeenCalled()
-    expect(mockIsConsentRequestValid).not.toHaveBeenCalled()
+    expect(mockIsConsentRequestValid).toHaveBeenCalled()
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).not.toHaveBeenCalled()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -235,21 +240,49 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockPutConsentId).not.toHaveBeenCalled()
   })
 
-  it('Should throw an error due to error in PUT consents/{id}', async (): Promise<void> => {
-    mockPutConsentId.mockRejectedValueOnce(new Error('Could not establish connection'))
-    const response = await post(
-      request as Request,
-      h as ResponseToolkit
-    )
-    expect(response).toBe(h.response().code(202))
-    jest.runAllImmediates()
+  it('Should return 202 but log an error due to error in PUT consents/{id}',
+    async (): Promise<void> => {
+      mockPutConsentId.mockRejectedValueOnce(new Error('Could not establish connection'))
+      const response = await post(
+        request as Request,
+        h as ResponseToolkit
+      )
+      expect(response).toBe(h.response().code(202))
+      jest.runAllImmediates()
 
-    expect(setImmediate).toHaveBeenCalled()
-    expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
-    expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
-    expect(mockGenerate).toHaveBeenCalledWith()
-    expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
-    expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
-    expect(mockPutConsentId).toHaveBeenCalledWith(request, completeConsent, externalScopes)
-  })
+      expect(setImmediate).toHaveBeenCalled()
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+      expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
+      expect(mockGenerate).toHaveBeenCalledWith()
+      expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
+      expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
+      expect(mockPutConsentId).toHaveBeenCalledWith(request, completeConsent, externalScopes)
+      expect(mockLoggerError).toHaveBeenCalled()
+    })
+
+  it('Should not call challenge.generate() or update credentials, as consent already has credentials',
+    async (): Promise<void> => {
+      mockConsentDbRetrieve.mockResolvedValueOnce(completeConsent)
+
+      const response = await post(
+        request as Request,
+        h as ResponseToolkit
+      )
+      expect(response).toBe(h.response().code(202))
+      jest.runAllImmediates()
+
+      expect(setImmediate).toHaveBeenCalled()
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsent)
+      expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
+
+      expect(mockGenerate).not.toHaveBeenCalled()
+      expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+
+      expect(mockScopeDbRetrieve).toHaveBeenCalled()
+      // expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
+      expect(mockPutConsentId).toHaveBeenCalledWith(request, completeConsent, externalScopes)
+
+      expect(mockLoggerError).not.toHaveBeenCalled()
+    }
+  )
 })
