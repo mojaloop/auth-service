@@ -47,7 +47,7 @@ export interface ExternalScope {
  */
 export function convertExternalToScope (
   externalScopes: ExternalScope[], consentId: string): Scope[] {
-  const scopes: Scope[] = ([] as Scope[]).concat(...externalScopes.map(
+  const scopes: Scope[] = externalScopes.map(
     (element: ExternalScope): Scope[] =>
       element.actions.map((action: string): Scope => ({
         consentId,
@@ -55,7 +55,7 @@ export function convertExternalToScope (
         action
       })
       )
-  ))
+  ).flat()
 
   return scopes
 }
