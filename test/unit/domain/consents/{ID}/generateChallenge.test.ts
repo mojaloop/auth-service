@@ -61,6 +61,7 @@ const request: Request = {
     id: '1234'
   }
 }
+request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = request.headers.fspiopsource
 
 // @ts-ignore
 const requestNoHeaders: Request = {
@@ -125,20 +126,25 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   // Tests for isConsentRequestInitiatedByValidSource
   describe('Request Validation', (): void => {
     it('Should return true', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(request, partialConsent)).toBe(true)
+      expect(isConsentRequestInitiatedByValidSource(request, partialConsent))
+        .toBe(true)
     })
 
     it('Should return false because consent is null', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(request, null as unknown as Consent)).toBe(false)
+      expect(isConsentRequestInitiatedByValidSource(
+        request, null as unknown as Consent))
+        .toBeFalsy()
     })
 
     it('Should return false because initiator ID does not match', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(request, partialConsent2)).toBe(false)
+      expect(isConsentRequestInitiatedByValidSource(request, partialConsent2))
+        .toBeFalsy()
     })
 
     it('Should throw an error as request headers are missing', (): void => {
       expect((): void => {
-        isConsentRequestInitiatedByValidSource(requestNoHeaders as Request, partialConsent2)
+        isConsentRequestInitiatedByValidSource(
+          requestNoHeaders as Request, partialConsent2)
       }).toThrowError()
     })
   })
@@ -157,9 +163,12 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
     // eslint-disable-next-line max-len
     it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
-      mockConsentDbUpdate.mockRejectedValue(new Error('Error updating Database'))
+      mockConsentDbUpdate.mockRejectedValue(
+        new Error('Error updating Database'))
 
-      await expect(updateConsentCredential(partialConsent, credential)).rejects.toThrowError('Error updating Database')
+      await expect(updateConsentCredential(partialConsent, credential))
+        .rejects
+        .toThrowError('Error updating Database')
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
     })
@@ -174,21 +183,33 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     })
 
     it('Should resolve successfully and return 1', async (): Promise<void> => {
-      expect(await putConsentId(completeConsent, request, externalScopes)).toBe(1)
+      expect(await putConsentId(completeConsent, request, externalScopes))
+        .toBe(1)
     })
 
     it('Should throw an error as request is null value', async (): Promise<void> => {
-      await expect(putConsentId(completeConsent, null as unknown as Request, externalScopes)).rejects.toThrow()
+      await expect(putConsentId(
+        completeConsent, null as unknown as Request, externalScopes))
+        .rejects
+        .toThrow()
     })
 
-    it('Should throw an error as consent is null value', async (): Promise<void> => {
-      await expect(putConsentId(null as unknown as Consent, request, externalScopes)).rejects.toThrow()
-    })
+    it('Should throw an error as consent is null value', 
+      async (): Promise<void> => {
+        await expect(putConsentId(null as unknown as Consent, request, externalScopes))
+          .rejects
+          .toThrow()
+      }
+    )
 
-    it('Should throw an error as putConsents() throws an error', async (): Promise<void> => {
-      mockPutConsents.mockRejectedValue(new Error('Test Error'))
-      await expect(putConsentId(completeConsent, request, externalScopes)).rejects.toThrowError('Test Error')
-    })
+    it('Should throw an error as putConsents() throws an error',
+      async (): Promise<void> => {
+        mockPutConsents.mockRejectedValue(new Error('Test Error'))
+        await expect(putConsentId(completeConsent, request, externalScopes))
+          .rejects
+          .toThrowError('Test Error')
+      }
+    )
   })
 }
 )
