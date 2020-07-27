@@ -28,7 +28,7 @@
  ******/
 
 import Logger from '@mojaloop/central-services-logger'
-import Enum from '@mojaloop/central-services-shared'
+import { Enum } from '@mojaloop/central-services-shared'
 import { Consent } from '../../../../../model/consent'
 import { Scope } from '../../../../../model/scope'
 import { consentDB, scopeDB } from '../../../../../lib/db'
@@ -57,6 +57,9 @@ export async function post (
   // existence of all properties and their value types according
   // to the OpenAPI specification. It also ensures non-null
   // payload values.
+
+  // Does it automatically return error response for bad schema?
+  // Need to test?
 
   const payload: AuthPayload = request.payload as AuthPayload
 
@@ -112,8 +115,8 @@ export async function post (
   // of a correct request
   setImmediate((): void => {
     try {
-      // TODO: Is quote object format UTF8 string or is conversion required?
-      // Verify signature
+      // Challenge is a UTF-8 (Normalization Form C) JSON
+      // string of the QuoteResponse object
       const isVerified = verifySignature(
         payload.challenge,
         payload.value,

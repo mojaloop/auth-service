@@ -36,7 +36,7 @@ import { Scope } from '../../../../../model/scope'
 export interface AuthPayload {
   consentId: string;
   sourceAccountId: string;
-  status: string;
+  status: 'PENDING' | 'VERIFIED';
   challenge: string;
   value: string;
 }
