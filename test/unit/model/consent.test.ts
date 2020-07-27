@@ -72,6 +72,7 @@ const consentWithOnlyUpdateFields: Consent = {
 const conflictingConsent: Consent = {
   id: '1234',
   // Conflicting initiatorId and participantId
+  // between completeConsent and this Consent
   initiatorId: 'pisp-0000-1133',
   participantId: 'dfs-1233-5623',
   credentialId: '123',
@@ -196,6 +197,9 @@ describe('src/model/consent', (): void => {
       expect(consents[0]).toEqual(expect.objectContaining(consentWithOnlyUpdateFields))
     })
 
+    // Non conflicting fields imply
+    // * credentialStatus is not `ACTIVE` or
+    // * field is null
     it('updates existing consent with only non-conflicting fields from a consent', async (): Promise<void> => {
       // Inserting record to update
       await Db<Consent>('Consent')
