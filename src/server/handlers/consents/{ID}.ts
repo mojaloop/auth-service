@@ -26,8 +26,8 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent } from '../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential } from '../../domain/consents/{ID}'
-import { IncorrectChallengeError } from '../../domain/errors'
+import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '../../domain/consents/{ID}'
+import { IncorrectChallengeError, IncorrectStatusError } from '../../domain/errors'
 import { verifySignature } from '../../../lib/challenge'
 
 export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
@@ -40,12 +40,16 @@ export async function put (request: Request, h: ResponseToolkit): Promise<Respon
   const challenge = request.payload.credential.challenge.payload
   /* The incoming credential id from the PISP. */
   const requestCredentialId = request.payload.credential.id
+  /* The incoming credential status from the PISP. */
+  const credentialStatus = request.payload.credential.status
   let consent: Consent
 
   try {
     consent = await retrieveValidConsent(id, challenge)
+    /* Checks if incoming credential status is of the correct form */
+    await checkCredentialStatus(credentialStatus, id)
   } catch (error) {
-    if (error instanceof IncorrectChallengeError) {
+    if (error instanceof IncorrectChallengeError || error instanceof IncorrectStatusError) {
       Logger.push(error)
       return h.response().code(400)
     }

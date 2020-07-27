@@ -31,3 +31,12 @@ export class IncorrectChallengeError extends Error {
     this.consentId = consentId
   }
 }
+
+export class IncorrectStatusError extends Error {
+  public consentId: string
+
+  public constructor (consentId: string) {
+    super(`Incorrect status ${consentId}`)
+    this.consentId = consentId
+  }
+}

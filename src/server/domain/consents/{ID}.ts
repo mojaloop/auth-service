@@ -25,7 +25,7 @@
 import { Consent } from '../../../model/consent'
 import { Scope } from '../../../model/scope'
 import { consentDB, scopeDB } from '../../../lib/db'
-import { IncorrectChallengeError } from '../errors'
+import { IncorrectChallengeError, IncorrectStatusError } from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '../../../lib/requests'
 import { Enum } from '@mojaloop/central-services-shared'
@@ -34,7 +34,7 @@ import { ExternalScope, convertScopesToExternal } from '../../../lib/scopes'
 
 export interface ConsentCredential {
   credentialId: string;
-  credentialStatus: 'PENDING' | 'VERIFIED';
+  credentialStatus: 'VERIFIED';
   credentialPayload: string;
 }
 
@@ -46,13 +46,15 @@ export async function retrieveValidConsent (consentId: string, requestChallenge:
   return consent
 }
 
-/**
+export async function checkCredentialStatus (credentialStatus: string, consentId: string): Promise<void> {
+  if (credentialStatus !== 'PENDING') {
+    throw new IncorrectStatusError(consentId)
+  }
+}
+
+/*
  * Updates the consent resource in the database with incoming request's
  * credential attributes.
- * @param requestCredentialId incoming request's credential Id.
- * @param requestCredentialStatus incoming request's credential Status.
- * @param requestCredentialPayload incoming request's credential Payload.
- * @param consent Consent resource corresponding to incoming request's Consent Id.
  */
 export async function updateConsentCredential (consent: Consent, credential: ConsentCredential): Promise<number> {
   consent.credentialId = credential.credentialId
@@ -75,10 +77,10 @@ export async function putConsents (consent: Consent, signature: string, publicKe
       credentialType: consent.credentialType as 'FIDO',
       status: consent.credentialStatus as 'VERIFIED',
       challenge: {
-        payload: consent.credentialChallenge,
-        signature: signature
+        payload: consent.credentialChallenge as string,
+        signature: signature as string
       },
-      payload: publicKey
+      payload: publicKey as string
     }
   }
   const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
