@@ -52,9 +52,9 @@ export async function post (
   try {
     consent = await consentDB.retrieve(id)
   } catch (error) {
+    // TODO: Error Handling dealt with in future ticket #355
     Logger.push(error)
     Logger.error('Error in retrieving consent')
-    throw error
   }
 
   // If consent is invalid, throw error
@@ -92,7 +92,7 @@ export async function post (
       Logger.push(error)
       // eslint-disable-next-line max-len
       Logger.error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
-      // TODO: Decide on error handling HERE
+      // TODO: Decide on error handling HERE -  dealt with in future ticket #355
     }
   })
 
