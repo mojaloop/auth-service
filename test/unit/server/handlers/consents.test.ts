@@ -32,7 +32,7 @@ import * as Domain from '../../../../src/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
-const mockIsRequestValid = jest.spyOn(Domain, 'isRequestValid')
+const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
@@ -80,7 +80,7 @@ const h: ResponseToolkit = {
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
-    mockIsRequestValid.mockReturnValue(true)
+    mockIsPostRequestValid.mockReturnValue(true)
     mockStoreConsent.mockResolvedValue()
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
@@ -106,14 +106,14 @@ describe('server/handlers/consents', (): void => {
 
   it('Should return 400 code due to invalid request',
     async (): Promise<void> => {
-      mockIsRequestValid.mockReturnValueOnce(false)
+      mockIsPostRequestValid.mockReturnValueOnce(false)
 
       const response = await post(
         request as Request,
         h as ResponseToolkit
       )
       expect(response).toBe(400)
-      expect(mockIsRequestValid).toHaveBeenCalledWith(request)
+      expect(mockIsPostRequestValid).toHaveBeenCalledWith(request)
 
       expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
