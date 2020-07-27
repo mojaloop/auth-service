@@ -35,7 +35,21 @@ const Config = {
     }
   },
   production: {
-    // TODO, fill out production attributes accordingly.
+    /* For now, production environment is the same as the dev environment. */
+    client: 'mysql',
+    version: '5.5',
+    connection: config.get('DATABASE').connection,
+    pool: config.get('DATABASE').pool,
+    migrations: {
+      directory: migrationsDirectory,
+      tableName: 'auth-service',
+      stub: `${migrationsDirectory}/migration.template`,
+      loadExtensions: ['.ts']
+    },
+    seeds: {
+      directory: seedsDirectory,
+      loadExtensions: ['.ts']
+    }
   }
 }
 

@@ -38,7 +38,7 @@ import ScopeDB from '../model/scope'
 
 function getKnexInstance (): Knex {
   let Db: Knex
-  switch (process.env.NOD_ENV) {
+  switch (process.env.NODE_ENV) {
     case 'test': {
       Db = Knex(Config.test as object)
       break
