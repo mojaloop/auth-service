@@ -49,7 +49,35 @@ export async function generate (size: number = 32): Promise<string> {
     const buf = await randomBytesAsync(Math.round(Math.abs(size)))
     return buf.toString('base64')
   } catch (error) {
-    Logger.push(error).error('Unable to generate challenge string')
+    Logger.push(error)
+    Logger.error('Unable to generate challenge string')
+    throw error
+  }
+}
+
+/**
+ * Helper function to validate signatures using public key
+ * @param challenge UTF-8 challenge string
+ * @param signature Base64 signature string
+ * @param publicKey PEM Base64 Public key string or KeyObject for verification
+ *
+ * Currently, the implementation focuses on RSA 2048 and ECDSA:secp256k1 keys.
+ * Support for additional keys can be extended further.
+ */
+export function verifySignature (
+  challenge: string,
+  signature: string,
+  publicKey: string | crypto.KeyObject): boolean {
+  try {
+    // Digest Algorithm
+    const verifier: crypto.Verify = crypto.createVerify('SHA256')
+    // Hashing the challenge string
+    verifier.update(challenge)
+
+    return verifier.verify(publicKey, signature, 'base64')
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Unable to verify signature')
     throw error
   }
 }
