@@ -165,24 +165,24 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
     expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
+    expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
     expect(mockPutConsentId).toHaveBeenCalledWith(completeConsent, request, externalScopes)
   })
 
-  it('Should throw an error due to consent retrieval error', (): void => {
+  it('Should throw an error due to consent retrieval error', async (): Promise<void> => {
     mockConsentDbRetrieve.mockRejectedValueOnce(new Error('Id does not exist in database'))
-    expect(async (): Promise<void> => {
-      await post(request as Request, h as ResponseToolkit)
-    }).toThrowError()
+    await expect(post(request as Request, h as ResponseToolkit))
+      .rejects.toThrowError('Id does not exist in database')
 
     expect(setImmediate).not.toHaveBeenCalled()
     expect(mockIsConsentRequestValid).not.toHaveBeenCalled()
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).not.toHaveBeenCalled()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+    expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
     expect(mockPutConsentId).not.toHaveBeenCalled()
   })
 
-  // TODO - confirm JOI validation handles
   it('Should return 400 code due to invalid request', async (): Promise<void> => {
     mockIsConsentRequestValid.mockReturnValueOnce(false)
     const response = await post(
@@ -195,12 +195,17 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockConsentDbRetrieve).toHaveBeenCalled()
     expect(mockGenerate).not.toHaveBeenCalled()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+    expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
     expect(mockPutConsentId).not.toHaveBeenCalled()
   })
 
   it('Should throw an error due to error in challenge generation', async (): Promise<void> => {
     mockGenerate.mockRejectedValueOnce(new Error('Error generating challenge'))
-    expect(await post(request as Request, h as ResponseToolkit)).rejects.toThrowError()
+    const response = await post(
+      request as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(202))
     jest.runAllImmediates()
 
     expect(setImmediate).toHaveBeenCalled()
@@ -208,12 +213,17 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+    expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
     expect(mockPutConsentId).not.toHaveBeenCalled()
   })
 
   it('Should throw an error due to error updating credentials in database', async (): Promise<void> => {
     mockUpdateConsentCredential.mockRejectedValueOnce(new Error('Error updating db'))
-    expect(await post(request as Request, h as ResponseToolkit)).rejects.toThrowError()
+    const response = await post(
+      request as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(202))
     jest.runAllImmediates()
 
     expect(setImmediate).toHaveBeenCalled()
@@ -221,12 +231,17 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
     expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
+    expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
     expect(mockPutConsentId).not.toHaveBeenCalled()
   })
 
   it('Should throw an error due to error in PUT consents/{id}', async (): Promise<void> => {
     mockPutConsentId.mockRejectedValueOnce(new Error('Could not establish connection'))
-    expect(await post(request as Request, h as ResponseToolkit)).rejects.toThrowError()
+    const response = await post(
+      request as Request,
+      h as ResponseToolkit
+    )
+    expect(response).toBe(h.response().code(202))
     jest.runAllImmediates()
 
     expect(setImmediate).toHaveBeenCalled()
@@ -234,6 +249,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     expect(mockGenerate).toHaveBeenCalledWith()
     expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
+    expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
     expect(mockPutConsentId).toHaveBeenCalledWith(request, completeConsent, externalScopes)
   })
 })

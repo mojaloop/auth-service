@@ -114,8 +114,8 @@ const externalScopes: ExternalScope[] = [{
 
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   beforeAll((): void => {
-    mockLoggerPush.mockImplementation((): boolean => { return true })
-    mockLoggerError.mockImplementation((): boolean => { return true })
+    mockLoggerError.mockReturnValue(null)
+    mockLoggerPush.mockReturnValue(null)
   })
 
   beforeEach((): void => {
