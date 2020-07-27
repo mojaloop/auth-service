@@ -78,6 +78,7 @@ export async function post (
           credentialStatus: 'PENDING',
           credentialType: 'FIDO'
         }
+
         consent = await updateConsentCredential(consent, credential)
       }
 

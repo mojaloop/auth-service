@@ -98,7 +98,7 @@ export async function putConsentId (
       credentialType: consent.credentialType as 'FIDO',
       status: consent.credentialStatus as 'PENDING',
       challenge: {
-        payload: consent.credentialChallenge,
+        payload: consent.credentialChallenge as string,
         signature: null
       },
       payload: null
