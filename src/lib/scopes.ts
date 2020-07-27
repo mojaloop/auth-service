@@ -29,6 +29,10 @@
 
 import { Scope } from '../model/scope'
 
+/**
+ * Interface for scope objects received from external source by handler
+ * or to be sent in an outgoing call
+ */
 export interface ExternalScope {
   accountId: string;
   actions: string[];
@@ -41,8 +45,6 @@ export interface ExternalScope {
  */
 export function convertScopesToExternal (
   scopes: Scope[]): ExternalScope[] {
-  // MAKE THIS WORK IN A STREAMING WAY
-
   // Dictionary of accountId to ExternalScope object
   const scopeDictionary = {}
 
@@ -61,4 +63,24 @@ export function convertScopesToExternal (
   })
 
   return Object.values(scopeDictionary)
+}
+
+/** Takes input of array of ExternalScope objects
+ * Reformats and returns array of Scope objects
+ * @param externalScopes Array of ExternalScope objects received
+ * @param consentId Id of Consent to which scopes belong
+ */
+export function convertExternalToScope (
+  externalScopes: ExternalScope[], consentId: string): Scope[] {
+  const scopes: Scope[] = externalScopes.map(
+    (element: ExternalScope): Scope[] =>
+      element.actions.map((action: string): Scope => ({
+        consentId,
+        accountId: element.accountId,
+        action
+      })
+      )
+  ).flat()
+
+  return scopes
 }

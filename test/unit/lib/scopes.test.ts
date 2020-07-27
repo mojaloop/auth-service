@@ -28,8 +28,10 @@
  --------------
  ******/
 
-import { Scope } from '../../../src/model/scope'
-import { ExternalScope, convertScopesToExternal } from '../../../src/lib/scopes'
+import { Scope } from '../../../src/model/scope/scope'
+import * as ScopeFunctions from '../../../src/lib/scopes'
+
+const consentId = '1234'
 
 const scopes: Scope[] = [{
   id: 123234,
@@ -51,7 +53,7 @@ const scopes: Scope[] = [{
 }
 ]
 
-const externalScope: ExternalScope[] = [{
+const externalScope: ScopeFunctions.ExternalScope[] = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
@@ -61,9 +63,18 @@ const externalScope: ExternalScope[] = [{
 }
 ]
 
-// TODO: Add more tests
 describe('Scope Convert Scopes to ExternalScopes', (): void => {
   it('Should return Scope array when input ExternalScope array', (): void => {
-    expect(convertScopesToExternal(scopes)).toStrictEqual(externalScope)
+    expect(ScopeFunctions.convertScopesToExternal(scopes))
+      .toStrictEqual(externalScope)
   })
+})
+
+describe('Scope Convert ExternalScope to Scope', (): void => {
+  it('Should return Scope array when input ExternalScope array',
+    (): void => {
+      expect(ScopeFunctions.convertExternalToScope(externalScope, consentId))
+        .toStrictEqual(scopes)
+    }
+  )
 })
