@@ -26,8 +26,8 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent } from '../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '../../domain/consents/{ID}'
-import { IncorrectChallengeError, IncorrectStatusError } from '../../domain/errors'
+import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '../../../domain/consents/{ID}'
+import { IncorrectChallengeError, IncorrectStatusError } from '../../../domain/errors'
 import { verifySignature } from '../../../lib/challenge'
 
 export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {

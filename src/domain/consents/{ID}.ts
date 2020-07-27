@@ -22,15 +22,15 @@
 
  --------------
  ******/
-import { Consent } from '../../../model/consent'
-import { Scope } from '../../../model/scope'
-import { consentDB, scopeDB } from '../../../lib/db'
+import { Consent } from '../../model/consent'
+import { Scope } from '../../model/scope'
+import { consentDB, scopeDB } from '../../lib/db'
 import { IncorrectChallengeError, IncorrectStatusError } from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '../../../lib/requests'
+import { thirdPartyRequest } from '../../lib/requests'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Request } from '@hapi/hapi'
-import { ExternalScope, convertScopesToExternal } from '../../../lib/scopes'
+import { ExternalScope, convertScopesToExternal } from '../../lib/scopes'
 
 export interface ConsentCredential {
   credentialId: string;
