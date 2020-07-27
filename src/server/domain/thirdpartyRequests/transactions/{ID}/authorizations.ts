@@ -44,14 +44,14 @@ export interface AuthPayload {
 /*
  * Domain function to validate payload status
  */
-export function isPendingPayload (payload: AuthPayload): boolean {
+export function isPayloadPending (payload: AuthPayload): boolean {
   return payload.status === 'PENDING'
 }
 
 /*
  * Domain function to check for existence of an active Consent key
  */
-export function hasActiveConsentKey (consent: Consent): boolean {
+export function hasActiveCredentialForPayload (consent: Consent): boolean {
   return (consent.credentialStatus === 'ACTIVE' &&
     consent.credentialPayload !== null)
 }

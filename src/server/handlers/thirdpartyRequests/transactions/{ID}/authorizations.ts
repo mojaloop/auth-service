@@ -37,8 +37,8 @@ import { verifySignature } from '../../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   AuthPayload,
-  isPendingPayload,
-  hasActiveConsentKey,
+  isPayloadPending,
+  hasActiveCredentialForPayload,
   hasMatchingScopeForPayload
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
@@ -61,7 +61,7 @@ export async function post (
   const payload: AuthPayload = request.payload as AuthPayload
 
   // Validate incoming payload status
-  if (!isPendingPayload(payload)) {
+  if (!isPayloadPending(payload)) {
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
@@ -103,7 +103,7 @@ export async function post (
   }
 
   // Check for presence of an active key
-  if (!hasActiveConsentKey(consent)) {
+  if (!hasActiveCredentialForPayload(consent)) {
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 

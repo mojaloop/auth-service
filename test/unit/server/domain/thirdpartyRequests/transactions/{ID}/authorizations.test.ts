@@ -31,8 +31,8 @@ import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
 import {
   AuthPayload,
-  isPendingPayload,
-  hasActiveConsentKey,
+  isPayloadPending,
+  hasActiveCredentialForPayload,
   hasMatchingScopeForPayload
 } from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
@@ -41,7 +41,7 @@ import {
  * Domain Unit Tests
  */
 describe('Incoming POST Transaction Authorization Domain', (): void => {
-  describe('isPendingPayload', (): void => {
+  describe('isPayloadPending', (): void => {
     it('returns true for \'PENDING\' payload status', async (): Promise<void> => {
       const pendingPayload: AuthPayload = {
         consentId: '1223abcd',
@@ -51,7 +51,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         value: 'dwuduwd&e2idjoj0w'
       }
 
-      const correctStatus = isPendingPayload(pendingPayload)
+      const correctStatus = isPayloadPending(pendingPayload)
 
       expect(correctStatus).toEqual(true)
     })
@@ -65,13 +65,13 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         value: 'dwuduwd&e2idjoj0w'
       }
 
-      const correctStatus = isPendingPayload(verifiedPayload)
+      const correctStatus = isPayloadPending(verifiedPayload)
 
       expect(correctStatus).toEqual(false)
     })
   })
 
-  describe('hasActiveConsentKey', (): void => {
+  describe('hasActiveCredentialForPayload', (): void => {
     it('returns true non-null and \'ACTIVE\' consent credential', async (): Promise<void> => {
       const activeConsent: Consent = {
         id: '1234',
@@ -84,7 +84,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         credentialPayload: 'dwuduwd&e2idjoj0w'
       }
 
-      const activeKey = hasActiveConsentKey(activeConsent)
+      const activeKey = hasActiveCredentialForPayload(activeConsent)
 
       expect(activeKey).toEqual(true)
     })
@@ -101,7 +101,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         credentialPayload: null as unknown as string
       }
 
-      const activeKey = hasActiveConsentKey(nullConsent)
+      const activeKey = hasActiveCredentialForPayload(nullConsent)
 
       expect(activeKey).toEqual(false)
     })
@@ -118,13 +118,13 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         credentialPayload: null as unknown as string
       }
 
-      const activeKey = hasActiveConsentKey(pendingConsent)
+      const activeKey = hasActiveCredentialForPayload(pendingConsent)
 
       expect(activeKey).toEqual(false)
     })
   })
 
-  describe('  hasMatchingScopeForPayload', (): void => {
+  describe('hasMatchingScopeForPayload', (): void => {
     it('returns true if the payload scope matches an associated consent scope', async (): Promise<void> => {
       const payload: AuthPayload = {
         consentId: '1223abcd',
