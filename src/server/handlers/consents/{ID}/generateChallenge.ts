@@ -86,16 +86,20 @@ export async function post (
   const id = request.params.id
 
   // Fetch consent using ID
-  let consent: Consent = null as unknown as Consent
+  let consent: Consent
   try {
     consent = await consentDB.retrieve(id)
   } catch (error) {
     // TODO: Error Handling dealt with in future ticket #355
     Logger.push(error)
     Logger.error('Error in retrieving consent')
+
+    // If consent cannot be retrieved using given ID
+    // Return 400 code
+    return h.response().code(400)
   }
 
-  // If consent is invalid, throw error
+  // If consent is invalid, return 400 code
   if (!isConsentRequestInitiatedByValidSource(request, consent)) {
     return h.response().code(400)
   }
