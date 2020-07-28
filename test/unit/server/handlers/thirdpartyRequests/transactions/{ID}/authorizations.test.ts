@@ -41,6 +41,7 @@ import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
 import * as Challenge from '../../../../../../../src/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
+import { NotFoundError } from '../../../../../../../src/model/errors'
 
 /*
  * Mock Domain Functions
@@ -169,8 +170,9 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
   })
 
   it('Should return 400 (Bad Request) response code for no `ACTIVE` credentials', async (): Promise<void> => {
-    // Active Payload
+    // Inactive credential
     mockHasActiveCredential.mockReturnValue(false)
+
     const response = await post(request, h)
 
     // Accepted Acknowledgement
@@ -181,5 +183,88 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
     expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
     expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
     expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+  })
+
+  it('Should return 404 (Not Found) response code for no matching consent scope', async (): Promise<void> => {
+    // No matching scope for the consent in the DB
+    mockHasMatchingScope.mockReturnValue(false)
+
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+    expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+    expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+  })
+
+  it('Should return 404 (Not Found) response code for payload consent not existing', async (): Promise<void> => {
+    // Requested Consent not in the DB
+    mockRetrieveConsent.mockRejectedValue(
+      new NotFoundError('Consent', payload.consentId)
+    )
+
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+    expect(mockLoggerPush).toHaveBeenCalled()
+    expect(mockLoggerError).toHaveBeenCalled()
+  })
+
+  it('Should return 500 (Server Error) response code for error in retrieving consent', async (): Promise<void> => {
+    mockRetrieveConsent.mockRejectedValue(
+      new Error()
+    )
+
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+    expect(mockLoggerPush).toHaveBeenCalled()
+    expect(mockLoggerError).toHaveBeenCalled()
+  })
+
+  it('Should return 404 (Not Found) response code for no associated consent scopes', async (): Promise<void> => {
+    // Consent does not have any scopes in DB
+    mockRetrieveAllScopes.mockRejectedValue(
+      new NotFoundError('Consent Scopes', payload.consentId)
+    )
+
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+    expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+    expect(mockLoggerPush).toHaveBeenCalled()
+    expect(mockLoggerError).toHaveBeenCalled()
+  })
+
+  it('Should return 500 (Server Error) response code for error in retrieving scopes', async (): Promise<void> => {
+    mockRetrieveAllScopes.mockRejectedValue(
+      new Error()
+    )
+
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+    expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+    expect(mockLoggerPush).toHaveBeenCalled()
+    expect(mockLoggerError).toHaveBeenCalled()
   })
 })

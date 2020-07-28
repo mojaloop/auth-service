@@ -78,13 +78,13 @@ export async function post (
     Logger.error('Could not retrieve consent')
 
     if (error instanceof NotFoundError) {
+      // **************************
+      // TODO: Error 400 or 404???
+      // **************************
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
-    //
-    // TODO: Service Unavailable (503) or Internal Server error (500)?
-    //
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
   }
 
   let consentScopes: Scope[]
@@ -97,17 +97,20 @@ export async function post (
     Logger.error('Could not retrieve scope')
 
     if (error instanceof NotFoundError) {
+      // **************************
+      // TODO: Error 400 or 404???
+      // **************************
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
-    //
-    // TODO: Service Unavailable (503) or Internal Server error (500)?
-    //
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
   }
 
   // Check if the request scope matches with the consent
   if (!hasMatchingScopeForPayload(consentScopes, payload)) {
+    // **************************
+    // TODO: Error 400 or 404???
+    // **************************
     return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
   }
 
@@ -121,8 +124,8 @@ export async function post (
   // of a correct request
   setImmediate((): void => {
     try {
-      // Challenge is a UTF-8 (Normalization Form C) JSON
-      // string of the QuoteResponse object
+      // Challenge is a UTF-8 (Normalization Form C)
+      // JSON string of the QuoteResponse object
       const isVerified = verifySignature(
         payload.challenge,
         payload.value,
@@ -140,6 +143,7 @@ export async function post (
       Logger.push(error)
       Logger.error('Could not verify signature')
 
+      // Unit test for this block
       // TODO: Inform Switch that there is some problem on server side or
       // Should this just throw an error?
     }
