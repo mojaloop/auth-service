@@ -53,6 +53,23 @@ const scopes: Scope[] = [{
 }
 ]
 
+const scopesNoId: Scope[] = [{
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.getAccess'
+},
+{
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.transferMoney'
+},
+{
+  consentId: '1234',
+  accountId: 'as22',
+  action: 'account.getAccess'
+}
+]
+
 const externalScope: ScopeFunctions.ExternalScope[] = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
@@ -74,7 +91,7 @@ describe('Scope Convert ExternalScope to Scope', (): void => {
   it('Should return Scope array when input ExternalScope array',
     (): void => {
       expect(ScopeFunctions.convertExternalToScope(externalScope, consentId))
-        .toStrictEqual(scopes)
+        .toStrictEqual(scopesNoId)
     }
   )
 })
