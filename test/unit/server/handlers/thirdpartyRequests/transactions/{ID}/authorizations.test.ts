@@ -117,7 +117,7 @@ const mockScopes: Scope[] = [
  * Handler Unit Tests
  */
 describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (): void => {
-  beforeAll((): void => {
+  beforeEach((): void => {
     mockIsPayloadPending.mockReturnValue(true)
     mockHasActiveCredential.mockReturnValue(true)
     mockHasMatchingScope.mockReturnValue(true)
@@ -131,9 +131,6 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
 
     // For setImmediate
     jest.useFakeTimers()
-  })
-
-  beforeEach((): void => {
     jest.clearAllTimers()
   })
 
@@ -157,5 +154,32 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
       payload.value,
       mockConsent.credentialPayload
     )
+  })
+
+  it('Should return 400 (Bad Request) response code for a non `PENDING` payload', async (): Promise<void> => {
+    // Active Payload
+    mockIsPayloadPending.mockReturnValue(false)
+
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+  })
+
+  it('Should return 400 (Bad Request) response code for no `ACTIVE` credentials', async (): Promise<void> => {
+    // Active Payload
+    mockHasActiveCredential.mockReturnValue(false)
+    const response = await post(request, h)
+
+    // Accepted Acknowledgement
+    expect(response).toBe(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+
+    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+    expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+    expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+    expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
   })
 })

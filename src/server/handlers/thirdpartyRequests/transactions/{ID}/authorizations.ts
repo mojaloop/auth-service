@@ -81,6 +81,9 @@ export async function post (
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
+    //
+    // TODO: Service Unavailable (503) or Internal Server error (500)?
+    //
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
@@ -97,6 +100,9 @@ export async function post (
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
+    //
+    // TODO: Service Unavailable (503) or Internal Server error (500)?
+    //
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
