@@ -177,6 +177,7 @@ jobs:
           command: |
             docker-compose up -d
             npm run wait-4-all
+            npm run migrate
       - run:
           name: Execute integration tests
           command: npm -s run test:integration

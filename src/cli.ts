@@ -32,6 +32,7 @@ import ServiceServer from './server'
 import { Command } from 'commander'
 
 // handle script parameters
+console.log('process args: ' + process.argv)
 const program = new Command(Config.PACKAGE.name)
 program
   .version(Config.PACKAGE.version)
