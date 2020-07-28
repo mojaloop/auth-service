@@ -39,7 +39,7 @@ import { Scope } from '../../../../model/scope'
 
 // Asynchronously deals with generating challenge, updating consent db
 //  and making outgoing PUT consent/{ID} call
-export async function postBackground (
+export async function generateChallengeAndPutConsentId (
   request: Request,
   consent: Consent,
   id: string
@@ -106,7 +106,7 @@ export async function post (
 
   // Asynchronously deals with generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
-  postBackground(request, consent, id)
+  generateChallengeAndPutConsentId(request, consent, id)
   // intentionally not await-ing we want to run it in background
 
   // Return Success code informing source: request received

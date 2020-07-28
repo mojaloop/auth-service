@@ -152,10 +152,10 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     jest.clearAllMocks()
   })
 
-  describe('PostBackground', (): void => {
+  describe('generateChallengeAndPutConsentId', (): void => {
     it('Should finish without any errors, generating challenge, updating credentials and making outgoing call',
       async (): Promise<void> => {
-        await expect(Handler.postBackground(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+        await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
 
         expect(mockGenerate).toHaveBeenCalledWith()
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
@@ -166,7 +166,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 
     it('Should finish without any errors, NOT generating challenge or updating credentials, and making outgoing call',
       async (): Promise<void> => {
-        await expect(Handler.postBackground(request, completeConsent, partialConsent.id)).resolves.toBeUndefined()
+        await expect(Handler.generateChallengeAndPutConsentId(request, completeConsent, partialConsent.id)).resolves.toBeUndefined()
 
         expect(mockGenerate).not.toHaveBeenCalled()
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -178,7 +178,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     it('Should log an error due to error updating credentials in database', async (): Promise<void> => {
       mockUpdateConsentCredential.mockRejectedValueOnce(new Error('Error updating db'))
 
-      await expect(Handler.postBackground(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+      await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
 
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
@@ -193,7 +193,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     it('Should log an error due to error in challenge generation', async (): Promise<void> => {
       mockGenerate.mockRejectedValueOnce(new Error('Error generating challenge'))
 
-      await expect(Handler.postBackground(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+      await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
 
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockLoggerPush).toHaveBeenCalledWith(Error('Error generating challenge'))
@@ -209,7 +209,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       async (): Promise<void> => {
         mockPutConsentId.mockRejectedValueOnce(new Error('Could not establish connection'))
 
-        await expect(Handler.postBackground(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+        await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
 
         expect(mockGenerate).toHaveBeenCalledWith()
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
@@ -221,9 +221,9 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   })
 
   describe('Post', (): void => {
-    const mockPostBackground = jest.spyOn(Handler, 'postBackground')
+    const mockGenChallengeAndPutConsentId = jest.spyOn(Handler, 'generateChallengeAndPutConsentId')
     beforeAll((): void => {
-      mockPostBackground.mockResolvedValue(undefined)
+      mockGenChallengeAndPutConsentId.mockResolvedValue(undefined)
     })
     it('Should return 202 success code', async (): Promise<void> => {
       const response = await Handler.post(
