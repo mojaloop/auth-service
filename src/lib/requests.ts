@@ -43,6 +43,7 @@ const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
   logger: Logger,
   // TODO: Decide on below later - Handled in future ticket #361
+  // Also decide on need for jwsSigningKey
   jwsSign: false,
   tls: {
     outbound: {
@@ -51,10 +52,6 @@ const configRequest: BaseRequestConfigType = {
       }
     }
   }
-  // jwsSigningKey: 'test key REPLACE'
-  // Ask Lewis about Below - where should I get it?
-  // Also if it's optional why is there an error when I don't provide it???
-  // jwsSigningKey: 'test key'
 
 }
 const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
