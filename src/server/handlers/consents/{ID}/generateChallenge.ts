@@ -27,8 +27,20 @@
 
  --------------
  ******/
-// eslint-disable-next-line max-len
-import { updateConsentCredential, isConsentRequestInitiatedByValidSource, putConsentId, ConsentCredential } from '../../../../domain/consents/{ID}/generateChallenge'
+
+/* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing
+ * which will be addressed in the future in
+ * ticket #354
+ */
+
+import {
+  updateConsentCredential,
+  isConsentRequestInitiatedByValidSource,
+  putConsentId, ConsentCredential
+} from '../../../../domain/consents/{ID}/generateChallenge'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../lib/db'
