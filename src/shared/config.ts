@@ -42,6 +42,7 @@ export interface ServiceConfig {
   PARTICIPANT_ID: string;
 
   // ../lib/config.
+  ENVIRONMENT: string;
   DATABASE?: {
     ACQUIRE_TIMEOUT_MILLIS: number;
     CREATE_RETRY_INTERVAL_MILLIS: number;

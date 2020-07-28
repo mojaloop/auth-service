@@ -1,4 +1,4 @@
-import { config } from '../../src/lib/config'
+import { config } from '../src/lib/config'
 import path from 'path'
 const migrationsDirectory = path.join(__dirname, '../migrations')
 const seedsDirectory = path.join(__dirname, '../seeds')
@@ -35,7 +35,7 @@ const Config = {
     }
   },
   production: {
-    /* For now, production environment is the same as the dev environment. */
+    /* For now, the production environment is the same as the development environment. */
     client: 'mysql',
     version: '5.5',
     connection: config.get('DATABASE').connection,

@@ -33,12 +33,13 @@
 
 import Knex from 'knex'
 import Config from '../../config/knexfile'
+import { config } from './config'
 import ConsentDB from '../model/consent'
 import ScopeDB from '../model/scope'
 
 function getKnexInstance (): Knex {
   let Db: Knex
-  switch (process.env.NODE_ENV) {
+  switch (config.get('ENVIRONMENT')) {
     case 'test': {
       Db = Knex(Config.test as object)
       break
