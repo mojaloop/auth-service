@@ -225,7 +225,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     beforeAll((): void => {
       mockPostBackground.mockResolvedValue(undefined)
     })
-    it.only('Should return 202 success code', async (): Promise<void> => {
+    it('Should return 202 success code', async (): Promise<void> => {
       const response = await Handler.post(
         request as Request,
         h as ResponseToolkit
@@ -246,7 +246,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       )
       expect(response).toBe(h.response().code(400))
 
-      expect(mockIsConsentRequestValid).toHaveBeenCalled()
+      expect(mockIsConsentRequestValid).not.toHaveBeenCalled()
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(request.params.id)
     })
 
