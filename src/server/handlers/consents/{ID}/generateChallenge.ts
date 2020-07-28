@@ -37,6 +37,44 @@ import Logger from '@mojaloop/central-services-logger'
 import { convertScopesToExternal } from '../../../../lib/scopes'
 import { Scope } from '../../../../model/scope'
 
+// Asynchronously deals with generating challenge, updating consent db
+//  and making outgoing PUT consent/{ID} call
+export async function postBackground (
+  request: Request,
+  consent: Consent,
+  id: string
+): Promise<void> {
+  try {
+    // If there is no pre-existing challenge for the consent id
+    // Generate one and update database
+    if (!consent.credentialChallenge) {
+      // Challenge generation
+      const challengeValue = await challenge.generate()
+
+      // Updating credentials with generated challenge
+      const credential: ConsentCredential = {
+        credentialChallenge: challengeValue,
+        credentialStatus: 'PENDING',
+        credentialType: 'FIDO'
+      }
+
+      consent = await updateConsentCredential(consent, credential)
+    }
+
+    // Retrieve Scopes
+    const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
+    const scopes = convertScopesToExternal(scopesRetrieved)
+
+    // Outgoing call to PUT consents/{ID}
+    await putConsentId(consent, request, scopes)
+  } catch (error) {
+    Logger.push(error)
+    // eslint-disable-next-line max-len
+    Logger.error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
+    // TODO: Decide on error handling HERE -  dealt with in future ticket #355
+  }
+}
+
 /** The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a
  * credential for the given Consent object. The `{ID}` in the URI should
  * contain the `{ID}` that was used in the `POST /consents`.
@@ -64,37 +102,8 @@ export async function post (
 
   // Asynchronously deals with generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
-  setImmediate(async (): Promise<void> => {
-    try {
-      // If there is no pre-existing challenge for the consent id
-      // Generate one and update database
-      if (!consent.credentialChallenge) {
-        // Challenge generation
-        const challengeValue = await challenge.generate()
-
-        // Updating credentials with generated challenge
-        const credential: ConsentCredential = {
-          credentialChallenge: challengeValue,
-          credentialStatus: 'PENDING',
-          credentialType: 'FIDO'
-        }
-
-        consent = await updateConsentCredential(consent, credential)
-      }
-
-      // Retrieve Scopes
-      const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
-      const scopes = convertScopesToExternal(scopesRetrieved)
-
-      // Outgoing call to PUT consents/{ID}
-      putConsentId(consent, request, scopes)
-    } catch (error) {
-      Logger.push(error)
-      // eslint-disable-next-line max-len
-      Logger.error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
-      // TODO: Decide on error handling HERE -  dealt with in future ticket #355
-    }
-  })
+  postBackground(request, consent, id)
+  // intentionally not await-ing we want to run it in background
 
   // Return Success code informing source: request received
   return h.response().code(202)
