@@ -54,14 +54,13 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 // @ts-ignore
 const request: Request = {
   headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
+    'fspiop-source': 'pisp-2342-2233',
+    'fspiop-destination': 'dfsp-3333-2123'
   },
   params: {
     id: '1234'
   }
 }
-request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = request.headers.fspiopsource
 
 // @ts-ignore
 const requestNoHeaders: Request = {
