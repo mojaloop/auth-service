@@ -32,14 +32,14 @@ import ServiceServer from './server'
 import { Command } from 'commander'
 
 // handle script parameters
-console.log('process args: ' + process.argv)
 const program = new Command(Config.PACKAGE.name)
 program
   .version(Config.PACKAGE.version)
   .description('auth-service cli')
   .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
   .option('-H, --host <string>', 'listen on host', Config.HOST)
-  .parse(process.argv)
+
+program.parse(process.argv)
 
 // overload Config with script parameters
 Config.PORT = program.port
