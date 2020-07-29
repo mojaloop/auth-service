@@ -34,7 +34,8 @@
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
     "seed:run": "knex $npm_package_config_knex seed:run",
-    "wait-4-docker": "node --experimental-modules ./scripts/_wait4_all.mjs"
+    "wait-4-docker": "node --experimental-modules ./scripts/_wait4_all.mjs",
+    "convert-script": "babel ./scripts/_wait4_all.mjs -d ./scripts/build/"
   },
   "husky": {
     "hooks": {
@@ -75,6 +76,8 @@
     "@typescript-eslint/eslint-plugin": "1.13.0",
     "@typescript-eslint/parser": "1.13.0",
     "add": "^2.0.6",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-config-standard": "14.1.1",
