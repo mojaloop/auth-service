@@ -34,7 +34,7 @@
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
     "seed:run": "knex $npm_package_config_knex seed:run",
-    "wait-4-docker": "node --experimental-modules ./scripts/_wait4_all.mjs",
+    "wait-4-docker": "node ./scripts/_wait4_all.mjs",
     "convert-script": "babel ./scripts/_wait4_all.mjs -d ./scripts/build/"
   },
   "husky": {
