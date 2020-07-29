@@ -34,6 +34,7 @@ describe('cli', (): void => {
       PARTICIPANT_ID: Config.PARTICIPANT_ID,
       PORT: Config.PORT,
       HOST: Config.HOST,
+      ENVIRONMENT: Config.ENVIRONMENT,
       INSPECT: {
         DEPTH: 4,
         SHOW_HIDDEN: false,

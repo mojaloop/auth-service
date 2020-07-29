@@ -8,6 +8,7 @@ services:
   auth-service:
     container_name: as_auth-service
     image: mojaloop/auth-service:local
+    command: sh -c "/opt/auth-service/scripts/wait4.js my-sql"
     build:
       context: .
       cache_from:
@@ -18,6 +19,9 @@ services:
       - mojaloop-net
     depends_on:
       - mysql
+    volumes:
+      - ./scripts/wait4.js:/opt/auth-service/scripts/wait4.js
+      - ./scripts/wait4.config.js:/opt/auth-service/scripts/wait4.config.js
     healthcheck:
       test: wget -q http://172.17.0.1:4004/health -O /dev/null || exit 1
       timeout: 20s
