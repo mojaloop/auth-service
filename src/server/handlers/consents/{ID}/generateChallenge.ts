@@ -71,6 +71,10 @@ export async function generateChallengeAndPutConsentId (
       }
 
       consent = await updateConsentCredential(consent, credential)
+    } else if (consent.credentialStatus === 'ACTIVE') {
+      // TODO: Error handling here - dealt with in #355
+      Logger.error('ACTIVE credential consent has requested challenge')
+      return
     }
 
     // Retrieve Scopes

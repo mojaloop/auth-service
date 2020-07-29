@@ -94,6 +94,16 @@ const completeConsent: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
+const completeConsentActiveCredential: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'ACTIVE',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
 const credential = {
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
@@ -217,6 +227,20 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockPutConsentId).toHaveBeenCalledWith(completeConsent, request, externalScopes)
         expect(mockLoggerPush).toHaveBeenCalledWith(Error('Could not establish connection'))
         expect(mockLoggerError).toHaveBeenCalledWith('Error: Outgoing call with challenge credential NOT made to  PUT consent/1234')
+      })
+
+    it('Should log an error due to ACTIVE credential in consent',
+      async (): Promise<void> => {
+        await expect(Handler.generateChallengeAndPutConsentId(
+          request, completeConsentActiveCredential, partialConsent.id))
+          .resolves.toBeUndefined()
+
+        expect(mockLoggerError).toHaveBeenCalledWith('ACTIVE credential consent has requested challenge')
+
+        expect(mockGenerate).not.toHaveBeenCalled()
+        expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+        expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
+        expect(mockPutConsentId).not.toHaveBeenCalled()
       })
   })
 
