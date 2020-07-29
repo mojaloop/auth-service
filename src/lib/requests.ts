@@ -30,7 +30,7 @@
  --------------
  ******/
 /* istanbul ignore file */
-// Testing will be covered in Ticket #354
+// Testing will be covered in #354
 
 import { config } from './config'
 import { ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
