@@ -147,10 +147,10 @@ ThirdPartyAuthorizationRequest:
   properties:
     challenge: 
       type: string
-      description: The original Challenge (Quote response) object as a JSON string
+      description: The original Challenge (Quote response) object as a UTF-8 JSON string (Normalization Form C)
     value:
       type: string
-      description: The signed Challenge (quote response) object as base64 encoded string 
+      description: The signed Challenge (Quote response) object as base64 encoded string
     consentId:
       - $ref: '#/definitions/CorrelationId'
       description: >
