@@ -28,8 +28,14 @@
  ******/
 
 import Logger from '@mojaloop/central-services-logger'
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import * as Challenge from '../../../../../../../src/lib/challenge'
 import * as Domain from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Consent } from '../../../../../../../src/model/consent'
+import { Scope } from '../../../../../../../src/model/scope'
+import { Enum } from '@mojaloop/central-services-shared'
+import { NotFoundError } from '../../../../../../../src/model/errors'
+import { thirdPartyRequest } from '../../../../../../../src/lib/requests'
 import {
   consentDB,
   scopeDB
@@ -37,32 +43,22 @@ import {
 import {
   post
 } from '../../../../../../../src/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
-import { Consent } from '../../../../../../../src/model/consent'
-import { Scope } from '../../../../../../../src/model/scope'
-import * as Challenge from '../../../../../../../src/lib/challenge'
-import { Enum } from '@mojaloop/central-services-shared'
-import { NotFoundError } from '../../../../../../../src/model/errors'
 
 /*
- * Mock Domain Functions
+ * Mock Handler Functions
  */
 const mockIsPayloadPending = jest.spyOn(Domain, 'isPayloadPending')
 const mockHasActiveCredential = jest.spyOn(Domain, 'hasActiveCredentialForPayload')
 const mockHasMatchingScope = jest.spyOn(Domain, 'hasMatchingScopeForPayload')
 const mockVerifyChallenge = jest.spyOn(Challenge, 'verifySignature')
-// Need to add response function mock
 
-/*
- * Mock Model Functions
- */
 const mockRetrieveConsent = jest.spyOn(consentDB, 'retrieve')
 const mockRetrieveAllScopes = jest.spyOn(scopeDB, 'retrieveAll')
 
-/*
- * Mock Logger Functions
- */
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
+
+const mockPutThirdpartyTransactionsAuth = jest.spyOn(thirdPartyRequest, 'putThirdpartyRequestsTransactionsAuthorizations')
 
 /*
  * Mock Request and Response Resources
@@ -77,6 +73,9 @@ const payload: Domain.AuthPayload = {
 
 // @ts-ignore
 const request: Request = {
+  headers: {
+    'fspiop-source': 'switch'
+  },
   params: {
     id: '1234'
   },
@@ -94,6 +93,9 @@ const h: ResponseToolkit = {
   }
 }
 
+/*
+ * Mock consent and scopes
+ */
 const mockConsent: Consent = {
   id: payload.consentId,
   credentialStatus: 'ACTIVE',
@@ -119,6 +121,7 @@ const mockScopes: Scope[] = [
  */
 describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (): void => {
   beforeEach((): void => {
+    // Positive flow values for a successful 202 return
     mockIsPayloadPending.mockReturnValue(true)
     mockHasActiveCredential.mockReturnValue(true)
     mockHasMatchingScope.mockReturnValue(true)
@@ -129,6 +132,12 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
 
     mockRetrieveConsent.mockResolvedValue(mockConsent)
     mockRetrieveAllScopes.mockResolvedValue(mockScopes)
+
+    mockPutThirdpartyTransactionsAuth.mockResolvedValue({
+      statusCode: 200,
+      headers: null,
+      data: Buffer.from('Response Data')
+    })
 
     // For setImmediate
     jest.useFakeTimers()
@@ -154,6 +163,11 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
       payload.challenge,
       payload.value,
       mockConsent.credentialPayload
+    )
+    expect(mockPutThirdpartyTransactionsAuth).toHaveBeenCalledWith(
+      payload,
+      request.params.id,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
   })
 

@@ -42,6 +42,7 @@ import { Scope } from '../../../../../model/scope'
 import { consentDB, scopeDB } from '../../../../../lib/db'
 import { NotFoundError } from '../../../../../model/errors'
 import { verifySignature } from '../../../../../lib/challenge'
+import { thirdPartyRequest } from '../../../../../lib/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   AuthPayload,
@@ -62,12 +63,8 @@ export async function post (
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Hapi-OpenAPI plugin validates the payload schema for
-  // existence of all properties and their value types according
-  // to the OpenAPI specification. It also ensures non-null
-  // payload values.
-
-  // Does it automatically return error response for bad schema?
-  // Need to test?
+  // existence of properties and their types based on the
+  // OpenAPI specification. It also ensures non-null values.
 
   const payload: AuthPayload = request.payload as AuthPayload
 
@@ -87,7 +84,7 @@ export async function post (
 
     if (error instanceof NotFoundError) {
       // **************************
-      // TODO: Error 400 or 404???
+      // TODO: Error 400 or 404 or 422???
       // **************************
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
@@ -106,7 +103,7 @@ export async function post (
 
     if (error instanceof NotFoundError) {
       // **************************
-      // TODO: Error 400 or 404???
+      // TODO: Error 400 or 404 or 422???
       // **************************
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
@@ -117,19 +114,21 @@ export async function post (
   // Check if the request scope matches with the consent
   if (!hasMatchingScopeForPayload(consentScopes, payload)) {
     // **************************
-    // TODO: Error 400 or 404???
+    // TODO: Error 400 or 404 or 422???
     // **************************
     return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
   }
 
   // Check for presence of an active key
   if (!hasActiveCredentialForPayload(consent)) {
+    // **************************
+    // TODO: Error 400 or 404 or 422???
+    // **************************
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
   // If everything checks out, delay processing to the next
   // event loop cycle and return successful acknowledgement
-  // of a correct request
   setImmediate((): void => {
     try {
       // Challenge is a UTF-8 (Normalization Form C)
@@ -146,7 +145,12 @@ export async function post (
 
       // TODO: Check what to do if verification fails: leave status as PENDING?
 
-      // TODO: PUT request to switch
+      // PUT request to switch
+      thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+        payload,
+        request.params.id,
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      )
     } catch (error) {
       Logger.push(error)
       Logger.error('Could not verify signature')
@@ -157,6 +161,6 @@ export async function post (
     }
   })
 
-  // Request acknowledgement: received and processing it
+  // Received and processing the request
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
