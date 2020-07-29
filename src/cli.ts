@@ -39,7 +39,9 @@ program
   .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
   .option('-H, --host <string>', 'listen on host', Config.HOST)
 
-program.parse(process.argv)
+if (process.argv.length > 0) {
+  program.parse(process.argv)
+}
 
 // overload Config with script parameters
 Config.PORT = program.port
