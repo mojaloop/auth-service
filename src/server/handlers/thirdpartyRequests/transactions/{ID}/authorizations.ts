@@ -83,9 +83,6 @@ export async function post (
     Logger.error('Could not retrieve consent')
 
     if (error instanceof NotFoundError) {
-      // **************************
-      // TODO: Error 400 or 404 or 422???
-      // **************************
       return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
     }
 
@@ -102,26 +99,17 @@ export async function post (
     Logger.error('Could not retrieve scope')
 
     if (error instanceof NotFoundError) {
-      // **************************
-      // TODO: Error 400 or 404 or 422???
-      // **************************
-      return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+      return h.response().code(Enum.Http.ReturnCodes.FORBIDDEN.CODE)
     }
 
     return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
   }
 
   if (!hasMatchingScopeForPayload(consentScopes, payload)) {
-    // **************************
-    // TODO: Error 400 or 404 or 422???
-    // **************************
-    return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.FORBIDDEN.CODE)
   }
 
   if (!hasActiveCredentialForPayload(consent)) {
-    // **************************
-    // TODO: Error 400 or 404 or 422???
-    // **************************
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
@@ -138,13 +126,9 @@ export async function post (
       )
 
       if (isVerified) {
+        // return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
         payload.status = 'VERIFIED'
       }
-
-      // **************************
-      // TODO: Check what to do if verification fails: leave status as PENDING?
-      // Unit test for this
-      // **************************
 
       // PUT request to switch to inform about verification
       thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
@@ -156,11 +140,7 @@ export async function post (
       Logger.push(error)
       Logger.error('Could not verify signature')
 
-      // **************************
-      // TODO: Inform Switch that there is some problem on server side or
-      // Should this just throw an error?
-      // Unit test for this block
-      // **************************
+      // return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
     }
   })
 

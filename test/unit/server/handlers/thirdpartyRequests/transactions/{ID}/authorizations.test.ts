@@ -199,14 +199,14 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
     expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
   })
 
-  it('Should return 404 (Not Found) response code for no matching consent scope', async (): Promise<void> => {
+  it('Should return 403 (Forbidden) response code for no matching consent scope', async (): Promise<void> => {
     // No matching scope for the consent in the DB
     mockHasMatchingScope.mockReturnValue(false)
 
     const response = await post(request, h)
 
     // Accepted Acknowledgement
-    expect(response).toBe(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+    expect(response).toBe(Enum.Http.ReturnCodes.FORBIDDEN.CODE)
 
     expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
     expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
@@ -247,7 +247,7 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
     expect(mockLoggerError).toHaveBeenCalled()
   })
 
-  it('Should return 404 (Not Found) response code for no associated consent scopes', async (): Promise<void> => {
+  it('Should return 403 (Forbidden) response code for no associated consent scopes', async (): Promise<void> => {
     // Consent does not have any scopes in DB
     mockRetrieveAllScopes.mockRejectedValue(
       new NotFoundError('Consent Scopes', payload.consentId)
@@ -256,7 +256,7 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
     const response = await post(request, h)
 
     // Accepted Acknowledgement
-    expect(response).toBe(Enum.Http.ReturnCodes.NOTFOUND.CODE)
+    expect(response).toBe(Enum.Http.ReturnCodes.FORBIDDEN.CODE)
 
     expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
     expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
