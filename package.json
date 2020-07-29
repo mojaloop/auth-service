@@ -113,6 +113,7 @@
     "@mojaloop/sdk-standard-components": "^10.6.3",
     "@types/convict": "^5.2.1",
     "blipp": "^4.0.1",
+    "child_process": "^1.0.2",
     "commander": "^5.1.0",
     "convict": "^6.0.0",
     "hapi-openapi": "^2.0.2",
