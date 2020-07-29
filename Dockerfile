@@ -27,6 +27,7 @@ RUN ln -sf /dev/stdout ./logs/combined.log
 RUN apk del build-dependencies
 # RUN npm prune --production
 
-RUN npm run test:unit
+## Temporary to see if integration tests run successfuly ##
+# RUN npm run test:unit
 EXPOSE 4004
 CMD ["npm", "run", "start"]
