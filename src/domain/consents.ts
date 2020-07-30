@@ -72,7 +72,8 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
   const consent: Consent = {
     id: payload.id,
     initiatorId: payload.initiatorId,
-    participantId: payload.participantId
+    participantId: payload.participantId,
+    status: 'ACTIVE'
   }
 
   const scopes: Scope[] = convertExternalToScope(payload.scopes, consent.id)
