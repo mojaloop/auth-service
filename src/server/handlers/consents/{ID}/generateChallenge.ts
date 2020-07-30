@@ -41,6 +41,7 @@ import {
   isConsentRequestInitiatedByValidSource,
   putConsentId, ConsentCredential
 } from '../../../../domain/consents/{ID}/generateChallenge'
+import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../lib/db'
@@ -112,12 +113,12 @@ export async function post (
 
     // If consent cannot be retrieved using given ID
     // Return 400 code
-    return h.response().code(400)
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
   // If consent is invalid, return 400 code
   if (!isConsentRequestInitiatedByValidSource(request, consent)) {
-    return h.response().code(400)
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
 
   // Asynchronously deals with generating challenge, updating consent db
@@ -126,5 +127,5 @@ export async function post (
   // intentionally not await-ing we want to run it in background
 
   // Return Success code informing source: request received
-  return h.response().code(202)
+  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }

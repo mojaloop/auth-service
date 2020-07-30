@@ -34,7 +34,11 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { createAndStoreConsent, isPostConsentRequestValid } from '../../domain/consents'
+import { Enum } from '@mojaloop/central-services-shared'
+import {
+  createAndStoreConsent,
+  isPostConsentRequestValid
+} from '../../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
@@ -47,7 +51,7 @@ export async function post (
   h: ResponseToolkit): Promise<ResponseObject> {
   // Validate request
   if (!isPostConsentRequestValid(request)) {
-    return h.response().code(400)
+    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
   }
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
@@ -61,5 +65,5 @@ export async function post (
   })
 
   // Return Success code informing source: request received
-  return h.response().code(202)
+  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
