@@ -50,8 +50,10 @@ import Logger from '@mojaloop/central-services-logger'
 import { convertScopesToExternal } from '../../../../lib/scopes'
 import { Scope } from '../../../../model/scope'
 
-// Asynchronously deals with generating challenge, updating consent db
-//  and making outgoing PUT consent/{ID} call
+/** Retrieves consent, validates request,
+ *  generates challenge, updates consent db
+ * and makes outgoing PUT consent/{ID} call
+ */
 export async function generateChallengeAndPutConsentId (
   request: Request,
   id: string
@@ -70,10 +72,9 @@ export async function generateChallengeAndPutConsentId (
       throw (new Error('NotImplementedYetError'))
     }
 
-    // If consent is invalid, return 400 code
     if (!isConsentRequestInitiatedByValidSource(request, consent)) {
-      // If consent cannot be retrieved using given ID, send PUT ...error back
       // TODO: Error Handling dealt with in future ticket #355
+      // send PUT ...error back
       throw (new Error('NotImplementedYetError'))
     }
 
