@@ -434,11 +434,6 @@ workflows:
           requires:
             - setup
           
-      - test-coverage:
-          context: org-global
-          requires:
-            - setup
-          
       - vulnerability-check:
           context: org-global
           requires:
@@ -453,6 +448,13 @@ workflows:
           context: org-global
           requires:
             - setup
+
+      - test-coverage:
+          context: org-global
+          requires:
+            - setup
+            - test-unit
+            - test-integration
           
       - linting-check:
           context: org-global
