@@ -54,10 +54,29 @@ import { Scope } from '../../../../model/scope'
 //  and making outgoing PUT consent/{ID} call
 export async function generateChallengeAndPutConsentId (
   request: Request,
-  consent: Consent,
   id: string
 ): Promise<void> {
   try {
+    // Fetch consent from database using ID
+    let consent: Consent
+    try {
+      consent = await consentDB.retrieve(id)
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Error in retrieving consent')
+
+      // If consent cannot be retrieved using given ID, send PUT ...error back
+      // TODO: Error Handling dealt with in future ticket #355
+      throw (new Error('NotImplementedYetError'))
+    }
+
+    // If consent is invalid, return 400 code
+    if (!isConsentRequestInitiatedByValidSource(request, consent)) {
+      // If consent cannot be retrieved using given ID, send PUT ...error back
+      // TODO: Error Handling dealt with in future ticket #355
+      throw (new Error('NotImplementedYetError'))
+    }
+
     // If there is no pre-existing challenge for the consent id
     // Generate one and update database
     if (!consent.credentialChallenge) {
@@ -86,9 +105,8 @@ export async function generateChallengeAndPutConsentId (
     await putConsentId(consent, request, scopes)
   } catch (error) {
     Logger.push(error)
-    // eslint-disable-next-line max-len
-    Logger.error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
-    // TODO: Decide on error handling HERE -  dealt with in future ticket #355
+    Logger.error(`Outgoing call NOT made to PUT consent/${id}`)
+    // TODO: Decide on error handling HERE - dealt with in future ticket #355
     throw error
   }
 }
@@ -103,28 +121,10 @@ export async function post (
   request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
 
-  // Fetch consent using ID
-  let consent: Consent
-  try {
-    consent = await consentDB.retrieve(id)
-  } catch (error) {
-    // TODO: Error Handling dealt with in future ticket #355
-    Logger.push(error)
-    Logger.error('Error in retrieving consent')
-
-    // If consent cannot be retrieved using given ID
-    // Return 400 code
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-  }
-
-  // If consent is invalid, return 400 code
-  if (!isConsentRequestInitiatedByValidSource(request, consent)) {
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-  }
-
-  // Asynchronously deals with generating challenge, updating consent db
+  // Asynchronously deals with validating request,
+  //  generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
-  generateChallengeAndPutConsentId(request, consent, id)
+  generateChallengeAndPutConsentId(request, id)
   // intentionally not await-ing we want to run it in background
 
   // Return Success code informing source: request received
