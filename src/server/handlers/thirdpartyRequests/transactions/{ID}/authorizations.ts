@@ -48,7 +48,8 @@ import {
   AuthPayload,
   isPayloadPending,
   hasActiveCredentialForPayload,
-  hasMatchingScopeForPayload
+  hasMatchingScopeForPayload,
+  putErrorRequest
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
@@ -66,62 +67,56 @@ export async function post (
   // existence of properties and their types based on the
   // OpenAPI specification. It also ensures non-null values.
 
-  // ***********************************
-  // TODO: make it completely async,
-  // adjust response and unit tests accordingly
-  // *************************************
-
   const payload: AuthPayload = request.payload as AuthPayload
 
-  // Validate incoming payload status
-  if (!isPayloadPending(payload)) {
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-    // 3100
-  }
-
-  let consent: Consent
-
-  // Check if consent exists and retrieve consent data
-  try {
-    consent = await consentDB.retrieve(payload.consentId)
-  } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not retrieve consent')
-
-    if (error instanceof NotFoundError) {
-      return h.response().code(Enum.Http.ReturnCodes.NOTFOUND.CODE)
-    }
-
-    return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
-  }
-
-  let consentScopes: Scope[]
-
-  // Retrieve scopes for the consent
-  try {
-    consentScopes = await scopeDB.retrieveAll(payload.consentId)
-  } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not retrieve scope')
-
-    if (error instanceof NotFoundError) {
-      return h.response().code(Enum.Http.ReturnCodes.FORBIDDEN.CODE)
-    }
-
-    return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
-  }
-
-  if (!hasMatchingScopeForPayload(consentScopes, payload)) {
-    return h.response().code(Enum.Http.ReturnCodes.FORBIDDEN.CODE)
-  }
-
-  if (!hasActiveCredentialForPayload(consent)) {
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-  }
-
-  // If everything checks out, delay processing to the next
-  // event loop cycle and return successful acknowledgement
+  // Return a 202 (Accepted) acknowledgement and carry on
+  // with the processing asynchronously
   setImmediate(async (): Promise<void> => {
+    // Validate incoming payload status
+    if (!isPayloadPending(payload)) {
+      return putErrorRequest(request, '3100', 'Bad Request')
+    }
+
+    let consent: Consent
+
+    // Check if consent exists and retrieve consent data
+    try {
+      consent = await consentDB.retrieve(payload.consentId)
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Could not retrieve consent')
+
+      if (error instanceof NotFoundError) {
+        return putErrorRequest(request, '2000', 'Not Found')
+      }
+
+      return putErrorRequest(request, '2000', 'Server Error')
+    }
+
+    let consentScopes: Scope[]
+
+    // Retrieve scopes for the consent
+    try {
+      consentScopes = await scopeDB.retrieveAll(payload.consentId)
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Could not retrieve scope')
+
+      if (error instanceof NotFoundError) {
+        return putErrorRequest(request, '2000', 'Forbidden')
+      }
+
+      return putErrorRequest(request, '2000', 'Server Error')
+    }
+
+    if (!hasMatchingScopeForPayload(consentScopes, payload)) {
+      return putErrorRequest(request, '2000', 'Forbidden')
+    }
+
+    if (!hasActiveCredentialForPayload(consent)) {
+      return putErrorRequest(request, '3100', 'Bad Request')
+    }
+
     try {
       // Challenge is a UTF-8 (Normalization Form C)
       // JSON string of the QuoteResponse object
@@ -131,23 +126,24 @@ export async function post (
         consent.credentialPayload as string
       )
 
-      if (isVerified) {
-        // return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-        payload.status = 'VERIFIED'
+      if (!isVerified) {
+        return putErrorRequest(request, '3100', 'Bad Request')
       }
 
-      // PUT request to switch to inform about verification
-      await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
-        payload,
-        request.params.id,
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-      )
+      payload.status = 'VERIFIED'
     } catch (error) {
       Logger.push(error)
       Logger.error('Could not verify signature')
 
-      // return h.response().code(Enum.Http.ReturnCodes.INTERNALSERVERERRROR.CODE)
+      return putErrorRequest(request, '2000', 'Server Error')
     }
+
+    // PUT request to switch to inform about verification
+    await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+      payload,
+      request.params.id,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
   })
 
   // Received and processing the request

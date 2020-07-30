@@ -85,7 +85,7 @@ export function hasMatchingScopeForPayload (
 }
 
 /*
- * Domain function make an error request
+ * Domain function make an error request using Mojaloop internal codes
  */
 export async function putErrorRequest (
   request: Request,
