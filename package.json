@@ -114,6 +114,7 @@
     "blipp": "^4.0.1",
     "commander": "^5.1.0",
     "convict": "^6.0.0",
+    "dot-prop": "^5.2.0",
     "hapi-openapi": "^2.0.2",
     "hapi-swagger": "^13.0.1",
     "knex": "^0.21.1",
