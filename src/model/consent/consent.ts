@@ -52,6 +52,7 @@ export interface Consent {
   id: string;
   initiatorId?: string;
   participantId?: string;
+  status: string;
   credentialId?: string;
   credentialType?: string;
   credentialStatus?: string;
