@@ -60,6 +60,7 @@ export async function putConsentRevoke (
   request: Request
 ): Promise<SDKStandardComponents.GenericRequestResponse> {
   const body = {
+    state: 'REVOKED'
 
   }
 
