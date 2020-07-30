@@ -37,6 +37,10 @@
 
 import { Consent } from '../../../../../model/consent'
 import { Scope } from '../../../../../model/scope'
+import { Request } from '@hapi/hapi'
+import { thirdPartyRequest } from '../../../../../lib/requests'
+import { Enum } from '@mojaloop/central-services-shared'
+import Logger from '@mojaloop/central-services-logger'
 
 /*
  * Interface for incoming payload
@@ -78,4 +82,29 @@ export function hasMatchingScopeForPayload (
   }
 
   return false
+}
+
+/*
+ * Domain function make an error request
+ */
+export async function putErrorRequest (
+  request: Request,
+  errorCode: string,
+  errorDescription: string): Promise<void> {
+  try {
+    await
+    thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizationsError(
+      {
+        errorInformation: {
+          errorCode,
+          errorDescription
+        }
+      },
+      request.params.id,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not make PUT error request')
+  }
 }

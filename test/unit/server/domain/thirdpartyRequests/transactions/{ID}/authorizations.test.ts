@@ -27,13 +27,18 @@
  --------------
  ******/
 
+import { Request } from '@hapi/hapi'
+import { Enum } from '@mojaloop/central-services-shared'
+import Logger from '@mojaloop/central-services-logger'
 import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
+import { thirdPartyRequest } from '../../../../../../../src/lib/requests'
 import {
   AuthPayload,
   isPayloadPending,
   hasActiveCredentialForPayload,
-  hasMatchingScopeForPayload
+  hasMatchingScopeForPayload,
+  putErrorRequest
 } from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
@@ -194,5 +199,77 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
 
       expect(scopeMatch).toEqual(false)
     })
+  })
+
+  describe('putErrorRequest', (): void => {
+    let mockErrorMethod: jest.SpyInstance
+    let request: Request
+
+    beforeAll((): void => {
+      mockErrorMethod = jest.spyOn(
+        thirdPartyRequest,
+        'putThirdpartyRequestsTransactionsAuthorizationsError'
+      )
+
+      // @ts-ignore
+      request = {
+        headers: {
+          'fspiop-source': 'switch'
+        },
+        params: {
+          id: '1234'
+        },
+        payload: {
+          consentId: '1234',
+          sourceAccountId: 'pisp-2343-f223',
+          status: 'PENDING',
+          challenge: 'QuoteResponse Object JSON string',
+          value: 'YjYyODNkOWUwZjUxNzOThmMjllYjE2Yg=='
+        }
+      }
+    })
+
+    it('calls the thirdPartyRequest error method with correct paramaeters',
+      async (): Promise<void> => {
+        mockErrorMethod.mockResolvedValue(true)
+        await putErrorRequest(request, '3001', 'Bad Request')
+
+        expect(mockErrorMethod).toHaveBeenCalledWith(
+          {
+            errorInformation: {
+              errorCode: '3001',
+              errorDescription: 'Bad Request'
+            }
+          },
+          request.params.id,
+          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        )
+      })
+
+    it('logs error in case there is an internal sdk-standard-components error',
+      async (): Promise<void> => {
+        const mockLoggerPush = jest.spyOn(Logger, 'push')
+        const mockLoggerError = jest.spyOn(Logger, 'error').mockImplementation(
+          (): void => {}
+        )
+
+        mockErrorMethod.mockRejectedValue('Internal Error')
+
+        await putErrorRequest(request, '3001', 'Bad Request')
+
+        expect(mockErrorMethod).toHaveBeenCalledWith(
+          {
+            errorInformation: {
+              errorCode: '3001',
+              errorDescription: 'Bad Request'
+            }
+          },
+          request.params.id,
+          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        )
+
+        expect(mockLoggerError).toHaveBeenCalled()
+        expect(mockLoggerPush).toHaveBeenCalled()
+      })
   })
 })

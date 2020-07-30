@@ -66,11 +66,17 @@ export async function post (
   // existence of properties and their types based on the
   // OpenAPI specification. It also ensures non-null values.
 
+  // ***********************************
+  // TODO: make it completely async,
+  // adjust response and unit tests accordingly
+  // *************************************
+
   const payload: AuthPayload = request.payload as AuthPayload
 
   // Validate incoming payload status
   if (!isPayloadPending(payload)) {
     return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
+    // 3100
   }
 
   let consent: Consent
@@ -115,7 +121,7 @@ export async function post (
 
   // If everything checks out, delay processing to the next
   // event loop cycle and return successful acknowledgement
-  setImmediate((): void => {
+  setImmediate(async (): Promise<void> => {
     try {
       // Challenge is a UTF-8 (Normalization Form C)
       // JSON string of the QuoteResponse object
@@ -131,7 +137,7 @@ export async function post (
       }
 
       // PUT request to switch to inform about verification
-      thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+      await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
         payload,
         request.params.id,
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
