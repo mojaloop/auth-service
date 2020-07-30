@@ -192,7 +192,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
         .toThrow()
     })
 
-    it('Should throw an error as consent is null value', 
+    it('Should throw an error as consent is null value',
       async (): Promise<void> => {
         await expect(putConsentId(null as unknown as Consent, request, externalScopes))
           .rejects

@@ -185,10 +185,11 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockPutConsentId).toHaveBeenCalledWith(completeConsent, request, externalScopes)
       })
 
-    it('Should log an error due to error updating credentials in database', async (): Promise<void> => {
+    it('Should throw an error due to error updating credentials in database', async (): Promise<void> => {
       mockUpdateConsentCredential.mockRejectedValueOnce(new Error('Error updating db'))
 
-      await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+      await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id))
+        .rejects.toThrowError('Error updating db')
 
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
@@ -200,10 +201,11 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsentId).not.toHaveBeenCalled()
     })
 
-    it('Should log an error due to error in challenge generation', async (): Promise<void> => {
+    it('Should throw an error due to error in challenge generation', async (): Promise<void> => {
       mockGenerate.mockRejectedValueOnce(new Error('Error generating challenge'))
 
-      await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+      await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id))
+        .rejects.toThrowError('Error generating challenge')
 
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockLoggerPush).toHaveBeenCalledWith(Error('Error generating challenge'))
@@ -215,11 +217,12 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsentId).not.toHaveBeenCalled()
     })
 
-    it('Should log an error due to error in PUT consents/{id}',
+    it('Should throw an error due to error in PUT consents/{id}',
       async (): Promise<void> => {
         mockPutConsentId.mockRejectedValueOnce(new Error('Could not establish connection'))
 
-        await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id)).resolves.toBeUndefined()
+        await expect(Handler.generateChallengeAndPutConsentId(request, partialConsent, partialConsent.id))
+          .rejects.toThrowError('Could not establish connection')
 
         expect(mockGenerate).toHaveBeenCalledWith()
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
@@ -233,7 +236,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       async (): Promise<void> => {
         await expect(Handler.generateChallengeAndPutConsentId(
           request, completeConsentActiveCredential, partialConsent.id))
-          .resolves.toBeUndefined()
+          .rejects.toThrowError()
 
         expect(mockLoggerError).toHaveBeenCalledWith('ACTIVE credential consent has requested challenge')
 

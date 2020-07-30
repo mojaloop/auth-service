@@ -75,7 +75,7 @@ export async function generateChallengeAndPutConsentId (
     } else if (consent.credentialStatus === 'ACTIVE') {
       // TODO: Error handling here - dealt with in #355
       Logger.error('ACTIVE credential consent has requested challenge')
-      return
+      throw (new Error('NotImplementedYetError'))
     }
 
     // Retrieve Scopes
@@ -89,6 +89,7 @@ export async function generateChallengeAndPutConsentId (
     // eslint-disable-next-line max-len
     Logger.error(`Error: Outgoing call with challenge credential NOT made to  PUT consent/${id}`)
     // TODO: Decide on error handling HERE -  dealt with in future ticket #355
+    throw error
   }
 }
 
