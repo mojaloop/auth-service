@@ -453,8 +453,6 @@ workflows:
           context: org-global
           requires:
             - setup
-            - test-unit
-            - test-integration
           
       - linting-check:
           context: org-global
