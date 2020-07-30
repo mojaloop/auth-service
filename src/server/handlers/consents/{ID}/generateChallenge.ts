@@ -40,7 +40,7 @@ import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
   putConsentId, ConsentCredential
-} from '../../../../domain/consents/{ID}/generateChallenge'
+} from '../../../../domain/consents/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
