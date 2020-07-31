@@ -34,7 +34,7 @@ import { Request } from '@hapi/hapi'
 import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
 import { Enum } from '@mojaloop/central-services-shared'
-// import { NotFoundError } from '../../../../../../../src/model/errors'
+import { NotFoundError } from '../../../../../../../src/model/errors'
 import { thirdPartyRequest } from '../../../../../../../src/lib/requests'
 import {
   consentDB,
@@ -176,7 +176,7 @@ describe('validateAndVerifySignature', (): void => {
       )
     })
 
-  it('Should return a Mojaloop 3100 (Bad Request) for non `PENDING` payload',
+  it('Should return a 3100 (Bad Request) error for non PENDING payload',
     async (): Promise<void> => {
       // Active Payload
       mockIsPayloadPending.mockReturnValue(false)
@@ -184,6 +184,7 @@ describe('validateAndVerifySignature', (): void => {
       await Handler.validateAndVerifySignature(request)
 
       expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockIsPayloadPending).toReturnWith(false)
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request,
@@ -192,7 +193,7 @@ describe('validateAndVerifySignature', (): void => {
       )
     })
 
-  it('Should return a Mojaloop 3100 (Bad Request) for no `ACTIVE` credentials',
+  it('Should return a 3100 (Bad Request) error for no ACTIVE credentials',
     async (): Promise<void> => {
     // Inactive credential
       mockHasActiveCredential.mockReturnValue(false)
@@ -204,6 +205,7 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
       expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
       expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      expect(mockHasActiveCredential).toReturnWith(false)
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request,
@@ -212,138 +214,134 @@ describe('validateAndVerifySignature', (): void => {
       )
     })
 
-  // it('Should return a Mojaloop 2000 (Forbidden) response for no matching consent scope', async (): Promise<void> => {
-  //   // No matching scope for the consent in the DB
-  //   mockHasMatchingScope.mockReturnValue(false)
+  it('Should return a 2000 (Forbidden) error for no matching consent scope',
+    async (): Promise<void> => {
+      // No matching scope for the consent in the DB
+      mockHasMatchingScope.mockReturnValue(false)
 
-  //   const response = await post(request, h)
+      await Handler.validateAndVerifySignature(request)
 
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mockHasMatchingScope).toReturnWith(false)
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '2000',
+        'Forbidden'
+      )
+    })
 
-  //   jest.runAllImmediates()
+  it('Should return a 2000 (Not Found) for non-existent payload consent',
+    async (): Promise<void> => {
+      // Requested Consent not in the DB
+      mockRetrieveConsent.mockRejectedValue(
+        new NotFoundError('Consent', payload.consentId)
+      )
 
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-  //   expect(mockHasMatchingScope).toReturnWith(false)
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '2000', 'Forbidden')
-  // })
+      await Handler.validateAndVerifySignature(request)
 
-  // it('Should return a Mojaloop 2000 (Not Found) for payload consent not existing', async (): Promise<void> => {
-  //   // Requested Consent not in the DB
-  //   mockRetrieveConsent.mockRejectedValue(
-  //     new NotFoundError('Consent', payload.consentId)
-  //   )
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockLoggerPush).toHaveBeenCalled()
+      expect(mockLoggerError).toHaveBeenCalled()
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '2000',
+        'Not Found'
+      )
+    })
 
-  //   const response = await post(request, h)
+  it('Should return a 2000 (Server Error) for error in retrieving consent',
+    async (): Promise<void> => {
+      mockRetrieveConsent.mockRejectedValue(
+        new Error()
+      )
 
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      await Handler.validateAndVerifySignature(request)
 
-  //   jest.runAllImmediates()
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockLoggerPush).toHaveBeenCalled()
+      expect(mockLoggerError).toHaveBeenCalled()
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '2000',
+        'Server Error'
+      )
+    })
 
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockLoggerPush).toHaveBeenCalled()
-  //   expect(mockLoggerError).toHaveBeenCalled()
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '2000', 'Not Found')
-  // })
+  it('Should return a 2000 (Forbidden) for no associated consent scopes',
+    async (): Promise<void> => {
+      // Consent does not have any scopes in DB
+      mockRetrieveAllScopes.mockRejectedValue(
+        new NotFoundError('Consent Scopes', payload.consentId)
+      )
 
-  // it('Should return a Mojaloop 2000 (Server Error) response for error in retrieving consent', async (): Promise<void> => {
-  //   mockRetrieveConsent.mockRejectedValue(
-  //     new Error()
-  //   )
+      await Handler.validateAndVerifySignature(request)
 
-  //   const response = await post(request, h)
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockLoggerPush).toHaveBeenCalled()
+      expect(mockLoggerError).toHaveBeenCalled()
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '2000',
+        'Forbidden'
+      )
+    })
 
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  it('Should return a 2000 (Server Error) for error in retrieving scopes',
+    async (): Promise<void> => {
+      mockRetrieveAllScopes.mockRejectedValue(
+        new Error()
+      )
 
-  //   jest.runAllImmediates()
+      await Handler.validateAndVerifySignature(request)
 
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockLoggerPush).toHaveBeenCalled()
-  //   expect(mockLoggerError).toHaveBeenCalled()
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '2000', 'Server Error')
-  // })
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockLoggerPush).toHaveBeenCalled()
+      expect(mockLoggerError).toHaveBeenCalled()
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '2000',
+        'Server Error'
+      )
+    })
 
-  // it('Should return a Mojaloop 2000 (Forbidden) response for no associated consent scopes', async (): Promise<void> => {
-  //   // Consent does not have any scopes in DB
-  //   mockRetrieveAllScopes.mockRejectedValue(
-  //     new NotFoundError('Consent Scopes', payload.consentId)
-  //   )
+  it('Should return a 3100 (Bad Request) for wrong signature',
+    async (): Promise<void> => {
+      mockVerifyChallenge.mockReturnValue(false)
 
-  //   const response = await post(request, h)
+      await Handler.validateAndVerifySignature(request)
 
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-
-  //   jest.runAllImmediates()
-
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockLoggerPush).toHaveBeenCalled()
-  //   expect(mockLoggerError).toHaveBeenCalled()
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '2000', 'Forbidden')
-  // })
-
-  // it('Should return a Mojaloop 2000 (Server Error) for error in retrieving scopes', async (): Promise<void> => {
-  //   mockRetrieveAllScopes.mockRejectedValue(
-  //     new Error()
-  //   )
-
-  //   const response = await post(request, h)
-
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-
-  //   jest.runAllImmediates()
-
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockLoggerPush).toHaveBeenCalled()
-  //   expect(mockLoggerError).toHaveBeenCalled()
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '2000', 'Server Error')
-  // })
-
-  // it('Should return a Mojaloop 3100 (Bad Request) for wrong signature', async (): Promise<void> => {
-  //   mockVerifyChallenge.mockReturnValue(false)
-
-  //   const response = await post(request, h)
-
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-
-  //   jest.runAllImmediates()
-
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-  //   expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-  //   expect(mockVerifyChallenge).toHaveBeenCalledWith(
-  //     payload.challenge,
-  //     payload.value,
-  //     mockConsent.credentialPayload
-  //   )
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '3100', 'Bad Request')
-  // })
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mockVerifyChallenge).toReturnWith(false)
+      expect(mockVerifyChallenge).toHaveBeenCalledWith(
+        payload.challenge,
+        payload.value,
+        mockConsent.credentialPayload
+      )
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '3100',
+        'Bad Request'
+      )
+    })
 })
 
 // describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
