@@ -30,7 +30,7 @@
 import Logger from '@mojaloop/central-services-logger'
 import * as Challenge from '../../../../../../../src/lib/challenge'
 import * as Domain from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
 import { Enum } from '@mojaloop/central-services-shared'
@@ -40,17 +40,19 @@ import {
   consentDB,
   scopeDB
 } from '../../../../.././../../src/lib/db'
-import {
-  post
-} from '../../../../../../../src/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import * as Handler from '../../../../../../../src/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
  * Mock Handler Functions
  */
 const mockIsPayloadPending = jest.spyOn(Domain, 'isPayloadPending')
-const mockHasActiveCredential = jest.spyOn(Domain, 'hasActiveCredentialForPayload')
 const mockHasMatchingScope = jest.spyOn(Domain, 'hasMatchingScopeForPayload')
 const mockPutErrorRequest = jest.spyOn(Domain, 'putErrorRequest')
+const mockHasActiveCredential = jest.spyOn(
+  Domain,
+  'hasActiveCredentialForPayload'
+)
+
 const mockVerifyChallenge = jest.spyOn(Challenge, 'verifySignature')
 
 const mockRetrieveConsent = jest.spyOn(consentDB, 'retrieve')
@@ -59,7 +61,15 @@ const mockRetrieveAllScopes = jest.spyOn(scopeDB, 'retrieveAll')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
-const mockPutThirdpartyTransactionsAuth = jest.spyOn(thirdPartyRequest, 'putThirdpartyRequestsTransactionsAuthorizations')
+const mockPutThirdpartyTransactionsAuth = jest.spyOn(
+  thirdPartyRequest,
+  'putThirdpartyRequestsTransactionsAuthorizations'
+)
+
+// const mockValidateAndVerifySignature = jest.spyOn(
+//   Handler,
+//   'validateAndVerifySignature'
+// )
 
 /*
  * Mock Request and Response Resources
@@ -84,15 +94,15 @@ const request: Request = {
 }
 
 // @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (statusCode: number): ResponseObject => {
-        return statusCode as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
+// const h: ResponseToolkit = {
+//   response: (): ResponseObject => {
+//     return {
+//       code: (statusCode: number): ResponseObject => {
+//         return statusCode as unknown as ResponseObject
+//       }
+//     } as unknown as ResponseObject
+//   }
+// }
 
 /*
  * Mock consent and scopes
@@ -118,40 +128,17 @@ const mockScopes: Scope[] = [
 
 /*
  * Incoming POST `/thirdpartyRequests/transaction/{ID}/authorizations'
- * Handler Unit Tests
+ * Async Handler Unit Tests
  */
-describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (): void => {
-  // beforeEach((): void => {
-  //   // Positive flow values for a successful 202 return
-  //   mockIsPayloadPending.mockReturnValue(true)
-  //   mockHasActiveCredential.mockReturnValue(true)
-  //   mockHasMatchingScope.mockReturnValue(true)
-  //   mockVerifyChallenge.mockReturnValue(true)
-  //   mockPutErrorRequest.mockImplementation(async (): Promise<void> => {})
-
-  //   mockLoggerPush.mockReturnValue(null)
-  //   mockLoggerError.mockReturnValue(null)
-
-  //   mockRetrieveConsent.mockResolvedValue(mockConsent)
-  //   mockRetrieveAllScopes.mockResolvedValue(mockScopes)
-
-  //   mockPutThirdpartyTransactionsAuth.mockResolvedValue({
-  //     statusCode: 200,
-  //     headers: null,
-  //     data: Buffer.from('Response Data')
-  //   })
-
-  //   // For setImmediate
-  //   jest.useFakeTimers()
-  //   jest.clearAllTimers()
-  // })
-
-  it('Should return 202 (Accepted) and make a PUT outgoing call for a correct request', async (): Promise<void> => {
+describe('validateAndVerifySignature', (): void => {
+  beforeEach((): void => {
+    // Positive flow values for a successful 202 return
     mockIsPayloadPending.mockReturnValue(true)
     mockHasActiveCredential.mockReturnValue(true)
     mockHasMatchingScope.mockReturnValue(true)
     mockVerifyChallenge.mockReturnValue(true)
-    mockPutErrorRequest.mockImplementation(async (): Promise<void> => {})
+    // mockPutErrorRequest.mockImplementation(async (): Promise<void> => {})
+    mockPutErrorRequest.mockResolvedValue(undefined)
 
     mockLoggerPush.mockReturnValue(null)
     mockLoggerError.mockReturnValue(null)
@@ -164,75 +151,66 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
       headers: null,
       data: Buffer.from('Response Data')
     })
-
-    // For setImmediate
-    jest.useFakeTimers()
-    jest.clearAllTimers()
-
-    const response = await post(request, h)
-
-    // Accepted Acknowledgement
-    expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-
-    jest.runAllImmediates()
-
-    expect(setImmediate).toHaveBeenCalled()
-    expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-    expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-    expect(mockRetrieveAllScopes).toHaveBeenCalled()
-    // With(payload.consentId)
-    expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-    expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-
-    expect(mockVerifyChallenge).toHaveBeenCalledWith(
-      payload.challenge,
-      payload.value,
-      mockConsent.credentialPayload
-    )
-    expect(mockPutThirdpartyTransactionsAuth).toHaveBeenCalledWith(
-      payload,
-      request.params.id,
-      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-    )
   })
 
-  // it('Should return a Mojaloop 3100 (Bad Request) response for a non `PENDING` payload', async (): Promise<void> => {
-  //   // Active Payload
-  //   mockIsPayloadPending.mockReturnValue(false)
+  it('Should make PUT outgoing request for successful verification',
+    async (): Promise<void> => {
+      await Handler.validateAndVerifySignature(request)
 
-  //   const response = await post(request, h)
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
 
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      expect(mockVerifyChallenge).toHaveBeenCalledWith(
+        payload.challenge,
+        payload.value,
+        mockConsent.credentialPayload
+      )
 
-  //   jest.runAllImmediates()
+      expect(mockPutThirdpartyTransactionsAuth).toHaveBeenCalledWith(
+        payload,
+        request.params.id,
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      )
+    })
 
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '3100', 'Bad Request')
-  // })
+  it('Should return a Mojaloop 3100 (Bad Request) for non `PENDING` payload',
+    async (): Promise<void> => {
+      // Active Payload
+      mockIsPayloadPending.mockReturnValue(false)
 
-  // it('Should return a Mojaloop 3100 (Bad Request) response for no `ACTIVE` credentials', async (): Promise<void> => {
-  //   // Inactive credential
-  //   mockHasActiveCredential.mockReturnValue(false)
+      await Handler.validateAndVerifySignature(request)
 
-  //   const response = await post(request, h)
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '3100',
+        'Bad Request'
+      )
+    })
 
-  //   // Accepted Acknowledgement
-  //   expect(response).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  it('Should return a Mojaloop 3100 (Bad Request) for no `ACTIVE` credentials',
+    async (): Promise<void> => {
+    // Inactive credential
+      mockHasActiveCredential.mockReturnValue(false)
 
-  //   jest.runAllImmediates()
+      await Handler.validateAndVerifySignature(request)
 
-  //   expect(setImmediate).toHaveBeenCalled()
-  //   expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-  //   expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-  //   expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-  //   expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-  //   // Error
-  //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '3100', 'Bad Request')
-  // })
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '3100',
+        'Bad Request'
+      )
+    })
 
   // it('Should return a Mojaloop 2000 (Forbidden) response for no matching consent scope', async (): Promise<void> => {
   //   // No matching scope for the consent in the DB
@@ -367,3 +345,18 @@ describe('server/handlers/thirdpartyRequests/transaction/{ID}/authorizations', (
   //   expect(mockPutErrorRequest).toHaveBeenCalledWith(request, '3100', 'Bad Request')
   // })
 })
+
+// describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
+//   (): void => {
+//     beforeEach((): void => {
+//       mockValidateAndVerifySignature.mockResolvedValue(undefined)
+//     })
+
+//     it('Should return 202 (Accepted) and call async handler',
+//       (): void => {
+//         const response = Handler.post(request, h)
+
+//         expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
+//         expect(response.code).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+//       })
+//   })

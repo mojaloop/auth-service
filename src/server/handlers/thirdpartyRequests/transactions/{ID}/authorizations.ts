@@ -52,99 +52,101 @@ import {
   putErrorRequest
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
+export async function validateAndVerifySignature (request: Request): Promise<void> {
+  const payload: AuthPayload = request.payload as AuthPayload
+
+  // Validate incoming payload status
+  if (!isPayloadPending(payload)) {
+    return putErrorRequest(request, '3100', 'Bad Request')
+  }
+
+  let consent: Consent
+
+  // Check if consent exists and retrieve consent data
+  try {
+    consent = await consentDB.retrieve(payload.consentId)
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not retrieve consent')
+
+    if (error instanceof NotFoundError) {
+      return putErrorRequest(request, '2000', 'Not Found')
+    }
+
+    return putErrorRequest(request, '2000', 'Server Error')
+  }
+
+  let consentScopes: Scope[]
+
+  // Retrieve scopes for the consent
+  try {
+    consentScopes = await scopeDB.retrieveAll(payload.consentId)
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not retrieve scope')
+
+    if (error instanceof NotFoundError) {
+      return putErrorRequest(request, '2000', 'Forbidden')
+    }
+
+    return putErrorRequest(request, '2000', 'Server Error')
+  }
+
+  if (!hasMatchingScopeForPayload(consentScopes, payload)) {
+    return putErrorRequest(request, '2000', 'Forbidden')
+  }
+
+  if (!hasActiveCredentialForPayload(consent)) {
+    return putErrorRequest(request, '3100', 'Bad Request')
+  }
+
+  try {
+    // Challenge is a UTF-8 (Normalization Form C)
+    // JSON string of the QuoteResponse object
+    const isVerified = verifySignature(
+      payload.challenge,
+      payload.value,
+      consent.credentialPayload as string
+    )
+
+    if (!isVerified) {
+      return putErrorRequest(request, '3100', 'Bad Request')
+    }
+
+    payload.status = 'VERIFIED'
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not verify signature')
+
+    return putErrorRequest(request, '2000', 'Server Error')
+  }
+
+  // PUT request to switch to inform about verification
+  await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+    payload,
+    request.params.id,
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  )
+}
+
 /*
  * The HTTP request `POST /thirdpartyRequests/transactions/{ID}/authorizations`
  * is used to authorize the PISP transaction identified by {ID}.
- * The Switch uses it to verify the user's signature on
+ * The `switch` uses it to verify the user's signature on
  * the quote using the associated Consent's public key.
  * The response is sent using outgoing request
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
-export async function post (
+export function post (
   request: Request,
-  h: ResponseToolkit): Promise<ResponseObject> {
+  h: ResponseToolkit): ResponseObject {
   // Hapi-OpenAPI plugin validates the payload schema for
   // existence of properties and their types based on the
   // OpenAPI specification. It also ensures non-null values.
 
-  const payload: AuthPayload = request.payload as AuthPayload
-
   // Return a 202 (Accepted) acknowledgement and carry on
-  // with the processing asynchronously
-  setImmediate(async (): Promise<void> => {
-    // Validate incoming payload status
-    if (!isPayloadPending(payload)) {
-      return putErrorRequest(request, '3100', 'Bad Request')
-    }
-
-    let consent: Consent
-
-    // Check if consent exists and retrieve consent data
-    try {
-      consent = await consentDB.retrieve(payload.consentId)
-    } catch (error) {
-      Logger.push(error)
-      Logger.error('Could not retrieve consent')
-
-      if (error instanceof NotFoundError) {
-        return putErrorRequest(request, '2000', 'Not Found')
-      }
-
-      return putErrorRequest(request, '2000', 'Server Error')
-    }
-
-    let consentScopes: Scope[]
-
-    // Retrieve scopes for the consent
-    try {
-      consentScopes = await scopeDB.retrieveAll(payload.consentId)
-    } catch (error) {
-      Logger.push(error)
-      Logger.error('Could not retrieve scope')
-
-      if (error instanceof NotFoundError) {
-        return putErrorRequest(request, '2000', 'Forbidden')
-      }
-
-      return putErrorRequest(request, '2000', 'Server Error')
-    }
-
-    if (!hasMatchingScopeForPayload(consentScopes, payload)) {
-      return putErrorRequest(request, '2000', 'Forbidden')
-    }
-
-    if (!hasActiveCredentialForPayload(consent)) {
-      return putErrorRequest(request, '3100', 'Bad Request')
-    }
-
-    try {
-      // Challenge is a UTF-8 (Normalization Form C)
-      // JSON string of the QuoteResponse object
-      const isVerified = verifySignature(
-        payload.challenge,
-        payload.value,
-        consent.credentialPayload as string
-      )
-
-      if (!isVerified) {
-        return putErrorRequest(request, '3100', 'Bad Request')
-      }
-
-      payload.status = 'VERIFIED'
-    } catch (error) {
-      Logger.push(error)
-      Logger.error('Could not verify signature')
-
-      return putErrorRequest(request, '2000', 'Server Error')
-    }
-
-    // PUT request to switch to inform about verification
-    await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
-      payload,
-      request.params.id,
-      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-    )
-  })
+  // with the validation and processing asynchronously
+  validateAndVerifySignature(request)
 
   // Received and processing the request
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
