@@ -45,7 +45,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 
-async function validateRequestAndRevokeConsent (
+export async function validateRequestAndRevokeConsent (
   request: Request): Promise<void> {
   const consentId = request.params.id
 
