@@ -46,6 +46,7 @@ import { NotFoundError } from '../../../src/model/errors'
 const partialConsent: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
+  status: 'ACTIVE',
   participantId: 'dfsp-3333-2123'
 }
 
@@ -53,6 +54,7 @@ const completeConsent: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
+  status: 'ACTIVE',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
@@ -124,6 +126,7 @@ describe('src/model/consent', (): void => {
         id: '1234',
         initiatorId: 'pisp-2342-2233',
         participantId: 'dfsp-3333-2123',
+        status: 'ACTIVE',
         createdAt: expect.any(String),
         credentialId: null,
         credentialType: null,
@@ -151,6 +154,7 @@ describe('src/model/consent', (): void => {
         id: '1234',
         initiatorId: 'pisp-2342-2233',
         participantId: 'dfsp-3333-2123',
+        status: 'ACTIVE',
         createdAt: expect.any(String),
         credentialId: null,
         credentialType: null,
@@ -168,6 +172,7 @@ describe('src/model/consent', (): void => {
       // Action
       await expect(consentDB.insert({
         id: null as unknown as string,
+        status: 'ACTIVE',
         initiatorId: '494949',
         participantId: '3030303'
       })).rejects.toThrow()

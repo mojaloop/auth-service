@@ -73,7 +73,8 @@ const request: Request = {
 const consent = {
   id: '1234',
   participantId: 'auth121',
-  initiatorId: 'pispa'
+  initiatorId: 'pispa',
+  status: 'ACTIVE'
 }
 
 const externalScopes = [{
