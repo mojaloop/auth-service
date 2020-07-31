@@ -53,7 +53,7 @@ const mockHasActiveCredential = jest.spyOn(
   'hasActiveCredentialForPayload'
 )
 
-const mockVerifyChallenge = jest.spyOn(Challenge, 'verifySignature')
+const mockVerifySignature = jest.spyOn(Challenge, 'verifySignature')
 
 const mockRetrieveConsent = jest.spyOn(consentDB, 'retrieve')
 const mockRetrieveAllScopes = jest.spyOn(scopeDB, 'retrieveAll')
@@ -136,7 +136,7 @@ describe('validateAndVerifySignature', (): void => {
     mockIsPayloadPending.mockReturnValue(true)
     mockHasActiveCredential.mockReturnValue(true)
     mockHasMatchingScope.mockReturnValue(true)
-    mockVerifyChallenge.mockReturnValue(true)
+    mockVerifySignature.mockReturnValue(true)
     // mockPutErrorRequest.mockImplementation(async (): Promise<void> => {})
     mockPutErrorRequest.mockResolvedValue(undefined)
 
@@ -163,7 +163,7 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
       expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
 
-      expect(mockVerifyChallenge).toHaveBeenCalledWith(
+      expect(mockVerifySignature).toHaveBeenCalledWith(
         payload.challenge,
         payload.value,
         mockConsent.credentialPayload
@@ -320,7 +320,7 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should return a 3100 (Bad Request) for wrong signature',
     async (): Promise<void> => {
-      mockVerifyChallenge.mockReturnValue(false)
+      mockVerifySignature.mockReturnValue(false)
 
       await Handler.validateAndVerifySignature(request)
 
@@ -329,8 +329,60 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
       expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
       expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-      expect(mockVerifyChallenge).toReturnWith(false)
-      expect(mockVerifyChallenge).toHaveBeenCalledWith(
+      expect(mockVerifySignature).toReturnWith(false)
+      expect(mockVerifySignature).toHaveBeenCalledWith(
+        payload.challenge,
+        payload.value,
+        mockConsent.credentialPayload
+      )
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '3100',
+        'Bad Request'
+      )
+    })
+
+  it('Should return a 3100 (Bad Request) for wrong signature',
+    async (): Promise<void> => {
+      mockVerifySignature.mockReturnValue(false)
+
+      await Handler.validateAndVerifySignature(request)
+
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mockVerifySignature).toReturnWith(false)
+      expect(mockVerifySignature).toHaveBeenCalledWith(
+        payload.challenge,
+        payload.value,
+        mockConsent.credentialPayload
+      )
+      // Error
+      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+        request,
+        '3100',
+        'Bad Request'
+      )
+    })
+
+  it('Should return a 2000 (Server Error) for error in signature verification',
+    async (): Promise<void> => {
+      mockVerifySignature.mockImplementationOnce((): boolean => {
+        throw new Error()
+      })
+
+      await Handler.validateAndVerifySignature(request)
+
+      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
+      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mockVerifySignature).toReturnWith(false)
+      expect(mockVerifySignature).toHaveBeenCalledWith(
         payload.challenge,
         payload.value,
         mockConsent.credentialPayload
