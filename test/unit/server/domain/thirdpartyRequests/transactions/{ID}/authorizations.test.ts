@@ -47,158 +47,165 @@ import {
  */
 describe('Incoming POST Transaction Authorization Domain', (): void => {
   describe('isPayloadPending', (): void => {
-    it('returns true for \'PENDING\' payload status', async (): Promise<void> => {
-      const pendingPayload: AuthPayload = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: 'PENDING',
-        challenge: 'xyhdushsoa82w92mzs',
-        value: 'dwuduwd&e2idjoj0w'
-      }
+    it('returns true for \'PENDING\' payload status',
+      async (): Promise<void> => {
+        const pendingPayload: AuthPayload = {
+          consentId: '1223abcd',
+          sourceAccountId: '2222-322d-d2k2',
+          status: 'PENDING',
+          challenge: 'xyhdushsoa82w92mzs',
+          value: 'dwuduwd&e2idjoj0w'
+        }
 
-      const correctStatus = isPayloadPending(pendingPayload)
+        const correctStatus = isPayloadPending(pendingPayload)
 
-      expect(correctStatus).toEqual(true)
-    })
+        expect(correctStatus).toEqual(true)
+      })
 
-    it('returns false for non-\'PENDING\' payload status', async (): Promise<void> => {
-      const verifiedPayload: AuthPayload = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: 'VERIFIED',
-        challenge: 'xyhdushsoa82w92mzs',
-        value: 'dwuduwd&e2idjoj0w'
-      }
+    it('returns false for non-\'PENDING\' payload status',
+      async (): Promise<void> => {
+        const verifiedPayload: AuthPayload = {
+          consentId: '1223abcd',
+          sourceAccountId: '2222-322d-d2k2',
+          status: 'VERIFIED',
+          challenge: 'xyhdushsoa82w92mzs',
+          value: 'dwuduwd&e2idjoj0w'
+        }
 
-      const correctStatus = isPayloadPending(verifiedPayload)
+        const correctStatus = isPayloadPending(verifiedPayload)
 
-      expect(correctStatus).toEqual(false)
-    })
+        expect(correctStatus).toEqual(false)
+      })
   })
 
   describe('hasActiveCredentialForPayload', (): void => {
-    it('returns true non-null and \'ACTIVE\' consent credential', async (): Promise<void> => {
-      const activeConsent: Consent = {
-        id: '1234',
-        initiatorId: 'pisp-2342-2233',
-        participantId: 'dfsp-3333-2123',
-        credentialId: '123',
-        credentialType: 'FIDO',
-        credentialStatus: 'ACTIVE',
-        credentialChallenge: 'xyhdushsoa82w92mzs',
-        credentialPayload: 'dwuduwd&e2idjoj0w'
-      }
+    it('returns true non-null and \'ACTIVE\' consent credential',
+      async (): Promise<void> => {
+        const activeConsent: Consent = {
+          id: '1234',
+          initiatorId: 'pisp-2342-2233',
+          participantId: 'dfsp-3333-2123',
+          credentialId: '123',
+          credentialType: 'FIDO',
+          credentialStatus: 'ACTIVE',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialPayload: 'dwuduwd&e2idjoj0w'
+        }
 
-      const activeKey = hasActiveCredentialForPayload(activeConsent)
+        const activeKey = hasActiveCredentialForPayload(activeConsent)
 
-      expect(activeKey).toEqual(true)
-    })
+        expect(activeKey).toEqual(true)
+      })
 
-    it('returns false for null consent credential key', async (): Promise<void> => {
-      const nullConsent: Consent = {
-        id: '1234',
-        initiatorId: 'pisp-2342-2233',
-        participantId: 'dfsp-3333-2123',
-        credentialId: '123',
-        credentialType: 'FIDO',
-        credentialStatus: 'ACTIVE',
-        credentialChallenge: 'xyhdushsoa82w92mzs',
-        credentialPayload: null as unknown as string
-      }
+    it('returns false for null consent credential key',
+      async (): Promise<void> => {
+        const nullConsent: Consent = {
+          id: '1234',
+          initiatorId: 'pisp-2342-2233',
+          participantId: 'dfsp-3333-2123',
+          credentialId: '123',
+          credentialType: 'FIDO',
+          credentialStatus: 'ACTIVE',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialPayload: null as unknown as string
+        }
 
-      const activeKey = hasActiveCredentialForPayload(nullConsent)
+        const activeKey = hasActiveCredentialForPayload(nullConsent)
 
-      expect(activeKey).toEqual(false)
-    })
+        expect(activeKey).toEqual(false)
+      })
 
-    it('returns false for \'PENDING\' consent credential', async (): Promise<void> => {
-      const pendingConsent: Consent = {
-        id: '1234',
-        initiatorId: 'pisp-2342-2233',
-        participantId: 'dfsp-3333-2123',
-        credentialId: '123',
-        credentialType: 'FIDO',
-        credentialStatus: 'PENDING',
-        credentialChallenge: 'xyhdushsoa82w92mzs',
-        credentialPayload: null as unknown as string
-      }
+    it('returns false for \'PENDING\' consent credential',
+      async (): Promise<void> => {
+        const pendingConsent: Consent = {
+          id: '1234',
+          initiatorId: 'pisp-2342-2233',
+          participantId: 'dfsp-3333-2123',
+          credentialId: '123',
+          credentialType: 'FIDO',
+          credentialStatus: 'PENDING',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialPayload: null as unknown as string
+        }
 
-      const activeKey = hasActiveCredentialForPayload(pendingConsent)
+        const activeKey = hasActiveCredentialForPayload(pendingConsent)
 
-      expect(activeKey).toEqual(false)
-    })
+        expect(activeKey).toEqual(false)
+      })
   })
 
   describe('hasMatchingScopeForPayload', (): void => {
-    it('returns true if the payload scope matches an associated consent scope', async (): Promise<void> => {
-      const payload: AuthPayload = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: 'PENDING',
-        challenge: 'dddw7hwuehfuhnd8jd',
-        value: 'dwuduwd&e2idjoj0w'
-      }
-
-      const consentScopes: Scope[] = [
-        {
-          id: 1,
-          consentId: payload.consentId,
-          action: 'account.transfer',
-          accountId: '3332-edds-2332'
-        },
-        {
-          id: 2,
-          consentId: payload.consentId,
-          action: 'account.balance',
-          accountId: payload.sourceAccountId
-        },
-        {
-          id: 3,
-          consentId: payload.consentId,
-          action: 'account.billpayment',
-          accountId: '2020-20sj-nsj2'
+    it('returns true if the payload scope matches an associated consent scope',
+      async (): Promise<void> => {
+        const payload: AuthPayload = {
+          consentId: '1223abcd',
+          sourceAccountId: '2222-322d-d2k2',
+          status: 'PENDING',
+          challenge: 'dddw7hwuehfuhnd8jd',
+          value: 'dwuduwd&e2idjoj0w'
         }
-      ]
 
-      const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
+        const consentScopes: Scope[] = [
+          {
+            id: 1,
+            consentId: payload.consentId,
+            action: 'account.transfer',
+            accountId: '3332-edds-2332'
+          },
+          {
+            id: 2,
+            consentId: payload.consentId,
+            action: 'account.balance',
+            accountId: payload.sourceAccountId
+          },
+          {
+            id: 3,
+            consentId: payload.consentId,
+            action: 'account.billpayment',
+            accountId: '2020-20sj-nsj2'
+          }
+        ]
 
-      expect(scopeMatch).toEqual(true)
-    })
+        const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 
-    it('returns false if the payload scope does not match any consent scopes', async (): Promise<void> => {
-      const payload: AuthPayload = {
-        consentId: '1223abcd',
-        sourceAccountId: '2222-322d-d2k2',
-        status: 'PENDING',
-        challenge: 'dddw7hwuehfuhnd8jd',
-        value: 'dwuduwd&e2idjoj0w'
-      }
+        expect(scopeMatch).toEqual(true)
+      })
 
-      const consentScopes: Scope[] = [
-        {
-          id: 1,
-          consentId: payload.consentId,
-          action: 'account.transfer',
-          accountId: '3332-edds-2332'
-        },
-        {
-          id: 2,
-          consentId: payload.consentId,
-          action: 'account.balance',
-          accountId: '3332-2dcx-1020'
-        },
-        {
-          id: 3,
-          consentId: payload.consentId,
-          action: 'account.billpayment',
-          accountId: '2020-20sj-nsj2'
+    it('returns false if the payload scope does not match any consent scopes',
+      async (): Promise<void> => {
+        const payload: AuthPayload = {
+          consentId: '1223abcd',
+          sourceAccountId: '2222-322d-d2k2',
+          status: 'PENDING',
+          challenge: 'dddw7hwuehfuhnd8jd',
+          value: 'dwuduwd&e2idjoj0w'
         }
-      ]
 
-      const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
+        const consentScopes: Scope[] = [
+          {
+            id: 1,
+            consentId: payload.consentId,
+            action: 'account.transfer',
+            accountId: '3332-edds-2332'
+          },
+          {
+            id: 2,
+            consentId: payload.consentId,
+            action: 'account.balance',
+            accountId: '3332-2dcx-1020'
+          },
+          {
+            id: 3,
+            consentId: payload.consentId,
+            action: 'account.billpayment',
+            accountId: '2020-20sj-nsj2'
+          }
+        ]
 
-      expect(scopeMatch).toEqual(false)
-    })
+        const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
+
+        expect(scopeMatch).toEqual(false)
+      })
   })
 
   describe('putErrorRequest', (): void => {

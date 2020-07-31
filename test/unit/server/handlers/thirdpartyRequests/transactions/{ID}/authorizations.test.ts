@@ -28,9 +28,7 @@
  ******/
 
 import Logger from '@mojaloop/central-services-logger'
-import * as Challenge from '../../../../../../../src/lib/challenge'
-import * as Domain from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
-import { Request } from '@hapi/hapi'
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { Consent } from '../../../../../../../src/model/consent'
 import { Scope } from '../../../../../../../src/model/scope'
 import { Enum } from '@mojaloop/central-services-shared'
@@ -40,6 +38,8 @@ import {
   consentDB,
   scopeDB
 } from '../../../../.././../../src/lib/db'
+import * as Challenge from '../../../../../../../src/lib/challenge'
+import * as Domain from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
 import * as Handler from '../../../../../../../src/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
@@ -66,10 +66,10 @@ const mockPutThirdpartyTransactionsAuth = jest.spyOn(
   'putThirdpartyRequestsTransactionsAuthorizations'
 )
 
-// const mockValidateAndVerifySignature = jest.spyOn(
-//   Handler,
-//   'validateAndVerifySignature'
-// )
+const mockValidateAndVerifySignature = jest.spyOn(
+  Handler,
+  'validateAndVerifySignature'
+)
 
 /*
  * Mock Request and Response Resources
@@ -94,15 +94,17 @@ const request: Request = {
 }
 
 // @ts-ignore
-// const h: ResponseToolkit = {
-//   response: (): ResponseObject => {
-//     return {
-//       code: (statusCode: number): ResponseObject => {
-//         return statusCode as unknown as ResponseObject
-//       }
-//     } as unknown as ResponseObject
-//   }
-// }
+const h: ResponseToolkit = {
+  response: (): ResponseObject => {
+    return {
+      code: (statusCode: number): ResponseObject => {
+        return {
+          statusCode
+        } as unknown as ResponseObject
+      }
+    } as unknown as ResponseObject
+  }
+}
 
 /*
  * Mock consent and scopes
@@ -128,7 +130,7 @@ const mockScopes: Scope[] = [
 
 /*
  * Incoming POST `/thirdpartyRequests/transaction/{ID}/authorizations'
- * Async Handler Unit Tests
+ * Async Handler Helper Unit Tests
  */
 describe('validateAndVerifySignature', (): void => {
   beforeEach((): void => {
@@ -320,31 +322,7 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should return a 3100 (Bad Request) for wrong signature',
     async (): Promise<void> => {
-      mockVerifySignature.mockReturnValue(false)
-
-      await Handler.validateAndVerifySignature(request)
-
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-      expect(mockVerifySignature).toReturnWith(false)
-      expect(mockVerifySignature).toHaveBeenCalledWith(
-        payload.challenge,
-        payload.value,
-        mockConsent.credentialPayload
-      )
-      // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '3100',
-        'Bad Request'
-      )
-    })
-
-  it('Should return a 3100 (Bad Request) for wrong signature',
-    async (): Promise<void> => {
+      // Invalid signature
       mockVerifySignature.mockReturnValue(false)
 
       await Handler.validateAndVerifySignature(request)
@@ -396,17 +374,20 @@ describe('validateAndVerifySignature', (): void => {
     })
 })
 
-// describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
-//   (): void => {
-//     beforeEach((): void => {
-//       mockValidateAndVerifySignature.mockResolvedValue(undefined)
-//     })
+/*
+ * Incoming POST `/thirdpartyRequests/transaction/{ID}/authorizations'
+ * Handler Unit Tests
+ */
+describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
+  (): void => {
+    beforeAll((): void => {
+      mockValidateAndVerifySignature.mockResolvedValue(undefined)
+    })
 
-//     it('Should return 202 (Accepted) and call async handler',
-//       (): void => {
-//         const response = Handler.post(request, h)
+    it('Should return 202 (Accepted) and call async handler', (): void => {
+      const response = Handler.post(request, h)
 
-//         expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
-//         expect(response.code).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-//       })
-//   })
+      expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
+      expect(response.statusCode).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+    })
+  })

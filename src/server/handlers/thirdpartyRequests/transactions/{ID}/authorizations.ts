@@ -6,6 +6,13 @@
  * ticket #354
  */
 
+/*
+ * There is a need to add Auth-Service specific errors
+ * to the Mojaloop error codes and document them. The
+ * handler and unit test error values need to be changed
+ * accordingly. This will be addressed in Ticket #355.
+ */
+
 /*****
  License
  --------------
@@ -52,7 +59,12 @@ import {
   putErrorRequest
 } from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
 
-export async function validateAndVerifySignature (request: Request): Promise<void> {
+/*
+ * Asynchronous POST handler helper function to
+ * process everything in the background
+ */
+export async function validateAndVerifySignature (
+  request: Request): Promise<void> {
   const payload: AuthPayload = request.payload as AuthPayload
 
   // Validate incoming payload status
@@ -144,10 +156,9 @@ export function post (
   // existence of properties and their types based on the
   // OpenAPI specification. It also ensures non-null values.
 
-  // Return a 202 (Accepted) acknowledgement and carry on
-  // with the validation and processing asynchronously
+  // Validate and process asynchronously
   validateAndVerifySignature(request)
 
-  // Received and processing the request
+  // Return a 202 (Accepted) acknowledgement in the meantime
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
