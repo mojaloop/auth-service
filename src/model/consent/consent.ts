@@ -59,6 +59,7 @@ export interface Consent {
   credentialPayload?: string;
   credentialChallenge?: string;
   createdAt?: Date;
+  revokedAt?: string;
 }
 
 /*
