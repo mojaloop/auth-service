@@ -37,7 +37,7 @@
 import {
   putConsentRevoke,
   isConsentRequestInitiatedByValidSource,
-  updateConsentStatus
+  revokeConsentStatus
 } from '../../../../domain/consents/revoke'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
@@ -71,7 +71,7 @@ async function validateRequestAndRevokeConsent (
 
     // If Consent is ACTIVE, revoke it and update database
     if (consent.status === 'ACTIVE') {
-      consent = await updateConsentStatus(consent, 'REVOKED')
+      consent = await revokeConsentStatus(consent)
     }
 
     // Outgoing call to PUT consents/{ID}/revoke

@@ -43,14 +43,16 @@ import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
 export function isConsentRequestInitiatedByValidSource (
-  consent: Consent, request: Request): boolean {
+  consent: Consent,
+  request: Request): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
   return (consent && consent.initiatorId === fspiopSource)
 }
 
-export async function updateConsentStatus (
-  consent: Consent, status: string): Promise<Consent> {
-  consent.status = status
+export async function revokeConsentStatus (
+  consent: Consent): Promise<Consent> {
+  consent.status = 'REVOKED'
+  consent.revokedAt = Date.prototype.toISOString()
   await consentDB.update(consent)
   return consent
 }
@@ -60,8 +62,9 @@ export async function putConsentRevoke (
   request: Request
 ): Promise<SDKStandardComponents.GenericRequestResponse> {
   const body = {
-    state: 'REVOKED'
-
+    consentId: consent.id,
+    status: consent.status,
+    revokedAt: consent.revokedAt
   }
 
   return thirdPartyRequest.putConsents(consent.id, body, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
