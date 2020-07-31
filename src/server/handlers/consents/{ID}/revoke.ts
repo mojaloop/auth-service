@@ -35,7 +35,7 @@
  --------------
  ******/
 import {
-  putConsentRevoke,
+  patchConsentRevoke,
   isConsentRequestInitiatedByValidSource,
   revokeConsentStatus
 } from '../../../../domain/consents/revoke'
@@ -75,7 +75,7 @@ async function validateRequestAndRevokeConsent (
     }
 
     // Outgoing call to PUT consents/{ID}/revoke
-    await putConsentRevoke(consent, request)
+    await patchConsentRevoke(consent, request)
   } catch (error) {
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)

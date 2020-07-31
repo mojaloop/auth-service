@@ -57,7 +57,7 @@ export async function revokeConsentStatus (
   return consent
 }
 
-export async function putConsentRevoke (
+export async function patchConsentRevoke (
   consent: Consent,
   request: Request
 ): Promise<SDKStandardComponents.GenericRequestResponse> {
@@ -67,5 +67,5 @@ export async function putConsentRevoke (
     revokedAt: consent.revokedAt
   }
 
-  return thirdPartyRequest.putConsents(consent.id, body, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
+  return thirdPartyRequest.patchConsentsId(consent.id, body, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
 }
