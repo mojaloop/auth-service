@@ -36,10 +36,10 @@
  ******/
 
 import Logger from '@mojaloop/central-services-logger'
-import { Consent } from '../../../../../model/consent'
-import { Scope } from '../../../../../model/scope'
+import { Consent } from '../model/consent'
+import { Scope } from '../model/scope'
 import { Request } from '@hapi/hapi'
-import { thirdPartyRequest } from '../../../../../lib/requests'
+import { thirdPartyRequest } from '../lib/requests'
 import { Enum } from '@mojaloop/central-services-shared'
 
 /*

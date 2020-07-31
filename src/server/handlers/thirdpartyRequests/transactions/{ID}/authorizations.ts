@@ -57,7 +57,7 @@ import {
   hasActiveCredentialForPayload,
   hasMatchingScopeForPayload,
   putErrorRequest
-} from '../../../../domain/thirdpartyRequests/transactions/{ID}/authorizations'
+} from '../../../../../domain/authorizations'
 
 /*
  * Asynchronous POST handler helper function to

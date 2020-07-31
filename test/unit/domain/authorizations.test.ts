@@ -30,16 +30,16 @@
 import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
-import { Consent } from '../../../../../../../src/model/consent'
-import { Scope } from '../../../../../../../src/model/scope'
-import { thirdPartyRequest } from '../../../../../../../src/lib/requests'
+import { Consent } from '../../../src/model/consent'
+import { Scope } from '../../../src/model/scope'
+import { thirdPartyRequest } from '../../../src/lib/requests'
 import {
   AuthPayload,
   isPayloadPending,
   hasActiveCredentialForPayload,
   hasMatchingScopeForPayload,
   putErrorRequest
-} from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
+} from '../../../src/domain/authorizations'
 
 /*
  * POST /thirdpartyRequests/transactions/{ID}/authorizations

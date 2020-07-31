@@ -39,7 +39,7 @@ import {
   scopeDB
 } from '../../../../.././../../src/lib/db'
 import * as Challenge from '../../../../../../../src/lib/challenge'
-import * as Domain from '../../../../../../../src/server/domain/thirdpartyRequests/transactions/{ID}/authorizations'
+import * as Domain from '../../../../../../../src/domain/authorizations'
 import * as Handler from '../../../../../../../src/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*

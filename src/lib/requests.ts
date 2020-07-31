@@ -32,9 +32,9 @@
 /* istanbul ignore file */
 // Testing will be covered in #354
 
+import Logger from '@mojaloop/central-services-logger'
 import { config } from './config'
 import { ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
-import Logger from '@mojaloop/central-services-logger'
 
 // Config file to instantiate ThirdPartyRequest object
 const configRequest: BaseRequestConfigType = {
