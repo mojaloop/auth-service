@@ -37,9 +37,8 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "*": [
-        "src/*",
-        "node_modules/*"
+      "~/*": [
+        "src/*"
       ]
     },
     "esModuleInterop": true,
