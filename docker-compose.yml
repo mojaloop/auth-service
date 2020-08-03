@@ -8,7 +8,7 @@ services:
   auth-service:
     container_name: as_auth-service
     image: mojaloop/auth-service:local
-    command: sh -c "/opt/auth-service/scripts/wait4.js my-sql"
+    #command: sh -c "/opt/auth-service/scripts/wait4.js my-sql"
     build:
       context: .
       cache_from:

@@ -18,7 +18,6 @@ RUN adduser -D as-user
 USER as-user
 COPY --chown=as-user --from=builder /opt/auth-service .
 # cleanup
-#RUN apk del build-dependencies
 #RUN npm prune --production
 EXPOSE 4004
 CMD ["npm", "run", "start"]
