@@ -83,20 +83,51 @@ export class ConsentDB {
   }
 
   // Update Consent
-  // No validation against Null or illegal updates in models
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
-    const updateCount: number = await this
-      .Db<Consent>('Consent')
-      .where({ id: consent.id })
-      .update(consent)
+    // Transaction to make the update atomic
+    return this.Db.transaction(async (trx): Promise<number> => {
+      // Transaction is rolled back automatically if there is
+      // an error and the returned promise is rejected
+      const consents: Consent[] = await trx<Consent>('Consent')
+        .select('*')
+        .where({ id: consent.id })
+        .limit(1)
 
-    // Ensure that the caller knows that the resource does not exist
-    if (updateCount === 0) {
-      throw new NotFoundError('Consent', consent.id)
-    }
+      if (consents.length === 0) {
+        throw new NotFoundError('Consent', consent.id)
+      }
 
-    return updateCount
+      const existingConsent: Consent = consents[0]
+      const updatedConsent: Record<string, string | Date> = {}
+
+      // Prepare a new Consent with only allowable updates
+      Object.keys(existingConsent).forEach((key): void => {
+        const value: string | Date =
+          existingConsent[key as keyof Consent] as string | Date
+
+        // Cannot overwrite an `ACTIVE` credentialStatus
+        if (key === 'credentialStatus' && value === 'ACTIVE') {
+          return
+        }
+
+        // Cannot overwrite non-null fields
+        if (value !== null && key !== 'credentialStatus') {
+          return
+        }
+
+        updatedConsent[key] = consent[key as keyof Consent] as string | Date
+      })
+
+      // If there are no fields that can be updated
+      if (Object.keys(updatedConsent).length === 0) {
+        return 0
+      }
+
+      return trx<Consent>('Consent')
+        .where({ id: consent.id })
+        .update(updatedConsent)
+    })
   }
 
   // Retrieve Consent by ID (unique)
