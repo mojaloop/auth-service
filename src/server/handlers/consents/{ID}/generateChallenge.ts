@@ -39,13 +39,13 @@
 import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
-  putConsentId, ConsentCredential
+  putConsentId
 } from '../../../../domain/consents/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '../../../../lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../lib/db'
-import { Consent } from '../../../../model/consent'
+import { Consent, ConsentCredential } from '../../../../model/consent'
 import Logger from '@mojaloop/central-services-logger'
 import { convertScopesToExternal } from '../../../../lib/scopes'
 import { Scope } from '../../../../model/scope'

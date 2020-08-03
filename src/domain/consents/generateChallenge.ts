@@ -39,20 +39,10 @@
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../lib/db'
 import { thirdPartyRequest } from '../../lib/requests'
-import { Consent } from '../../model/consent'
+import { Consent, ConsentCredential } from '../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { ExternalScope } from '../../lib/scopes'
-
-/*
- * Interface for Consent Credential resource type
- */
-export interface ConsentCredential {
-  credentialType: string;
-  credentialStatus: string;
-  credentialPayload: string | null;
-  credentialChallenge: string;
-}
 
 /**
  * Validates whether generate challenge request is valid
@@ -109,7 +99,7 @@ export async function putConsentId (
         payload: consent.credentialChallenge as string,
         signature: null
       },
-      payload: null
+      payload: undefined
     }
   }
   // Use sdk-standard-components library to send request
