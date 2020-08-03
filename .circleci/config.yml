@@ -192,8 +192,6 @@ jobs:
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d 
-            cd ~/project/
-            sh -c "./scripts/wait4.js my-sql"
       - run:
           name: Execute integration tests
           command: |

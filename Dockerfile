@@ -19,5 +19,6 @@ USER as-user
 COPY --chown=as-user --from=builder /opt/auth-service .
 # cleanup
 #RUN npm prune --production
+RUN sh -c "/opt/auth-service/scripts/wait4.js my-sql"
 EXPOSE 4004
 CMD ["npm", "run", "start"]
