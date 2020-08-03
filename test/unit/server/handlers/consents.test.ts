@@ -27,7 +27,7 @@
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { post } from '../../../../src/server/handlers/consents'
+import { post } from '~/server/handlers/consents'
 import * as Domain from '../../../../src/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 

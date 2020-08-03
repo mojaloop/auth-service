@@ -38,7 +38,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import {
   createAndStoreConsent,
   isPostConsentRequestValid
-} from '../../domain/consents'
+} from '~/domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 

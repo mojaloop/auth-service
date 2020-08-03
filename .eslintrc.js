@@ -19,6 +19,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
+    project: "./tsconfig.json",
+    tsConfigRootDir: "./"
   },
   rules: {
     indent: 'off',
@@ -34,6 +36,11 @@ module.exports = {
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
     'cucumber/no-arrow-functions': 2,
     'max-len': ["warn", { "code": 80 }]
+  },
+  settings: {
+    "import/resolver": {
+      "typescript": {}
+    }
   },
   overrides: [
     {

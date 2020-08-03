@@ -1,13 +1,12 @@
 {
   "include": [
     "src",
-    "ambient.d.ts"
+    "ambient.d.ts",
+    "test"
   ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "**/*.test.ts",
-    "test",
     "lib",
     "coverage",
     "**/__mocks__/*"
@@ -15,6 +14,10 @@
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
+    "rootDirs": [
+      "src",
+      "test"
+    ],
     "lib": [
       "esnext"
     ],
