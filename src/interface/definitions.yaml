@@ -52,12 +52,21 @@ Consent:
       description: PISP identifier who uses this Consent
     status: 
       $ref: '#/definitions/ConsentStatusEnum'
+    revokedAt: 
+      $ref: '#/definitions/ConsentRevokedAt'
     scopes:
       type: array
       items:
         $ref: '#/definitions/Scope'
     credential:
       $ref: '#/definitions/Credential'
+  required: 
+    - id
+    - status
+    - scopes
+    - participantId
+    - initiatorId
+    - credential
 
 ConsentStatusEnum:
   title: ConsentStatus
@@ -69,6 +78,12 @@ ConsentStatusEnum:
     The status of the Credential's creation
     - "ACTIVE" - The Consent is valid, and ready to be used by the PISP
     - "REVOKED" - The Consent is no longer valid and has been requested to be deleted
+
+ConsentRevokedAt:
+  title: ConsentRevokedAt
+  type: Date
+  description: >
+    The time/date at which the Consent was revoked, after which it is no longer valid
 
 Credential:
   title: Credential

@@ -634,6 +634,12 @@
           ],
           "description": "PISP identifier who uses this Consent"
         },
+        "status": {
+          "$ref": "#/definitions/ConsentStatusEnum"
+        },
+        "revokedAt": {
+          "$ref": "#/definitions/ConsentRevokedAt"
+        },
         "scopes": {
           "type": "array",
           "items": {
