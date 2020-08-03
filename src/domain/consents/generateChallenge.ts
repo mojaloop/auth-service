@@ -50,7 +50,7 @@ import { ExternalScope } from '../../lib/scopes'
 export interface ConsentCredential {
   credentialType: string;
   credentialStatus: string;
-  credentialPayload?: string | null;
+  credentialPayload: string | null;
   credentialChallenge: string;
 }
 
