@@ -80,7 +80,7 @@ export async function updateConsentCredential (
   consent.credentialStatus = credential.credentialStatus
   consent.credentialChallenge = credential.credentialChallenge
 
-  // Update in database
+  // Update in database, relying on database validation for any null or relational aspects.
   await consentDB.update(consent)
   return consent
 }
