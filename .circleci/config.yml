@@ -203,7 +203,7 @@ jobs:
             npm -s run test:integration
       - run:
           name: Prepare test results
-          commad: |
+          command: |
             mkdir -p test/results
             mv junit.xml test/results
       - store_artifacts:
