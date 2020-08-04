@@ -209,11 +209,11 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
   })
 
   describe('putErrorRequest', (): void => {
-    let mockErrorMethod: jest.SpyInstance
+    let mockSdkErrorMethod: jest.SpyInstance
     let request: Request
 
     beforeAll((): void => {
-      mockErrorMethod = jest.spyOn(
+      mockSdkErrorMethod = jest.spyOn(
         thirdPartyRequest,
         'putThirdpartyRequestsTransactionsAuthorizationsError'
       )
@@ -238,10 +238,12 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
 
     it('calls the thirdPartyRequest error method with correct paramaeters',
       async (): Promise<void> => {
-        mockErrorMethod.mockResolvedValue(true)
+        // GenericRequestResponse
+        mockSdkErrorMethod.mockResolvedValue({})
+
         await putErrorRequest(request, '3001', 'Bad Request')
 
-        expect(mockErrorMethod).toHaveBeenCalledWith(
+        expect(mockSdkErrorMethod).toHaveBeenCalledWith(
           {
             errorInformation: {
               errorCode: '3001',
@@ -260,11 +262,11 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           (): void => {}
         )
 
-        mockErrorMethod.mockRejectedValue('Internal Error')
+        mockSdkErrorMethod.mockRejectedValue('Internal Error')
 
         await putErrorRequest(request, '3001', 'Bad Request')
 
-        expect(mockErrorMethod).toHaveBeenCalledWith(
+        expect(mockSdkErrorMethod).toHaveBeenCalledWith(
           {
             errorInformation: {
               errorCode: '3001',
