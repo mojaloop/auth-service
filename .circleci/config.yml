@@ -201,6 +201,11 @@ jobs:
             cd ~/project/
             npm ci
             npm -s run test:integration
+      - run:
+          name: Prepare test results
+          commad: |
+            mkdir -p test/results
+            mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
           prefix: test
