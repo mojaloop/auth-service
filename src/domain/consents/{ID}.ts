@@ -34,7 +34,7 @@ import { ExternalScope, convertScopesToExternal } from '../../lib/scopes'
 
 export interface ConsentCredential {
   credentialId: string;
-  credentialStatus: 'VERIFIED';
+  credentialStatus: 'ACTIVE';
   credentialPayload: string;
 }
 
@@ -75,7 +75,7 @@ export async function putConsents (consent: Consent, signature: string, publicKe
     credential: {
       id: consent.credentialId as string,
       credentialType: consent.credentialType as 'FIDO',
-      status: consent.credentialStatus as 'VERIFIED',
+      status: consent.credentialStatus as 'ACTIVE',
       challenge: {
         payload: consent.credentialChallenge as string,
         signature: signature as string

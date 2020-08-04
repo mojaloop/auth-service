@@ -30,17 +30,22 @@ import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCred
 import { IncorrectChallengeError, IncorrectStatusError } from '../../../domain/errors'
 import { verifySignature } from '../../../lib/challenge'
 
-export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+export default async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
   /* The incoming signature from the PISP. */
+  // @ts-ignore
   const signature = request.payload.credential.challenge.signature
   /* The incoming public key from the PISP. */
+  // @ts-ignore
   const publicKey = request.payload.credential.payload
   /* The incoming challenge from the PISP. */
+  // @ts-ignore
   const challenge = request.payload.credential.challenge.payload
   /* The incoming credential id from the PISP. */
+  // @ts-ignore
   const requestCredentialId = request.payload.credential.id
   /* The incoming credential status from the PISP. */
+  // @ts-ignore
   const credentialStatus = request.payload.credential.status
   let consent: Consent
 
@@ -66,7 +71,7 @@ export async function put (request: Request, h: ResponseToolkit): Promise<Respon
       }
       const credential: ConsentCredential = {
         credentialId: requestCredentialId,
-        credentialStatus: 'VERIFIED',
+        credentialStatus: 'ACTIVE',
         credentialPayload: publicKey
       }
       await updateConsentCredential(consent, credential)
