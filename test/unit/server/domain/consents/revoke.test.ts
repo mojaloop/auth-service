@@ -27,11 +27,16 @@
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import * as Domain from '../../../../../../src/domain/consents/revoke'
 import { consentDB } from '../../../../../../src/lib/db'
 import Logger from '@mojaloop/central-services-logger'
-import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
+import SDKStandardComponents, { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '../../../../../src/lib/requests'
+import {
+  isConsentRequestInitiatedByValidSource,
+  patchConsentRevoke,
+  revokeConsentStatus
+} from '../../../../../src/domain/consents/revoke'
+import { Consent } from '../../../../../src/model/consent'
 
 // const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 // const mockPatchConsentRevoke = jest.spyOn(Domain, 'patchConsentRevoke')
@@ -74,6 +79,13 @@ const request: Request = {
 }
 
 // @ts-ignore
+const requestNoHeaders: Request = {
+  params: {
+    id: '1234'
+  }
+}
+
+// @ts-ignore
 const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
@@ -84,10 +96,58 @@ const h: ResponseToolkit = {
   }
 }
 
+/*
+ * Mock Consent Resources
+ */
+const partialConsentActive: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  status: 'ACTIVE'
+}
+
+const partialConsentActive2: Consent = {
+  id: '1234',
+  initiatorId: 'pi2-2233',
+  participantId: 'dfs333-2123',
+  status: 'ACTIVE'
+}
+
+const partialConsentRevoked: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  revokedAt: 'now',
+  status: 'REVOKED'
+}
+
+const completeConsentRevoked: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  status: 'REVOKED',
+  revokedAt: 'now',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
+const completeConsentActive: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  status: 'ACTIVE',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
-    mockConsentUpdate.mockResolvedValue(revokedConsent)
-    mockPatchConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
+    mockConsentUpdate.mockResolvedValue(partialConsentRevoked)
+    mockPatchConsents.mockResolvedValue(
+      1 as unknown as SDKStandardComponents.GenericRequestResponse)
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
   })
@@ -96,4 +156,70 @@ describe('server/handlers/consents', (): void => {
     jest.clearAllMocks()
   })
 
+  describe('isConsentRequestInitiatedByValidSource', (): void => {
+    it('Should return true', (): void => {
+      expect(isConsentRequestInitiatedByValidSource(partialConsentActive, request))
+        .toBe(true)
+    })
+
+    it('Should return false because consent is null', (): void => {
+      expect(isConsentRequestInitiatedByValidSource(
+        null as unknown as Consent, request))
+        .toBeFalsy()
+    })
+
+    it('Should return false because initiator ID does not match', (): void => {
+      expect(isConsentRequestInitiatedByValidSource(partialConsentActive2, request))
+        .toBeFalsy()
+    })
+
+    it('Should throw an error as request headers are missing', (): void => {
+      expect((): void => {
+        isConsentRequestInitiatedByValidSource(
+          partialConsentActive, requestNoHeaders as Request)
+      }).toThrowError()
+    })
+  })
+
+  describe('revokeConsentStatus', (): void => {
+
+  })
+
+  describe('patchConsentRevoke', (): void => {
+    it('Should resolve successfully and return 1', async (): Promise<void> => {
+      expect(await patchConsentRevoke(completeConsentRevoked, request))
+        .toBe(1)
+    })
+    
+    it('Should resolve successfully and return 1', async (): Promise<void> => {
+      expect(await patchConsentRevoke(partialConsentRevoked, request))
+        .toBe(1)
+    })
+
+    it('Should throw an error as request is null value',
+      async (): Promise<void> => {
+        await expect(patchConsentRevoke(
+          completeConsentRevoked, null as unknown as Request))
+          .rejects
+          .toThrow()
+      })
+
+    it('Should throw an error as consent is null value',
+      async (): Promise<void> => {
+        await expect(patchConsentRevoke(
+          null as unknown as Consent, request))
+          .rejects
+          .toThrow()
+      }
+    )
+
+    it('Should throw an error as patchConsents() throws an error',
+      async (): Promise<void> => {
+        mockPatchConsents.mockRejectedValue(new Error('Test Error'))
+        await expect(patchConsentRevoke(completeConsentRevoked, request))
+          .rejects
+          .toThrowError('Test Error')
+      }
+    )
+  })
 })

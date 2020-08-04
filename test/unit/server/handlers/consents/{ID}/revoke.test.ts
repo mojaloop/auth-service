@@ -32,6 +32,7 @@ import * as Domain from '../../../../../../src/domain/consents/revoke'
 import { consentDB } from '../../../../../../src/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
+import { Consent } from '../../../../../../src/model/consent'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsentRevoke = jest.spyOn(Domain, 'patchConsentRevoke')
@@ -83,14 +84,55 @@ const h: ResponseToolkit = {
   }
 }
 
+/*
+ * Mock Consent Resources
+ */
+const partialConsentActive: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  status: 'ACTIVE'
+}
+
+const partialConsentRevoked: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  revokedAt: 'now',
+  status: 'REVOKED'
+}
+
+const completeConsentRevoked: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  status: 'REVOKED',
+  revokedAt: 'now',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
+const completeConsentActive: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  status: 'ACTIVE',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
+
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
     mockIsPostConsentRequestValid.mockReturnValue(true)
-    mockRevokeConsentStatus.mockResolvedValue(revokedConsent)
+    mockRevokeConsentStatus.mockResolvedValue(partialConsentRevoked)
     mockPatchConsentRevoke.mockResolvedValue(1 as unknown as GenericRequestResponse)
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
-    mockConsentRetrieve.mockResolvedValue()
+    mockConsentRetrieve.mockResolvedValue(partialConsentActive)
   })
 
   beforeEach((): void => {
