@@ -3,14 +3,7 @@
 /*
  * This flag is to ignore BDD testing for model
  * which will be addressed in the future in
- * ticket #354
- */
-
-/*
- * There is a need to add Auth-Service specific errors
- * to the Mojaloop error codes and document them. The
- * handler and unit test error values need to be changed
- * accordingly. This will be addressed in Ticket #355.
+ * Ticket #354
  */
 
 /*****
@@ -60,6 +53,37 @@ import {
 } from '../../../../../domain/authorizations'
 
 /*
+ * TODO: There is a need to document and add Auth-Service
+ * specific errors to Mojaloop.
+ * The handler and unit test error values need to be changed
+ * accordingly. This will be addressed in Ticket #355.
+ */
+const PAYLOAD_NOT_PENDING_ERROR = {
+  code: '3100',
+  description: 'Bad Request'
+}
+const CONSENT_NOT_FOUND_ERROR = {
+  code: '2000',
+  description: 'Not Found'
+}
+const SCOPE_NOT_FOUND_ERROR = {
+  code: '2000',
+  description: 'Forbidden'
+}
+const SERVER_ERROR = {
+  code: '2000',
+  description: 'Server Error'
+}
+const NO_ACTIVE_CREDS_ERROR = {
+  code: '3100',
+  description: 'No Active Credentials'
+}
+const INCORRECT_SIGNATURE_ERROR = {
+  code: '3100',
+  description: 'Incorrect Signature'
+}
+
+/*
  * Asynchronous POST handler helper function to
  * process everything in the background
  */
@@ -69,7 +93,11 @@ export async function validateAndVerifySignature (
 
   // Validate incoming payload status
   if (!isPayloadPending(payload)) {
-    return putErrorRequest(request, '3100', 'Bad Request')
+    return putErrorRequest(
+      request,
+      PAYLOAD_NOT_PENDING_ERROR.code,
+      PAYLOAD_NOT_PENDING_ERROR.description
+    )
   }
 
   let consent: Consent
@@ -82,10 +110,14 @@ export async function validateAndVerifySignature (
     Logger.error('Could not retrieve consent')
 
     if (error instanceof NotFoundError) {
-      return putErrorRequest(request, '2000', 'Not Found')
+      return putErrorRequest(
+        request,
+        CONSENT_NOT_FOUND_ERROR.code,
+        CONSENT_NOT_FOUND_ERROR.description
+      )
     }
 
-    return putErrorRequest(request, '2000', 'Server Error')
+    return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
   }
 
   let consentScopes: Scope[]
@@ -98,18 +130,30 @@ export async function validateAndVerifySignature (
     Logger.error('Could not retrieve scope')
 
     if (error instanceof NotFoundError) {
-      return putErrorRequest(request, '2000', 'Forbidden')
+      return putErrorRequest(
+        request,
+        SCOPE_NOT_FOUND_ERROR.code,
+        SCOPE_NOT_FOUND_ERROR.description
+      )
     }
 
-    return putErrorRequest(request, '2000', 'Server Error')
+    return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
   }
 
   if (!hasMatchingScopeForPayload(consentScopes, payload)) {
-    return putErrorRequest(request, '2000', 'Forbidden')
+    return putErrorRequest(
+      request,
+      SCOPE_NOT_FOUND_ERROR.code,
+      SCOPE_NOT_FOUND_ERROR.description
+    )
   }
 
   if (!hasActiveCredentialForPayload(consent)) {
-    return putErrorRequest(request, '3100', 'Bad Request')
+    return putErrorRequest(
+      request,
+      NO_ACTIVE_CREDS_ERROR.code,
+      NO_ACTIVE_CREDS_ERROR.description
+    )
   }
 
   try {
@@ -122,7 +166,11 @@ export async function validateAndVerifySignature (
     )
 
     if (!isVerified) {
-      return putErrorRequest(request, '3100', 'Bad Request')
+      return putErrorRequest(
+        request,
+        INCORRECT_SIGNATURE_ERROR.code,
+        INCORRECT_SIGNATURE_ERROR.description
+      )
     }
 
     payload.status = 'VERIFIED'
@@ -130,7 +178,7 @@ export async function validateAndVerifySignature (
     Logger.push(error)
     Logger.error('Could not verify signature')
 
-    return putErrorRequest(request, '2000', 'Server Error')
+    return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
   }
 
   // PUT request to switch to inform about verification
