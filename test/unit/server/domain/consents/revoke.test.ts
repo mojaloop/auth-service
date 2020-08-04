@@ -182,7 +182,30 @@ describe('server/handlers/consents', (): void => {
   })
 
   describe('revokeConsentStatus', (): void => {
+    it('Should return a revoked consent', async (): Promise<void> => {
+      const revokedConsent = await revokeConsentStatus(partialConsentActive)
+      expect(revokedConsent.status).toBe('REVOKED')
+      expect(revokedConsent.revokedAt).toBeDefined()
+      expect(mockConsentUpdate).toHaveBeenCalled()
+    })
 
+    it('Should return a revoked consent', async (): Promise<void> => {
+      const revokedConsent = await revokeConsentStatus(completeConsentActive)
+      expect(revokedConsent.status).toBe('REVOKED')
+      expect(revokedConsent.revokedAt).toBeDefined()
+      expect(mockConsentUpdate).toHaveBeenCalled()
+    })
+
+    it('Should throw an error due to error in updating consent',
+      async (): Promise<void> => {
+        mockConsentUpdate.mockResolvedValueOnce(new Error('Test Error'))
+
+        await expect(revokeConsentStatus(partialConsentActive))
+          .rejects
+          .toThrowError('Test Error')
+
+        expect(mockConsentUpdate).toHaveBeenCalled()
+      })
   })
 
   describe('patchConsentRevoke', (): void => {
@@ -190,7 +213,7 @@ describe('server/handlers/consents', (): void => {
       expect(await patchConsentRevoke(completeConsentRevoked, request))
         .toBe(1)
     })
-    
+
     it('Should resolve successfully and return 1', async (): Promise<void> => {
       expect(await patchConsentRevoke(partialConsentRevoked, request))
         .toBe(1)
