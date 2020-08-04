@@ -96,7 +96,8 @@ const completeConsent: Consent = {
 const credential = {
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
+  credentialChallenge: 'xyhdushsoa82w92mzs=',
+  credentialPayload: null
 }
 
 // const challenge = 'xyhdushsoa82w92mzs='
@@ -153,7 +154,8 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     it('Should return a consent object with filled out credentials', async (): Promise<void> => {
       mockConsentDbUpdate.mockResolvedValueOnce(3)
 
-      const updatedConsent = await updateConsentCredential(partialConsent, credential)
+      const updatedConsent = await updateConsentCredential(
+        partialConsent, credential)
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
       expect(updatedConsent).toEqual(completeConsent)
@@ -185,16 +187,18 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
         .toBe(1)
     })
 
-    it('Should throw an error as request is null value', async (): Promise<void> => {
-      await expect(putConsentId(
-        completeConsent, null as unknown as Request, externalScopes))
-        .rejects
-        .toThrow()
-    })
+    it('Should throw an error as request is null value',
+      async (): Promise<void> => {
+        await expect(putConsentId(
+          completeConsent, null as unknown as Request, externalScopes))
+          .rejects
+          .toThrow()
+      })
 
     it('Should throw an error as consent is null value',
       async (): Promise<void> => {
-        await expect(putConsentId(null as unknown as Consent, request, externalScopes))
+        await expect(putConsentId(
+          null as unknown as Consent, request, externalScopes))
           .rejects
           .toThrow()
       }

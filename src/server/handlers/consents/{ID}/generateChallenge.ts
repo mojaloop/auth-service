@@ -88,7 +88,8 @@ export async function generateChallengeAndPutConsentId (
       const credential: ConsentCredential = {
         credentialChallenge: challengeValue,
         credentialStatus: 'PENDING',
-        credentialType: 'FIDO'
+        credentialType: 'FIDO',
+        credentialPayload: null
       }
 
       consent = await updateConsentCredential(consent, credential)

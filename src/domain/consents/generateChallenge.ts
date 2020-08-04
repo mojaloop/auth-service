@@ -69,8 +69,12 @@ export async function updateConsentCredential (
   consent.credentialType = credential.credentialType
   consent.credentialStatus = credential.credentialStatus
   consent.credentialChallenge = credential.credentialChallenge
+  if (credential.credentialPayload) { // if Payload is non-null
+    consent.credentialPayload = credential.credentialPayload as string
+  }
 
-  // Update in database, relying on database validation for any null or relational aspects.
+  // Update in database,
+  // relying on database validation for any null or relational aspects.
   await consentDB.update(consent)
   return consent
 }
@@ -99,7 +103,7 @@ export async function putConsentId (
         payload: consent.credentialChallenge as string,
         signature: null
       },
-      payload: undefined
+      payload: consent.credentialPayload || null
     }
   }
   // Use sdk-standard-components library to send request

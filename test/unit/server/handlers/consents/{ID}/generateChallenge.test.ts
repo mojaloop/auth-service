@@ -30,7 +30,7 @@
  ******/
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../../../../../../src/lib/db'
-import { Consent } from '../../../../../../src/model/consent'
+import { Consent, ConsentCredential } from '../../../../../../src/model/consent'
 import * as Handler from '../../../../../../src/server/handlers/consents/{ID}/generateChallenge'
 import * as Challenge from '../../../../../../src/lib/challenge'
 import * as Domain from '../../../../../../src/domain/consents/generateChallenge'
@@ -104,10 +104,11 @@ const completeConsentActiveCredential: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
-const credential = {
+const credential: ConsentCredential = {
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
+  credentialChallenge: 'xyhdushsoa82w92mzs=',
+  credentialPayload: null
 }
 
 const challenge = 'xyhdushsoa82w92mzs='

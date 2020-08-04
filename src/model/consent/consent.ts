@@ -66,7 +66,7 @@ export interface Consent {
 export interface ConsentCredential {
   credentialType: string;
   credentialStatus: string;
-  credentialPayload?: string;
+  credentialPayload: string | null;
   credentialChallenge: string;
 }
 
