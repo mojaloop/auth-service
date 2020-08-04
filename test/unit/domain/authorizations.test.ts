@@ -206,6 +206,23 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
 
         expect(scopeMatch).toEqual(false)
       })
+
+    it('returns false if the consent scopes array is empty',
+      async (): Promise<void> => {
+        const payload: AuthPayload = {
+          consentId: '1223abcd',
+          sourceAccountId: '2222-322d-d2k2',
+          status: 'PENDING',
+          challenge: 'dddw7hwuehfuhnd8jd',
+          value: 'dwuduwd&e2idjoj0w'
+        }
+
+        const consentScopes: Scope[] = []
+
+        const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
+
+        expect(scopeMatch).toEqual(false)
+      })
   })
 
   describe('putErrorRequest', (): void => {
@@ -236,7 +253,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
       }
     })
 
-    it('calls the thirdPartyRequest error method with correct paramaeters',
+    it('calls the thirdPartyRequest error method with correct parameters',
       async (): Promise<void> => {
         // GenericRequestResponse
         mockSdkErrorMethod.mockResolvedValue({})
