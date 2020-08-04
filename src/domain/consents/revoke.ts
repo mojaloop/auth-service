@@ -67,5 +67,9 @@ export async function patchConsentRevoke (
 
   }
 
-  return thirdPartyRequest.patchConsents(consent.id, body, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
+  return thirdPartyRequest.patchConsents(
+    consent.id,
+    body,
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  )
 }
