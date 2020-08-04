@@ -77,7 +77,7 @@ ConsentStatusEnum:
   description: |
     The status of the Credential's creation
     - "ACTIVE" - The Consent is valid, and ready to be used by the PISP
-    - "REVOKED" - The Consent is no longer valid and has been requested to be deleted
+    - "REVOKED" - The Consent is no longer valid and has been revoked
 
 ConsentRevokedAt:
   title: ConsentRevokedAt
