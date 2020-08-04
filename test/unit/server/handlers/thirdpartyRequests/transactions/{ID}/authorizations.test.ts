@@ -139,7 +139,6 @@ describe('validateAndVerifySignature', (): void => {
     mockHasActiveCredential.mockReturnValue(true)
     mockHasMatchingScope.mockReturnValue(true)
     mockVerifySignature.mockReturnValue(true)
-    // mockPutErrorRequest.mockImplementation(async (): Promise<void> => {})
     mockPutErrorRequest.mockResolvedValue(undefined)
 
     mockLoggerPush.mockReturnValue(null)

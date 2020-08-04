@@ -75,13 +75,9 @@ export function hasMatchingScopeForPayload (
   consentScopes: Scope[],
   payload: AuthPayload): boolean {
   // Check if any scope matches
-  for (const scope of consentScopes) {
-    if (scope.accountId === payload.sourceAccountId) {
-      return true
-    }
-  }
-
-  return false
+  return consentScopes.some((scope: Scope): boolean =>
+    scope.accountId === payload.sourceAccountId
+  )
 }
 
 /*

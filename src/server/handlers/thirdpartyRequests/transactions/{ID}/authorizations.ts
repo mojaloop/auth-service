@@ -57,6 +57,7 @@ import {
  * specific errors to Mojaloop.
  * The handler and unit test error values need to be changed
  * accordingly. This will be addressed in Ticket #355.
+ * The following errors are just placeholders for now.
  */
 const PAYLOAD_NOT_PENDING_ERROR = {
   code: '3100',
@@ -200,10 +201,6 @@ export async function validateAndVerifySignature (
 export function post (
   request: Request,
   h: ResponseToolkit): ResponseObject {
-  // Hapi-OpenAPI plugin validates the payload schema for
-  // existence of properties and their types based on the
-  // OpenAPI specification. It also ensures non-null values.
-
   // Validate and process asynchronously
   validateAndVerifySignature(request)
 
