@@ -65,6 +65,7 @@ const completeConsent: Consent = {
 const consentWithOnlyUpdateFields: Consent = {
   id: '1234',
   credentialId: '123',
+  status: 'ACTIVE',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -77,6 +78,7 @@ const conflictingConsent: Consent = {
   // between completeConsent and this Consent
   initiatorId: 'pisp-0000-1133',
   participantId: 'dfs-1233-5623',
+  status: 'ACTIVE',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'ACTIVE',
