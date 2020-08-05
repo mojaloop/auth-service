@@ -42559,6 +42559,31 @@
       "decision": "ignore",
       "madeAt": 1593693305032,
       "expiresAt": 1596285287958
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-angular>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596103953329,
+      "expiresAt": 1598695942150
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596103957393,
+      "expiresAt": 1598695942150
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-core>conventional-changelog-writer>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596103959656,
+      "expiresAt": 1598695942150
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-jshint>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596103962176,
+      "expiresAt": 1598695942150
+    },
+    "1213|standard-version>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596103965583,
+      "expiresAt": 1598695942150
     }
   },
   "rules": {},
