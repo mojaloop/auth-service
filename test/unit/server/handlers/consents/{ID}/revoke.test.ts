@@ -36,7 +36,7 @@ import { Consent } from '../../../../../../src/model/consent'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsentRevoke = jest.spyOn(Domain, 'patchConsentRevoke')
-const mockIsPostConsentRequestValid = jest.spyOn(
+const mockIsConsentRequestValid = jest.spyOn(
   Domain, 'isConsentRequestInitiatedByValidSource')
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -124,12 +124,14 @@ const completeConsentActive: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
+const consentId = '1234'
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
-    mockIsPostConsentRequestValid.mockReturnValue(true)
+    mockIsConsentRequestValid.mockReturnValue(true)
     mockRevokeConsentStatus.mockResolvedValue(partialConsentRevoked)
-    mockPatchConsentRevoke.mockResolvedValue(1 as unknown as GenericRequestResponse)
+    mockPatchConsentRevoke
+      .mockResolvedValue(1 as unknown as GenericRequestResponse)
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
     mockConsentRetrieve.mockResolvedValue(partialConsentActive)
@@ -145,25 +147,61 @@ describe('server/handlers/consents', (): void => {
         await expect(Handler.validateRequestAndRevokeConsent(request))
           .resolves.toBe(undefined)
 
-        expect(mockConsentRetrieve).toBeCalledWith()
-        expect(mockIsPostConsentRequestValid).toBeCalledWith()
-        expect(mockRevokeConsentStatus).toBeCalledWith()
-        expect(mockPatchConsentRevoke).toBeCalledWith()
+        expect(mockConsentRetrieve).toBeCalledWith(consentId)
+        expect(mockIsConsentRequestValid)
+          .toBeCalledWith(partialConsentActive, request)
+        expect(mockRevokeConsentStatus).toBeCalledWith(partialConsentActive)
+        expect(mockPatchConsentRevoke)
+          .toBeCalledWith(partialConsentRevoked, request)
       })
 
-    it('Should finish with no errors, but mockRevokeConsentStatus should not be called',
+    it('Should finish with no errors, but revokeConsentStatus should not be called',
       async (): Promise<void> => {
+        mockConsentRetrieve.mockResolvedValueOnce(completeConsentRevoked)
         await expect(Handler.validateRequestAndRevokeConsent(request))
           .resolves.toBe(undefined)
 
-        expect(mockConsentRetrieve).toBeCalledWith()
-        expect(mockIsPostConsentRequestValid).toBeCalledWith()
+        expect(mockConsentRetrieve).toBeCalledWith(consentId)
+        expect(mockIsConsentRequestValid)
+          .toBeCalledWith(completeConsentRevoked, request)
         expect(mockRevokeConsentStatus).not.toBeCalled()
-        expect(mockPatchConsentRevoke).toBeCalledWith()
+        expect(mockPatchConsentRevoke)
+          .toBeCalledWith(completeConsentRevoked, request)
+      })
+
+    it('Should throw an error due to consent retrieval error',
+      async (): Promise<void> => {
+        mockConsentRetrieve.mockRejectedValueOnce(new Error('Test'))
+        await expect(Handler.validateRequestAndRevokeConsent(request))
+          .rejects.toThrowError('NotImplementedYetError')
+
+        expect(mockConsentRetrieve).toBeCalledWith(consentId)
+        expect(mockIsConsentRequestValid).not.toBeCalled()
+        expect(mockRevokeConsentStatus).not.toBeCalled()
+        expect(mockPatchConsentRevoke).not.toBeCalled()
+      })
+
+    it('Should throw an error due to invalid request',
+      async (): Promise<void> => {
+        mockIsConsentRequestValid.mockReturnValueOnce(false)
+        await expect(Handler.validateRequestAndRevokeConsent(request))
+          .rejects.toThrowError('NotImplementedYetError')
+
+        expect(mockConsentRetrieve).toBeCalledWith(consentId)
+        expect(mockIsConsentRequestValid).toBeCalledWith(partialConsentActive)
+        expect(mockRevokeConsentStatus).not.toBeCalled()
+        expect(mockPatchConsentRevoke).not.toBeCalled()
       })
   })
 
   describe('Post', (): void => {
+    const mockValidateRequestAndRevokeConsent = jest.spyOn(
+      Handler, 'validateRequestAndRevokeConsent')
+
+    beforeAll((): void => {
+      mockValidateRequestAndRevokeConsent.mockResolvedValue()
+    })
+
     it('Should return 202 success code',
       async (): Promise<void> => {
         const response = await Handler.post(
