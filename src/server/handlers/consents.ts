@@ -34,7 +34,10 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { createAndStoreConsent, isPostConsentRequestValid } from '../../domain/consents'
+import {
+  createAndStoreConsent,
+  isPostConsentRequestValid
+} from '../../domain/consents'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
