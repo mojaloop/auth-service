@@ -26,10 +26,10 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { consentDB } from '../../../../../../src/lib/db'
+import { Request } from '@hapi/hapi'
+import { consentDB } from '../../../../../src/lib/db'
 import Logger from '@mojaloop/central-services-logger'
-import SDKStandardComponents, { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '../../../../../src/lib/requests'
 import {
   isConsentRequestInitiatedByValidSource,
@@ -85,17 +85,6 @@ const requestNoHeaders: Request = {
   }
 }
 
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
-
 /*
  * Mock Consent Resources
  */
@@ -145,7 +134,7 @@ const completeConsentActive: Consent = {
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
-    mockConsentUpdate.mockResolvedValue(partialConsentRevoked)
+    mockConsentUpdate.mockResolvedValue(2)
     mockPatchConsents.mockResolvedValue(
       1 as unknown as SDKStandardComponents.GenericRequestResponse)
     mockLoggerError.mockReturnValue(null)
@@ -158,7 +147,8 @@ describe('server/handlers/consents', (): void => {
 
   describe('isConsentRequestInitiatedByValidSource', (): void => {
     it('Should return true', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(partialConsentActive, request))
+      expect(
+        isConsentRequestInitiatedByValidSource(partialConsentActive, request))
         .toBe(true)
     })
 
@@ -169,7 +159,8 @@ describe('server/handlers/consents', (): void => {
     })
 
     it('Should return false because initiator ID does not match', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(partialConsentActive2, request))
+      expect(
+        isConsentRequestInitiatedByValidSource(partialConsentActive2, request))
         .toBeFalsy()
     })
 
