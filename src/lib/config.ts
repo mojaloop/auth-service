@@ -34,7 +34,7 @@ export const config = convict({
   PARTICIPANT_ID: RC.get('PARTICIPANT_ID') as string,
   RUN_MIGRATIONS: !RC.get('MIGRATIONS').DISABLED,
   RUN_DATA_MIGRATIONS: RC.get('MIGRATIONS').RUN_DATA_MIGRATIONS as boolean,
-  ENVIRONMENT: RC.get('ENVIRONMENT') as string,
+  DB_ENVIRONMENT: RC.get('DB_ENVIRONMENT') as string,
   DATABASE: {
     client: RC.get('DATABASE').DIALECT as string,
     connection: {
