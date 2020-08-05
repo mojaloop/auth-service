@@ -42,6 +42,10 @@ import { Consent } from '../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
+/**
+ * Validates if the request is initiated by a valid source
+ * Compares Consent object's initiator ID with source
+ */
 export function isConsentRequestInitiatedByValidSource (
   consent: Consent,
   request: Request): boolean {
@@ -49,6 +53,10 @@ export function isConsentRequestInitiatedByValidSource (
   return (consent && consent.initiatorId === fspiopSource)
 }
 
+/**
+ * Revoke status of consent object, update in the database
+ * and return consent
+ */
 export async function revokeConsentStatus (
   consent: Consent): Promise<Consent> {
   consent.status = 'REVOKED'
@@ -57,6 +65,9 @@ export async function revokeConsentStatus (
   return consent
 }
 
+/**
+ * Send outgoing PATCH consent/{id}/revoke request
+ */
 export async function patchConsentRevoke (
   consent: Consent,
   request: Request

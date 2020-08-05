@@ -45,6 +45,10 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
 
+/**
+ * Asynchronously deals with validating request, revoking consent object
+ * and send outgoing PATCH consent/{id}/revoke request to switch
+ */
 export async function validateRequestAndRevokeConsent (
   request: Request): Promise<void> {
   const consentId = request.params.id
@@ -84,14 +88,14 @@ export async function validateRequestAndRevokeConsent (
   }
 }
 
-/** The HTTP request `POST /consents` is used to create a consent object.
- * Called by `DFSP` after the successful creation and
- * validation of a consentRequest.
+/**
+ * The HTTP request `POST /consents/{id}/revoke` is used to revoke a consent
+ * object - Called by either a PISP or DFSP
  */
 export async function post (
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  // Asynchronously deals with creation and storing of consents and scope
+  // Asynchronously validate request and revoke consent
   validateRequestAndRevokeConsent(request)
 
   // Return Success code informing source: request received
