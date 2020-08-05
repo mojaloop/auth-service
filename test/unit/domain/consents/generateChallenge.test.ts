@@ -30,20 +30,17 @@
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../src/lib/db'
 import { Consent } from '../../../../src/model/consent'
-import { thirdPartyRequest } from '../../../../src/lib/requests'
-// eslint-disable-next-line max-len
 import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
-  putConsentId
+  generatePutConsentsRequest
 } from '../../../../src/domain/consents/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
-import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
+import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { ExternalScope } from '../../../../src/lib/scopes'
 
 // Declaring Mock Functions
-const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -112,6 +109,23 @@ const externalScopes: ExternalScope[] = [{
 }
 ]
 
+const putConsentRequestBody: PutConsentsRequest = {
+  requestId: '1234',
+  initiatorId: completeConsent.initiatorId as string,
+  participantId: completeConsent.participantId as string,
+  scopes: externalScopes,
+  credential: {
+    id: null,
+    credentialType: 'FIDO',
+    status: 'PENDING',
+    challenge: {
+      payload: completeConsent.credentialChallenge as string,
+      signature: null
+    },
+    payload: null
+  }
+}
+
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   beforeAll((): void => {
     mockLoggerError.mockReturnValue(null)
@@ -179,37 +193,19 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     beforeAll((): void => {
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = '1234'
       request.headers[Enum.Http.Headers.FSPIOP.DESTINATION] = '5678'
-      mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
     })
 
-    it('Should resolve successfully and return 1', async (): Promise<void> => {
-      expect(await putConsentId(completeConsent, request, externalScopes))
-        .toBe(1)
+    it('Should resolve successfully', async (): Promise<void> => {
+      expect(await generatePutConsentsRequest(completeConsent, externalScopes))
+        .toStrictEqual(putConsentRequestBody)
     })
-
-    it('Should throw an error as request is null value',
-      async (): Promise<void> => {
-        await expect(putConsentId(
-          completeConsent, null as unknown as Request, externalScopes))
-          .rejects
-          .toThrow()
-      })
 
     it('Should throw an error as consent is null value',
       async (): Promise<void> => {
-        await expect(putConsentId(
-          null as unknown as Consent, request, externalScopes))
+        await expect(generatePutConsentsRequest(
+          null as unknown as Consent, externalScopes))
           .rejects
           .toThrow()
-      }
-    )
-
-    it('Should throw an error as putConsents() throws an error',
-      async (): Promise<void> => {
-        mockPutConsents.mockRejectedValue(new Error('Test Error'))
-        await expect(putConsentId(completeConsent, request, externalScopes))
-          .rejects
-          .toThrowError('Test Error')
       }
     )
   })

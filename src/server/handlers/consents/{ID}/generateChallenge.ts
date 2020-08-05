@@ -39,7 +39,7 @@
 import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
-  putConsentId
+  generatePutConsentsRequest
 } from '../../../../domain/consents/generateChallenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '../../../../lib/challenge'
@@ -49,6 +49,7 @@ import { Consent, ConsentCredential } from '../../../../model/consent'
 import Logger from '@mojaloop/central-services-logger'
 import { convertScopesToExternal } from '../../../../lib/scopes'
 import { Scope } from '../../../../model/scope'
+import { thirdPartyRequest } from '../../../../../src/lib/requests'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -104,7 +105,12 @@ export async function generateChallengeAndPutConsentId (
     const scopes = convertScopesToExternal(scopesRetrieved)
 
     // Outgoing call to PUT consents/{ID}
-    await putConsentId(consent, request, scopes)
+
+    // Build Request Body
+    const requestBody = await generatePutConsentsRequest(consent, scopes)
+    // Use sdk-standard-components library to send request
+    await thirdPartyRequest.putConsents(
+      consent.id, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
   } catch (error) {
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${id}`)

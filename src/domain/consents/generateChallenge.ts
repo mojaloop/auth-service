@@ -38,7 +38,6 @@
 
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../lib/db'
-import { thirdPartyRequest } from '../../lib/requests'
 import { Consent, ConsentCredential } from '../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
@@ -84,13 +83,12 @@ export async function updateConsentCredential (
  * @param consent Consent object with credential challenge, type and status
  * @param headers headers from PISP generate challenge request
  */
-export async function putConsentId (
+export async function generatePutConsentsRequest (
   consent: Consent,
-  request: Request,
   scopes: ExternalScope[]):
-  Promise<SDKStandardComponents.GenericRequestResponse | undefined> {
+  Promise<SDKStandardComponents.PutConsentsRequest> {
   // Construct body of outgoing request
-  const body = {
+  const body: SDKStandardComponents.PutConsentsRequest = {
     requestId: consent.id,
     initiatorId: consent.initiatorId as string,
     participantId: consent.participantId as string,
@@ -106,7 +104,5 @@ export async function putConsentId (
       payload: consent.credentialPayload || null
     }
   }
-  // Use sdk-standard-components library to send request
-  return thirdPartyRequest.putConsents(
-    consent.id, body, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
+  return body
 }
