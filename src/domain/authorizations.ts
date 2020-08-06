@@ -87,15 +87,17 @@ export async function putErrorRequest (
   request: Request,
   errorCode: string,
   errorDescription: string): Promise<void> {
+  const errorResponse = {
+    errorInformation: {
+      errorCode,
+      errorDescription
+    }
+  }
+
   try {
     await
     thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizationsError(
-      {
-        errorInformation: {
-          errorCode,
-          errorDescription
-        }
-      },
+      errorResponse,
       request.params.id,
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
