@@ -269,8 +269,8 @@ jobs:
       - run:
           name: Configure git + ssh
           command: |
-            git config user.email "mojaloop@circleci.com"
-            git config user.name "circleci"
+            git config user.email ${GIT_CI_EMAIL}
+            git config user.name ${GIT_CI_USER}
             git checkout ${CIRCLE_BRANCH}
             mkdir -p ~/.ssh
             ssh-keyscan -p 443 ssh.github.com >> ~/.ssh/known_hosts
@@ -281,6 +281,54 @@ jobs:
       - run:
           name: Push the release
           command: git push --follow-tags origin ${CIRCLE_BRANCH}
+
+  publish:
+    executor: default-machine
+    steps:
+      - run:
+          name: Install git
+          command: |
+            sudo apt-get update && sudo apt-get install -y git
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Load the pre-built docker image from workspace
+          command: docker load -i /tmp/docker-image.tar
+      - run:
+          name: Login to Docker Hub
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: Re-tag pre built image
+          command: |
+            docker tag $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:local $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:latest
+            docker tag $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:local $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:${CIRCLE_TAG}
+      - run:
+          name: Publish Docker image latest tag to Docker Hub
+          command: |
+            echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:latest"
+            docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:latest
+            echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:${CIRCLE_TAG}"
+            docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:${CIRCLE_TAG}
+      - run:
+          # Note: this is rather imperfect, but will do for now
+          name: Format the changelog into the github release body
+          command: |
+            git diff --no-indent-heuristic master~2 HEAD CHANGELOG.md | sed -n '/^+[^+]/ s/^+//p' > /tmp/changes
+            echo 'export RELEASE_CHANGES=`cat /tmp/changes`' >> $BASH_ENV
+      - run:
+          name: check the release changes
+          command: |
+            echo "Changes are: ${RELEASE_CHANGES}"
+      - github-release/create:
+          github-token-variable: ${GITHUB_TOKEN}
+          tag: ${CIRCLE_TAG}
+          title: ${CIRCLE_TAG} Release
+          description: ${RELEASE_CHANGES}
+          file-path: CHANGELOG.md
+      - slack/status:
+          webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
+          success_message: '*"${CIRCLE_PROJECT_REPONAME}"* - Release \`"${CIRCLE_TAG}"\` \nhttps://github.com/mojaloop/"${CIRCLE_PROJECT_REPONAME}"/releases/tag/"${CIRCLE_TAG}"'
 
   license-scan:
     executor: default-machine
@@ -351,52 +399,6 @@ jobs:
           failure_message: 'Anchore Image Scan failed  for: \`"${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"\`'
       - store_artifacts:
           path: anchore-reports
-
-  publish:
-    executor: default-machine
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp
-      - run:
-          name: Load the pre-built docker image from workspace
-          command: docker load -i /tmp/docker-image.tar
-      - run:
-          name: Login to Docker Hub
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run:
-          name: Re-tag pre built image
-          command: |
-            docker tag $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG
-      - run:
-          name: Publish Docker image $CIRCLE_TAG & Latest tag to Docker Hub
-          command: |
-            echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
-            docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
-            echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG"
-            docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG
-      - run:
-          # Note: this is rather imperfect, but will do for now
-          name: Format the changelog into the github release body
-          command: |
-            git diff --no-indent-heuristic master~5 HEAD CHANGELOG.md | sed -n '/^+[^+]/ s/^+//p' > /tmp/changes
-            echo 'export RELEASE_CHANGES=`cat /tmp/changes`' >> $BASH_ENV
-      - run:
-          name: check the release changes
-          command: |
-            echo "Changes are: ${RELEASE_CHANGES}"
-      - github-release/create:
-          # TODO: GITHUB_RELEASE_TOKEN is a personal access token for Lewis!
-          # This is less than ideal, but there are currently no ways to give
-          # more permissions to the default CircleCI ${GITHUB_TOKEN}!
-          github-token-variable: ${GITHUB_RELEASE_TOKEN}
-          tag: ${CIRCLE_TAG}
-          title: ${CIRCLE_TAG} Release
-          description: ${RELEASE_CHANGES}
-          file-path: CHANGELOG.md
-      - slack/status:
-          webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
-          success_message: '*"${CIRCLE_PROJECT_REPONAME}"* - Release \`"${CIRCLE_TAG}"\` \nhttps://github.com/mojaloop/"${CIRCLE_PROJECT_REPONAME}"/releases/tag/"${CIRCLE_TAG}"'
 
 ##
 # Workflows
