@@ -58,7 +58,7 @@ export function isConsentRequestInitiatedByValidSource (
  */
 export async function revokeConsentStatus (
   consent: Consent): Promise<Consent> {
-  if (consent.status === 'ACTIVE') {
+  if (consent.status !== 'ACTIVE') {
     // TODO: Confirm this is how we want to handle this
     return consent
     // throw (new Error('Consent already revoked'))
