@@ -34,6 +34,26 @@ import * as ScopeFunctions from '../../../src/lib/scopes'
 const consentId = '1234'
 
 const scopes: Scope[] = [{
+  id: 123234,
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.getAccess'
+},
+{
+  id: 232234,
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.transferMoney'
+},
+{
+  id: 234,
+  consentId: '1234',
+  accountId: 'as22',
+  action: 'account.getAccess'
+}
+]
+
+const scopesNoId: Scope[] = [{
   consentId: '1234',
   accountId: 'as2342',
   action: 'account.getAccess'
@@ -50,7 +70,7 @@ const scopes: Scope[] = [{
 }
 ]
 
-const externalScope = [{
+const externalScope: ScopeFunctions.ExternalScope[] = [{
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
@@ -60,10 +80,18 @@ const externalScope = [{
 }
 ]
 
+describe('Scope Convert Scopes to ExternalScopes', (): void => {
+  it('Should return Scope array when input ExternalScope array', (): void => {
+    expect(ScopeFunctions.convertScopesToExternal(scopes))
+      .toStrictEqual(externalScope)
+  })
+})
+
 describe('Scope Convert ExternalScope to Scope', (): void => {
   it('Should return Scope array when input ExternalScope array',
     (): void => {
       expect(ScopeFunctions.convertExternalToScope(externalScope, consentId))
-        .toStrictEqual(scopes)
-    })
+        .toStrictEqual(scopesNoId)
+    }
+  )
 })

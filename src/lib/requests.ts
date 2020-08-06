@@ -30,17 +30,19 @@
  --------------
  ******/
 /* istanbul ignore file */
-// Testing will be covered in PR #11
+// Testing will be covered in #354
 
 import { config } from './config'
-// @ts-ignore
-import { Logger, ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
+import { ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
+import Logger from '@mojaloop/central-services-logger'
+// TODO: Switch to sdk-standard-components Logger once implemented
 
 // Config file to instantiate ThirdPartyRequest object
 const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
-  logger: new Logger(),
+  logger: Logger,
   // TODO: Decide on below later - Handled in future ticket #361
+  // Also decide on need for jwsSigningKey
   jwsSign: false,
   tls: {
     outbound: {
