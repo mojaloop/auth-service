@@ -71,18 +71,21 @@ const requestNoHeaders: Request = {
  */
 const partialConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123'
 }
 
 const partialConsent2: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2234',
   participantId: 'dfsp-3333-2123'
 }
 
 const completeConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialType: 'FIDO',

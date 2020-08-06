@@ -83,12 +83,14 @@ const h: ResponseToolkit = {
  */
 const partialConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123'
 }
 
 const completeConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   // credentialId: '123',
@@ -99,11 +101,22 @@ const completeConsent: Consent = {
 
 const completeConsentActiveCredential: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'ACTIVE',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
+const completeConsentRevoked: Consent = {
+  id: '1234',
+  status: 'REVOKED',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
@@ -224,6 +237,24 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockGenerate).not.toHaveBeenCalled()
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
       })
+
+    it('Should throw an error due revoked consent', async (): Promise<void> => {
+      mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentRevoked)
+      await expect(Handler.generateChallengeAndPutConsent(request, partialConsent.id))
+        .rejects.toThrowError('Revoked Consent')
+
+      expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith()
+      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
+      expect(mockLoggerPush).toHaveBeenCalledWith(Error('Revoked Consent'))
+
+      expect(mockGenerate).not.toHaveBeenCalled()
+      expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+      expect(mockScopeDbRetrieve).not.toHaveBeenCalled()
+      expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
+      expect(mockGeneratePutConsentsRequest).not.toHaveBeenCalled()
+      expect(mockPutConsents).not.toHaveBeenCalled()
+    })
 
     it('Should throw an error due to error retrieving consent from database', async (): Promise<void> => {
       mockConsentDbRetrieve.mockRejectedValueOnce(new Error('Error retrieving consent'))
