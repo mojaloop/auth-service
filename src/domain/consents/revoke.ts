@@ -49,7 +49,7 @@ export function isConsentRequestInitiatedByValidSource (
   consent: Consent,
   request: Request): boolean {
   const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  return (consent && consent.initiatorId === fspiopSource)
+  return (consent?.initiatorId === fspiopSource)
 }
 
 /**
