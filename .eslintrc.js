@@ -2,7 +2,7 @@ module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   plugins: [
     'cucumber',
-    '@typescript-eslint'
+    '@typescript-eslint',
   ],
   extends: [
     'eslint:recommended',
@@ -14,7 +14,7 @@ module.exports = {
     // Enforces ES6+ import/export syntax
     'plugin:import/errors',
     'plugin:import/warnings',
-    'plugin:import/typescript',
+    'plugin:import/typescript'
   ],
   parserOptions: {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
@@ -35,7 +35,8 @@ module.exports = {
     'cucumber/expression-type': 2,
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
     'cucumber/no-arrow-functions': 2,
-    'max-len': ["warn", { "code": 80 }]
+    'max-len': ["warn", { "code": 80 }],
+    'import/default': 0, // Disable to support legacy modules without default export
   },
   settings: {
     "import/resolver": {

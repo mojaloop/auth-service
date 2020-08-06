@@ -46,6 +46,7 @@
       ]
     },
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "allowJs": true
   }
 }
