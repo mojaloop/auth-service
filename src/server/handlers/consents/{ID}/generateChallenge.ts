@@ -55,7 +55,7 @@ import { thirdPartyRequest } from '../../../../../src/lib/requests'
  *  generates challenge, updates consent db
  * and makes outgoing PUT consent/{ID} call
  */
-export async function generateChallengeAndPutConsentId (
+export async function generateChallengeAndPutConsent (
   request: Request,
   id: string
 ): Promise<void> {
@@ -132,7 +132,7 @@ export async function post (
   // Asynchronously deals with validating request,
   //  generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
-  generateChallengeAndPutConsentId(request, id)
+  generateChallengeAndPutConsent(request, id)
   // intentionally not await-ing we want to run it in background
 
   // Return Success code informing source: request received
