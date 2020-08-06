@@ -29,10 +29,36 @@
 
 import Knex from 'knex'
 import Config from '../../config/knexfile'
+import { config } from './config'
 import ConsentDB from '../model/consent'
 import ScopeDB from '../model/scope'
 
-const Db: Knex = Knex(Config.test)
+function getKnexInstance (): Knex {
+  let Db: Knex
+  switch (config.get('ENVIRONMENT')) {
+    case 'test': {
+      Db = Knex(Config.test as object)
+      break
+    }
+
+    case 'development': {
+      Db = Knex(Config.development as object)
+      break
+    }
+
+    case 'production': {
+      Db = Knex(Config.production as object)
+      break
+    }
+
+    default: {
+      throw new Error('Unexpected environment encountered.')
+    }
+  }
+  return Db
+}
+
+const Db: Knex = getKnexInstance()
 const consentDB: ConsentDB = new ConsentDB(Db)
 const scopeDB: ScopeDB = new ScopeDB(Db)
 
