@@ -75,9 +75,7 @@ export async function validateRequestAndRevokeConsent (
     }
 
     // If Consent is ACTIVE, revoke it and update database
-    if (consent.status === 'ACTIVE') {
-      consent = await revokeConsentStatus(consent)
-    }
+    consent = await revokeConsentStatus(consent)
 
     // Outgoing call to PUT consents/{ID}/revoke
     const requestBody = generatePatchConsentRequest(consent)
