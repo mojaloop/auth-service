@@ -1,4 +1,11 @@
-/* eslint-disable max-len */
+/* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing
+ * which will be addressed in the future in
+ * ticket #354
+ */
+
 /*****
  License
  --------------
@@ -40,7 +47,33 @@ export interface ExternalScope {
 }
 
 /**
- * Takes input of array of ExternalScope objects
+ * Reformats object structure, removing
+ * scope & consent ids, and returns array of formatted scopes
+ * @param scopes Scopes retrieved from database
+ */
+export function convertScopesToExternal (
+  scopes: Scope[]): ExternalScope[] {
+  // Dictionary of accountId to ExternalScope object
+  const scopeDictionary = {}
+
+  scopes.forEach((scope: Scope): void => {
+    const accountId: string = scope.accountId
+
+    if (!(accountId in scopeDictionary)) {
+      // @ts-ignore
+      scopeDictionary[accountId] = {
+        accountId,
+        actions: []
+      }
+    }
+    // @ts-ignore
+    scopeDictionary[accountId].actions.push(scope.action)
+  })
+
+  return Object.values(scopeDictionary)
+}
+
+/** Takes input of array of ExternalScope objects
  * Reformats and returns array of Scope objects
  * @param externalScopes Array of ExternalScope objects received
  * @param consentId Id of Consent to which scopes belong

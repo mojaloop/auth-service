@@ -34,6 +34,38 @@ import * as ScopeFunctions from '../../../src/lib/scopes'
 const consentId = '1234'
 
 const scopes: Scope[] = [{
+<<<<<<< HEAD
+=======
+  id: 123234,
+>>>>>>> master
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.getAccess'
+},
+{
+<<<<<<< HEAD
+=======
+  id: 232234,
+>>>>>>> master
+  consentId: '1234',
+  accountId: 'as2342',
+  action: 'account.transferMoney'
+},
+{
+<<<<<<< HEAD
+=======
+  id: 234,
+>>>>>>> master
+  consentId: '1234',
+  accountId: 'as22',
+  action: 'account.getAccess'
+}
+]
+
+<<<<<<< HEAD
+const externalScope = [{
+=======
+const scopesNoId: Scope[] = [{
   consentId: '1234',
   accountId: 'as2342',
   action: 'account.getAccess'
@@ -50,7 +82,8 @@ const scopes: Scope[] = [{
 }
 ]
 
-const externalScope = [{
+const externalScope: ScopeFunctions.ExternalScope[] = [{
+>>>>>>> master
   accountId: 'as2342',
   actions: ['account.getAccess', 'account.transferMoney']
 },
@@ -60,10 +93,26 @@ const externalScope = [{
 }
 ]
 
+<<<<<<< HEAD
+=======
+describe('Scope Convert Scopes to ExternalScopes', (): void => {
+  it('Should return Scope array when input ExternalScope array', (): void => {
+    expect(ScopeFunctions.convertScopesToExternal(scopes))
+      .toStrictEqual(externalScope)
+  })
+})
+
+>>>>>>> master
 describe('Scope Convert ExternalScope to Scope', (): void => {
   it('Should return Scope array when input ExternalScope array',
     (): void => {
       expect(ScopeFunctions.convertExternalToScope(externalScope, consentId))
+<<<<<<< HEAD
         .toStrictEqual(scopes)
     })
+=======
+        .toStrictEqual(scopesNoId)
+    }
+  )
+>>>>>>> master
 })

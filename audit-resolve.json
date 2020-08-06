@@ -1,7 +1,8 @@
 {
   "decisions": {
-    "1500|npm-audit-resolver>yargs-unparser>yargs>yargs-parser": {
+    "1213|standard-version>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
       "decision": "ignore",
+<<<<<<< HEAD
       "madeAt": 1590048105189,
       "expiresAt": 1592640079056
     },
@@ -156,71 +157,6 @@
       "madeAt": 1593693305039,
       "expiresAt": 1596285287958
     },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-=======
->>>>>>> master
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-<<<<<<< HEAD
-=======
-    "1523|jest>@jest/core>jest-runner>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest>jest-cli>@jest/core>jest-runner>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest>@jest/core>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest>jest-cli>@jest/core>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest>jest-cli>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>@jest/reporters>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>jest-runner>jest-jasmine2>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>jest-runner>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>jest-runtime>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>jest-runner>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|jest-cucumber>jest>jest-cli>@jest/core>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
->>>>>>> master
     "1523|jest-cucumber>jest>jest-cli>jest-config>jest-environment-jsdom>jsdom>request-promise-native>request-promise-core>lodash": {
       "decision": "ignore",
       "madeAt": 1593693305039,
@@ -322,8 +258,6 @@
       "expiresAt": 1596285287958
     },
     "1523|standard-version>conventional-changelog>conventional-changelog-core>conventional-changelog-writer>lodash": {
-<<<<<<< HEAD
-=======
       "decision": "ignore",
       "madeAt": 1593693305039,
       "expiresAt": 1596285287958
@@ -334,24 +268,10 @@
       "expiresAt": 1596285287958
     },
     "1523|standard-version>conventional-recommended-bump>conventional-commits-parser>lodash": {
->>>>>>> master
       "decision": "ignore",
       "madeAt": 1593693305039,
       "expiresAt": 1596285287958
     },
-<<<<<<< HEAD
-    "1523|standard-version>conventional-changelog>conventional-changelog-core>conventional-commits-parser>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-    "1523|standard-version>conventional-recommended-bump>conventional-commits-parser>lodash": {
-      "decision": "ignore",
-      "madeAt": 1593693305039,
-      "expiresAt": 1596285287958
-    },
-=======
->>>>>>> master
     "1523|standard-version>conventional-changelog>conventional-changelog-core>lodash": {
       "decision": "ignore",
       "madeAt": 1593693305039,
@@ -42662,11 +42582,6 @@
       "decision": "ignore",
       "madeAt": 1596607717025,
       "expiresAt": 1599199699880
-=======
-      "decision": "ignore",
-      "madeAt": 1593693305032,
-      "expiresAt": 1596285287958
->>>>>>> master
     }
   },
   "rules": {},
