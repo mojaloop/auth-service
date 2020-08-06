@@ -27,15 +27,15 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../../src/lib/db'
+import { consentDB } from '../../../../src/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   isConsentRequestInitiatedByValidSource,
   generatePatchConsentRequest,
   revokeConsentStatus
-} from '../../../../../src/domain/consents/revoke'
-import { Consent } from '../../../../../src/model/consent'
+} from '../../../../src/domain/consents/revoke'
+import { Consent } from '../../../../src/model/consent'
 
 // const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 // const mockPatchConsentRevoke = jest.spyOn(Domain, 'patchConsentRevoke')
