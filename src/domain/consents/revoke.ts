@@ -37,7 +37,6 @@
 
 import { Request } from '@hapi/hapi'
 import { consentDB } from '../../lib/db'
-import { thirdPartyRequest } from '../../lib/requests'
 import { Consent } from '../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
@@ -68,19 +67,13 @@ export async function revokeConsentStatus (
 /**
  * Send outgoing PATCH consent/{id}/revoke request
  */
-export async function patchConsentRevoke (
-  consent: Consent,
-  request: Request
-): Promise<SDKStandardComponents.GenericRequestResponse> {
-  const body: SDKStandardComponents.PatchConsentsRequest = {
+export function generatePatchConsentRequest (
+  consent: Consent
+): SDKStandardComponents.PatchConsentsRequest {
+  const requestBody: SDKStandardComponents.PatchConsentsRequest = {
     status: consent.status,
     revokedAt: consent.revokedAt
 
   }
-
-  return thirdPartyRequest.patchConsents(
-    consent.id,
-    body,
-    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  )
+  return requestBody
 }

@@ -30,10 +30,9 @@ import { Request } from '@hapi/hapi'
 import { consentDB } from '../../../../../src/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '../../../../../src/lib/requests'
 import {
   isConsentRequestInitiatedByValidSource,
-  patchConsentRevoke,
+  generatePatchConsentRequest,
   revokeConsentStatus
 } from '../../../../../src/domain/consents/revoke'
 import { Consent } from '../../../../../src/model/consent'
@@ -43,7 +42,6 @@ import { Consent } from '../../../../../src/model/consent'
 // const mockIsPostConsentRequestValid = jest.spyOn(
 //   Domain, 'isConsentRequestInitiatedByValidSource')
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
-const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
@@ -132,11 +130,15 @@ const completeConsentActive: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
-describe('server/handlers/consents', (): void => {
+const requestBody: SDKStandardComponents.PatchConsentsRequest = {
+  status: 'REVOKED',
+  revokedAt: 'now'
+
+}
+
+describe('server/domain/consents/revoke', (): void => {
   beforeAll((): void => {
     mockConsentUpdate.mockResolvedValue(2)
-    mockPatchConsents.mockResolvedValue(
-      1 as unknown as SDKStandardComponents.GenericRequestResponse)
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
   })
@@ -199,41 +201,21 @@ describe('server/handlers/consents', (): void => {
       })
   })
 
-  describe('patchConsentRevoke', (): void => {
-    it('Should resolve successfully and return 1', async (): Promise<void> => {
-      expect(await patchConsentRevoke(completeConsentRevoked, request))
-        .toBe(1)
+  describe('generatePatchConsentRequest', (): void => {
+    it('Should return correct request body', (): void => {
+      expect(generatePatchConsentRequest(completeConsentRevoked))
+        .toStrictEqual(requestBody)
     })
 
-    it('Should resolve successfully and return 1', async (): Promise<void> => {
-      expect(await patchConsentRevoke(partialConsentRevoked, request))
-        .toBe(1)
+    it('Should also return correct request body', async (): Promise<void> => {
+      expect(generatePatchConsentRequest(partialConsentRevoked))
+        .toStrictEqual(requestBody)
     })
 
-    it('Should throw an error as request is null value',
-      async (): Promise<void> => {
-        await expect(patchConsentRevoke(
-          completeConsentRevoked, null as unknown as Request))
-          .rejects
-          .toThrow()
-      })
-
-    it('Should throw an error as consent is null value',
-      async (): Promise<void> => {
-        await expect(patchConsentRevoke(
-          null as unknown as Consent, request))
-          .rejects
-          .toThrow()
-      }
-    )
-
-    it('Should throw an error as patchConsents() throws an error',
-      async (): Promise<void> => {
-        mockPatchConsents.mockRejectedValue(new Error('Test Error'))
-        await expect(patchConsentRevoke(completeConsentRevoked, request))
-          .rejects
-          .toThrowError('Test Error')
-      }
-    )
+    it('Should throw an error as consent is null value', (): void => {
+      expect(generatePatchConsentRequest(
+        null as unknown as Consent))
+        .toThrow()
+    })
   })
 })

@@ -35,7 +35,7 @@
  --------------
  ******/
 import {
-  patchConsentRevoke,
+  generatePatchConsentRequest,
   isConsentRequestInitiatedByValidSource,
   revokeConsentStatus
 } from '../../../../domain/consents/revoke'
@@ -44,6 +44,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { consentDB } from '../../../../lib/db'
 import { Consent } from '../../../../model/consent'
+import { thirdPartyRequest } from '../../../../lib/requests'
 
 /**
  * Asynchronously deals with validating request, revoking consent object
@@ -79,7 +80,12 @@ export async function validateRequestAndRevokeConsent (
     }
 
     // Outgoing call to PUT consents/{ID}/revoke
-    await patchConsentRevoke(consent, request)
+    const requestBody = generatePatchConsentRequest(consent)
+    await thirdPartyRequest.patchConsents(
+      consent.id,
+      requestBody,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
   } catch (error) {
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)

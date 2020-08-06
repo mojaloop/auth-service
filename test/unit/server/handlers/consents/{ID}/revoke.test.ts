@@ -28,14 +28,17 @@
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import * as Handler from '../../../../../../src/server/handlers/consents/{ID}/revoke'
+import { thirdPartyRequest } from '../../../../../../src/lib/requests'
 import * as Domain from '../../../../../../src/domain/consents/revoke'
 import { consentDB } from '../../../../../../src/lib/db'
+import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
-import { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { Consent } from '../../../../../../src/model/consent'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
-const mockPatchConsentRevoke = jest.spyOn(Domain, 'patchConsentRevoke')
+const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
+const mockGeneratePatchConsentRequest = jest.spyOn(Domain, 'generatePatchConsentRequest')
 const mockIsConsentRequestValid = jest.spyOn(
   Domain, 'isConsentRequestInitiatedByValidSource')
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
@@ -113,25 +116,32 @@ const completeConsentRevoked: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
-const completeConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  credentialId: '123',
-  credentialType: 'FIDO',
-  status: 'ACTIVE',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
+// const completeConsentActive: Consent = {
+//   id: '1234',
+//   initiatorId: 'pisp-2342-2233',
+//   participantId: 'dfsp-3333-2123',
+//   credentialId: '123',
+//   credentialType: 'FIDO',
+//   status: 'ACTIVE',
+//   credentialStatus: 'PENDING',
+//   credentialChallenge: 'xyhdushsoa82w92mzs='
+// }
 
 const consentId = '1234'
+
+const requestBody: SDKStandardComponents.PatchConsentsRequest = {
+  status: 'REVOKED',
+  revokedAt: 'now'
+
+}
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
     mockIsConsentRequestValid.mockReturnValue(true)
     mockRevokeConsentStatus.mockResolvedValue(partialConsentRevoked)
-    mockPatchConsentRevoke
-      .mockResolvedValue(1 as unknown as GenericRequestResponse)
+    mockGeneratePatchConsentRequest.mockReturnValue(requestBody)
+    mockPatchConsents
+      .mockResolvedValue(1 as unknown as SDKStandardComponents.GenericRequestResponse)
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
     mockConsentRetrieve.mockResolvedValue(partialConsentActive)
@@ -151,8 +161,13 @@ describe('server/handlers/consents', (): void => {
         expect(mockIsConsentRequestValid)
           .toBeCalledWith(partialConsentActive, request)
         expect(mockRevokeConsentStatus).toBeCalledWith(partialConsentActive)
-        expect(mockPatchConsentRevoke)
-          .toBeCalledWith(partialConsentRevoked, request)
+        expect(Domain.generatePatchConsentRequest)
+          .toBeCalledWith(partialConsentRevoked)
+        expect(mockPatchConsents)
+          .toBeCalledWith(consentId,
+            requestBody,
+            request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+          )
       })
 
     it('Should finish with no errors, but revokeConsentStatus should not be called',
@@ -165,8 +180,13 @@ describe('server/handlers/consents', (): void => {
         expect(mockIsConsentRequestValid)
           .toBeCalledWith(completeConsentRevoked, request)
         expect(mockRevokeConsentStatus).not.toBeCalled()
-        expect(mockPatchConsentRevoke)
-          .toBeCalledWith(completeConsentRevoked, request)
+        expect(mockGeneratePatchConsentRequest)
+          .toBeCalledWith(completeConsentRevoked)
+        expect(mockPatchConsents)
+          .toBeCalledWith(consentId,
+            requestBody,
+            request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+          )
       })
 
     it('Should throw an error due to consent retrieval error',
@@ -178,7 +198,8 @@ describe('server/handlers/consents', (): void => {
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
         expect(mockIsConsentRequestValid).not.toBeCalled()
         expect(mockRevokeConsentStatus).not.toBeCalled()
-        expect(mockPatchConsentRevoke).not.toBeCalled()
+        expect(mockGeneratePatchConsentRequest).not.toBeCalled()
+        expect(mockPatchConsents).not.toBeCalled()
       })
 
     it('Should throw an error due to invalid request',
@@ -190,8 +211,29 @@ describe('server/handlers/consents', (): void => {
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
         expect(mockIsConsentRequestValid).toBeCalledWith(partialConsentActive)
         expect(mockRevokeConsentStatus).not.toBeCalled()
-        expect(mockPatchConsentRevoke).not.toBeCalled()
+        expect(mockGeneratePatchConsentRequest).not.toBeCalled()
+        expect(mockPatchConsents).not.toBeCalled()
       })
+
+    it('Should throw an error as patchConsents() throws an error',
+      async (): Promise<void> => {
+        mockPatchConsents.mockRejectedValue(new Error('Test Error'))
+        await expect(Handler.validateRequestAndRevokeConsent(request))
+          .rejects.toThrowError('Test Error')
+
+        expect(mockConsentRetrieve).toBeCalledWith(consentId)
+        expect(mockIsConsentRequestValid)
+          .toBeCalledWith(completeConsentRevoked, request)
+        expect(mockRevokeConsentStatus).not.toBeCalled()
+        expect(mockGeneratePatchConsentRequest)
+          .toBeCalledWith(completeConsentRevoked)
+        expect(mockPatchConsents)
+          .toBeCalledWith(consentId,
+            requestBody,
+            request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+          )
+      }
+    )
   })
 
   describe('Post', (): void => {
