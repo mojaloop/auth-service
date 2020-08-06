@@ -42559,6 +42559,11 @@
       "decision": "ignore",
       "madeAt": 1593693305032,
       "expiresAt": 1596285287958
+    },
+    "1213|standard-version>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596697058707,
+      "expiresAt": 1597301824496
     }
   },
   "rules": {},
