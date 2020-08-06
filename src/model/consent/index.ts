@@ -29,5 +29,6 @@
 
 export {
   Consent,
+  ConsentCredential,
   ConsentDB as default
 } from './consent'
