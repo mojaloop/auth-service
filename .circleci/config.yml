@@ -170,12 +170,42 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
+          name: Set up NVM
+          command: |
+            echo ${NVM_DIR}
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v10.15.3
+            nvm alias default v10.15.3
+      - run:
+          name: install modules
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            node --version
+            npm install
+      - run:
           name: Create dir for test results
-          command: mkdir -p ./test/results
+          command: | 
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            mkdir -p ./test/results
+      - run:
+          name: Build docker images
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            docker-compose up -d 
+            chmod +x ./scripts/wait4.js
+            sh -c "./scripts/wait4.js my-sql"
       - run:
           name: Execute integration tests
-          command: npm -s run test:integration
-          no_output_timeout: 25m
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd ~/project/
+            npm ci
+            npm -s run test:integration
+      - run:
+          name: Prepare test results
+          command: |
+            mkdir -p test/results
+            mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
           prefix: test
@@ -411,11 +441,6 @@ workflows:
           requires:
             - setup
           
-      - test-coverage:
-          context: org-global
-          requires:
-            - setup
-          
       - vulnerability-check:
           context: org-global
           requires:
@@ -427,6 +452,11 @@ workflows:
             - setup
          
       - test-integration:
+          context: org-global
+          requires:
+            - setup
+
+      - test-coverage:
           context: org-global
           requires:
             - setup

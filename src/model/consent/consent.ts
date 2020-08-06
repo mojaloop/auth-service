@@ -63,6 +63,16 @@ export interface Consent {
 }
 
 /*
+ * Interface for Consent Credential resource type
+ */
+export interface ConsentCredential {
+  credentialType: string;
+  credentialStatus: string;
+  credentialPayload: string | null;
+  credentialChallenge: string;
+}
+
+/*
  * Class to abstract Consent DB operations
  */
 export class ConsentDB {
