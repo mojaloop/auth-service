@@ -19,6 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
 
  --------------
  ******/
@@ -28,17 +29,21 @@ export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
   return knex.schema.hasTable('Consent')
     .then((exists: boolean): Knex.SchemaBuilder | void => {
       if (!exists) {
-        return knex.schema.createTable('Consent', (t: Knex.CreateTableBuilder): void => {
-          t.string('id', 32).primary().notNullable()
-          t.string('initiatorId', 32).notNullable()
-          t.string('participantId', 32).notNullable()
-          t.timestamp('createdAt').defaultTo(knex.fn.now())
-          t.string('credentialId', 256).nullable()
-          t.string('credentialType', 16).nullable()
-          t.string('credentialStatus', 10).nullable()
-          t.string('credentialPayload').nullable()
-          t.string('credentialChallenge', 128).nullable()
-        })
+        return knex.schema.createTable('Consent',
+          (t: Knex.CreateTableBuilder): void => {
+            // TODO: Confirm string length for status and revoked at
+            t.string('id', 32).primary().notNullable()
+            t.string('status', 10).primary().notNullable()
+            t.string('initiatorId', 32).notNullable()
+            t.string('participantId', 32).notNullable()
+            t.timestamp('createdAt').defaultTo(knex.fn.now())
+            t.string('revokedAt', 256).nullable()
+            t.string('credentialId', 256).nullable()
+            t.string('credentialType', 16).nullable()
+            t.string('credentialStatus', 10).nullable()
+            t.string('credentialPayload').nullable()
+            t.string('credentialChallenge', 128).nullable()
+          })
       }
     })
 }

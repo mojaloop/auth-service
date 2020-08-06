@@ -24,6 +24,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
 
  --------------
  ******/
@@ -34,6 +35,7 @@ import * as Knex from 'knex'
 const consents = [
   {
     id: '123',
+    status: 'ACTIVE',
     initiatorId: 'PISPA',
     participantId: 'DFSPA',
     credentialId: null,
@@ -44,6 +46,7 @@ const consents = [
   },
   {
     id: '124',
+    status: 'ACTIVE',
     initiatorId: 'PISPB',
     participantId: 'DFSPA',
     credentialId: '9876',
@@ -54,6 +57,7 @@ const consents = [
   },
   {
     id: '125',
+    status: 'ACTIVE',
     initiatorId: 'PISPC',
     participantId: 'DFSPA',
     credentialId: '9875',
