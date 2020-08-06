@@ -46,7 +46,7 @@ module.exports = {
     {
       // Disable some rules that we abuse in unit tests.
       files: [
-        'test /**/*.ts'
+        'test /**/*.ts',
       ],
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
