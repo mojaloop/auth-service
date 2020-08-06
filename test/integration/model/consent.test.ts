@@ -30,6 +30,7 @@
 import Knex from 'knex'
 import Config from '../../../config/knexfile'
 import ConsentDB, { Consent } from '../../../src/model/consent'
+import { Scope } from '../../../src/model/scope'
 import { NotFoundError } from '../../../src/model/errors'
 
 /*
@@ -320,9 +321,9 @@ describe('src/model/consent', (): void => {
 
         await Db<Consent>('Consent').insert(completeConsent)
         // Insert associated scopes
-        await Db('Scope').insert(tempScopes)
+        await Db<Scope>('Scope').insert(tempScopes)
 
-        let scopes = await Db('Scope')
+        let scopes = await Db<Scope>('Scope')
           .select('*')
           .where({
             consentId: completeConsent.id
@@ -334,7 +335,7 @@ describe('src/model/consent', (): void => {
 
         expect(deleteCount).toEqual(1)
 
-        scopes = await Db('Scope')
+        scopes = await Db<Scope>('Scope')
           .select('*')
           .where({
             consentId: completeConsent.id
