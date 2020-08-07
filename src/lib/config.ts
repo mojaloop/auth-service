@@ -32,8 +32,22 @@
 
 import convict from 'convict'
 import Config from '../../config/default.json'
+import { from } from 'env-variable'
+import fs from 'fs'
+require('dotenv').config()
 
 const RC = convict(Config)
+
+function getFileContent (path: string | Buffer | import('url').URL): Buffer {
+  if (!fs.existsSync(path)) {
+    throw new Error('File doesn\'t exist')
+  }
+  return fs.readFileSync(path)
+}
+
+const env = from(process.env, {
+  asFileContent: (path: string | Buffer | import('url').URL): Buffer => getFileContent(path)
+})
 
 export const config = convict({
   PORT: RC.get('PORT') as number,
@@ -41,6 +55,7 @@ export const config = convict({
   RUN_MIGRATIONS: !RC.get('MIGRATIONS').DISABLED,
   RUN_DATA_MIGRATIONS: RC.get('MIGRATIONS').RUN_DATA_MIGRATIONS as boolean,
   DB_ENVIRONMENT: RC.get('DB_ENVIRONMENT') as string,
+  jwsSigningKey: env.get('JWS_SIGNING_KEY_PATH').asFileContent(),
   DATABASE: {
     client: RC.get('DATABASE').DIALECT as string,
     connection: {
