@@ -189,6 +189,13 @@ describe('server/domain/consents/revoke', (): void => {
       expect(mockConsentUpdate).toHaveBeenCalled()
     })
 
+    it('Should return the consent without any operations, if already revoked',
+      async (): Promise<void> => {
+        const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
+        expect(revokedConsent).toStrictEqual(completeConsentRevoked)
+        expect(mockConsentUpdate).not.toHaveBeenCalled()
+      })
+
     it('Should throw an error due to error in updating consent',
       async (): Promise<void> => {
         mockConsentUpdate.mockResolvedValueOnce(new Error('Test Error'))

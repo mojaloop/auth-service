@@ -244,7 +244,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         .rejects.toThrowError('Revoked Consent')
 
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-      expect(mockIsConsentRequestValid).toHaveBeenCalledWith()
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsentRevoked)
       expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
       expect(mockLoggerPush).toHaveBeenCalledWith(Error('Revoked Consent'))
 
