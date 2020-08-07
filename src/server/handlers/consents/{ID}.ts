@@ -30,10 +30,11 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent } from '../../../model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '../../../domain/consents/{ID}'
+import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '../../../domain/consents/consents'
 import { IncorrectChallengeError, IncorrectStatusError } from '../../../domain/errors'
 import { verifySignature } from '../../../lib/challenge'
 import { NotFoundError } from '../../../model/errors'
+import { Enum } from '@mojaloop/central-services-shared'
 
 export async function retrieveUpdateAndPutConsent (id: string, challenge: string, credentialStatus: string, signature: string, publicKey: string, requestCredentialId: string, request: Request): Promise<void> {
   let consent: Consent
@@ -54,6 +55,7 @@ export async function retrieveUpdateAndPutConsent (id: string, challenge: string
         credentialPayload: publicKey
       }
       await updateConsentCredential(consent, credential)
+
       /* Outbound PUT consents/{ID} call */
       putConsents(consent, signature, publicKey, request)
     } catch (error) {
@@ -64,10 +66,10 @@ export async function retrieveUpdateAndPutConsent (id: string, challenge: string
   } catch (error) {
     if (error instanceof IncorrectChallengeError || error instanceof IncorrectStatusError || error instanceof NotFoundError) {
       Logger.push(error)
-      /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number 355 */
     }
     Logger.push(error)
     Logger.error('Error in retrieving consent.')
+    /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number 355 */
   }
 }
 
@@ -82,5 +84,5 @@ export default async function put (request: Request, h: ResponseToolkit): Promis
     request.payload.credential.status
   ]
   retrieveUpdateAndPutConsent(id, challenge, credentialStatus, signature, publicKey, requestCredentialId, request)
-  return h.response().code(202)
+  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
