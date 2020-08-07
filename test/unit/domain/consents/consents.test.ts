@@ -43,7 +43,6 @@ const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockScopeDbRetrieveAll = jest.spyOn(scopeDB, 'retrieveAll')
 const mockPutConsentsOutbound = jest.spyOn(thirdPartyRequest, 'putConsents')
 const mockConvertScopesToExternal = jest.spyOn(Scopes, 'convertScopesToExternal')
-// const mockEnum = jest.spyOn(Enum, 'Http')
 
 /*
  * Mock Request Resources
