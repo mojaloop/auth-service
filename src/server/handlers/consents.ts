@@ -34,13 +34,14 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
+
+import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   createAndStoreConsent,
   isPostConsentRequestValid
 } from '~/domain/consents'
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and
