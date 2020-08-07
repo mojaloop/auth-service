@@ -36,7 +36,10 @@ import { verifySignature } from '../../../lib/challenge'
 import { NotFoundError } from '../../../model/errors'
 import { Enum } from '@mojaloop/central-services-shared'
 
-export async function retrieveUpdateAndPutConsent (id: string, challenge: string, credentialStatus: string, signature: string, publicKey: string, requestCredentialId: string, request: Request): Promise<void> {
+export async function retrieveUpdateAndPutConsent (id: string, challenge: string,
+  credentialStatus: string, signature: string,
+  publicKey: string, requestCredentialId: string,
+  request: Request): Promise<void> {
   let consent: Consent
   try {
     consent = await retrieveValidConsent(id, challenge)
@@ -62,6 +65,7 @@ export async function retrieveUpdateAndPutConsent (id: string, challenge: string
       Logger.push(error)
       Logger.error('Error: Outgoing call with challenge credential NOT made to PUT consents/' + id)
       /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number 355 */
+      return
     }
   } catch (error) {
     if (error instanceof IncorrectChallengeError || error instanceof IncorrectStatusError || error instanceof NotFoundError) {
@@ -75,13 +79,14 @@ export async function retrieveUpdateAndPutConsent (id: string, challenge: string
 
 export default async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
-  const requestPayload = request.payload
+  // @ts-ignore
+  const requestPayloadCredential = request.payload.credential
   const [signature, publicKey, challenge, requestCredentialId, credentialStatus] = [
-    requestPayload.credential.challenge.signature,
-    request.payload.credential.payload,
-    request.payload.credential.challenge.payload,
-    request.payload.credential.id,
-    request.payload.credential.status
+    requestPayloadCredential.challenge.signature,
+    requestPayloadCredential.payload,
+    requestPayloadCredential.challenge.payload,
+    requestPayloadCredential.id,
+    requestPayloadCredential.status
   ]
   retrieveUpdateAndPutConsent(id, challenge, credentialStatus, signature, publicKey, requestCredentialId, request)
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)

@@ -65,10 +65,12 @@ export async function buildConsentRequestBody (consent: Consent, signature: stri
   /* Retrieve the scopes pertinent to this consentId and populate the scopes accordingly. */
   const scopes: Scope[] = await scopeDB.retrieveAll(consent.id)
   const externalScopes: ExternalScope[] = convertScopesToExternal(scopes)
+  // @ts-ignore
   const consentBody: PutConsentsRequest = {
     requestId: consent.id,
     scopes: externalScopes,
-    ...consent,
+    initiatorId: consent.initiatorId as string,
+    participantId: consent.participantId as string,
     credential: {
       id: consent.credentialId as string,
       credentialType: 'FIDO',
