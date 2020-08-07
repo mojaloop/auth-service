@@ -220,9 +220,9 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     it('Should finish without any errors, NOT generating challenge or updating credentials, and making outgoing call',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(completeConsent)
-        await expect(Handler.generateChallengeAndPutConsent(request, partialConsent.id)).resolves.toBeUndefined()
+        await expect(Handler.generateChallengeAndPutConsent(request, completeConsent.id)).resolves.toBeUndefined()
 
-        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
+        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsent.id)
         expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsent)
         expect(mockScopeDbRetrieve).toHaveBeenCalled()
         expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
@@ -240,10 +240,10 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 
     it('Should throw an error due revoked consent', async (): Promise<void> => {
       mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentRevoked)
-      await expect(Handler.generateChallengeAndPutConsent(request, partialConsent.id))
+      await expect(Handler.generateChallengeAndPutConsent(request, completeConsentRevoked.id))
         .rejects.toThrowError('Revoked Consent')
 
-      expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
+      expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsentRevoked.id)
       expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsentRevoked)
       expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
       expect(mockLoggerPush).toHaveBeenCalledWith(Error('Revoked Consent'))
@@ -378,10 +378,10 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentActiveCredential)
         await expect(Handler.generateChallengeAndPutConsent(
-          request, partialConsent.id))
+          request, completeConsentActiveCredential.id))
           .rejects.toThrowError()
 
-        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
+        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsentActiveCredential.id)
         expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsentActiveCredential)
         expect(mockLoggerError).toHaveBeenCalledWith('ACTIVE credential consent has requested challenge')
 

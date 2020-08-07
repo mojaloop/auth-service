@@ -70,7 +70,7 @@ export async function revokeConsentStatus (
 }
 
 /**
- * Send outgoing PATCH consent/{id}/revoke request
+ * Generate outgoing PATCH consent/{id}/revoke request body
  */
 export function generatePatchConsentRequest (
   consent: Consent
