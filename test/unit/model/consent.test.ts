@@ -36,9 +36,9 @@
  */
 
 import Knex from 'knex'
-import Config from '../../../config/knexfile'
-import ConsentDB, { Consent } from '../../../src/model/consent'
-import { NotFoundError } from '../../../src/model/errors'
+import Config from '../../config/knexfile'
+import ConsentDB, { Consent } from '~/model/consent'
+import { NotFoundError } from '~/model/errors'
 
 /*
  * Mock Consent Resources

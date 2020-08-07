@@ -21,9 +21,9 @@
  * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { logResponse, RequestLogged } from '../../../src/shared/logger'
+import { logResponse, RequestLogged } from '~/shared/logger'
 import logger from '@mojaloop/central-services-logger'
-import inspect from '../../../src/shared/inspect'
+import inspect from '~/shared/inspect'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 jest.mock('@mojaloop/central-services-logger', () => ({

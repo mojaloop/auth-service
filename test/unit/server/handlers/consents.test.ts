@@ -28,7 +28,7 @@
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { post } from '~/server/handlers/consents'
-import * as Domain from '../../../../src/domain/consents'
+import * as Domain from '~/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')

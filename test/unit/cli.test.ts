@@ -21,8 +21,8 @@
  * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import Config from '../../src/shared/config'
-import server from '../../src/server'
+import Config from '~/shared/config'
+import server from '~/server'
 jest.mock('../../src/server')
 
 describe('cli', (): void => {

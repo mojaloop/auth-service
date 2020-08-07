@@ -23,15 +23,14 @@
  --------------
  ******/
 
-import Config from '../../../config/knexfile'
-import knex from 'knex'
-import * as Knex from 'knex'
+import Config from '../../config/knexfile'
+import Knex from 'knex'
 
 describe('testing scope table', (): void => {
-  let db: knex<unknown[]>
+  let db: Knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.test)
+    db = Knex(Config.test)
     await db.migrate.latest()
     await db.seed.run()
   })
@@ -66,10 +65,10 @@ describe('testing scope table', (): void => {
 })
 
 describe('testing that constraints are enforced in the Scope table', (): void => {
-  let db: knex<unknown[]>
+  let db: Knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.test)
+    db = Knex(Config.test)
     await db.migrate.latest()
     await db.seed.run()
   })
