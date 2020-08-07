@@ -23,7 +23,7 @@
  --------------
  ******/
 
-import Config from '../../config/knexfile'
+import Config from '../../../config/knexfile'
 import Knex from 'knex'
 
 describe('testing Consent table', (): void => {

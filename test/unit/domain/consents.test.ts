@@ -32,7 +32,7 @@ import { consentDB, scopeDB } from '~/lib/db'
 import { createAndStoreConsent } from '~/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
-import * as ScopeFunction from '../../../src/lib/scopes'
+import * as ScopeFunction from '~/lib/scopes'
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')

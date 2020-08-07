@@ -47,7 +47,7 @@ describe('shared/logger', (): void => {
 
   it('should log response via inspect', (): void => {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    jest.mock('../../../src/shared/inspect', () => jest.fn())
+    jest.mock('~/shared/inspect', () => jest.fn())
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => { throw new Error('parse-error') })
     const request = { response: { source: 'abc', statusCode: 200 } }

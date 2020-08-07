@@ -28,7 +28,7 @@
  ******/
 
 import Knex from 'knex'
-import Config from '../../config/knexfile'
+import Config from '../../../config/knexfile'
 import ScopeDB, { Scope } from '~/model/scope'
 import { Consent } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'

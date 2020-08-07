@@ -23,11 +23,11 @@
  ******/
 import Config from '~/shared/config'
 import server from '~/server'
-jest.mock('../../src/server')
+jest.mock('~/server')
 
 describe('cli', (): void => {
   it('should use default port & host', async (): Promise<void> => {
-    const cli = await import('../../src/cli')
+    const cli = await import('~/cli')
     expect(cli).toBeDefined()
     expect(server.run).toHaveBeenCalledWith({
       PACKAGE: Config.PACKAGE,

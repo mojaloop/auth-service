@@ -36,7 +36,7 @@
  */
 
 import Knex from 'knex'
-import Config from '../../config/knexfile'
+import Config from '../../../config/knexfile'
 import ConsentDB, { Consent } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
 
