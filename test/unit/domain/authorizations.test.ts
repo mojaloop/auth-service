@@ -60,7 +60,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const correctStatus = isPayloadPending(pendingPayload)
 
         expect(correctStatus).toEqual(true)
-      })
+      }
+    )
 
     it('returns false for non-\'PENDING\' payload status',
       async (): Promise<void> => {
@@ -75,7 +76,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const correctStatus = isPayloadPending(verifiedPayload)
 
         expect(correctStatus).toEqual(false)
-      })
+      }
+    )
   })
 
   describe('hasActiveCredentialForPayload', (): void => {
@@ -95,7 +97,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const activeKey = hasActiveCredentialForPayload(activeConsent)
 
         expect(activeKey).toEqual(true)
-      })
+      }
+    )
 
     it('returns false for null consent credential key',
       async (): Promise<void> => {
@@ -113,7 +116,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const activeKey = hasActiveCredentialForPayload(nullConsent)
 
         expect(activeKey).toEqual(false)
-      })
+      }
+    )
 
     it('returns false for \'PENDING\' consent credential',
       async (): Promise<void> => {
@@ -131,7 +135,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const activeKey = hasActiveCredentialForPayload(pendingConsent)
 
         expect(activeKey).toEqual(false)
-      })
+      }
+    )
   })
 
   describe('hasMatchingScopeForPayload', (): void => {
@@ -169,7 +174,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 
         expect(scopeMatch).toEqual(true)
-      })
+      }
+    )
 
     it('returns false if the payload scope does not match any consent scopes',
       async (): Promise<void> => {
@@ -205,7 +211,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 
         expect(scopeMatch).toEqual(false)
-      })
+      }
+    )
 
     it('returns false if the consent scopes array is empty',
       async (): Promise<void> => {
@@ -222,7 +229,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 
         expect(scopeMatch).toEqual(false)
-      })
+      }
+    )
   })
 
   describe('putErrorRequest', (): void => {
@@ -270,7 +278,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           request.params.id,
           request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
         )
-      })
+      }
+    )
 
     it('logs error in case there is an internal sdk-standard-components error',
       async (): Promise<void> => {
@@ -296,6 +305,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
 
         expect(mockLoggerError).toHaveBeenCalled()
         expect(mockLoggerPush).toHaveBeenCalled()
-      })
+      }
+    )
   })
 })

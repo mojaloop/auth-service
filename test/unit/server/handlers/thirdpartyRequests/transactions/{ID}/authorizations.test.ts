@@ -175,7 +175,8 @@ describe('validateAndVerifySignature', (): void => {
         request.params.id,
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
-    })
+    }
+  )
 
   it('Should return a 3100 (Bad Request) error for non PENDING payload',
     async (): Promise<void> => {
@@ -192,7 +193,8 @@ describe('validateAndVerifySignature', (): void => {
         '3100',
         'Bad Request'
       )
-    })
+    }
+  )
 
   it('Should return a 3100 (Bad Request) error for no ACTIVE credentials',
     async (): Promise<void> => {
@@ -213,7 +215,8 @@ describe('validateAndVerifySignature', (): void => {
         '3100',
         'Bad Request'
       )
-    })
+    }
+  )
 
   it('Should return a 2000 (Forbidden) error for no matching consent scope',
     async (): Promise<void> => {
@@ -233,7 +236,8 @@ describe('validateAndVerifySignature', (): void => {
         '2000',
         'Forbidden'
       )
-    })
+    }
+  )
 
   it('Should return a 2000 (Not Found) for non-existent payload consent',
     async (): Promise<void> => {
@@ -254,7 +258,8 @@ describe('validateAndVerifySignature', (): void => {
         '2000',
         'Not Found'
       )
-    })
+    }
+  )
 
   it('Should return a 2000 (Server Error) for error in retrieving consent',
     async (): Promise<void> => {
@@ -274,7 +279,8 @@ describe('validateAndVerifySignature', (): void => {
         '2000',
         'Server Error'
       )
-    })
+    }
+  )
 
   it('Should return a 2000 (Forbidden) for no associated consent scopes',
     async (): Promise<void> => {
@@ -296,7 +302,8 @@ describe('validateAndVerifySignature', (): void => {
         '2000',
         'Forbidden'
       )
-    })
+    }
+  )
 
   it('Should return a 2000 (Server Error) for error in retrieving scopes',
     async (): Promise<void> => {
@@ -317,7 +324,8 @@ describe('validateAndVerifySignature', (): void => {
         '2000',
         'Server Error'
       )
-    })
+    }
+  )
 
   it('Should return a 3100 (Bad Request) for wrong signature',
     async (): Promise<void> => {
@@ -343,7 +351,8 @@ describe('validateAndVerifySignature', (): void => {
         '3100',
         'Bad Request'
       )
-    })
+    }
+  )
 
   it('Should return a 2000 (Server Error) for error in signature verification',
     async (): Promise<void> => {
@@ -370,7 +379,8 @@ describe('validateAndVerifySignature', (): void => {
         '3100',
         'Bad Request'
       )
-    })
+    }
+  )
 })
 
 /*
@@ -389,4 +399,5 @@ describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
       expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
       expect(response.statusCode).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
-  })
+  }
+)
