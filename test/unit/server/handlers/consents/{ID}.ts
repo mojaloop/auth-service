@@ -110,7 +110,8 @@ describe('server/handler/consents/{ID}', (): void => {
   let id: string, signature: string, publicKey: string, challenge: string, requestCredentialId: string, credentialStatus: string
   beforeAll((): void => {
     mockRetrieveValidConsent.mockResolvedValue(retrievedConsent)
-    mockCheckCredentialStatus.mockResolvedValue(undefined) // TODO Change.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mockCheckCredentialStatus.mockImplementation((credentialStatus: string, consentId: string): void => {})
     mockUpdateConsentCredential.mockResolvedValue(0)
     mockPutConsents.mockResolvedValue(null)
     mockLoggerPush.mockReturnValue(null)
@@ -169,7 +170,10 @@ describe('server/handler/consents/{ID}', (): void => {
   })
 
   it('should return a 400 failure code, where retrieveValidConsent throws an error', async (): Promise<void> => {
-    mockCheckCredentialStatus.mockRejectedValueOnce(new IncorrectStatusError(id))
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mockCheckCredentialStatus.mockImplementationOnce((consentId: string, requestChallenge: string): Promise<Consent> => {
+      throw new IncorrectStatusError(consentId)
+    })
 
     const response = await put(request as Request, h as ResponseToolkit)
     expect(response).toBe(400)
