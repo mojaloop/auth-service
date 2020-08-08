@@ -166,7 +166,6 @@ describe('server/handler/consents/{ID}', (): void => {
     expect(mockVerifySignature).not.toHaveBeenCalled()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
     expect(mockPutConsents).not.toHaveBeenCalled()
-    expect(setImmediate).not.toHaveBeenCalled()
   })
 
   it('should return a 400 failure code, where retrieveValidConsent throws an error', async (): Promise<void> => {
@@ -180,7 +179,6 @@ describe('server/handler/consents/{ID}', (): void => {
     expect(mockVerifySignature).not.toHaveBeenCalled()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
     expect(mockPutConsents).not.toHaveBeenCalled()
-    expect(setImmediate).not.toHaveBeenCalled()
   })
 
   it('should throw an error when trying to retrieve the consent resource', async (): Promise<void> => {
@@ -195,7 +193,6 @@ describe('server/handler/consents/{ID}', (): void => {
     expect(mockVerifySignature).not.toHaveBeenCalled()
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
     expect(mockPutConsents).not.toHaveBeenCalled()
-    expect(setImmediate).not.toHaveBeenCalled()
   })
 
   it('should fail to verify the signature', async (): Promise<void> => {
@@ -205,12 +202,10 @@ describe('server/handler/consents/{ID}', (): void => {
     expect(response).toBe(undefined) // THIS MAY BE ERRONEOUS, change if necessary.
     expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
     expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
-    jest.runAllImmediates()
 
     expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
     expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
     expect(mockPutConsents).not.toHaveBeenCalled()
-    expect(setImmediate).toHaveBeenCalled()
   })
 
   it('should fail to update the consent credential attributes and throw an error', async (): Promise<void> => {
@@ -222,7 +217,6 @@ describe('server/handler/consents/{ID}', (): void => {
     }).toThrow(err)
     expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
     expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
-    jest.runAllImmediates()
 
     /* Mock the Domain.ConsentCredential Value. */
     const credential: Domain.ConsentCredential = {
@@ -233,7 +227,6 @@ describe('server/handler/consents/{ID}', (): void => {
     expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
     expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
     expect(mockPutConsents).not.toHaveBeenCalled()
-    expect(setImmediate).toHaveBeenCalled()
   })
 
   it('should fail to make the outgoing call to PUT /consents/{ID} and throw an error', async (): Promise<void> => {
@@ -245,7 +238,6 @@ describe('server/handler/consents/{ID}', (): void => {
     }).toThrow(err)
     expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
     expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
-    jest.runAllImmediates()
 
     /* Mock the Domain.ConsentCredential Value. */
     const credential: Domain.ConsentCredential = {
@@ -256,6 +248,5 @@ describe('server/handler/consents/{ID}', (): void => {
     expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
     expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
     expect(mockPutConsents).toHaveBeenCalledWith(retrievedConsent, signature, publicKey, request as Request)
-    expect(setImmediate).toHaveBeenCalled()
   })
 })
