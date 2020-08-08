@@ -23,7 +23,9 @@
  optionally within square brackets <email>.
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
+
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+
  --------------
  ******/
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
