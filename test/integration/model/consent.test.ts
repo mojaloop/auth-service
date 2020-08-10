@@ -53,6 +53,7 @@ const completeConsent: Consent = {
   credentialPayload: 'dwuduwd&e2idjoj0w'
 }
 
+// Intentional lack of initiatorId and participantId
 const consentWithOnlyUpdateFields: Consent = {
   id: '1234',
   credentialId: '123',
@@ -123,6 +124,7 @@ describe('src/model/consent', (): void => {
             id: partialConsent.id
           })
 
+        expect(consents.length).toEqual(1)
         expect(consents[0]).toEqual(expectedPartialConsent)
       }
     )
@@ -166,13 +168,13 @@ describe('src/model/consent', (): void => {
         // Inserting record to update
         await Db<Consent>('Consent').insert(partialConsent)
 
+        // Update only selected fields of inserted record
         const updateCount: number = await consentDB.update(
           consentWithOnlyUpdateFields
         )
 
         expect(updateCount).toEqual(1)
 
-        // Assertion
         const consents: Consent[] = await Db<Consent>('Consent')
           .select('*')
           .where({
@@ -194,12 +196,10 @@ describe('src/model/consent', (): void => {
         // Inserting record to update
         await Db<Consent>('Consent').insert(partialConsent)
 
-        // Action
         const updateCount: number = await consentDB.update(conflictingConsent)
 
         expect(updateCount).toEqual(1)
 
-        // Assertion
         const consents: Consent[] = await Db<Consent>('Consent')
           .select('*')
           .where({
