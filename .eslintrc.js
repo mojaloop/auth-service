@@ -2,7 +2,7 @@ module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   plugins: [
     'cucumber',
-    '@typescript-eslint',
+    '@typescript-eslint'
   ],
   extends: [
     'eslint:recommended',
@@ -36,7 +36,7 @@ module.exports = {
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
     'cucumber/no-arrow-functions': 2,
     'max-len': ["warn", { "code": 80 }],
-    'import/default': 0, // Disable to support legacy modules without default export
+    'import/default': 0 // Disable to support legacy modules without default export
   },
   settings: {
     "import/resolver": {
@@ -50,8 +50,8 @@ module.exports = {
         'test /**/*.ts',
       ],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': 'off',
-      },
+        '@typescript-eslint/explicit-function-return-type': 'off'
+      }
     },
     {
       files: [
