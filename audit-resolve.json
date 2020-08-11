@@ -2,8 +2,8 @@
   "decisions": {
     "1213|standard-version>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
       "decision": "ignore",
-      "madeAt": 1596717869999,
-      "expiresAt": 1599309860980
+      "madeAt": 1597141908900,
+      "expiresAt": 1599733893451
     },
     "1500|npm-audit-resolver>audit-resolve-core>yargs-parser": {
       "decision": "ignore",
@@ -42579,6 +42579,11 @@
       "decision": "ignore",
       "madeAt": 1596192751515,
       "expiresAt": 1596797444962
+    },
+    "1213|@commitlint/config-conventional>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1597141908900,
+      "expiresAt": 1599733893451
     }
   },
   "rules": {},
