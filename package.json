@@ -38,6 +38,7 @@
   },
   "husky": {
     "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged && npm run test",
       "post-commit": "git update-index --again"
     }
@@ -65,6 +66,8 @@
   },
   "homepage": "https://github.com/mojaloop/auth-service#readme",
   "devDependencies": {
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^9.1.1",
     "@types/hapi": "^18.0.3",
     "@types/hapi__hapi": "^19.0.3",
     "@types/hapi__inert": "^5.2.0",
