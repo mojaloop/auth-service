@@ -33,3 +33,5 @@ declare module '@mojaloop/central-services-shared'
 declare module '@hapi/good'
 declare module 'hapi-openapi'
 declare module 'blipp'
+
+declare module 'env-variable'
