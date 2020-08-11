@@ -14,6 +14,7 @@
     "audit:resolve": "SHELL=sh resolve-audit",
     "audit:check": "SHELL=sh check-audit",
     "build": "tsc",
+    "build:openapi": "swagger-cli bundle -o ./src/interface/api.yaml -t yaml ./src/interface/api-template.yaml && swagger-cli validate ./src/interface/api.yaml",
     "docker:build": "docker build -t auth-service:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 4004:4004 auth-service:local",
     "lint": "eslint ./src/**/*.ts *.js",
@@ -128,6 +129,7 @@
     "parse-strings-in-object": "^2.0.0",
     "path": "^0.12.7",
     "rc": "^1.2.8",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^4.2.0",
+    "swagger-cli": "^4.0.4"
   }
 }
