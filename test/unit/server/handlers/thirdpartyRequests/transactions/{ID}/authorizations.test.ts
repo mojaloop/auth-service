@@ -29,18 +29,18 @@
 
 import Logger from '@mojaloop/central-services-logger'
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
-import { Consent } from '../../../../../../../src/model/consent'
-import { Scope } from '../../../../../../../src/model/scope'
+import { Consent } from '~/model/consent'
+import { Scope } from '~/model/scope'
 import { Enum } from '@mojaloop/central-services-shared'
-import { NotFoundError } from '../../../../../../../src/model/errors'
-import { thirdPartyRequest } from '../../../../../../../src/lib/requests'
+import { NotFoundError } from '~/model/errors'
+import { thirdPartyRequest } from '~/lib/requests'
 import {
   consentDB,
   scopeDB
-} from '../../../../.././../../src/lib/db'
-import * as Challenge from '../../../../../../../src/lib/challenge'
-import * as Domain from '../../../../../../../src/domain/authorizations'
-import * as Handler from '../../../../../../../src/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+} from '~/lib/db'
+import * as Challenge from '~/lib/challenge'
+import * as Domain from '~/domain/authorizations'
+import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 
 /*
  * Mock Handler Functions
