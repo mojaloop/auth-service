@@ -40,16 +40,16 @@ import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
   generatePutConsentsRequest
-} from '../../../../domain/consents/generateChallenge'
-import { Enum } from '@mojaloop/central-services-shared'
-import * as challenge from '../../../../lib/challenge'
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { consentDB, scopeDB } from '../../../../lib/db'
-import { Consent, ConsentCredential } from '../../../../model/consent'
+} from '~/domain/consents/generateChallenge'
 import Logger from '@mojaloop/central-services-logger'
-import { convertScopesToExternal } from '../../../../lib/scopes'
-import { Scope } from '../../../../model/scope'
-import { thirdPartyRequest } from '../../../../../src/lib/requests'
+import { Enum } from '@mojaloop/central-services-shared'
+import * as challenge from '~/lib/challenge'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { consentDB, scopeDB } from '~/lib/db'
+import { Consent, ConsentCredential } from '~/model/consent'
+import { convertScopesToExternal } from '~/lib/scopes'
+import { Scope } from '~/model/scope'
+import { thirdPartyRequest } from '~/lib/requests'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
