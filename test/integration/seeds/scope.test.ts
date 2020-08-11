@@ -46,19 +46,19 @@ describe('testing scope table', (): void => {
     const users: Knex.QueryBuilder[] = await db.from('Scope').select('*')
     expect(users.length).toEqual(3)
     expect(users[0]).toEqual({
-      id: 1,
+      id: expect.any(Number),
       consentId: '123',
       action: 'accounts.getBalance',
       accountId: '12345-67890'
     })
     expect(users[1]).toEqual({
-      id: 2,
+      id: expect.any(Number),
       consentId: '123',
       action: 'accounts.transfer',
       accountId: '12345-67890'
     })
     expect(users[2]).toEqual({
-      id: 3,
+      id: expect.any(Number),
       consentId: '124',
       action: 'accounts.transfer',
       accountId: '21345-67890'
