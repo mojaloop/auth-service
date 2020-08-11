@@ -35,8 +35,9 @@ module.exports = {
     'cucumber/expression-type': 2,
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
     'cucumber/no-arrow-functions': 2,
+    'import/default': 'warn', // Support legacy modules without default export
+    'import/extensions': 'off',
     'max-len': ["warn", { "code": 80 }],
-    'import/default': 0 // Disable to support legacy modules without default export
   },
   settings: {
     "import/resolver": {
