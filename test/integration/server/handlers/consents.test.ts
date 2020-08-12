@@ -95,7 +95,7 @@ describe('server/handlers/consents', (): void => {
   //   jest.clearAllMocks()
   // })
 
-  it('Should return 202 success code',
+  it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {
       // const consent: Consent = {
       //   id: '123'
