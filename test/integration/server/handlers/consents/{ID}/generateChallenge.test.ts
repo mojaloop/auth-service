@@ -31,8 +31,8 @@
 // import { post } from '~/server/handlers/consents'
 // import * as Domain from '~/domain/consents'
 // import Logger from '@mojaloop/central-services-logger'
-// import axios from 'axios'
-// import { Consent } from '~/model/consent'
+import axios from 'axios'
+import { Consent } from '~/model/consent'
 
 // const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
 // const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
@@ -81,7 +81,7 @@
 //   }
 // }
 
-// describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
+describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 // beforeAll((): void => {
 //   mockIsPostRequestValid.mockReturnValue(true)
 //   mockStoreConsent.mockResolvedValue()
@@ -90,62 +90,98 @@
 //   jest.useFakeTimers()
 // })
 
-// beforeEach((): void => {
-//   jest.clearAllTimers()
-//   jest.clearAllMocks()
-// })
+  // beforeEach((): void => {
+  //   jest.clearAllTimers()
+  //   jest.clearAllMocks()
+  // })
 
-// it('Should return 202 success code',
-//   async (): Promise<void> => {
-//     const consent: Consent = {
-//       id: '123'
-//     }
+  it('Should return 202 success code',
+    async (): Promise<void> => {
+      const consent: Consent = {
+        id: '123'
+      }
 
-//     // Arrange
-//     const scenariosURI = `http://localhost:4004/consents/${consent.id}/generateChallenge`
-//     const options = [
-//       {
-//         body: {
-//           type: 'FIDO'
-//         }
-//       }
-//     ]
+      // Arrange
+      const scenariosURI = `http://0.0.0.0:4004/consents/${consent.id}/generateChallenge`
+      const options = [
+        {
+          body: {
+            type: 'FIDO'
+          }
+        }
+      ]
 
-//     // Add README.md
+      // Add README.md
 
-//     const result = await axios.post(scenariosURI, options)
-//     console.log(result)
+      try {
+        await axios.post(scenariosURI, options)
+      } catch (err) {
+        console.log(err.response)
+      }
 
-//     expect(result.status).toBe(202)
-//   }
-// )
+      // expect(result.data).toEqual({})
 
-// it('Should return 400 code due to invalid request',
-//   async (): Promise<void> => {
-//     mockIsPostRequestValid.mockReturnValueOnce(false)
+      // expect(result.status).toBe(202)
+    }
+  )
 
-//     const response = await post(
-//       request as Request,
-//       h as ResponseToolkit
-//     )
-//     expect(response).toBe(400)
-//     expect(mockIsPostRequestValid).toHaveBeenCalledWith(request)
+  // it('Should return 400 code due to invalid request',
+  //   async (): Promise<void> => {
+  //     mockIsPostRequestValid.mockReturnValueOnce(false)
 
-//     expect(setImmediate).not.toHaveBeenCalled()
-//     expect(mockStoreConsent).not.toHaveBeenCalled()
-//   })
+  //     const response = await post(
+  //       request as Request,
+  //       h as ResponseToolkit
+  //     )
+  //     expect(response).toBe(400)
+  //     expect(mockIsPostRequestValid).toHaveBeenCalledWith(request)
 
-// it('Should throw an error due to error in creating/storing consent & scopes',
-//   async (): Promise<void> => {
-//     mockStoreConsent.mockRejectedValueOnce(
-//       new Error('Error Registering Consent'))
+  //     expect(setImmediate).not.toHaveBeenCalled()
+  //     expect(mockStoreConsent).not.toHaveBeenCalled()
+  //   })
 
-//     const response = await post(request as Request, h as ResponseToolkit)
-//     expect(response).toBe(202)
-//     jest.runAllImmediates()
+  // it('Should throw an error due to error in creating/storing consent & scopes',
+  //   async (): Promise<void> => {
+  //     mockStoreConsent.mockRejectedValueOnce(
+  //       new Error('Error Registering Consent'))
+
+  //     const response = await post(request as Request, h as ResponseToolkit)
+  //     expect(response).toBe(202)
+  //     jest.runAllImmediates()
 
 //     expect(setImmediate).toHaveBeenCalled()
 //     expect(mockStoreConsent).toHaveBeenLastCalledWith(request)
 //     expect(mockStoreConsent).not.toHaveLastReturnedWith('')
 //   })
-// })
+})
+
+// {
+//   "$ref": "#/parameters/Content-Length"
+// },
+// {
+//   "$ref": "#/parameters/Content-Type"
+// },
+// {
+//   "$ref": "#/parameters/Date"
+// },
+// {
+//   "$ref": "#/parameters/X-Forwarded-For"
+// },
+// {
+//   "$ref": "#/parameters/FSPIOP-Source"
+// },
+// {
+//   "$ref": "#/parameters/FSPIOP-Destination"
+// },
+// {
+//   "$ref": "#/parameters/FSPIOP-Encryption"
+// },
+// {
+//   "$ref": "#/parameters/FSPIOP-Signature"
+// },
+// {
+//   "$ref": "#/parameters/FSPIOP-URI"
+// },
+// {
+//   "$ref": "#/parameters/FSPIOP-HTTP-Method"
+// }
