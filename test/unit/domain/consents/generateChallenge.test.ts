@@ -28,17 +28,17 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../src/lib/db'
-import { Consent } from '../../../../src/model/consent'
+import { consentDB } from '~/lib/db'
+import { Consent } from '~/model/consent'
+import { Enum } from '@mojaloop/central-services-shared'
+import Logger from '@mojaloop/central-services-logger'
+import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
+import { ExternalScope } from '~/lib/scopes'
 import {
   updateConsentCredential,
   isConsentRequestInitiatedByValidSource,
   generatePutConsentsRequest
-} from '../../../../src/domain/consents/generateChallenge'
-import { Enum } from '@mojaloop/central-services-shared'
-import Logger from '@mojaloop/central-services-logger'
-import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { ExternalScope } from '../../../../src/lib/scopes'
+} from '~/domain/consents/generateChallenge'
 
 // Declaring Mock Functions
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')

@@ -37,12 +37,12 @@
 
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
-import { Consent } from '../../../../../model/consent'
-import { Scope } from '../../../../../model/scope'
-import { consentDB, scopeDB } from '../../../../../lib/db'
-import { NotFoundError } from '../../../../../model/errors'
-import { verifySignature } from '../../../../../lib/challenge'
-import { thirdPartyRequest } from '../../../../../lib/requests'
+import { Consent } from '~/model/consent'
+import { Scope } from '~/model/scope'
+import { consentDB, scopeDB } from '~/lib/db'
+import { NotFoundError } from '~/model/errors'
+import { verifySignature } from '~/lib/challenge'
+import { thirdPartyRequest } from '~/lib/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
   AuthPayload,
@@ -50,7 +50,7 @@ import {
   hasActiveCredentialForPayload,
   hasMatchingScopeForPayload,
   putErrorRequest
-} from '../../../../../domain/authorizations'
+} from '~/domain/authorizations'
 
 /*
  * TODO: There is a need to document and add Auth-Service

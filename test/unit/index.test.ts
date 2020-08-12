@@ -23,8 +23,8 @@
  --------------
  ******/
 
-import index from '../../src/index'
-import Config from '../../src/shared/config'
+import index from '~/index'
+import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
 
 describe('index', (): void => {

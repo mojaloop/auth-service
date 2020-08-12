@@ -28,8 +28,8 @@
  --------------
  ******/
 
-import { Scope } from '../../../src/model/scope/scope'
-import * as ScopeFunctions from '../../../src/lib/scopes'
+import { Scope } from '~/model/scope/scope'
+import * as ScopeFunctions from '~/lib/scopes'
 
 const consentId = '1234'
 
