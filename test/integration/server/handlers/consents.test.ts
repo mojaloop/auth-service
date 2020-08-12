@@ -32,7 +32,7 @@
 // import * as Domain from '~/domain/consents'
 // import Logger from '@mojaloop/central-services-logger'
 import axios from 'axios'
-import { Consent } from '~/model/consent'
+// import { Consent } from '~/model/consent'
 
 // const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
 // const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
@@ -81,7 +81,7 @@ import { Consent } from '~/model/consent'
 //   }
 // }
 
-describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
+describe('server/handlers/consents', (): void => {
 // beforeAll((): void => {
 //   mockIsPostRequestValid.mockReturnValue(true)
 //   mockStoreConsent.mockResolvedValue()
@@ -97,31 +97,46 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 
   it('Should return 202 success code',
     async (): Promise<void> => {
-      const consent: Consent = {
-        id: '123'
-      }
+      // const consent: Consent = {
+      //   id: '123'
+      // }
 
       // Arrange
-      const scenariosURI = `http://0.0.0.0:4004/consents/${consent.id}/generateChallenge`
-      const options = [
-        {
-          body: {
-            type: 'FIDO'
+      const scenariosURI = 'http://0.0.0.0:4004/consents'
+      const body = {
+        id: 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec',
+        requestId: '179395e8-8dd7-16a0-99f9-0da8f0c51c7f',
+        initiatorId: 'pispa',
+        participantId: 'dfspa',
+        scopes: [
+          {
+            scope: 'accounts.getBalance',
+            accountId: 'dfspa.alice.1234'
+          },
+          {
+            scope: 'accounts.transfer',
+            accountId: 'dfspa.alice.1234'
           }
-        }
-      ]
-
-      // Add README.md
-
-      try {
-        await axios.post(scenariosURI, options)
-      } catch (err) {
-        console.log(err.response)
+        ]
       }
 
-      // expect(result.data).toEqual({})
+      const headers = {
+        date: new Date(),
+        'fspiop-source': 'third-party API',
+        'fspiop-destination': 'auth-service'
+      }
 
-      // expect(result.status).toBe(202)
+      // let response: AxiosResponse
+
+      // try {
+      const response = await axios.post(scenariosURI, body, {
+        headers: headers
+      })
+
+      expect(response.status).toEqual(202)
+      // } catch (err) {
+      // console.log(err.response)
+      // }
     }
   )
 
@@ -156,32 +171,32 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 })
 
 // {
-//   "$ref": "#/parameters/Content-Length"
+//   '$ref': '#/parameters/Content-Length'
 // },
 // {
-//   "$ref": "#/parameters/Content-Type"
+//   '$ref': '#/parameters/Content-Type'
 // },
 // {
-//   "$ref": "#/parameters/Date"
+//   '$ref': '#/parameters/Date'
 // },
 // {
-//   "$ref": "#/parameters/X-Forwarded-For"
+//   '$ref': '#/parameters/X-Forwarded-For'
 // },
 // {
-//   "$ref": "#/parameters/FSPIOP-Source"
+//   '$ref': '#/parameters/FSPIOP-Source'
 // },
 // {
-//   "$ref": "#/parameters/FSPIOP-Destination"
+//   '$ref': '#/parameters/FSPIOP-Destination'
 // },
 // {
-//   "$ref": "#/parameters/FSPIOP-Encryption"
+//   '$ref': '#/parameters/FSPIOP-Encryption'
 // },
 // {
-//   "$ref": "#/parameters/FSPIOP-Signature"
+//   '$ref': '#/parameters/FSPIOP-Signature'
 // },
 // {
-//   "$ref": "#/parameters/FSPIOP-URI"
+//   '$ref': '#/parameters/FSPIOP-URI'
 // },
 // {
-//   "$ref": "#/parameters/FSPIOP-HTTP-Method"
+//   '$ref': '#/parameters/FSPIOP-HTTP-Method'
 // }
