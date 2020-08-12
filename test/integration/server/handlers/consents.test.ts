@@ -27,81 +27,16 @@
  --------------
  ******/
 
-// import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-// import { post } from '~/server/handlers/consents'
-// import * as Domain from '~/domain/consents'
-// import Logger from '@mojaloop/central-services-logger'
 import axios from 'axios'
 // import { Consent } from '~/model/consent'
 
-// const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
-// const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
-// const mockLoggerPush = jest.spyOn(Logger, 'push')
-// const mockLoggerError = jest.spyOn(Logger, 'error')
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-// const request: Request = {
-//   headers: {
-//     fspiopsource: 'pisp-2342-2233',
-//     fspiopdestination: 'dfsp-3333-2123'
-//   },
-//   params: {
-//     id: '1234'
-//   },
-//   payload: {
-//     id: '1234',
-//     requestId: '475234',
-//     initiatorId: 'pispa',
-//     participantId: 'sfsfdf23',
-//     scopes: [
-//       {
-//         accountId: '3423',
-//         actions: ['acc.getMoney', 'acc.sendMoney']
-//       },
-//       {
-//         accountId: '232345',
-//         actions: ['acc.accessSaving']
-//       }
-//     ],
-//     credential: null
-//   }
-// }
-
-// @ts-ignore
-// const h: ResponseToolkit = {
-//   response: (): ResponseObject => {
-//     return {
-//       code: (num: number): ResponseObject => {
-//         return num as unknown as ResponseObject
-//       }
-//     } as unknown as ResponseObject
-//   }
-// }
-
 describe('server/handlers/consents', (): void => {
-// beforeAll((): void => {
-//   mockIsPostRequestValid.mockReturnValue(true)
-//   mockStoreConsent.mockResolvedValue()
-//   mockLoggerError.mockReturnValue(null)
-//   mockLoggerPush.mockReturnValue(null)
-//   jest.useFakeTimers()
-// })
-
-  // beforeEach((): void => {
-  //   jest.clearAllTimers()
-  //   jest.clearAllMocks()
-  // })
-
   it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {
       // const consent: Consent = {
       //   id: '123'
       // }
 
-      // Arrange
       const scenariosURI = 'http://0.0.0.0:4004/consents'
       const body = {
         id: 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec',
@@ -117,86 +52,39 @@ describe('server/handlers/consents', (): void => {
             scope: 'accounts.transfer',
             accountId: 'dfspa.alice.1234'
           }
-        ]
+        ],
+        credential: {
+          id: '5678',
+          type: 'FIDO',
+          status: 'ACTIVE',
+          challenge: {
+            payload: 'base64(...)',
+            signature: 'base64(...)'
+          },
+          payload: 'base64(...)'
+        }
       }
 
+      // fsioip encryption, signature, uri, http method
+      // x forwarded for
+
       const headers = {
-        date: new Date(),
+        date: new Date().toJSON(),
         'fspiop-source': 'third-party API',
         'fspiop-destination': 'auth-service'
       }
 
       // let response: AxiosResponse
 
-      // try {
-      const response = await axios.post(scenariosURI, body, {
-        headers: headers
-      })
+      try {
+        const response = await axios.post(scenariosURI, body, {
+          headers: headers
+        })
 
-      expect(response.status).toEqual(202)
-      // } catch (err) {
-      // console.log(err.response)
-      // }
+        expect(response.status).toEqual(202)
+      } catch (err) {
+        console.log(err.response)
+      }
     }
   )
-
-  // it('Should return 400 code due to invalid request',
-  //   async (): Promise<void> => {
-  //     mockIsPostRequestValid.mockReturnValueOnce(false)
-
-  //     const response = await post(
-  //       request as Request,
-  //       h as ResponseToolkit
-  //     )
-  //     expect(response).toBe(400)
-  //     expect(mockIsPostRequestValid).toHaveBeenCalledWith(request)
-
-  //     expect(setImmediate).not.toHaveBeenCalled()
-  //     expect(mockStoreConsent).not.toHaveBeenCalled()
-  //   })
-
-  // it('Should throw an error due to error in creating/storing consent & scopes',
-  //   async (): Promise<void> => {
-  //     mockStoreConsent.mockRejectedValueOnce(
-  //       new Error('Error Registering Consent'))
-
-  //     const response = await post(request as Request, h as ResponseToolkit)
-  //     expect(response).toBe(202)
-  //     jest.runAllImmediates()
-
-//     expect(setImmediate).toHaveBeenCalled()
-//     expect(mockStoreConsent).toHaveBeenLastCalledWith(request)
-//     expect(mockStoreConsent).not.toHaveLastReturnedWith('')
-//   })
 })
-
-// {
-//   '$ref': '#/parameters/Content-Length'
-// },
-// {
-//   '$ref': '#/parameters/Content-Type'
-// },
-// {
-//   '$ref': '#/parameters/Date'
-// },
-// {
-//   '$ref': '#/parameters/X-Forwarded-For'
-// },
-// {
-//   '$ref': '#/parameters/FSPIOP-Source'
-// },
-// {
-//   '$ref': '#/parameters/FSPIOP-Destination'
-// },
-// {
-//   '$ref': '#/parameters/FSPIOP-Encryption'
-// },
-// {
-//   '$ref': '#/parameters/FSPIOP-Signature'
-// },
-// {
-//   '$ref': '#/parameters/FSPIOP-URI'
-// },
-// {
-//   '$ref': '#/parameters/FSPIOP-HTTP-Method'
-// }
