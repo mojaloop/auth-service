@@ -193,7 +193,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d 
             chmod +x ./scripts/wait4.js
-            sh -c "./scripts/wait4.js my-sql"
+            sh -c "./scripts/wait4.js auth-service-integration"
       - run:
           name: Execute integration tests
           command: |
