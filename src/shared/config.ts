@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the 'License') and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop
+ files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ ANY KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -20,60 +25,70 @@
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Raman Mangla <ramanmangla@google.com>
  --------------
  ******/
 
-import rc from 'rc'
-import parse from 'parse-strings-in-object'
-import Config from '../../config/default.json'
-import Package from '../../package.json'
-export interface ServiceConfig {
-  // package.json
-  PACKAGE: object;
+// import rc from 'rc'
+// import parse from 'parse-strings-in-object'
+// import Config from '../../config/default.json'
+import PACKAGE from '../../package.json'
 
-  // ../server.ts
+interface DbConnection {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
+  timezone: string;
+}
+
+interface DbPool {
+  min: number;
+  max: number;
+  acquireTimeoutMillis: number;
+  createTimeoutMillis: number;
+  destroyTimeoutMillis: number;
+  idleTimeoutMillis: number;
+  reapIntervalMillis: number;
+  createRetryIntervalMillis: number;
+}
+
+export interface ServiceConfig {
+  ENV: string;
   PORT: number;
   HOST: string;
-
-  // TODO: Comment
   PARTICIPANT_ID: string;
 
-  // ../lib/config.
-  DB_ENVIRONMENT: string;
   DATABASE?: {
-    ACQUIRE_TIMEOUT_MILLIS: number;
-    CREATE_RETRY_INTERVAL_MILLIS: number;
-    CREATE_TIMEOUT_MILLIS: number;
-    DEBUG: boolean;
-    DESTROY_TIMEOUT_MILLIS: number;
-    DIALECT: string;
-    HOST: string;
-    IDLE_TIMEOUT_MILLIS: number;
-    PASSWORD: string;
-    POOL_MAX_SIZE: number;
-    POOL_MIN_SIZE: number;
-    PORT: number;
-    REAP_INTERVAL_MILLIS: number;
-    SCHEMA: string;
-    USER: string;
+    client: string;
+    version?: string;
+    useNullAsDefault?: boolean;
+    connection: DbConnection | string;
+    pool?: DbPool;
+
+    migrations?: {
+      directory: string;
+      tableName: string;
+      stub: string;
+      loadExtensions: string[];
+    };
+
+    seeds?: {
+      directory: string;
+      loadExtensions: string[];
+    };
   };
 
-  MIGRATIONS?: {
-    DISABLED: boolean;
-    RUN_DATA_MIGRATIONS: boolean;
-  };
-
-  // inspect.ts
-  INSPECT?: {
-    DEPTH?: number;
-    SHOW_HIDDEN?: boolean;
-    COLOR?: boolean;
+  INSPECT: {
+    DEPTH: number;
+    SHOW_HIDDEN: boolean;
+    COLOR: boolean;
   };
 }
 
-const RC = parse(rc('AS', Config)) as ServiceConfig
+// const RC = parse(rc('AS', Config)) as ServiceConfig
 
-export default {
-  ...RC,
-  PACKAGE: Package
+export {
+  PACKAGE
 }
