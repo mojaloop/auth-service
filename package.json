@@ -11,8 +11,8 @@
     "knex": "--knexfile ./config/knexfile.ts"
   },
   "scripts": {
-    "audit:resolve": "SHELL=sh resolve-audit",
-    "audit:check": "SHELL=sh check-audit",
+    "audit:resolve": "SHELL=sh resolve-audit --production",
+    "audit:check": "SHELL=sh check-audit --production",
     "build": "tsc -p ./tsconfig.build.json",
     "docker:build": "docker build -t auth-service:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 4004:4004 auth-service:local",
