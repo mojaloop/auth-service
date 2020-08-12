@@ -14,11 +14,13 @@ module.exports = {
     // Enforces ES6+ import/export syntax
     'plugin:import/errors',
     'plugin:import/warnings',
-    'plugin:import/typescript',
+    'plugin:import/typescript'
   ],
   parserOptions: {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
+    project: "./tsconfig.json",
+    tsConfigRootDir: "./"
   },
   rules: {
     indent: 'off',
@@ -33,17 +35,24 @@ module.exports = {
     'cucumber/expression-type': 2,
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
     'cucumber/no-arrow-functions': 2,
-    'max-len': ["warn", { "code": 80 }]
+    'import/default': 'warn', // Support legacy modules without default export
+    'import/extensions': 'off',
+    'max-len': ["warn", { "code": 80 }],
+  },
+  settings: {
+    "import/resolver": {
+      "typescript": {}
+    }
   },
   overrides: [
     {
       // Disable some rules that we abuse in unit tests.
       files: [
-        'test /**/*.ts'
+        'test /**/*.ts',
       ],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': 'off',
-      },
+        '@typescript-eslint/explicit-function-return-type': 'off'
+      }
     },
     {
       files: [

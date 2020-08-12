@@ -29,17 +29,19 @@
  --------------
  ******/
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
-import { consentDB, scopeDB } from '../../../../../../src/lib/db'
-import { Consent, ConsentCredential } from '../../../../../../src/model/consent'
-import * as Handler from '../../../../../../src/server/handlers/consents/{ID}/generateChallenge'
-import * as Challenge from '../../../../../../src/lib/challenge'
-import * as Domain from '../../../../../../src/domain/consents/generateChallenge'
-import * as ScopeFunctions from '../../../../../../src/lib/scopes'
-import { Enum } from '@mojaloop/central-services-shared'
+import { consentDB, scopeDB } from '~/lib/db'
+import { Consent, ConsentCredential } from '~/model/consent'
+import * as Handler from '~/server/handlers/consents/{ID}/generateChallenge'
+import * as Challenge from '~/lib/challenge'
+import * as Domain from '~/domain/consents/generateChallenge'
+import * as ScopeFunctions from '~/lib/scopes'
 import Logger from '@mojaloop/central-services-logger'
-import { Scope } from '../../../../../../src/model/scope'
-import SDKStandardComponents, { GenericRequestResponse } from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '../../../../../../src/lib/requests'
+import { Enum } from '@mojaloop/central-services-shared'
+import { Scope } from '~/model/scope'
+import { thirdPartyRequest } from '~/lib/requests'
+import SDKStandardComponents, {
+  GenericRequestResponse
+} from '@mojaloop/sdk-standard-components'
 
 // Declaring Mocks
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')

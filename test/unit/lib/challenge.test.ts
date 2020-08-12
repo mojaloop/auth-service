@@ -30,7 +30,7 @@
 import crypto from 'crypto'
 import Logger from '@mojaloop/central-services-logger'
 import Credential from './credential'
-import { generate, verifySignature } from '../../../src/lib/challenge'
+import { generate, verifySignature } from '~/lib/challenge'
 
 describe('Challenge Generation', (): void => {
   it('Should return a 32 byte string by default', async (): Promise<void> => {
