@@ -33,7 +33,10 @@
 // Testing will be covered in #354
 
 import { config } from './config'
-import Logger, {
+import Logger from '@mojaloop/central-services-logger'
+import {
+  // TODO: Once Logger is implemented in sdk-standard-components - use that
+  // Logger,
   ThirdpartyRequests,
   BaseRequestConfigType
 } from '@mojaloop/sdk-standard-components'
