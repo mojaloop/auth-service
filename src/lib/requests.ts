@@ -43,8 +43,8 @@ const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
   logger: Logger,
   // TODO: Decide on below later - Handled in future ticket #361
-  jwsSign: true,
-  jwsSigningKey: (config.get('jwsSigningKey') as Buffer).toString('base64'),
+  // Also decide on need for jwsSigningKey
+  jwsSign: false,
   tls: {
     outbound: {
       mutualTLS: {
