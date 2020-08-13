@@ -5,4 +5,4 @@
 
 - Run `docker-compose build` to build the MySQL and auth-service images
 - Run `docker-compose up` to run the built docker images
-- Run `npm run test:integration` to run the integration tests
+- Run `npm run test:integration` to run the integration tests (in a separate terminal session)

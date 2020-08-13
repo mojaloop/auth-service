@@ -28,21 +28,21 @@
  ******/
 
 import axios from 'axios'
-// import { Consent } from '~/model/consent'
 
 describe('server/handlers/consents', (): void => {
   it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {
-      // const consent: Consent = {
-      //   id: '123'
-      // }
-
+      // Endpoint
       const scenariosURI = 'http://0.0.0.0:4004/consents'
+
+      // Request parameters
       const body = {
         id: 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec',
         requestId: '179395e8-8dd7-16a0-99f9-0da8f0c51c7f',
         initiatorId: 'pispa',
         participantId: 'dfspa',
+        // TODO: `scope` should be `action` and should be an array of strings.
+        // Test needs to be changed once OpenAPI spec is updated.
         scopes: [
           {
             scope: 'accounts.getBalance',
@@ -53,6 +53,8 @@ describe('server/handlers/consents', (): void => {
             accountId: 'dfspa.alice.1234'
           }
         ],
+        // TODO: Credential should be `null`.
+        // Test needs to be changed once OpenAPI spec is updated.
         credential: {
           id: '5678',
           type: 'FIDO',
@@ -65,26 +67,17 @@ describe('server/handlers/consents', (): void => {
         }
       }
 
-      // fsioip encryption, signature, uri, http method
-      // x forwarded for
-
       const headers = {
         date: new Date().toJSON(),
-        'fspiop-source': 'third-party API',
+        'fspiop-source': body.participantId,
         'fspiop-destination': 'auth-service'
       }
 
-      // let response: AxiosResponse
+      const response = await axios.post(scenariosURI, body, {
+        headers: headers
+      })
 
-      try {
-        const response = await axios.post(scenariosURI, body, {
-          headers: headers
-        })
-
-        expect(response.status).toEqual(202)
-      } catch (err) {
-        console.log(err.response)
-      }
+      expect(response.status).toEqual(202)
     }
   )
 })
