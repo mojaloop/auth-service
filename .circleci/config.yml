@@ -509,10 +509,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
 
       - test-integration:
           context: org-global
