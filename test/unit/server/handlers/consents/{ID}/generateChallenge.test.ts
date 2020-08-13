@@ -74,7 +74,9 @@ const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
       code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
+        return {
+          statusCode: num
+        } as unknown as ResponseObject
       }
     } as unknown as ResponseObject
   }
@@ -405,7 +407,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         request as Request,
         h as ResponseToolkit
       )
-      expect(response).toBe(h.response().code(202))
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
   })
 })

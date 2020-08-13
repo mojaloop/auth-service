@@ -165,7 +165,8 @@ describe('src/model/consent', (): void => {
           credentialType: null,
           credentialStatus: null,
           credentialPayload: null,
-          credentialChallenge: null
+          credentialChallenge: null,
+          revokedAt: null
         })
 
         // Fail primary key constraint
@@ -349,7 +350,6 @@ describe('src/model/consent', (): void => {
         await Db('Scope')
           .insert({
             consentId: '1234',
-            status: 'ACTIVE',
             action: 'accounts.transfer',
             accountId: '78901-12345'
           })
@@ -357,7 +357,6 @@ describe('src/model/consent', (): void => {
         await Db('Scope')
           .insert({
             consentId: '1234',
-            status: 'ACTIVE',
             action: 'accounts.balance',
             accountId: '38383-22992'
           })
