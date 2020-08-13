@@ -1,4 +1,18 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [0.1.9](https://github.com/mojaloop/auth-service/compare/v0.1.7...v0.1.9) (2020-08-13)
+
+
+### Features
+
+* **bdd:** Add bdd scenarios for account linking ([#7](https://github.com/mojaloop/auth-service/issues/7)) ([ff073a7](https://github.com/mojaloop/auth-service/commit/ff073a78d534d2ea84c30c2771a64da9f7c9990f))
+* **commits:** added linter to enforce conventional commit messages ([#27](https://github.com/mojaloop/auth-service/issues/27)) ([06da856](https://github.com/mojaloop/auth-service/commit/06da856fa02b257d7839d72ab3a355a82be6d00b))
+* **swagger:** Add new Auth Service endpoints to swagger.json ([#8](https://github.com/mojaloop/auth-service/issues/8)) ([bc8774d](https://github.com/mojaloop/auth-service/commit/bc8774da9d96dfbb0dab65381fd629ae45d1ba38)), closes [#280](https://github.com/mojaloop/auth-service/issues/280)
+
+
+### Maintenance
+
+* **circleci:** add steps to circleci to automate github release ([#33](https://github.com/mojaloop/auth-service/issues/33)) ([0406204](https://github.com/mojaloop/auth-service/commit/04062043726fe1405733d136f5c63fcd63cc1eec))
+
 ### [0.1.8](https://github.com/mojaloop/auth-service/compare/v0.1.7...v0.1.8) (2020-06-09)
 
 
