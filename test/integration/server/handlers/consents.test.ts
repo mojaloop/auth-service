@@ -41,6 +41,7 @@ describe('server/handlers/consents', (): void => {
         requestId: '179395e8-8dd7-16a0-99f9-0da8f0c51c7f',
         initiatorId: 'pispa',
         participantId: 'dfspa',
+
         // TODO: `scope` should be `action` and should be an array of strings.
         // Test needs to be changed once OpenAPI spec is updated.
         scopes: [
@@ -53,6 +54,7 @@ describe('server/handlers/consents', (): void => {
             accountId: 'dfspa.alice.1234'
           }
         ],
+
         // TODO: Credential should be `null`.
         // Test needs to be changed once OpenAPI spec is updated.
         credential: {
