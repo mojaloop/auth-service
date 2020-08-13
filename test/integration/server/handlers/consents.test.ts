@@ -43,7 +43,8 @@ describe('server/handlers/consents', (): void => {
         participantId: 'dfspa',
 
         // TODO: `scope` should be `action` and should be an array of strings.
-        // Test needs to be changed once OpenAPI spec is updated.
+        // Test needs to be changed once OpenAPI spec is updated
+        // in Ticket #412.
         scopes: [
           {
             scope: 'accounts.getBalance',
@@ -56,7 +57,8 @@ describe('server/handlers/consents', (): void => {
         ],
 
         // TODO: Credential should be `null`.
-        // Test needs to be changed once OpenAPI spec is updated.
+        // Test needs to be changed once OpenAPI spec is updated
+        // in Ticket #412.
         credential: {
           id: '5678',
           type: 'FIDO',

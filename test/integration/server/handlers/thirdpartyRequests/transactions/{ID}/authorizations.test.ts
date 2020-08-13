@@ -37,7 +37,8 @@ describe('server/handlers/thirdpartyRequests/transactions/{ID}/authorizations',
 
         // TODO: URI should be
         // `/thirdpartyRequests/transactions/{ID}/authorizations`
-        // Test needs to be changed once OpenAPI spec is updated.
+        // Test needs to be changed once OpenAPI spec is updated
+        // in Ticket #412.
         const scenariosURI = `http://0.0.0.0:4004/thirdPartyRequests/transactions/${transactionId}/authorizations`
 
         // Request parameters
