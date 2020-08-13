@@ -111,6 +111,7 @@ const h: ResponseToolkit = {
  */
 const mockConsent: Consent = {
   id: payload.consentId,
+  status: 'ACTIVE',
   credentialStatus: 'ACTIVE',
   credentialPayload: 'Mock public key payload'
 }
