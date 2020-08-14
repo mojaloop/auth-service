@@ -115,7 +115,7 @@
     "@mojaloop/central-services-logger": "^10.6.0",
     "@mojaloop/central-services-metrics": "^9.5.0",
     "@mojaloop/central-services-shared": "^11.0.0",
-    "@mojaloop/sdk-standard-components": "^10.6.8",
+    "@mojaloop/sdk-standard-components": "^11.0.0",
     "@types/convict": "^5.2.1",
     "babel-jest": "^26.1.0",
     "blipp": "^4.0.1",
