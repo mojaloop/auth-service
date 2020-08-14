@@ -42,7 +42,8 @@ const consents = [
     credentialType: null,
     credentialStatus: null,
     credentialPayload: null,
-    credentialChallenge: null
+    credentialChallenge: null,
+    revokedAt: null
   },
   {
     id: '124',
@@ -53,7 +54,8 @@ const consents = [
     credentialType: 'FIDO',
     credentialStatus: 'PENDING',
     credentialPayload: null,
-    credentialChallenge: 'string_representing_challenge_a'
+    credentialChallenge: 'string_representing_challenge_a',
+    revokedAt: null
   },
   {
     id: '125',
@@ -64,7 +66,8 @@ const consents = [
     credentialType: 'FIDO',
     credentialStatus: 'VERIFIED',
     credentialPayload: 'string_representing_public_key_a',
-    credentialChallenge: 'string_representing_challenge_b'
+    credentialChallenge: 'string_representing_challenge_b',
+    revokedAt: null
   }
 ]
 
