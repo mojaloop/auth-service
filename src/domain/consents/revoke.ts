@@ -64,7 +64,7 @@ export async function revokeConsentStatus (
     // throw (new Error('Consent already revoked'))
   }
   consent.status = 'REVOKED'
-  consent.revokedAt = Date.prototype.toISOString()
+  consent.revokedAt = (new Date()).toISOString()
   await consentDB.update(consent)
   return consent
 }
@@ -76,8 +76,8 @@ export function generatePatchConsentRequest (
   consent: Consent
 ): SDKStandardComponents.PatchConsentsRequest {
   const requestBody: SDKStandardComponents.PatchConsentsRequest = {
-    status: consent.status,
-    revokedAt: consent.revokedAt
+    status: consent.status as string as 'REVOKED',
+    revokedAt: consent.revokedAt as string
 
   }
   return requestBody
