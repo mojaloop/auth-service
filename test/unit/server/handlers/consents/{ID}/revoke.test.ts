@@ -185,7 +185,8 @@ describe('server/handlers/consents', (): void => {
         expect(mockGeneratePatchConsentRequest)
           .toBeCalledWith(completeConsentRevoked)
         expect(mockPatchConsents)
-          .toBeCalledWith(consentId,
+          .toBeCalledWith(
+            consentId,
             requestBody,
             request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
           )
@@ -211,7 +212,7 @@ describe('server/handlers/consents', (): void => {
           .rejects.toThrowError('NotImplementedYetError')
 
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
-        expect(mockIsConsentRequestValid).toBeCalledWith(partialConsentActive)
+        expect(mockIsConsentRequestValid).toBeCalledWith(partialConsentActive, request)
         expect(mockRevokeConsentStatus).not.toBeCalled()
         expect(mockGeneratePatchConsentRequest).not.toBeCalled()
         expect(mockPatchConsents).not.toBeCalled()

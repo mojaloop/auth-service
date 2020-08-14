@@ -198,7 +198,7 @@ describe('server/domain/consents/revoke', (): void => {
 
     it('Should throw an error due to error in updating consent',
       async (): Promise<void> => {
-        mockConsentUpdate.mockResolvedValueOnce(new Error('Test Error'))
+        mockConsentUpdate.mockRejectedValueOnce(new Error('Test Error'))
 
         await expect(revokeConsentStatus(partialConsentActive))
           .rejects
@@ -220,9 +220,10 @@ describe('server/domain/consents/revoke', (): void => {
     })
 
     it('Should throw an error as consent is null value', (): void => {
-      expect(generatePatchConsentRequest(
-        null as unknown as Consent))
-        .toThrow()
+      expect((): void => {
+        generatePatchConsentRequest(
+          null as unknown as Consent)
+      }).toThrow()
     })
   })
 })
