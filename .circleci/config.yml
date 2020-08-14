@@ -320,7 +320,6 @@ jobs:
   github-release:
     executor: default-machine
     steps:
-      - checkout
       - run:
           name: Install git
           command: |
