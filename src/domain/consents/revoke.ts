@@ -39,6 +39,7 @@ import { Request } from '@hapi/hapi'
 import { consentDB } from '../../lib/db'
 import { Consent } from '../../model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
+import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
 /**
@@ -59,9 +60,8 @@ export function isConsentRequestInitiatedByValidSource (
 export async function revokeConsentStatus (
   consent: Consent): Promise<Consent> {
   if (consent.status === 'REVOKED') {
-    // TODO: Confirm this is how we want to handle this
+    Logger.push('Previously revoked consent was asked to be revoked')
     return consent
-    // throw (new Error('Consent already revoked'))
   }
   consent.status = 'REVOKED'
   consent.revokedAt = (new Date()).toISOString()

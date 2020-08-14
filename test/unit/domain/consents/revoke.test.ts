@@ -180,6 +180,7 @@ describe('server/domain/consents/revoke', (): void => {
       expect(revokedConsent.status).toBe('REVOKED')
       expect(revokedConsent.revokedAt).toBeDefined()
       expect(mockConsentUpdate).toHaveBeenCalled()
+      expect(mockLoggerPush).not.toHaveBeenCalled()
     })
 
     it('Should also return a revoked consent', async (): Promise<void> => {
@@ -187,12 +188,14 @@ describe('server/domain/consents/revoke', (): void => {
       expect(revokedConsent.status).toBe('REVOKED')
       expect(revokedConsent.revokedAt).toBeDefined()
       expect(mockConsentUpdate).toHaveBeenCalled()
+      expect(mockLoggerPush).not.toHaveBeenCalled()
     })
 
     it('Should return the consent without any operations, if already revoked',
       async (): Promise<void> => {
         const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
         expect(revokedConsent).toStrictEqual(completeConsentRevoked)
+        expect(mockLoggerPush).toHaveBeenCalled()
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
@@ -205,6 +208,7 @@ describe('server/domain/consents/revoke', (): void => {
           .toThrowError('Test Error')
 
         expect(mockConsentUpdate).toHaveBeenCalled()
+        expect(mockLoggerPush).not.toHaveBeenCalled()
       })
   })
 
