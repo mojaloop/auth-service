@@ -245,13 +245,14 @@ describe('src/model/consent', (): void => {
             id: completeConsent.id
           })
 
-        const expectedConsent: Consent = {
+        const expectedConsent: object = {
           // Conflicting fields (initiatorId, participantId) are still the same
           // Even other fields are the same
           ...completeConsent,
           createdAt: expect.any(Date),
           // credentialStatus is updated to 'ACTIVE'
-          credentialStatus: 'ACTIVE'
+          credentialStatus: 'ACTIVE',
+          revokedAt: null
         }
 
         expect(consents[0]).toEqual(expectedConsent)
