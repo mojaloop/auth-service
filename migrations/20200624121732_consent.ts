@@ -37,6 +37,7 @@ export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
             t.string('initiatorId', 32).notNullable()
             t.string('participantId', 32).notNullable()
             t.timestamp('createdAt').defaultTo(knex.fn.now())
+            // TODO: Do we need to change internal representation to Date object
             t.string('revokedAt', 256).nullable()
             t.string('credentialId', 256).nullable()
             t.string('credentialType', 16).nullable()
