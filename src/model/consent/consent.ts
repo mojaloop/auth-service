@@ -110,6 +110,11 @@ export class ConsentDB {
         throw new NotFoundError('Consent', consent.id)
       }
 
+      // Cannot overwrite REVOKED status Consent
+      if (consents[0].status === 'REVOKED') {
+        throw new Error('Cannot modify Revoked Consent')
+      }
+
       const existingConsent: Consent = consents[0]
       const updatedConsent: Record<string, string | Date> = {}
 
@@ -120,11 +125,6 @@ export class ConsentDB {
 
         // Cannot overwrite an `ACTIVE` credentialStatus
         if (key === 'credentialStatus' && value === 'ACTIVE') {
-          return
-        }
-
-        // Cannot overwrite REVOKED status Consent
-        if (key === 'status' && value === 'REVOKED') {
           return
         }
 

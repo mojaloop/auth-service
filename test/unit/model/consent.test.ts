@@ -300,7 +300,7 @@ describe('src/model/consent', (): void => {
         const inserted = await consentDB.insert(completeConsent)
         const updated = await consentDB.update(completeConsentRevoked)
 
-        let consents: Consent[] = await Db<Consent>('Consent')
+        const consents: Consent[] = await Db<Consent>('Consent')
           .select('*')
           .where({
             id: completeConsent.id
@@ -313,8 +313,8 @@ describe('src/model/consent', (): void => {
           createdAt: expect.any(String)
         }))
 
-        // Action
-        const updateRevoked = await consentDB.update({
+        // Action/Assert
+        await expect(consentDB.update({
           id: '1234',
           status: 'ACTIVE',
           credentialId: '123',
@@ -322,21 +322,7 @@ describe('src/model/consent', (): void => {
           credentialStatus: 'ACTIVE',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w'
-        })
-
-        consents = await Db<Consent>('Consent')
-          .select('*')
-          .where({
-            id: completeConsent.id
-          })
-        console.log(consents)
-
-        // Assert
-        expect(updateRevoked).toBe(1)
-        expect(consents[0]).toEqual(expect.objectContaining({
-          ...completeConsentRevoked,
-          createdAt: expect.any(String)
-        }))
+        })).rejects.toThrowError('Cannot modify Revoked Consent')
       })
   })
 
