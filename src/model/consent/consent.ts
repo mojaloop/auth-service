@@ -123,12 +123,13 @@ export class ConsentDB {
           return
         }
 
+        // Cannot overwrite REVOKED status Consent
         if (key === 'status' && value === 'REVOKED') {
           return
         }
 
         // Cannot overwrite non-null fields
-        if (value !== null && key !== 'credentialStatus') {
+        if (value !== null && key !== 'credentialStatus' && key !== 'status') {
           return
         }
 
