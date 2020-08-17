@@ -37,10 +37,6 @@ import {
 } from '../../../../src/domain/consents/revoke'
 import { Consent } from '../../../../src/model/consent'
 
-// const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
-// const mockPatchConsentRevoke = jest.spyOn(Domain, 'patchConsentRevoke')
-// const mockIsPostConsentRequestValid = jest.spyOn(
-//   Domain, 'isConsentRequestInitiatedByValidSource')
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
