@@ -211,7 +211,7 @@ describe('server/handlers/consents', (): void => {
         expect(mockPatchConsents).not.toBeCalled()
       })
 
-    it('Should throw an error as patchConsents() throws an error',
+    it('Should propagate errors from patchConsents()',
       async (): Promise<void> => {
         mockPatchConsents.mockRejectedValue(new Error('Test Error'))
         await expect(Handler.validateRequestAndRevokeConsent(request))
