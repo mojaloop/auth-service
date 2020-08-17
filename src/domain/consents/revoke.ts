@@ -75,6 +75,9 @@ export async function revokeConsentStatus (
 export function generatePatchRevokedConsentRequest (
   consent: Consent
 ): SDKStandardComponents.PatchConsentsRequest {
+  if (consent.status !== 'REVOKED')
+    throw new Error('Attempting to generate request for non-revoked consent!')
+
   const requestBody: SDKStandardComponents.PatchConsentsRequest = {
     status: 'REVOKED',
     revokedAt: consent.revokedAt as string
