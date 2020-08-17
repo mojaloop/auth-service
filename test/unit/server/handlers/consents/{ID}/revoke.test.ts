@@ -38,7 +38,8 @@ import { Consent } from '../../../../../../src/model/consent'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
-const mockGeneratePatchConsentRequest = jest.spyOn(Domain, 'generatePatchConsentRequest')
+const mockGeneratePatchConsentRequest = jest.spyOn(
+  Domain, 'generatePatchRevokedConsentRequest')
 const mockIsConsentRequestValid = jest.spyOn(
   Domain, 'isConsentRequestInitiatedByValidSource')
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
@@ -118,17 +119,6 @@ const completeConsentRevoked: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
-// const completeConsentActive: Consent = {
-//   id: '1234',
-//   initiatorId: 'pisp-2342-2233',
-//   participantId: 'dfsp-3333-2123',
-//   credentialId: '123',
-//   credentialType: 'FIDO',
-//   status: 'ACTIVE',
-//   credentialStatus: 'PENDING',
-//   credentialChallenge: 'xyhdushsoa82w92mzs='
-// }
-
 const consentId = '1234'
 
 const requestBody: SDKStandardComponents.PatchConsentsRequest = {
@@ -163,7 +153,7 @@ describe('server/handlers/consents', (): void => {
         expect(mockIsConsentRequestValid)
           .toBeCalledWith(partialConsentActive, request)
         expect(mockRevokeConsentStatus).toBeCalledWith(partialConsentActive)
-        expect(Domain.generatePatchConsentRequest)
+        expect(Domain.generatePatchRevokedConsentRequest)
           .toBeCalledWith(partialConsentRevoked)
         expect(mockPatchConsents)
           .toBeCalledWith(consentId,

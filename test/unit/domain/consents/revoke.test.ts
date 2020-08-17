@@ -32,7 +32,7 @@ import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   isConsentRequestInitiatedByValidSource,
-  generatePatchConsentRequest,
+  generatePatchRevokedConsentRequest,
   revokeConsentStatus
 } from '../../../../src/domain/consents/revoke'
 import { Consent } from '../../../../src/model/consent'
@@ -210,18 +210,18 @@ describe('server/domain/consents/revoke', (): void => {
 
   describe('generatePatchConsentRequest', (): void => {
     it('Should return correct request body', (): void => {
-      expect(generatePatchConsentRequest(completeConsentRevoked))
+      expect(generatePatchRevokedConsentRequest(completeConsentRevoked))
         .toStrictEqual(requestBody)
     })
 
     it('Should also return correct request body', async (): Promise<void> => {
-      expect(generatePatchConsentRequest(partialConsentRevoked))
+      expect(generatePatchRevokedConsentRequest(partialConsentRevoked))
         .toStrictEqual(requestBody)
     })
 
     it('Should throw an error as consent is null value', (): void => {
       expect((): void => {
-        generatePatchConsentRequest(
+        generatePatchRevokedConsentRequest(
           null as unknown as Consent)
       }).toThrow()
     })

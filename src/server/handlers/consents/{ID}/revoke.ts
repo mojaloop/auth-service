@@ -35,7 +35,7 @@
  --------------
  ******/
 import {
-  generatePatchConsentRequest,
+  generatePatchRevokedConsentRequest,
   isConsentRequestInitiatedByValidSource,
   revokeConsentStatus
 } from '../../../../domain/consents/revoke'
@@ -78,7 +78,7 @@ export async function validateRequestAndRevokeConsent (
     consent = await revokeConsentStatus(consent)
 
     // Outgoing call to PUT consents/{ID}/revoke
-    const requestBody = generatePatchConsentRequest(consent)
+    const requestBody = generatePatchRevokedConsentRequest(consent)
     await thirdPartyRequest.patchConsents(
       consent.id,
       requestBody,

@@ -72,13 +72,12 @@ export async function revokeConsentStatus (
 /**
  * Generate outgoing PATCH consent/{id}/revoke request body
  */
-export function generatePatchConsentRequest (
+export function generatePatchRevokedConsentRequest (
   consent: Consent
 ): SDKStandardComponents.PatchConsentsRequest {
   const requestBody: SDKStandardComponents.PatchConsentsRequest = {
     status: 'REVOKED',
     revokedAt: consent.revokedAt as string
-
   }
   return requestBody
 }
