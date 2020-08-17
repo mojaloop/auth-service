@@ -27,15 +27,15 @@
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import * as Handler from '../../../../../../src/server/handlers/consents/{ID}/revoke'
-import { thirdPartyRequest } from '../../../../../../src/lib/requests'
-import * as Domain from '../../../../../../src/domain/consents/revoke'
+import * as Handler from '~/server/handlers/consents/{ID}/revoke'
+import { thirdPartyRequest } from '~/lib/requests'
+import * as Domain from '~/domain/consents/revoke'
 import * as validators from '~/domain/validators'
-import { consentDB } from '../../../../../../src/lib/db'
+import { consentDB } from '~/lib/db'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
-import { Consent } from '../../../../../../src/model/consent'
+import { Consent } from '~/model/consent'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
