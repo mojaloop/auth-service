@@ -180,7 +180,7 @@ describe('server/domain/consents/revoke', (): void => {
       })
   })
 
-  describe('generatePatchConsentRequest', (): void => {
+  describe('generatePatchRevokedConsentRequest', (): void => {
     it('Should return correct request body', (): void => {
       expect(generatePatchRevokedConsentRequest(completeConsentRevoked))
         .toStrictEqual(requestBody)
@@ -196,6 +196,15 @@ describe('server/domain/consents/revoke', (): void => {
         generatePatchRevokedConsentRequest(
           null as unknown as Consent)
       }).toThrow()
+    })
+
+    it('Should throw an error as consent is ACTIVE', (): void => {
+      // Reset Consent Status
+      completeConsentActive.status = 'ACTIVE'
+      
+      expect((): void => {
+        generatePatchRevokedConsentRequest(completeConsentActive)
+      }).toThrowError('Attempting to generate request for non-revoked consent!')
     })
   })
 })
