@@ -62,6 +62,19 @@ const completeConsent: Consent = {
   credentialPayload: 'dwuduwd&e2idjoj0w'
 }
 
+const completeConsentRevoked: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  status: 'REVOKED',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs',
+  credentialPayload: 'dwuduwd&e2idjoj0w',
+  revokedAt: (new Date()).toISOString()
+}
+
 const consentWithOnlyUpdateFields: Consent = {
   id: '1234',
   credentialId: '123',
@@ -278,6 +291,52 @@ describe('src/model/consent', (): void => {
       // Action
         await expect(consentDB.update(completeConsent))
           .rejects.toThrowError(NotFoundError)
+      })
+
+    it('inserts consent, updates it to revoke it but then does not update a REVOKED consent',
+      async (): Promise<void> => {
+        // Action
+        await Db<Consent>('Consent').del()
+        const inserted = await consentDB.insert(completeConsent)
+        const updated = await consentDB.update(completeConsentRevoked)
+
+        let consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: completeConsent.id
+          })
+        // Assert
+        expect(inserted).toBe(true)
+        expect(updated).toBe(1)
+        expect(consents[0]).toEqual(expect.objectContaining({
+          ...completeConsentRevoked,
+          createdAt: expect.any(String)
+        }))
+
+        // Action
+        const updateRevoked = await consentDB.update({
+          id: '1234',
+          status: 'ACTIVE',
+          credentialId: '123',
+          credentialType: 'FIDO',
+          credentialStatus: 'ACTIVE',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialPayload: 'dwuduwd&e2idjoj0w'
+        })
+
+        consents = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: completeConsent.id
+          })
+        console.log(consents)
+
+        // Assert
+        expect(updateRevoked).toBe(1)
+        expect(consents[0]).toEqual(expect.objectContaining({
+          ...completeConsentRevoked,
+          createdAt: expect.any(String)
+        }))
       })
   })
 
