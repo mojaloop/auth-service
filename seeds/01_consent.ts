@@ -24,6 +24,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
 
  --------------
  ******/
@@ -34,33 +35,39 @@ import * as Knex from 'knex'
 const consents = [
   {
     id: '123',
+    status: 'ACTIVE',
     initiatorId: 'PISPA',
     participantId: 'DFSPA',
     credentialId: null,
     credentialType: null,
     credentialStatus: null,
     credentialPayload: null,
-    credentialChallenge: null
+    credentialChallenge: null,
+    revokedAt: null
   },
   {
     id: '124',
+    status: 'ACTIVE',
     initiatorId: 'PISPB',
     participantId: 'DFSPA',
     credentialId: '9876',
     credentialType: 'FIDO',
     credentialStatus: 'PENDING',
     credentialPayload: null,
-    credentialChallenge: 'string_representing_challenge_a'
+    credentialChallenge: 'string_representing_challenge_a',
+    revokedAt: null
   },
   {
     id: '125',
+    status: 'ACTIVE',
     initiatorId: 'PISPC',
     participantId: 'DFSPA',
     credentialId: '9875',
     credentialType: 'FIDO',
     credentialStatus: 'VERIFIED',
     credentialPayload: 'string_representing_public_key_a',
-    credentialChallenge: 'string_representing_challenge_b'
+    credentialChallenge: 'string_representing_challenge_b',
+    revokedAt: null
   }
 ]
 

@@ -35,6 +35,7 @@ import * as Handler from '~/server/handlers/consents/{ID}/generateChallenge'
 import * as Challenge from '~/lib/challenge'
 import * as Domain from '~/domain/consents/generateChallenge'
 import * as ScopeFunctions from '~/lib/scopes'
+import * as validators from '~/domain/validators'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Scope } from '~/model/scope'
@@ -48,7 +49,7 @@ const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
 const mockGeneratePutConsentsRequest = jest.spyOn(Domain, 'generatePutConsentsRequest')
 const mockUpdateConsentCredential = jest.spyOn(Domain, 'updateConsentCredential')
 const mockGenerate = jest.spyOn(Challenge, 'generate')
-const mockIsConsentRequestValid = jest.spyOn(Domain, 'isConsentRequestInitiatedByValidSource')
+const mockIsConsentRequestValid = jest.spyOn(validators, 'isConsentRequestInitiatedByValidSource')
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockScopeDbRetrieve = jest.spyOn(scopeDB, 'retrieveAll')
 const mockConvertScopesToExternal = jest.spyOn(ScopeFunctions, 'convertScopesToExternal')
@@ -74,7 +75,9 @@ const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
       code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
+        return {
+          statusCode: num
+        } as unknown as ResponseObject
       }
     } as unknown as ResponseObject
   }
@@ -85,12 +88,14 @@ const h: ResponseToolkit = {
  */
 const partialConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123'
 }
 
 const completeConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   // credentialId: '123',
@@ -101,11 +106,22 @@ const completeConsent: Consent = {
 
 const completeConsentActiveCredential: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'ACTIVE',
+  credentialChallenge: 'xyhdushsoa82w92mzs='
+}
+
+const completeConsentRevoked: Consent = {
+  id: '1234',
+  status: 'REVOKED',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
@@ -192,7 +208,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         await expect(Handler.generateChallengeAndPutConsent(request, partialConsent.id)).resolves.toBeUndefined()
 
         expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsent, request)
         expect(mockGenerate).toHaveBeenCalledWith()
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
         expect(mockScopeDbRetrieve).toHaveBeenCalled()
@@ -209,10 +225,10 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
     it('Should finish without any errors, NOT generating challenge or updating credentials, and making outgoing call',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(completeConsent)
-        await expect(Handler.generateChallengeAndPutConsent(request, partialConsent.id)).resolves.toBeUndefined()
+        await expect(Handler.generateChallengeAndPutConsent(request, completeConsent.id)).resolves.toBeUndefined()
 
-        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsent)
+        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsent.id)
+        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(completeConsent, request)
         expect(mockScopeDbRetrieve).toHaveBeenCalled()
         expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
         expect(mockGeneratePutConsentsRequest).toHaveBeenCalledWith(completeConsent, externalScopes)
@@ -226,6 +242,24 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockGenerate).not.toHaveBeenCalled()
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
       })
+
+    it('Should throw an error due revoked consent', async (): Promise<void> => {
+      mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentRevoked)
+      await expect(Handler.generateChallengeAndPutConsent(request, completeConsentRevoked.id))
+        .rejects.toThrowError('Revoked Consent')
+
+      expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsentRevoked.id)
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(completeConsentRevoked, request)
+      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
+      expect(mockLoggerPush).toHaveBeenCalledWith(Error('Revoked Consent'))
+
+      expect(mockGenerate).not.toHaveBeenCalled()
+      expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+      expect(mockScopeDbRetrieve).not.toHaveBeenCalled()
+      expect(mockConvertScopesToExternal).not.toHaveBeenCalled()
+      expect(mockGeneratePutConsentsRequest).not.toHaveBeenCalled()
+      expect(mockPutConsents).not.toHaveBeenCalled()
+    })
 
     it('Should throw an error due to error retrieving consent from database', async (): Promise<void> => {
       mockConsentDbRetrieve.mockRejectedValueOnce(new Error('Error retrieving consent'))
@@ -253,7 +287,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         .rejects.toThrowError('NotImplementedYetError')
 
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsent, request)
       expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
       expect(mockLoggerPush).toHaveBeenCalledWith(Error('NotImplementedYetError'))
 
@@ -272,7 +306,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         .rejects.toThrowError('Error updating db')
 
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsent, request)
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
       expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
@@ -291,7 +325,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         .rejects.toThrowError('Error generating challenge')
 
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+      expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsent, request)
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockLoggerPush).toHaveBeenCalledWith(Error('Error generating challenge'))
       expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
@@ -311,7 +345,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
           .rejects.toThrowError('Could not establish connection')
 
         expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsent, request)
         expect(mockGenerate).toHaveBeenCalledWith()
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
         expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
@@ -334,7 +368,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
           .rejects.toThrowError('Test')
 
         expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, partialConsent)
+        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsent, request)
         expect(mockGenerate).toHaveBeenCalledWith()
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsent, credential)
         expect(mockConvertScopesToExternal).toHaveBeenCalledWith(scopes)
@@ -349,11 +383,11 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentActiveCredential)
         await expect(Handler.generateChallengeAndPutConsent(
-          request, partialConsent.id))
+          request, completeConsentActiveCredential.id))
           .rejects.toThrowError()
 
-        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsent.id)
-        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(request, completeConsentActiveCredential)
+        expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsentActiveCredential.id)
+        expect(mockIsConsentRequestValid).toHaveBeenCalledWith(completeConsentActiveCredential, request)
         expect(mockLoggerError).toHaveBeenCalledWith('ACTIVE credential consent has requested challenge')
 
         expect(mockGenerate).not.toHaveBeenCalled()
@@ -374,7 +408,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         request as Request,
         h as ResponseToolkit
       )
-      expect(response).toBe(h.response().code(202))
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
   })
 })

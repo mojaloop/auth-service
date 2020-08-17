@@ -38,10 +38,10 @@
 
 import {
   updateConsentCredential,
-  isConsentRequestInitiatedByValidSource,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
 import Logger from '@mojaloop/central-services-logger'
+import * as validators from '~/domain/validators'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '~/lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
@@ -73,10 +73,18 @@ export async function generateChallengeAndPutConsent (
       throw (new Error('NotImplementedYetError'))
     }
 
-    if (!isConsentRequestInitiatedByValidSource(request, consent)) {
+    if (!validators.isConsentRequestInitiatedByValidSource(consent, request)) {
       // TODO: Error Handling dealt with in future ticket #355
       // send PUT ...error back
       throw (new Error('NotImplementedYetError'))
+    }
+
+    // Revoked consent should NOT be touched.
+    if (consent.status === 'REVOKED') {
+      // TODO: Confirm what to do here
+      // Error Handling dealt with in future ticket #355
+      // send PUT ...error back ?
+      throw (new Error('Revoked Consent'))
     }
 
     // If there is no pre-existing challenge for the consent id

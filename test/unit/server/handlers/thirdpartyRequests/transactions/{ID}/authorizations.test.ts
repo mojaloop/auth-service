@@ -97,9 +97,9 @@ const request: Request = {
 const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
-      code: (statusCode: number): ResponseObject => {
+      code: (num: number): ResponseObject => {
         return {
-          statusCode
+          statusCode: num
         } as unknown as ResponseObject
       }
     } as unknown as ResponseObject
@@ -111,6 +111,7 @@ const h: ResponseToolkit = {
  */
 const mockConsent: Consent = {
   id: payload.consentId,
+  status: 'ACTIVE',
   credentialStatus: 'ACTIVE',
   credentialPayload: 'Mock public key payload'
 }

@@ -52,12 +52,14 @@ export interface Consent {
   id: string;
   initiatorId?: string;
   participantId?: string;
+  status: string;
   credentialId?: string;
   credentialType?: string;
   credentialStatus?: string;
   credentialPayload?: string;
   credentialChallenge?: string;
   createdAt?: Date;
+  revokedAt?: string;
 }
 
 /*
@@ -108,6 +110,11 @@ export class ConsentDB {
         throw new NotFoundError('Consent', consent.id)
       }
 
+      // Cannot overwrite REVOKED status Consent
+      if (consents[0].status === 'REVOKED') {
+        throw new Error('Cannot modify Revoked Consent')
+      }
+
       const existingConsent: Consent = consents[0]
       const updatedConsent: Record<string, string | Date> = {}
 
@@ -122,7 +129,7 @@ export class ConsentDB {
         }
 
         // Cannot overwrite non-null fields
-        if (value !== null && key !== 'credentialStatus') {
+        if (value !== null && key !== 'credentialStatus' && key !== 'status') {
           return
         }
 

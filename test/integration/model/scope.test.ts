@@ -39,11 +39,13 @@ import { NotFoundError } from '../../../src/model/errors'
 const partialConsents: Consent[] = [
   {
     id: '1234',
+    status: 'ACTIVE',
     initiatorId: 'pisp-2342-2233',
     participantId: 'dfsp-3333-2123'
   },
   {
     id: '948',
+    status: 'ACTIVE',
     initiatorId: 'pisp-2342-2013',
     participantId: 'dfsp-3333-2773'
   }

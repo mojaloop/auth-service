@@ -50,12 +50,40 @@ Consent:
       allOf:
         - $ref: '#/definitions/FspId'
       description: PISP identifier who uses this Consent
+    status: 
+      $ref: '#/definitions/ConsentStatusEnum'
+    revokedAt: 
+      $ref: '#/definitions/ConsentRevokedAt'
     scopes:
       type: array
       items:
         $ref: '#/definitions/Scope'
     credential:
       $ref: '#/definitions/Credential'
+  required: 
+    - id
+    - status
+    - scopes
+    - participantId
+    - initiatorId
+    - credential
+
+ConsentStatusEnum:
+  title: ConsentStatus
+  type: string
+  enum:
+    - ACTIVE
+    - REVOKED
+  description: |
+    The status of the Consent
+    - "ACTIVE" - The Consent is valid, and ready to be used by the PISP
+    - "REVOKED" - The Consent is no longer valid and has been revoked
+
+ConsentRevokedAt:
+  title: ConsentRevokedAt
+  type: string
+  description: >
+    The time/date (ISO date string) at which the Consent was revoked, after which it is no longer valid
 
 Credential:
   title: Credential
