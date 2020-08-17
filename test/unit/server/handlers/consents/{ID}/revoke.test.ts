@@ -163,7 +163,7 @@ describe('server/handlers/consents', (): void => {
           )
       })
 
-    it('Should also finish with no errors',
+    it('Should also resolve with no errors',
       async (): Promise<void> => {
         mockConsentRetrieve.mockResolvedValueOnce(completeConsentRevoked)
         mockRevokeConsentStatus.mockResolvedValueOnce(completeConsentRevoked)
@@ -185,7 +185,7 @@ describe('server/handlers/consents', (): void => {
           )
       })
 
-    it('Should throw an error due to consent retrieval error',
+    it('Should propagate consent retrieval error from consentDB.retrieve()',
       async (): Promise<void> => {
         mockConsentRetrieve.mockRejectedValueOnce(new Error('Test'))
         await expect(Handler.validateRequestAndRevokeConsent(request))

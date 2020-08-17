@@ -143,23 +143,25 @@ describe('server/domain/consents/revoke', (): void => {
   })
 
   describe('revokeConsentStatus', (): void => {
-    it('Should return a revoked consent', async (): Promise<void> => {
-      const revokedConsent = await revokeConsentStatus(partialConsentActive)
-      expect(revokedConsent.status).toBe('REVOKED')
-      expect(revokedConsent.revokedAt).toBeDefined()
-      expect(mockConsentUpdate).toHaveBeenCalled()
-      expect(mockLoggerPush).not.toHaveBeenCalled()
-    })
+    it('Should return a revoked consent if given active partial consent',
+      async (): Promise<void> => {
+        const revokedConsent = await revokeConsentStatus(partialConsentActive)
+        expect(revokedConsent.status).toBe('REVOKED')
+        expect(revokedConsent.revokedAt).toBeDefined()
+        expect(mockConsentUpdate).toHaveBeenCalled()
+        expect(mockLoggerPush).not.toHaveBeenCalled()
+      })
 
-    it('Should also return a revoked consent', async (): Promise<void> => {
-      const revokedConsent = await revokeConsentStatus(completeConsentActive)
-      expect(revokedConsent.status).toBe('REVOKED')
-      expect(revokedConsent.revokedAt).toBeDefined()
-      expect(mockConsentUpdate).toHaveBeenCalled()
-      expect(mockLoggerPush).not.toHaveBeenCalled()
-    })
+    it('Should return a revoked consent if given complete (with credentials) consent',
+      async (): Promise<void> => {
+        const revokedConsent = await revokeConsentStatus(completeConsentActive)
+        expect(revokedConsent.status).toBe('REVOKED')
+        expect(revokedConsent.revokedAt).toBeDefined()
+        expect(mockConsentUpdate).toHaveBeenCalled()
+        expect(mockLoggerPush).not.toHaveBeenCalled()
+      })
 
-    it('Should return the consent without any operations, if already revoked',
+    it('Should return the consent object without performing any operations, if already revoked',
       async (): Promise<void> => {
         const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
         expect(revokedConsent).toStrictEqual(completeConsentRevoked)
@@ -167,7 +169,7 @@ describe('server/domain/consents/revoke', (): void => {
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
-    it('Should throw an error due to error in updating consent',
+    it('Should propagate error in updating consent',
       async (): Promise<void> => {
         mockConsentUpdate.mockRejectedValue(new Error('Test Error'))
 
@@ -201,7 +203,7 @@ describe('server/domain/consents/revoke', (): void => {
     it('Should throw an error as consent is ACTIVE', (): void => {
       // Reset Consent Status
       completeConsentActive.status = 'ACTIVE'
-      
+
       expect((): void => {
         generatePatchRevokedConsentRequest(completeConsentActive)
       }).toThrowError('Attempting to generate request for non-revoked consent!')
