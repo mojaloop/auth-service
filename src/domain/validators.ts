@@ -44,10 +44,9 @@ import { Enum } from '@mojaloop/central-services-shared'
  * Compares Consent object's initiator ID with source
  */
 export function isConsentRequestInitiatedByValidSource (
-    consent: Consent,
-    request: Request): boolean {
-  
-      const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-      if (fspiopSource === null || fspiopSource === '') return false
-      return (consent?.initiatorId === fspiopSource)
-  }
+  consent: Consent,
+  request: Request): boolean {
+  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  if (fspiopSource === null || fspiopSource === '') return false
+  return (consent?.initiatorId === fspiopSource)
+}
