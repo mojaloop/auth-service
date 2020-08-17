@@ -35,39 +35,19 @@
  --------------
  ******/
 
-import { consentDB } from '~/lib/db'
+import { Request } from '@hapi/hapi'
 import { Consent } from '~/model/consent'
-import Logger from '@mojaloop/central-services-logger'
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { Enum } from '@mojaloop/central-services-shared'
 
 /**
- * Revoke status of consent object, update in the database
- * and return consent
+ * Validates if a request is initiated by a valid source
+ * Compares Consent object's initiator ID with source
  */
-export async function revokeConsentStatus (
-  consent: Consent): Promise<Consent> {
-  if (consent.status === 'REVOKED') {
-    Logger.push('Previously revoked consent was asked to be revoked')
-    return consent
+export function isConsentRequestInitiatedByValidSource (
+    consent: Consent,
+    request: Request): boolean {
+  
+      const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      if (fspiopSource === null || fspiopSource === '') return false
+      return (consent?.initiatorId === fspiopSource)
   }
-  consent.status = 'REVOKED'
-  consent.revokedAt = (new Date()).toISOString()
-  await consentDB.update(consent)
-  return consent
-}
-
-/**
- * Generate outgoing PATCH consent/{id}/revoke request body
- */
-export function generatePatchRevokedConsentRequest (
-  consent: Consent
-): SDKStandardComponents.PatchConsentsRequest {
-  if (consent.status !== 'REVOKED')
-    throw new Error('Attempting to generate request for non-revoked consent!')
-
-  const requestBody: SDKStandardComponents.PatchConsentsRequest = {
-    status: 'REVOKED',
-    revokedAt: consent.revokedAt as string
-  }
-  return requestBody
-}

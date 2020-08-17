@@ -36,15 +36,15 @@
  ******/
 import {
   generatePatchRevokedConsentRequest,
-  isConsentRequestInitiatedByValidSource,
   revokeConsentStatus
-} from '../../../../domain/consents/revoke'
+} from '~/domain/consents/revoke'
+import * as validators from '~/domain/validators'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
-import { consentDB } from '../../../../lib/db'
-import { Consent } from '../../../../model/consent'
-import { thirdPartyRequest } from '../../../../lib/requests'
+import { consentDB } from '~/lib/db'
+import { Consent } from '~/model/consent'
+import { thirdPartyRequest } from '~/lib/requests'
 
 /**
  * Asynchronously deals with validating request, revoking consent object
@@ -69,7 +69,7 @@ export async function validateRequestAndRevokeConsent (
     }
 
     // If request is not intiated by valid source, send PUT ...error back
-    if (!isConsentRequestInitiatedByValidSource(consent, request)) {
+    if (!validators.isConsentRequestInitiatedByValidSource(consent, request)) {
       // TODO: Error Handling dealt with in future ticket #355
       throw (new Error('NotImplementedYetError'))
     }

@@ -27,15 +27,14 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB } from '../../../../src/lib/db'
+import { consentDB } from '~/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
-  isConsentRequestInitiatedByValidSource,
   generatePatchRevokedConsentRequest,
   revokeConsentStatus
-} from '../../../../src/domain/consents/revoke'
-import { Consent } from '../../../../src/model/consent'
+} from '~/domain/consents/revoke'
+import { Consent } from '~/model/consent'
 
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -141,33 +140,6 @@ describe('server/domain/consents/revoke', (): void => {
 
   beforeEach((): void => {
     jest.clearAllMocks()
-  })
-
-  describe('isConsentRequestInitiatedByValidSource', (): void => {
-    it('Should return true', (): void => {
-      expect(
-        isConsentRequestInitiatedByValidSource(partialConsentActive, request))
-        .toBe(true)
-    })
-
-    it('Should return false because consent is null', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(
-        null as unknown as Consent, request))
-        .toBeFalsy()
-    })
-
-    it('Should return false because initiator ID does not match', (): void => {
-      expect(
-        isConsentRequestInitiatedByValidSource(partialConsentActive2, request))
-        .toBeFalsy()
-    })
-
-    it('Should throw an error as request headers are missing', (): void => {
-      expect((): void => {
-        isConsentRequestInitiatedByValidSource(
-          partialConsentActive, requestNoHeaders as Request)
-      }).toThrowError()
-    })
   })
 
   describe('revokeConsentStatus', (): void => {

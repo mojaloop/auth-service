@@ -36,27 +36,10 @@
  --------------
  ******/
 
-import { Request } from '@hapi/hapi'
-import { consentDB } from '../../lib/db'
-import { Consent, ConsentCredential } from '../../model/consent'
-import { Enum } from '@mojaloop/central-services-shared'
+import { consentDB } from '~/lib/db'
+import { Consent, ConsentCredential } from '~/model/consent'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
-import { ExternalScope } from '../../lib/scopes'
-
-/**
- * Validates whether generate challenge request is valid
- * by comparing consent ID sent matches with existing consent in table
- * and if source ID matches initiator ID
- * @param request: request received from PISP
- * @param consent: Consent object
- */
-export function isConsentRequestInitiatedByValidSource (
-  request: Request,
-  consent: Consent): boolean {
-  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  if (fspiopSource === null || fspiopSource === '') return false
-  return (consent?.initiatorId === fspiopSource)
-}
+import { ExternalScope } from '~/lib/scopes'
 
 /**
  * Assigns credentials to given consent object and updates in the database

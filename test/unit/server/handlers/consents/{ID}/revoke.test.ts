@@ -30,6 +30,7 @@ import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import * as Handler from '../../../../../../src/server/handlers/consents/{ID}/revoke'
 import { thirdPartyRequest } from '../../../../../../src/lib/requests'
 import * as Domain from '../../../../../../src/domain/consents/revoke'
+import * as validators from '~/domain/validators'
 import { consentDB } from '../../../../../../src/lib/db'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
@@ -41,7 +42,7 @@ const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
 const mockGeneratePatchConsentRequest = jest.spyOn(
   Domain, 'generatePatchRevokedConsentRequest')
 const mockIsConsentRequestValid = jest.spyOn(
-  Domain, 'isConsentRequestInitiatedByValidSource')
+  validators, 'isConsentRequestInitiatedByValidSource')
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')

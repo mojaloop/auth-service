@@ -36,7 +36,6 @@ import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { ExternalScope } from '~/lib/scopes'
 import {
   updateConsentCredential,
-  isConsentRequestInitiatedByValidSource,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
 
@@ -73,13 +72,6 @@ const partialConsent: Consent = {
   id: '1234',
   status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123'
-}
-
-const partialConsent2: Consent = {
-  id: '1234',
-  status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2234',
   participantId: 'dfsp-3333-2123'
 }
 
@@ -137,32 +129,6 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
   beforeEach((): void => {
     jest.clearAllMocks()
-  })
-
-  // Tests for isConsentRequestInitiatedByValidSource
-  describe('Request Validation', (): void => {
-    it('Should return true', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(request, partialConsent))
-        .toBe(true)
-    })
-
-    it('Should return false because consent is null', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(
-        request, null as unknown as Consent))
-        .toBeFalsy()
-    })
-
-    it('Should return false because initiator ID does not match', (): void => {
-      expect(isConsentRequestInitiatedByValidSource(request, partialConsent2))
-        .toBeFalsy()
-    })
-
-    it('Should throw an error as request headers are missing', (): void => {
-      expect((): void => {
-        isConsentRequestInitiatedByValidSource(
-          requestNoHeaders as Request, partialConsent2)
-      }).toThrowError()
-    })
   })
 
   // Tests for updateConsentCredential
