@@ -76,7 +76,7 @@ export function generatePatchConsentRequest (
   consent: Consent
 ): SDKStandardComponents.PatchConsentsRequest {
   const requestBody: SDKStandardComponents.PatchConsentsRequest = {
-    status: consent.status as string as 'REVOKED',
+    status: 'REVOKED',
     revokedAt: consent.revokedAt as string
 
   }

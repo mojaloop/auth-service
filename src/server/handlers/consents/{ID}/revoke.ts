@@ -74,7 +74,7 @@ export async function validateRequestAndRevokeConsent (
       throw (new Error('NotImplementedYetError'))
     }
 
-    // If Consent is ACTIVE, revoke it and update database
+    // If Consent is ACTIVE, revoke it and update database. If already revoked, leave it alone but don't throw an error.
     consent = await revokeConsentStatus(consent)
 
     // Outgoing call to PUT consents/{ID}/revoke
