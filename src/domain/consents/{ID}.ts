@@ -55,6 +55,10 @@ export async function retrieveValidConsent (
   consentId: string,
   requestChallenge: string): Promise<Consent> {
   const consent: Consent = await consentDB.retrieve(consentId)
+  // if consent is revoked, we cannot proceed
+  if (consent.status === 'REVOKED') {
+    throw new IncorrectStatusError(consentId)
+  }
   if (consent.credentialChallenge !== requestChallenge) {
     throw new IncorrectChallengeError(consentId)
   }
@@ -115,7 +119,7 @@ export async function putConsents (
   signature: string,
   publicKey: string,
   request: Request): Promise<void> {
-  /* Retrieve the scopes pertinent to this consentId 
+  /* Retrieve the scopes pertinent to this consentId
   and populate the scopes accordingly. */
   const consentBody: PutConsentsRequest = await buildConsentRequestBody(consent, signature, publicKey)
   const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
