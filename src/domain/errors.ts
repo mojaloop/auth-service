@@ -41,3 +41,12 @@ export class IncorrectCredentialStatusError extends Error {
   }
 }
 
+
+export class IncorrectConsentStatusError extends Error {
+  public consentId: string
+
+  public constructor (consentId: string) {
+    super(`Incorrect Consent status ${consentId}`)
+    this.consentId = consentId
+  }
+}
