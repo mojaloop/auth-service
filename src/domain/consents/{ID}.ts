@@ -72,9 +72,12 @@ export function checkCredentialStatus (
 export async function updateConsentCredential (
   consent: Consent,
   credential: ConsentCredential): Promise<number> {
+  if (!credential.credentialPayload) {
+    throw new Error('Payload not given')
+  }
   consent.credentialId = credential.credentialId
   consent.credentialStatus = credential.credentialStatus
-  consent.credentialPayload = credential.credentialPayload
+  consent.credentialPayload = credential.credentialPayload as string
   return consentDB.update(consent)
 }
 
