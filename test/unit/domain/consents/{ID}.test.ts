@@ -97,6 +97,32 @@ const retrievedConsent: Consent = {
   credentialChallenge: 'string_representing_challenge_payload'
 }
 
+const retrievedConsentRevoked: Consent = {
+  id: '1234',
+  status: 'REVOKED',
+  initiatorId: 'pispa',
+  participantId: 'sfsfdf23',
+  credentialId: '9876',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialPayload: 'string_representing_credential_payload',
+  credentialChallenge: 'string_representing_challenge_payload',
+  revokedAt: (new Date()).toISOString()
+}
+
+const retrievedConsentWrongChallenge: Consent = {
+  id: '1234',
+  status: 'REVOKED',
+  initiatorId: 'pispa',
+  participantId: 'sfsfdf23',
+  credentialId: '9876',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialPayload: 'string_representing_credential_payload',
+  credentialChallenge: 'wrong_string_representing_challenge_payload',
+  revokedAt: (new Date()).toISOString()
+}
+
 /* Mock the retrieved scope value. */
 const retrievedScopes = [{
   id: 123234,
@@ -158,15 +184,60 @@ describe('server/domain/consents/{ID}', (): void => {
 
   beforeEach((): void => {
     jest.clearAllMocks()
-    jest.clearAllTimers()
   })
 
-  /* We define all the postive test cases */
-  it('should retrive a valid consent without any errors', async (): Promise<void> => {
-    const returnedConsent: Consent = await retrieveValidConsent(id, challenge)
-    expect(returnedConsent).toBe(retrievedConsent)
+  describe('retrieveValidConsent', (): void => {
+    it('should retrieve a valid consent without any errors', async (): Promise<void> => {
+      const returnedConsent: Consent = await retrieveValidConsent(id, challenge)
 
-    expect(mockConsentDbRetrieve).toBeCalledWith(id)
+      expect(returnedConsent).toStrictEqual(retrievedConsent)
+      expect(mockConsentDbRetrieve).toBeCalledWith(id)
+    })
+
+    it('should propagate error in consent retrieval', async (): Promise<void> => {
+      mockConsentDbRetrieve.mockRejectedValueOnce(new Error('ConsentDB Error'))
+      await expect(retrieveValidConsent(id, challenge)).rejects.toThrowError('ConsentDB Error')
+
+      expect(mockConsentDbRetrieve).toBeCalledWith(id)
+    })
+
+    it('should throw IncorrectStatusError if retrieved consent has REVOKED status',
+      async (): Promise<void> => {
+        mockConsentDbRetrieve.mockResolvedValueOnce(retrievedConsentRevoked)
+        await expect(retrieveValidConsent(id, challenge)).rejects.toThrow(new IncorrectStatusError(id))
+
+        expect(mockConsentDbRetrieve).toBeCalledWith(id)
+      })
+
+    it('should throw IncorrectChallengeError if mismatch between retrieved consent challenge and request credential challenge',
+      async (): Promise<void> => {
+        mockConsentDbRetrieve.mockResolvedValueOnce(retrievedConsentWrongChallenge)
+        await expect(retrieveValidConsent(id, challenge)).rejects.toThrow(new IncorrectChallengeError(id))
+
+        expect(mockConsentDbRetrieve).toBeCalledWith(id)
+      })
+  
+
+  })
+
+  describe('checkCredentialStatus', (): void => {
+  
+
+  })
+
+  describe('updateConsentCredential', (): void => {
+  
+
+  })
+
+  describe('buildConsentRequestBody', (): void => {
+  
+
+  })
+
+  describe('putConsents', (): void => {
+  
+
   })
 
   it('should validate the credential status without any errors', async (): Promise<void> => {
