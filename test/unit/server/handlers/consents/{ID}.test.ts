@@ -27,7 +27,8 @@
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import put, { retrieveUpdateAndPutConsent } from '~/server/handlers/consents/{ID}'
+import { Enum } from '@mojaloop/central-services-shared'
+import * as Handler from '~/server/handlers/consents/{ID}'
 import * as Domain from '~/domain/consents/{ID}'
 import { IncorrectChallengeError, IncorrectStatusError } from '~/domain/errors'
 import { NotFoundError } from '~/model/errors'
@@ -101,7 +102,9 @@ const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
       code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
+        return {
+          statusCode: num
+        } as unknown as ResponseObject
       }
     } as unknown as ResponseObject
   }
@@ -112,9 +115,9 @@ describe('server/handler/consents/{ID}', (): void => {
   beforeAll((): void => {
     mockRetrieveValidConsent.mockResolvedValue(retrievedConsent)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mockCheckCredentialStatus.mockImplementation((credentialStatus: string, consentId: string): void => {})
+    mockCheckCredentialStatus.mockReturnValue()
     mockUpdateConsentCredential.mockResolvedValue(0)
-    mockPutConsents.mockResolvedValue(null)
+    mockPutConsents.mockResolvedValue()
     mockLoggerPush.mockReturnValue(null)
     mockLoggerError.mockReturnValue(null)
     mockVerifySignature.mockReturnValue(true)
@@ -132,126 +135,161 @@ describe('server/handler/consents/{ID}', (): void => {
 
   beforeEach((): void => {
     jest.clearAllMocks()
-    jest.clearAllTimers()
+    // jest.clearAllTimers()
   })
 
-  it('should return a 202 success code.', async (): Promise<void> => {
-    const response = await put(request as Request, h)
-    expect(response.code).toBe(202)
+  describe('retrieveUpdateAndPutConsent', (): void => {
+    it('should resolve successfully with no errors',
+      async (): Promise<void> => {
+        await expect(Handler.retrieveUpdateAndPutConsent())
+          .resolves
+          .toBeUndefined()
 
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
 
-    const credential: Domain.ConsentCredential = {
-      credentialId: requestCredentialId,
-      credentialStatus: 'ACTIVE',
-      credentialPayload: publicKey
-    }
+        /* Mock the Domain.ConsentCredential Value. */
+        const credential: Domain.ConsentCredential = {
+          credentialId: requestCredentialId,
+          credentialStatus: 'ACTIVE',
+          credentialPayload: publicKey
+        }
+        expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
+        expect(mockPutConsents).toHaveBeenCalledWith(retrievedConsent, signature, publicKey, request as Request)
+      })
 
-    expect(retrieveUpdateAndPutConsent).toHaveBeenCalledWith(id, challenge,
-      credentialStatus, signature,
-      publicKey, requestCredentialId,
-      request)
-    expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-    expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
-    expect(mockPutConsents).toHaveBeenCalledWith(retrievedConsent, signature, publicKey, request)
+    it('should propagate retrieveValidConsent IncorrectChallenge error',
+      async (): Promise<void> => {
+        mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectChallengeError(id))
+
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
+
+        expect(mockVerifySignature).not.toHaveBeenCalled()
+        expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+        expect(mockPutConsents).not.toHaveBeenCalled()
+      })
+
+    it('should propagate retrieveValidConsent IncorrectStatus error',
+      async (): Promise<void> => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        mockCheckCredentialStatus.mockImplementationOnce(
+          (credentialStatus: string, consentId: string): void => {
+            throw new IncorrectStatusError(consentId)
+          })
+
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
+
+        expect(mockVerifySignature).not.toHaveBeenCalled()
+        expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+        expect(mockPutConsents).not.toHaveBeenCalled()
+      })
+
+    it('should throw an error when trying to retrieve consent resource that does not exist',
+      async (): Promise<void> => {
+        mockRetrieveValidConsent.mockRejectedValueOnce(new NotFoundError('Consent', id))
+
+        await expect(Handler.retrieveUpdateAndPutConsent())
+          .rejects
+          .toThrow(new NotFoundError('Consent', id))
+
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
+
+        expect(mockVerifySignature).not.toHaveBeenCalled()
+        expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+        expect(mockPutConsents).not.toHaveBeenCalled()
+      })
+
+    it('should fail to verify the signature',
+      async (): Promise<void> => {
+        mockVerifySignature.mockReturnValueOnce(false)
+
+        await expect(Handler.retrieveUpdateAndPutConsent()).rejects.toThrow()
+
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
+
+        expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
+        expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
+        expect(mockPutConsents).not.toHaveBeenCalled()
+      })
+
+    it('should fail to update the consent credential attributes and throw an error',
+      async (): Promise<void> => {
+        const err: NotFoundError = new NotFoundError('Consent', id)
+        mockUpdateConsentCredential.mockRejectedValueOnce(err)
+
+        await expect(Handler.retrieveUpdateAndPutConsent())
+          .rejects
+          .toThrow(err)
+
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
+
+        /* Mock the Domain.ConsentCredential Value. */
+        const credential: Domain.ConsentCredential = {
+          credentialId: requestCredentialId,
+          credentialStatus: 'ACTIVE',
+          credentialPayload: publicKey
+        }
+        expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
+        expect(mockPutConsents).not.toHaveBeenCalled()
+      })
+
+    it('should fail to make the outgoing call to PUT /consents/{ID} and throw an error',
+      async (): Promise<void> => {
+        const err: Error = new Error('error thrown')
+        mockPutConsents.mockRejectedValueOnce(err)
+
+        await expect(Handler.retrieveUpdateAndPutConsent())
+          .rejects
+          .toThrow(err)
+
+        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
+
+        /* Mock the Domain.ConsentCredential Value. */
+        const credential: Domain.ConsentCredential = {
+          credentialId: requestCredentialId,
+          credentialStatus: 'ACTIVE',
+          credentialPayload: publicKey
+        }
+        expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
+        expect(mockPutConsents).toHaveBeenCalledWith(retrievedConsent, signature, publicKey, request as Request)
+      })
   })
 
-  it('should return a 400 failure code, where retrieveValidConsent throws an error', async (): Promise<void> => {
-    mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectChallengeError(id))
-
-    const response = await put(request as Request, h as ResponseToolkit)
-    expect(response.code).toBe(400)
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
-
-    expect(mockVerifySignature).not.toHaveBeenCalled()
-    expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
-    expect(mockPutConsents).not.toHaveBeenCalled()
-  })
-
-  it('should return a 400 failure code, where retrieveValidConsent throws an error', async (): Promise<void> => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mockCheckCredentialStatus.mockImplementationOnce((consentId: string, requestChallenge: string): Promise<Consent> => {
-      throw new IncorrectStatusError(consentId)
+  describe('PUT Handler', (): void => {
+    const mockRetrieveUpdateAndPutConsent = jest.spyOn(Handler, 'retrieveUpdateAndPutConsent')
+    beforeAll((): void => {
+      mockRetrieveUpdateAndPutConsent.mockResolvedValue()
     })
 
-    const response = await put(request as Request, h as ResponseToolkit)
-    expect(response).toBe(400)
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
+    it('should return a 202 success code.', async (): Promise<void> => {
+      const response = await Handler.put(request as Request, h)
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 
-    expect(mockVerifySignature).not.toHaveBeenCalled()
-    expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
-    expect(mockPutConsents).not.toHaveBeenCalled()
-  })
+      expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
+      expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
 
-  it('should throw an error when trying to retrieve the consent resource', async (): Promise<void> => {
-    mockRetrieveValidConsent.mockRejectedValueOnce(new NotFoundError('Consent', id))
+      const credential: Domain.ConsentCredential = {
+        credentialId: requestCredentialId,
+        credentialStatus: 'ACTIVE',
+        credentialPayload: publicKey
+      }
 
-    expect(async (): Promise<void> => {
-      await put(request as Request, h as ResponseToolkit)
-    }).toThrow(new NotFoundError('Consent', id))
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
-
-    expect(mockVerifySignature).not.toHaveBeenCalled()
-    expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
-    expect(mockPutConsents).not.toHaveBeenCalled()
-  })
-
-  it('should fail to verify the signature', async (): Promise<void> => {
-    mockVerifySignature.mockReturnValueOnce(false)
-
-    const response = await put(request as Request, h as ResponseToolkit)
-    expect(response).toBe(undefined) // THIS MAY BE ERRONEOUS, change if necessary.
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
-
-    expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-    expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
-    expect(mockPutConsents).not.toHaveBeenCalled()
-  })
-
-  it('should fail to update the consent credential attributes and throw an error', async (): Promise<void> => {
-    const err: NotFoundError = new NotFoundError('Consent', id)
-    mockUpdateConsentCredential.mockRejectedValueOnce(err)
-
-    expect(async (): Promise<void> => {
-      await put(request as Request, h as ResponseToolkit)
-    }).toThrow(err)
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
-
-    /* Mock the Domain.ConsentCredential Value. */
-    const credential: Domain.ConsentCredential = {
-      credentialId: requestCredentialId,
-      credentialStatus: 'ACTIVE',
-      credentialPayload: publicKey
-    }
-    expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-    expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
-    expect(mockPutConsents).not.toHaveBeenCalled()
-  })
-
-  it('should fail to make the outgoing call to PUT /consents/{ID} and throw an error', async (): Promise<void> => {
-    const err: Error = new Error('error thrown')
-    mockPutConsents.mockRejectedValueOnce(err)
-
-    expect(async (): Promise<void> => {
-      await put(request as Request, h as ResponseToolkit)
-    }).toThrow(err)
-    expect(mockRetrieveValidConsent).toHaveBeenCalledWith(id, challenge)
-    expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, id)
-
-    /* Mock the Domain.ConsentCredential Value. */
-    const credential: Domain.ConsentCredential = {
-      credentialId: requestCredentialId,
-      credentialStatus: 'ACTIVE',
-      credentialPayload: publicKey
-    }
-    expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-    expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
-    expect(mockPutConsents).toHaveBeenCalledWith(retrievedConsent, signature, publicKey, request as Request)
+      expect(mockRetrieveUpdateAndPutConsent).toHaveBeenCalledWith(id, challenge,
+        credentialStatus, signature,
+        publicKey, requestCredentialId,
+        request)
+      expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
+      expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credential)
+      expect(mockPutConsents).toHaveBeenCalledWith(retrievedConsent, signature, publicKey, request)
+    })
   })
 })
