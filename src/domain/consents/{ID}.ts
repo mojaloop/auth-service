@@ -64,7 +64,7 @@ export async function retrieveValidConsent (
 export function checkCredentialStatus (
   credentialStatus: string,
   consentId: string): void {
-  if (credentialStatus !== CredentialStatusEnum.PENDING) {
+  if (credentialStatus !== CredentialStatusEnum.ACTIVE) {
     throw new IncorrectCredentialStatusError(consentId)
   }
 }
