@@ -51,7 +51,7 @@ import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 
-interface PutConsentRequest {
+export interface InboundPutConsentRequest {
   credential: {
     id: string;
     payload: string;
@@ -79,7 +79,7 @@ export async function retrieveUpdateAndPutConsent (
       id: requestCredentialId,
       status: credentialStatus
     }
-  } = request.payload as PutConsentRequest
+  } = request.payload as InboundPutConsentRequest
 
   try {
     const consent: Consent = await retrieveValidConsent(id, challenge)
@@ -112,7 +112,7 @@ export async function retrieveUpdateAndPutConsent (
   } catch (error) {
     // TODO: common outbound call here
     Logger.push(error)
-    Logger.error('Error in retrieving consent.')
+    Logger.error('Error: Outgoing PUT consents/{ID} call not made')
     /* TODO, make outbound call to PUT consents/{ID}/error
     to be addressed in ticket number 355 */
   }
