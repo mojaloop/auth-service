@@ -50,6 +50,7 @@ import { Consent, ConsentCredential } from '~/model/consent'
 import { convertScopesToExternal } from '~/lib/scopes'
 import { Scope } from '~/model/scope'
 import { thirdPartyRequest } from '~/lib/requests'
+import { CredentialStatusEnum } from '~/model/consent/consent'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -96,7 +97,7 @@ export async function generateChallengeAndPutConsent (
       // Updating credentials with generated challenge
       const credential: ConsentCredential = {
         credentialChallenge: challengeValue,
-        credentialStatus: 'PENDING',
+        credentialStatus: CredentialStatusEnum.PENDING,
         credentialType: 'FIDO',
         credentialPayload: null
       }
