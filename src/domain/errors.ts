@@ -32,11 +32,12 @@ export class IncorrectChallengeError extends Error {
   }
 }
 
-export class IncorrectStatusError extends Error {
+export class IncorrectCredentialStatusError extends Error {
   public consentId: string
 
   public constructor (consentId: string) {
-    super(`Incorrect status ${consentId}`)
+    super(`Incorrect Credential status ${consentId}`)
     this.consentId = consentId
   }
 }
+
