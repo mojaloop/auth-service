@@ -35,21 +35,13 @@
  - Ahan Gupta <ahangupta.96@gmail.com>
  --------------
  ******/
-import { Consent } from '~/model/consent'
+import { Consent, ConsentCredential } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
 import { IncorrectChallengeError, IncorrectStatusError } from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '~/lib/requests'
-import { Enum } from '@mojaloop/central-services-shared'
-import { Request } from '@hapi/hapi'
 import { ExternalScope, convertScopesToExternal } from '~/lib/scopes'
-
-export interface ConsentCredential {
-  credentialId: string;
-  credentialStatus: 'ACTIVE';
-  credentialPayload: string;
-}
+import { CredentialStatusEnum } from '~/model/consent/consent'
 
 export async function retrieveValidConsent (
   consentId: string,
@@ -68,7 +60,7 @@ export async function retrieveValidConsent (
 export function checkCredentialStatus (
   credentialStatus: string,
   consentId: string): void {
-  if (credentialStatus !== 'PENDING') {
+  if (credentialStatus !== CredentialStatusEnum.PENDING) {
     throw new IncorrectStatusError(consentId)
   }
 }
@@ -103,7 +95,7 @@ export async function buildConsentRequestBody (
     credential: {
       id: consent.credentialId as string,
       credentialType: 'FIDO',
-      status: 'ACTIVE',
+      status: CredentialStatusEnum.ACTIVE,
       challenge: {
         payload: consent.credentialChallenge as string,
         signature: signature
@@ -112,16 +104,4 @@ export async function buildConsentRequestBody (
     }
   }
   return consentBody
-}
-
-export async function putConsents (
-  consent: Consent,
-  signature: string,
-  publicKey: string,
-  request: Request): Promise<void> {
-  /* Retrieve the scopes pertinent to this consentId
-  and populate the scopes accordingly. */
-  const consentBody: PutConsentsRequest = await buildConsentRequestBody(consent, signature, publicKey)
-  const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  thirdPartyRequest.putConsents(consent.id, consentBody, destParticipantId)
 }
