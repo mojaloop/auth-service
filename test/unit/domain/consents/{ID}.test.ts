@@ -37,10 +37,15 @@ import {
 import { Consent } from '~/model/consent'
 import { thirdPartyRequest } from '~/lib/requests'
 import * as Scopes from '~/lib/scopes'
-import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { Enum } from '@mojaloop/central-services-shared'
-import { IncorrectChallengeError, IncorrectCredentialStatusError } from '~/domain/errors'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import {
+  IncorrectChallengeError,
+  IncorrectCredentialStatusError
+} from '~/domain/errors'
 import { updateConsentCredential } from '~/domain/consents/generateChallenge'
+import { CredentialStatusEnum } from '~/model/consent/consent'
+import { InboundPutConsentRequest } from '~/server/handlers/consents/{ID}'
+import { Scope } from '~/model/scope'
 
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -150,6 +155,18 @@ const retrievedScopes = [{
 }
 ]
 
+const {
+  credential: {
+    challenge: {
+      signature,
+      payload: challenge
+    },
+    payload: publicKey,
+    id: requestCredentialId,
+    status: credentialStatus
+  }
+} = request.payload as InboundPutConsentRequest
+
 /* TODO, fill out later. */
 /* Mock the converted scope value. */
 const externalScopes: Scopes.ExternalScope[] = [
@@ -164,6 +181,24 @@ const externalScopes: Scopes.ExternalScope[] = [
 ]
 
 const consentId = retrievedConsent.id
+
+// Mock Outgoing Request Body
+const requestBody: SDKStandardComponents.PutConsentsRequest = {
+  requestId: consentId,
+  scopes: externalScopes,
+  initiatorId: retrievedConsent.initiatorId as string,
+  participantId: retrievedConsent.participantId as string,
+  credential: {
+    id: requestCredentialId,
+    credentialType: 'FIDO',
+    status: CredentialStatusEnum.ACTIVE,
+    challenge: {
+      payload: retrievedConsent.credentialChallenge as string,
+      signature
+    },
+    payload: publicKey
+  }
+}
 
 describe('server/domain/consents/{ID}', (): void => {
   beforeAll((): void => {
@@ -277,33 +312,38 @@ describe('server/domain/consents/{ID}', (): void => {
   })
 
   describe('buildConsentRequestBody', (): void => {
-    // it('should make the outbound call to PUT /consents/{ID} successfuly.', async (): Promise<void> => {
-    //   const returnedValue = await putConsents(retrievedConsent, signature, publicKey, request)
-    //   expect(returnedValue).toBe(undefined)
+    it('should build and return request body successfuly.',
+      async (): Promise<void> => {
+        const returnedBody = await buildConsentRequestBody(retrievedConsent, signature, publicKey)
+        expect(returnedBody).toStrictEqual(requestBody)
 
-    //   expect(mockScopeDbRetrieveAll).toBeCalledWith(id)
-    //   expect(mockConvertScopesToExternal).toBeCalledWith(retrievedScopes)
+        expect(mockScopeDbRetrieveAll).toBeCalledWith(consentId)
+        expect(mockConvertScopesToExternal).toBeCalledWith(retrievedScopes)
+      })
 
-    //   /* Mock the outgoing consentBody */
-    //   const consentBody: PutConsentsRequest = {
-    //     requestId: retrievedConsent.id,
-    //     initiatorId: retrievedConsent.initiatorId as string,
-    //     participantId: retrievedConsent.participantId as string,
-    //     scopes: externalScopes,
-    //     credential: {
-    //       id: retrievedConsent.credentialId as string,
-    //       credentialType: 'FIDO',
-    //       status: 'ACTIVE',
-    //       challenge: {
-    //         payload: retrievedConsent.credentialChallenge as string,
-    //         signature: signature as string
-    //       },
-    //       payload: publicKey as string
-    //     }
-    //   }
-    //   /* Mock the outgoing destination participant id */
-    //   const destParticipantId = request.headers['fspiop-source']
-    //   expect(mockPutConsentsOutbound).toBeCalledWith(id, consentBody, destParticipantId)
-    // })
+    it('should promulgate scope retrieval error.',
+      async (): Promise<void> => {
+        mockScopeDbRetrieveAll.mockRejectedValueOnce(new Error('Test'))
+        await expect(buildConsentRequestBody(retrievedConsent, signature, publicKey))
+          .rejects
+          .toThrowError('Test')
+
+        expect(mockScopeDbRetrieveAll).toBeCalledWith(consentId)
+        expect(mockConvertScopesToExternal).not.toBeCalled()
+      })
+
+    it('should promulgate scope conversion error.',
+      async (): Promise<void> => {
+        mockConvertScopesToExternal.mockImplementationOnce(
+          (scopes: Scope[]): Scopes.ExternalScope[] => {
+            throw new Error('Test')
+          })
+        await expect(buildConsentRequestBody(retrievedConsent, signature, publicKey))
+          .rejects
+          .toThrowError('Test')
+
+        expect(mockScopeDbRetrieveAll).toBeCalledWith(consentId)
+        expect(mockConvertScopesToExternal).toBeCalledWith(retrievedScopes)
+      })
   })
 })
