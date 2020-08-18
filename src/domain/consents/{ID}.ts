@@ -76,7 +76,7 @@ export function checkCredentialStatus (
 export async function updateConsentCredential (
   consent: Consent,
   credential: ConsentCredential): Promise<number> {
-  if (!credential.credentialPayload) {
+  if (!credential.credentialPayload || credential.credentialPayload === '') {
     throw new Error('Payload not given')
   }
   consent.credentialId = credential.credentialId
