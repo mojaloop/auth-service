@@ -38,7 +38,11 @@
 import { Consent, ConsentCredential } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
-import { IncorrectChallengeError, IncorrectStatusError } from '../errors'
+import {
+  IncorrectChallengeError,
+  IncorrectCredentialStatusError,
+  IncorrectConsentStatusError
+} from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { ExternalScope, convertScopesToExternal } from '~/lib/scopes'
 import { CredentialStatusEnum } from '~/model/consent/consent'
@@ -49,7 +53,7 @@ export async function retrieveValidConsent (
   const consent: Consent = await consentDB.retrieve(consentId)
   // if consent is revoked, we cannot proceed
   if (consent.status === 'REVOKED') {
-    throw new IncorrectStatusError(consentId)
+    throw new IncorrectConsentStatusError(consentId)
   }
   if (consent.credentialChallenge !== requestChallenge) {
     throw new IncorrectChallengeError(consentId)
@@ -61,7 +65,7 @@ export function checkCredentialStatus (
   credentialStatus: string,
   consentId: string): void {
   if (credentialStatus !== CredentialStatusEnum.PENDING) {
-    throw new IncorrectStatusError(consentId)
+    throw new IncorrectCredentialStatusError(consentId)
   }
 }
 
@@ -89,7 +93,7 @@ export async function buildConsentRequestBody (
    and populate the scopes accordingly. */
   const scopes: Scope[] = await scopeDB.retrieveAll(consent.id)
   const externalScopes: ExternalScope[] = convertScopesToExternal(scopes)
-  // @ts-ignore
+
   const consentBody: PutConsentsRequest = {
     requestId: consent.id,
     scopes: externalScopes,
