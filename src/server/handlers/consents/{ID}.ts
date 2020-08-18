@@ -1,3 +1,11 @@
+/* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing
+ * which will be addressed in the future in
+ * ticket #354
+ */
+
 /*****
  License
  --------------
@@ -23,6 +31,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta@google.com>
 
  --------------
@@ -30,26 +39,35 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent } from '~/model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '~/domain/consents/{ID}'
+import {
+  retrieveValidConsent,
+  updateConsentCredential,
+  putConsents, ConsentCredential,
+  checkCredentialStatus
+} from '~/domain/consents/{ID}'
 import { IncorrectChallengeError, IncorrectStatusError } from '~/domain/errors'
 import { verifySignature } from '~/lib/challenge'
 import { NotFoundError } from '~/model/errors'
 import { Enum } from '@mojaloop/central-services-shared'
 
-export async function retrieveUpdateAndPutConsent (id: string, challenge: string,
-  credentialStatus: string, signature: string,
-  publicKey: string, requestCredentialId: string,
+export async function retrieveUpdateAndPutConsent (
+  id: string,
+  challenge: string,
+  credentialStatus: string,
+  signature: string,
+  publicKey: string,
+  requestCredentialId: string,
   request: Request): Promise<void> {
-  let consent: Consent
   try {
-    consent = await retrieveValidConsent(id, challenge)
+    const consent: Consent = await retrieveValidConsent(id, challenge)
     /* Checks if incoming credential status is of the correct form */
-    await checkCredentialStatus(credentialStatus, id)
+    checkCredentialStatus(credentialStatus, id)
     try {
       if (!verifySignature(challenge, signature, publicKey)) {
         Logger.push({ consentId: id })
         Logger.error('Invalid Challenge')
-        /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number 355 */
+        /* TODO, make outbound call to PUT consents/{ID}/error
+        to be addressed in ticket number 355 */
         return
       }
       const credential: ConsentCredential = {
@@ -64,20 +82,26 @@ export async function retrieveUpdateAndPutConsent (id: string, challenge: string
     } catch (error) {
       Logger.push(error)
       Logger.error('Error: Outgoing call with challenge credential NOT made to PUT consents/' + id)
-      /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number 355 */
+      /* TODO, make outbound call to PUT consents/{ID}/error
+      to be addressed in ticket number 355 */
       return
     }
   } catch (error) {
-    if (error instanceof IncorrectChallengeError || error instanceof IncorrectStatusError || error instanceof NotFoundError) {
+    if (error instanceof IncorrectChallengeError ||
+      error instanceof IncorrectStatusError ||
+      error instanceof NotFoundError) {
       Logger.push(error)
     }
     Logger.push(error)
     Logger.error('Error in retrieving consent.')
-    /* TODO, make outbound call to PUT consents/{ID}/error to be addressed in ticket number 355 */
+    /* TODO, make outbound call to PUT consents/{ID}/error
+    to be addressed in ticket number 355 */
   }
 }
 
-export default async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+export default async function put (
+  request: Request,
+  h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
   // @ts-ignore
   const requestPayloadCredential = request.payload.credential

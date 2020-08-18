@@ -1,10 +1,23 @@
+/* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing
+ * which will be addressed in the future in
+ * ticket #354
+ */
+
 /*****
-License
+ License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the 'License') and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -17,6 +30,8 @@ License
  optionally within square brackets <email>.
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
+
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta.96@gmail.com>
  --------------
  ******/
@@ -36,7 +51,9 @@ export interface ConsentCredential {
   credentialPayload: string;
 }
 
-export async function retrieveValidConsent (consentId: string, requestChallenge: string): Promise<Consent> {
+export async function retrieveValidConsent (
+  consentId: string,
+  requestChallenge: string): Promise<Consent> {
   const consent: Consent = await consentDB.retrieve(consentId)
   if (consent.credentialChallenge !== requestChallenge) {
     throw new IncorrectChallengeError(consentId)
@@ -44,7 +61,9 @@ export async function retrieveValidConsent (consentId: string, requestChallenge:
   return consent
 }
 
-export function checkCredentialStatus (credentialStatus: string, consentId: string): void {
+export function checkCredentialStatus (
+  credentialStatus: string,
+  consentId: string): void {
   if (credentialStatus !== 'PENDING') {
     throw new IncorrectStatusError(consentId)
   }
@@ -54,15 +73,21 @@ export function checkCredentialStatus (credentialStatus: string, consentId: stri
  * Updates the consent resource in the database with incoming request's
  * credential attributes.
  */
-export async function updateConsentCredential (consent: Consent, credential: ConsentCredential): Promise<number> {
+export async function updateConsentCredential (
+  consent: Consent,
+  credential: ConsentCredential): Promise<number> {
   consent.credentialId = credential.credentialId
   consent.credentialStatus = credential.credentialStatus
   consent.credentialPayload = credential.credentialPayload
   return consentDB.update(consent)
 }
 
-export async function buildConsentRequestBody (consent: Consent, signature: string, publicKey: string): Promise<PutConsentsRequest> {
-  /* Retrieve the scopes pertinent to this consentId and populate the scopes accordingly. */
+export async function buildConsentRequestBody (
+  consent: Consent,
+  signature: string,
+  publicKey: string): Promise<PutConsentsRequest> {
+  /* Retrieve the scopes pertinent to this consentId
+   and populate the scopes accordingly. */
   const scopes: Scope[] = await scopeDB.retrieveAll(consent.id)
   const externalScopes: ExternalScope[] = convertScopesToExternal(scopes)
   // @ts-ignore
@@ -85,8 +110,13 @@ export async function buildConsentRequestBody (consent: Consent, signature: stri
   return consentBody
 }
 
-export async function putConsents (consent: Consent, signature: string, publicKey: string, request: Request): Promise<void> {
-  /* Retrieve the scopes pertinent to this consentId and populate the scopes accordingly. */
+export async function putConsents (
+  consent: Consent,
+  signature: string,
+  publicKey: string,
+  request: Request): Promise<void> {
+  /* Retrieve the scopes pertinent to this consentId 
+  and populate the scopes accordingly. */
   const consentBody: PutConsentsRequest = await buildConsentRequestBody(consent, signature, publicKey)
   const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
   thirdPartyRequest.putConsents(consent.id, consentBody, destParticipantId)
