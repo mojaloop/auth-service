@@ -29,17 +29,23 @@
 import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '~/lib/db'
 import Logger from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, checkCredentialStatus, putConsents } from '~/domain/consents/{ID}'
+import {
+  retrieveValidConsent,
+  checkCredentialStatus,
+  buildConsentRequestBody
+} from '~/domain/consents/{ID}'
 import { Consent } from '~/model/consent'
 import { thirdPartyRequest } from '~/lib/requests'
 import * as Scopes from '~/lib/scopes'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { Enum } from '@mojaloop/central-services-shared'
-import { IncorrectChallengeError, IncorrectStatusError } from '~/domain/errors'
+import { IncorrectChallengeError, IncorrectCredentialStatusError } from '~/domain/errors'
+import { updateConsentCredential } from '~/domain/consents/generateChallenge'
 
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
+const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
 const mockScopeDbRetrieveAll = jest.spyOn(scopeDB, 'retrieveAll')
 const mockPutConsentsOutbound = jest.spyOn(thirdPartyRequest, 'putConsents')
 const mockConvertScopesToExternal = jest.spyOn(Scopes, 'convertScopesToExternal')
@@ -157,9 +163,9 @@ const externalScopes: Scopes.ExternalScope[] = [
   }
 ]
 
-describe('server/domain/consents/{ID}', (): void => {
-  let id: string, signature: string, publicKey: string, challenge: string, credentialStatus: string
+const consentId = retrievedConsent.id
 
+describe('server/domain/consents/{ID}', (): void => {
   beforeAll((): void => {
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
@@ -168,18 +174,7 @@ describe('server/domain/consents/{ID}', (): void => {
     mockScopeDbRetrieveAll.mockResolvedValue(retrievedScopes)
     mockPutConsentsOutbound.mockResolvedValue(undefined)
     mockConvertScopesToExternal.mockReturnValue(externalScopes)
-
-    /* Setting the attributes according to the incoming request */
-    // @ts-ignore
-    const requestPayloadCredential = request.payload.credential
-    id = request.params.id
-    signature = requestPayloadCredential.challenge.signature
-    publicKey = requestPayloadCredential.payload
-    challenge = requestPayloadCredential.challenge.payload
-    credentialStatus = requestPayloadCredential.status
-
-    // @ts-ignore
-    request[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
+    mockConsentDbUpdate.mockResolvedValue(2)
   })
 
   beforeEach((): void => {
@@ -204,7 +199,7 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should throw IncorrectStatusError if retrieved consent has REVOKED status',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(retrievedConsentRevoked)
-        await expect(retrieveValidConsent(id, challenge)).rejects.toThrow(new IncorrectStatusError(id))
+        await expect(retrieveValidConsent(id, challenge)).rejects.toThrow(new IncorrectCredentialStatusError(id))
 
         expect(mockConsentDbRetrieve).toBeCalledWith(id)
       })
@@ -219,71 +214,96 @@ describe('server/domain/consents/{ID}', (): void => {
   })
 
   describe('checkCredentialStatus', (): void => {
+    it('should return nothing if credential status is ACTIVE',
+      (): void => {
+        expect(checkCredentialStatus('ACTIVE', consentId)).toBeUndefined()
+      })
 
+    it('should propagate IncorrectCredentialStatusError if credential status is not ACTIVE',
+      (): void => {
+        expect((): void => { checkCredentialStatus('ACTIVE', consentId) })
+          .toThrow(new IncorrectCredentialStatusError(consentId))
+      })
   })
 
   describe('updateConsentCredential', (): void => {
+    it('should update a consent with valid credentials without any errors',
+      async (): Promise<void> => {
+        const update = await updateConsentCredential(retrievedConsent, credentialActive)
 
+        expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
+        expect(update).toBe(2)
+      })
+
+    it('should propagate error in consentDB update',
+      async (): Promise<void> => {
+        mockConsentDbUpdate.mockRejectedValueOnce(new Error('ConsentDB Error'))
+        await expect(updateConsentCredential(retrievedConsent, credentialActive))
+          .rejects
+          .toThrowError('ConsentDB Error')
+
+        expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
+      })
+
+    it('should throw error if credential payload undefined',
+      async (): Promise<void> => {
+        // Make Credential Payload undefined
+        retrievedConsent.credentialPayload = undefined
+
+        await expect(updateConsentCredential(retrievedConsent, credentialActive))
+          .rejects
+          .toThrow('Payload not given')
+
+        expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
+
+        // Reset payload
+        retrievedConsent.credentialPayload = 'string_representing_credential_payload'
+      })
+
+    it('should throw error if credential payload empty string',
+      async (): Promise<void> => {
+        // Make Credential Payload undefined
+        retrievedConsent.credentialPayload = ''
+
+        await expect(updateConsentCredential(retrievedConsent, credentialActive))
+          .rejects
+          .toThrow('Payload not given')
+
+        expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
+
+        // Reset payload
+        retrievedConsent.credentialPayload = 'string_representing_credential_payload'
+      })
   })
 
   describe('buildConsentRequestBody', (): void => {
+    // it('should make the outbound call to PUT /consents/{ID} successfuly.', async (): Promise<void> => {
+    //   const returnedValue = await putConsents(retrievedConsent, signature, publicKey, request)
+    //   expect(returnedValue).toBe(undefined)
 
-  })
+    //   expect(mockScopeDbRetrieveAll).toBeCalledWith(id)
+    //   expect(mockConvertScopesToExternal).toBeCalledWith(retrievedScopes)
 
-  describe('putConsents', (): void => {
-
-  })
-
-  it('should validate the credential status without any errors', async (): Promise<void> => {
-    const returnedCheckedStatus = checkCredentialStatus(credentialStatus, id)
-    expect(returnedCheckedStatus).toBe(undefined)
-  })
-
-  it('should make the outbound call to PUT /consents/{ID} successfuly.', async (): Promise<void> => {
-    const returnedValue = await putConsents(retrievedConsent, signature, publicKey, request)
-    expect(returnedValue).toBe(undefined)
-
-    expect(mockScopeDbRetrieveAll).toBeCalledWith(id)
-    expect(mockConvertScopesToExternal).toBeCalledWith(retrievedScopes)
-
-    /* Mock the outgoing consentBody */
-    const consentBody: PutConsentsRequest = {
-      requestId: retrievedConsent.id,
-      initiatorId: retrievedConsent.initiatorId as string,
-      participantId: retrievedConsent.participantId as string,
-      scopes: externalScopes,
-      credential: {
-        id: retrievedConsent.credentialId as string,
-        credentialType: 'FIDO',
-        status: 'ACTIVE',
-        challenge: {
-          payload: retrievedConsent.credentialChallenge as string,
-          signature: signature as string
-        },
-        payload: publicKey as string
-      }
-    }
-    /* Mock the outgoing destination participant id */
-    const destParticipantId = request.headers['fspiop-source']
-    expect(mockPutConsentsOutbound).toBeCalledWith(id, consentBody, destParticipantId)
-  })
-
-  /* We define all the negative test cases. */
-  it('should throw an Incorrect Challenge error when credentialChallenge != requestChallenge', async (): Promise<void> => {
-    const err: IncorrectChallengeError = new IncorrectChallengeError(id)
-
-    expect(async (): Promise<Consent> => {
-      return await retrieveValidConsent(id, 'different_challenge_string')
-    }).rejects.toThrow(err)
-
-    expect(mockConsentDbRetrieve).toBeCalledWith(id)
-  })
-
-  it('should throw an Incorrect Status error when credentialStatus != PENDING', async (): Promise<void> => {
-    const err: IncorrectStatusError = new IncorrectStatusError(id)
-
-    expect(async (): Promise<void> => {
-      return checkCredentialStatus('ACTIVE', id)
-    }).rejects.toThrow(err)
+    //   /* Mock the outgoing consentBody */
+    //   const consentBody: PutConsentsRequest = {
+    //     requestId: retrievedConsent.id,
+    //     initiatorId: retrievedConsent.initiatorId as string,
+    //     participantId: retrievedConsent.participantId as string,
+    //     scopes: externalScopes,
+    //     credential: {
+    //       id: retrievedConsent.credentialId as string,
+    //       credentialType: 'FIDO',
+    //       status: 'ACTIVE',
+    //       challenge: {
+    //         payload: retrievedConsent.credentialChallenge as string,
+    //         signature: signature as string
+    //       },
+    //       payload: publicKey as string
+    //     }
+    //   }
+    //   /* Mock the outgoing destination participant id */
+    //   const destParticipantId = request.headers['fspiop-source']
+    //   expect(mockPutConsentsOutbound).toBeCalledWith(id, consentBody, destParticipantId)
+    // })
   })
 })
