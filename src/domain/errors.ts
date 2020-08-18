@@ -41,7 +41,6 @@ export class IncorrectCredentialStatusError extends Error {
   }
 }
 
-
 export class IncorrectConsentStatusError extends Error {
   public consentId: string
 
