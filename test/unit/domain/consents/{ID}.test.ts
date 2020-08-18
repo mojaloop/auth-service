@@ -216,27 +216,21 @@ describe('server/domain/consents/{ID}', (): void => {
 
         expect(mockConsentDbRetrieve).toBeCalledWith(id)
       })
-  
-
   })
 
   describe('checkCredentialStatus', (): void => {
-  
 
   })
 
   describe('updateConsentCredential', (): void => {
-  
 
   })
 
   describe('buildConsentRequestBody', (): void => {
-  
 
   })
 
   describe('putConsents', (): void => {
-  
 
   })
 
