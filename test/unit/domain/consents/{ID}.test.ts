@@ -27,15 +27,15 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB, scopeDB } from '../../../../src/lib/db'
+import { consentDB, scopeDB } from '~/lib/db'
 import Logger from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, checkCredentialStatus, putConsents } from '../../../../src/domain/consents/consents'
-import { Consent } from '../../../../src/model/consent'
-import { thirdPartyRequest } from '../../../../src/lib/requests'
-import * as Scopes from '../../../../src/lib/scopes'
+import { retrieveValidConsent, checkCredentialStatus, putConsents } from '~/domain/consents/{ID}'
+import { Consent } from '~/model/consent'
+import { thirdPartyRequest } from '~/lib/requests'
+import * as Scopes from '~/lib/scopes'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { Enum } from '@mojaloop/central-services-shared'
-import { IncorrectChallengeError, IncorrectStatusError } from '../../../../src/domain/errors'
+import { IncorrectChallengeError, IncorrectStatusError } from '~/domain/errors'
 
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -87,6 +87,7 @@ const request: Request = {
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pispa',
   participantId: 'sfsfdf23',
   credentialId: '9876',

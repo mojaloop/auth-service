@@ -27,13 +27,13 @@
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import put, { retrieveUpdateAndPutConsent } from '../../../../../src/server/handlers/consents/{ID}'
-import * as Domain from '../../../../../src/domain/consents/consents'
-import { IncorrectChallengeError, IncorrectStatusError } from '../../../../../src/domain/errors'
-import { NotFoundError } from '../../../../../src/model/errors'
-import * as Signature from '../../../../../src/lib/challenge'
+import put, { retrieveUpdateAndPutConsent } from '~/server/handlers/consents/{ID}'
+import * as Domain from '~/domain/consents/{ID}'
+import { IncorrectChallengeError, IncorrectStatusError } from '~/domain/errors'
+import { NotFoundError } from '~/model/errors'
+import * as Signature from '~/lib/challenge'
 import Logger from '@mojaloop/central-services-logger'
-import { Consent } from '../../../../../src/model/consent'
+import { Consent } from '~/model/consent'
 
 const mockRetrieveValidConsent = jest.spyOn(Domain, 'retrieveValidConsent')
 const mockCheckCredentialStatus = jest.spyOn(Domain, 'checkCredentialStatus')
@@ -86,6 +86,7 @@ const request: Request = {
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pispa',
   participantId: 'sfsfdf23',
   credentialId: '9876',

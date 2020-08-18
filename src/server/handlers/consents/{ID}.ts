@@ -28,12 +28,12 @@
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Consent } from '../../../model/consent'
+import { Consent } from '~/model/consent'
 import { Logger } from '@mojaloop/central-services-logger'
-import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '../../../domain/consents/consents'
-import { IncorrectChallengeError, IncorrectStatusError } from '../../../domain/errors'
-import { verifySignature } from '../../../lib/challenge'
-import { NotFoundError } from '../../../model/errors'
+import { retrieveValidConsent, updateConsentCredential, putConsents, ConsentCredential, checkCredentialStatus } from '~/domain/consents/{ID}'
+import { IncorrectChallengeError, IncorrectStatusError } from '~/domain/errors'
+import { verifySignature } from '~/lib/challenge'
+import { NotFoundError } from '~/model/errors'
 import { Enum } from '@mojaloop/central-services-shared'
 
 export async function retrieveUpdateAndPutConsent (id: string, challenge: string,
