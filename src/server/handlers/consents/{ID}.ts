@@ -99,7 +99,7 @@ export async function retrieveUpdateAndPutConsent (
   }
 }
 
-export default async function put (
+export async function put (
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
