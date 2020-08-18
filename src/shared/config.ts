@@ -32,6 +32,7 @@
 // import rc from 'rc'
 // import parse from 'parse-strings-in-object'
 // import Config from '../../config/default.json'
+import Convict from 'convict'
 import PACKAGE from '../../package.json'
 
 interface DbConnection {
@@ -60,21 +61,21 @@ export interface ServiceConfig {
   HOST: string;
   PARTICIPANT_ID: string;
 
-  DATABASE?: {
+  DATABASE: {
     client: string;
     version?: string;
     useNullAsDefault?: boolean;
     connection: DbConnection | string;
     pool?: DbPool;
 
-    migrations?: {
+    migrations: {
       directory: string;
       tableName: string;
-      stub: string;
+      stub?: string;
       loadExtensions: string[];
     };
 
-    seeds?: {
+    seeds: {
       directory: string;
       loadExtensions: string[];
     };
@@ -87,8 +88,156 @@ export interface ServiceConfig {
   };
 }
 
-// const RC = parse(rc('AS', Config)) as ServiceConfig
+export const ConvictConfig = Convict<ServiceConfig>({
+  ENV: {
+    doc: 'The application environment.',
+    format: ['production', 'development', 'test'],
+    default: 'test',
+    env: 'NODE_ENV'
+  },
+  HOST: {
+    doc: 'The Hostname/IP address to bind.',
+    format: '*',
+    default: '0.0.0.0',
+    env: 'HOST',
+    arg: 'host'
+  },
+  PORT: {
+    doc: 'The port to bind.',
+    format: 'port',
+    default: 8080,
+    env: 'PORT',
+    arg: 'port'
+  },
+  PARTICIPANT_ID: {
+    doc: 'Service ID for the Mojaloop network.',
+    format: String,
+    default: 'auth-service',
+    env: 'PARTICIPANT_ID',
+    arg: 'participantId'
+  },
+  DATABASE: {
+    client: {
+      doc: 'Database client name.',
+      format: String,
+      default: 'sqlite3'
+    },
+    connection: {
+      doc: 'DB Connection Config.',
+      // Check object properties????
+      format: function check (val: string | object): void {
+        if (typeof val !== 'string' && typeof val !== 'object') {
+          throw new TypeError('Not a string or object')
+        }
+      },
+      default: ':memory:'
+    },
+    migrations: {
+      directory: {
+        doc: 'Migrations directory path.',
+        format: String,
+        default: ''
+      },
+      tableName: {
+        doc: 'Migrations table name.',
+        format: String,
+        default: 'auth-service'
+      },
+      loadExtensions: {
+        doc: 'File Extension for migrations.',
+        format: Array,
+        default: ['.ts']
+      }
+    },
+    seeds: {
+      directory: {
+        doc: 'Seeds directory path.',
+        format: String,
+        default: ''
+      },
+      loadExtensions: {
+        doc: 'File Extension for seeds.',
+        format: Array, // Check array elements?
+        default: ['.ts']
+      }
+    }
+  },
+  INSPECT: {
+    DEPTH: {
+      doc: 'Inspection depth',
+      format: 'nat',
+      env: 'INSPECT_DEPTH',
+      default: 4
+    },
+    SHOW_HIDDEN: {
+      doc: 'Show hidden properties',
+      format: 'Boolean',
+      default: false
+    },
+    COLOR: {
+      doc: 'Show colors in output',
+      format: 'Boolean',
+      default: true
+    }
+  }
+})
 
+// **************************************
+// What to do about optional properties or props with multiple types or
+// optional objects?
+// **************************************
+
+// Remove Knex file???????????????????/
+
+// Load environment dependent configuration
+const env = ConvictConfig.get('ENV')
+
+ConvictConfig.loadFile(`${__dirname}/../../config/${env}.json`)
+
+// Perform configuration validation
+ConvictConfig.validate({ allowed: 'strict' })
+
+// **************************************
+// Extract optional properties or props with multiple types?
+// **************************************
+
+// Extract simplified config from Convict object
+const config: ServiceConfig = {
+  ENV: ConvictConfig.get('ENV'),
+  PORT: ConvictConfig.get('PORT'),
+  HOST: ConvictConfig.get('HOST'),
+  PARTICIPANT_ID: ConvictConfig.get('PARTICIPANT_ID'),
+
+  DATABASE: {
+    client: ConvictConfig.get('client'),
+    version: '?????', // optional
+    useNullAsDefault: true, // optional
+    connection: ConvictConfig.get('DATABASE.connection'), // check this object?
+    pool: {} as unknown as DbPool, // optional
+
+    migrations: {
+      directory: ConvictConfig.get('DATABASE.migrations.directory'),
+      tableName: ConvictConfig.get('DATABASE.migrations.tableName'),
+      stub: 'wwww', // Optional
+      loadExtensions: ConvictConfig.get('DATABASE.migrations.loadExtensions')
+    },
+
+    seeds: {
+      directory: ConvictConfig.get('DATABASE.seeds.directory'),
+      loadExtensions: ConvictConfig.get('DATABASE.seeds.loadExtensions')
+    }
+  },
+
+  INSPECT: {
+    DEPTH: ConvictConfig.get('INSPECT.DEPTH'),
+    SHOW_HIDDEN: ConvictConfig.get('INSPECT.SHOW_HIDDEN'),
+    COLOR: ConvictConfig.get('INSPECT.COLOR')
+  }
+}
+
+// initialize paths here?
+
+export default config
 export {
   PACKAGE
 }
