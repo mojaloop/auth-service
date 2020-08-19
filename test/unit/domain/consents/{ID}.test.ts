@@ -23,6 +23,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta@google.com>
  --------------
  ******/
@@ -31,7 +32,6 @@ import { consentDB, scopeDB } from '~/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import {
   retrieveValidConsent,
-  checkCredentialStatus,
   updateConsentCredential,
   buildConsentRequestBody
 } from '~/domain/consents/{ID}'
@@ -41,7 +41,6 @@ import * as Scopes from '~/lib/scopes'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   IncorrectChallengeError,
-  IncorrectCredentialStatusError,
   IncorrectConsentStatusError
 } from '~/domain/errors'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
@@ -271,19 +270,6 @@ describe('server/domain/consents/{ID}', (): void => {
           .toThrow(new IncorrectChallengeError(consentId))
 
         expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
-      })
-  })
-
-  describe('checkCredentialStatus', (): void => {
-    it('should return nothing if credential status is VERIFIED',
-      (): void => {
-        expect(checkCredentialStatus('VERIFIED', consentId)).toBeUndefined()
-      })
-
-    it('should propagate IncorrectCredentialStatusError if credential status is not ACTIVE',
-      (): void => {
-        expect((): void => { checkCredentialStatus('PENDING', consentId) })
-          .toThrow(new IncorrectCredentialStatusError(consentId))
       })
   })
 

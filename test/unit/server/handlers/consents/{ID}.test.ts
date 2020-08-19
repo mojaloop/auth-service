@@ -23,6 +23,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta@google.com>
  --------------
  ******/
@@ -32,7 +33,6 @@ import * as Handler from '~/server/handlers/consents/{ID}'
 import * as Domain from '~/domain/consents/{ID}'
 import {
   IncorrectChallengeError,
-  IncorrectCredentialStatusError,
   IncorrectConsentStatusError
 } from '~/domain/errors'
 import { NotFoundError } from '~/model/errors'
@@ -46,7 +46,6 @@ import { thirdPartyRequest } from '~/lib/requests'
 
 const mockRetrieveValidConsent = jest.spyOn(Domain, 'retrieveValidConsent')
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
-const mockCheckCredentialStatus = jest.spyOn(Domain, 'checkCredentialStatus')
 const mockUpdateConsentCredential = jest.spyOn(Domain, 'updateConsentCredential')
 const mockBuildConsentRequestBody = jest.spyOn(Domain, 'buildConsentRequestBody')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -121,6 +120,8 @@ const h: ResponseToolkit = {
 
 // Mock Variables from Request Payload
 const consentId = request.params.id
+const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+const credentialRequest = request.payload as Handler.UpdateCredentialRequest
 
 const {
   credential: {
@@ -129,8 +130,7 @@ const {
       payload: challenge
     },
     payload: publicKey,
-    id: requestCredentialId,
-    status: credentialStatus
+    id: requestCredentialId
   }
 } = request.payload as Handler.UpdateCredentialRequest
 
@@ -139,15 +139,6 @@ const credentialVerified: ConsentCredential = {
   credentialType: 'FIDO',
   credentialId: requestCredentialId,
   credentialStatus: CredentialStatusEnum.VERIFIED,
-  credentialPayload: publicKey,
-  credentialChallenge: challenge
-}
-
-/* Mock the ConsentCredential Value. */
-const credentialPending: ConsentCredential = {
-  credentialType: 'FIDO',
-  credentialId: requestCredentialId,
-  credentialStatus: CredentialStatusEnum.PENDING,
   credentialPayload: publicKey,
   credentialChallenge: challenge
 }
@@ -184,7 +175,6 @@ const requestBody: SDKStandardComponents.PutConsentsRequest = {
 describe('server/handler/consents/{ID}', (): void => {
   beforeAll((): void => {
     mockRetrieveValidConsent.mockResolvedValue(retrievedConsent)
-    mockCheckCredentialStatus.mockReturnValue()
     mockPutConsents.mockResolvedValue(1 as unknown as SDKStandardComponents.GenericRequestResponse)
     mockUpdateConsentCredential.mockResolvedValue(0)
     mockBuildConsentRequestBody.mockResolvedValue(requestBody)
@@ -200,12 +190,11 @@ describe('server/handler/consents/{ID}', (): void => {
   describe('validateAndUpdateConsent', (): void => {
     it('should resolve successfully with no errors',
       async (): Promise<void> => {
-        await expect(Handler.validateAndUpdateConsent(request))
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId))
           .resolves
           .toBeUndefined()
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
@@ -221,13 +210,12 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectChallengeError(consentId))
 
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
         expect(mockLoggerPush).toBeCalledWith(new IncorrectChallengeError(consentId))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
 
         expect(mockVerifySignature).not.toHaveBeenCalled()
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -239,13 +227,12 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectConsentStatusError(consentId))
 
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
         expect(mockLoggerPush).toBeCalledWith(new IncorrectConsentStatusError(consentId))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
 
         expect(mockVerifySignature).not.toHaveBeenCalled()
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -257,34 +244,12 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new NotFoundError('Consent', consentId))
 
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
         expect(mockLoggerPush).toBeCalledWith(new NotFoundError('Consent', consentId))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).not.toHaveBeenCalled()
-
-        expect(mockVerifySignature).not.toHaveBeenCalled()
-        expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
-        expect(mockBuildConsentRequestBody).not.toHaveBeenCalled()
-        expect(mockPutConsents).not.toHaveBeenCalled()
-      })
-
-    it('should log checkCredentialStatus IncorrectCredentialStatusError',
-      async (): Promise<void> => {
-        mockCheckCredentialStatus.mockImplementationOnce(
-          (_credentialStatus: string, consentId: string): void => {
-            throw new IncorrectCredentialStatusError(consentId)
-          })
-
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
-
-        expect(mockLoggerPush).toBeCalledWith(new IncorrectCredentialStatusError(consentId))
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
-
-        expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialPending.credentialStatus, consentId)
 
         expect(mockVerifySignature).not.toHaveBeenCalled()
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -296,13 +261,12 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockVerifySignature.mockReturnValueOnce(false)
 
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
         expect(mockLoggerPush).toBeCalledWith(Error('Invalid challenge'))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -314,13 +278,12 @@ describe('server/handler/consents/{ID}', (): void => {
         const err: NotFoundError = new NotFoundError('Consent', consentId)
         mockUpdateConsentCredential.mockRejectedValueOnce(err)
 
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
         expect(mockLoggerPush).toBeCalledWith(err)
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
@@ -333,13 +296,12 @@ describe('server/handler/consents/{ID}', (): void => {
         const err: Error = new Error('error thrown')
         mockPutConsents.mockRejectedValueOnce(err)
 
-        await expect(Handler.validateAndUpdateConsent(request)).resolves.toBeUndefined()
+        await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
         expect(mockLoggerPush).toBeCalledWith(err)
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
-        expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
         expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
@@ -358,7 +320,6 @@ describe('server/handler/consents/{ID}', (): void => {
     it('should return a 202 success code.', async (): Promise<void> => {
       const response = await Handler.put(request as Request, h)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-      // expect(mockvalidateAndUpdateConsent).toHaveBeenCalledWith(request)
     })
   })
 })

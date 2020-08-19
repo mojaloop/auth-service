@@ -44,7 +44,6 @@ import { thirdPartyRequest } from '~/lib/requests'
 import {
   retrieveValidConsent,
   updateConsentCredential,
-  checkCredentialStatus,
   buildConsentRequestBody
 } from '~/domain/consents/{ID}'
 import { verifySignature } from '~/lib/challenge'
@@ -64,7 +63,10 @@ export interface UpdateCredentialRequest {
   };
 }
 
-export async function validateAndUpdateConsent(consentId: string, request: UpdateCredentialRequest, destinationParticipantId: string): Promise<void> {
+export async function validateAndUpdateConsent (
+  consentId: string,
+  request: UpdateCredentialRequest,
+  destinationParticipantId: string): Promise<void> {
   const {
     credential: {
       challenge: {
@@ -72,7 +74,7 @@ export async function validateAndUpdateConsent(consentId: string, request: Updat
         payload: challenge
       },
       payload: publicKey,
-      id: requestCredentialId,
+      id: requestCredentialId
     }
   } = request
 

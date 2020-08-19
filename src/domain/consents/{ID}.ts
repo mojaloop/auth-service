@@ -40,7 +40,6 @@ import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
 import {
   IncorrectChallengeError,
-  IncorrectCredentialStatusError,
   IncorrectConsentStatusError
 } from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
@@ -59,14 +58,6 @@ export async function retrieveValidConsent (
     throw new IncorrectChallengeError(consentId)
   }
   return consent
-}
-
-export function checkCredentialStatus (
-  credentialStatus: string,
-  consentId: string): void {
-  if (credentialStatus !== CredentialStatusEnum.VERIFIED) {
-    throw new IncorrectCredentialStatusError(consentId)
-  }
 }
 
 /*
