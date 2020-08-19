@@ -730,9 +730,9 @@
       "type": "string",
       "enum": [
         "PENDING",
-        "ACTIVE"
+        "VERIFIED"
       ],
-      "description": "The status of the Credential's creation\n- \"PENDING\" - The PISP has requested a challenge, or the challenge has initialized but not yet answered by the PISP\n- \"ACTIVE\" - The Credential is valid, and ready to be used by the PISP\n"
+      "description": "The status of the Credential's creation\n- \"PENDING\" - The PISP has requested a challenge, or the challenge has initialized but not yet answered by the PISP\n- \"VERIFIED\" - The Credential is valid, and ready to be used by the PISP\n"
     },
     "CredentialTypeEnum": {
       "title": "CredentialTypeEnum",
