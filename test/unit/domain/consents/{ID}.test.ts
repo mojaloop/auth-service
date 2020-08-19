@@ -45,7 +45,7 @@ import {
   IncorrectConsentStatusError
 } from '~/domain/errors'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
-import { InboundPutConsentRequest } from '~/server/handlers/consents/{ID}'
+import { UpdateCredentialRequest } from '~/server/handlers/consents/{ID}'
 import { Scope } from '~/model/scope'
 
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -165,7 +165,7 @@ const {
     payload: publicKey,
     id: requestCredentialId
   }
-} = request.payload as InboundPutConsentRequest
+} = request.payload as UpdateCredentialRequest
 
 /* TODO, fill out later. */
 /* Mock the converted scope value. */

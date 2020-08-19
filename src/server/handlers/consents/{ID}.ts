@@ -51,13 +51,12 @@ import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 
-export interface InboundPutConsentRequest {
+export interface UpdateCredentialRequest {
   credential: {
     id: string;
     payload: string;
-    // TODO: should this be an enum? Or a string constant?
-    // Maybe we should leave it as a string as we're checking against an enum?
-    status: string;
+    // When Updating the credential, only a status of `PENDING` is allowed
+    status: CredentialStatusEnum.PENDING;
     challenge: {
       signature: string;
       payload: string;
@@ -65,10 +64,7 @@ export interface InboundPutConsentRequest {
   };
 }
 
-export async function retrieveUpdateAndPutConsent (
-  request: Request): Promise<void> {
-  const id = request.params.id
-
+export async function validateAndUpdateConsent(consentId: string, request: UpdateCredentialRequest, destinationParticipantId: string): Promise<void> {
   const {
     credential: {
       challenge: {
@@ -77,15 +73,11 @@ export async function retrieveUpdateAndPutConsent (
       },
       payload: publicKey,
       id: requestCredentialId,
-      status: credentialStatus
     }
-  } = request.payload as InboundPutConsentRequest
+  } = request
 
   try {
-    const consent: Consent = await retrieveValidConsent(id, challenge)
-    /* Checks if incoming credential status is of the correct form */
-    checkCredentialStatus(credentialStatus, id)
-
+    const consent: Consent = await retrieveValidConsent(consentId, challenge)
     const verifyResult = verifySignature(challenge, signature, publicKey)
     if (!verifyResult) {
       // TODO: domain specific error
@@ -107,10 +99,9 @@ export async function retrieveUpdateAndPutConsent (
       .putConsents(
         consent.id,
         consentBody,
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        destinationParticipantId
       )
   } catch (error) {
-    // TODO: common outbound call here
     Logger.push(error)
     Logger.error('Error: Outgoing PUT consents/{ID} call not made')
     /* TODO, make outbound call to PUT consents/{ID}/error
@@ -118,10 +109,14 @@ export async function retrieveUpdateAndPutConsent (
   }
 }
 
-export async function put (
-  request: Request,
-  h: ResponseToolkit): Promise<ResponseObject> {
+export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  const id = request.params.id
+  const updateConsentRequest = request.payload as UpdateCredentialRequest
+  // The DFSP we need to reply to
+  const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+
   // Note: not awaiting promise here
-  retrieveUpdateAndPutConsent(request)
+  validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
+
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
