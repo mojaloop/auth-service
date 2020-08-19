@@ -26,7 +26,6 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request } from '@hapi/hapi'
 import { consentDB } from '~/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
@@ -39,44 +38,6 @@ import { Consent } from '~/model/consent'
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: null
-  }
-}
-
-// @ts-ignore
-const requestNoHeaders: Request = {
-  params: {
-    id: '1234'
-  }
-}
 
 /*
  * Mock Consent Resources
@@ -183,30 +144,34 @@ describe('server/domain/consents/revoke', (): void => {
   })
 
   describe('generatePatchRevokedConsentRequest', (): void => {
-    it('Should return correct request body', (): void => {
-      expect(generatePatchRevokedConsentRequest(completeConsentRevoked))
-        .toStrictEqual(requestBody)
-    })
+    it('Should return correct request body when complete consent given',
+      (): void => {
+        expect(generatePatchRevokedConsentRequest(completeConsentRevoked))
+          .toStrictEqual(requestBody)
+      })
 
-    it('Should also return correct request body', async (): Promise<void> => {
-      expect(generatePatchRevokedConsentRequest(partialConsentRevoked))
-        .toStrictEqual(requestBody)
-    })
+    it('Should return correct request body even if partial consent given',
+      (): void => {
+        expect(generatePatchRevokedConsentRequest(partialConsentRevoked))
+          .toStrictEqual(requestBody)
+      })
 
-    it('Should throw an error as consent is null value', (): void => {
-      expect((): void => {
-        generatePatchRevokedConsentRequest(
-          null as unknown as Consent)
-      }).toThrow()
-    })
+    it('Should throw an error as consent is null value',
+      (): void => {
+        expect((): void => {
+          generatePatchRevokedConsentRequest(
+            null as unknown as Consent)
+        }).toThrow()
+      })
 
-    it('Should throw an error as consent is ACTIVE', (): void => {
+    it('Should throw an error as consent is ACTIVE',
+      (): void => {
       // Reset Consent Status
-      completeConsentActive.status = 'ACTIVE'
+        completeConsentActive.status = 'ACTIVE'
 
-      expect((): void => {
-        generatePatchRevokedConsentRequest(completeConsentActive)
-      }).toThrowError('Attempting to generate request for non-revoked consent!')
-    })
+        expect((): void => {
+          generatePatchRevokedConsentRequest(completeConsentActive)
+        }).toThrowError('Attempting to generate request for non-revoked consent!')
+      })
   })
 })
