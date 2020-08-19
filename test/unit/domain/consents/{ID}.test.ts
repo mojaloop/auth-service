@@ -368,7 +368,6 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should promulgate scope conversion error.',
       async (): Promise<void> => {
         mockConvertScopesToExternal.mockImplementationOnce(
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           (_scopes: Scope[]): Scopes.ExternalScope[] => {
             throw new Error('Test')
           })
