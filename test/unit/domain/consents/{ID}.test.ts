@@ -32,6 +32,7 @@ import Logger from '@mojaloop/central-services-logger'
 import {
   retrieveValidConsent,
   checkCredentialStatus,
+  updateConsentCredential,
   buildConsentRequestBody
 } from '~/domain/consents/{ID}'
 import { Consent } from '~/model/consent'
@@ -40,10 +41,10 @@ import * as Scopes from '~/lib/scopes'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   IncorrectChallengeError,
-  IncorrectCredentialStatusError
+  IncorrectCredentialStatusError,
+  IncorrectConsentStatusError
 } from '~/domain/errors'
-import { updateConsentCredential } from '~/domain/consents/generateChallenge'
-import { CredentialStatusEnum } from '~/model/consent/consent'
+import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 import { InboundPutConsentRequest } from '~/server/handlers/consents/{ID}'
 import { Scope } from '~/model/scope'
 
@@ -123,7 +124,7 @@ const retrievedConsentRevoked: Consent = {
 
 const retrievedConsentWrongChallenge: Consent = {
   id: '1234',
-  status: 'REVOKED',
+  status: 'ACTIVE',
   initiatorId: 'pispa',
   participantId: 'sfsfdf23',
   credentialId: '9876',
@@ -162,8 +163,7 @@ const {
       payload: challenge
     },
     payload: publicKey,
-    id: requestCredentialId,
-    status: credentialStatus
+    id: requestCredentialId
   }
 } = request.payload as InboundPutConsentRequest
 
@@ -180,7 +180,29 @@ const externalScopes: Scopes.ExternalScope[] = [
   }
 ]
 
+/* Mock the ConsentCredential Value. */
+const credentialActive: ConsentCredential = {
+  credentialType: 'FIDO',
+  credentialId: requestCredentialId,
+  credentialStatus: CredentialStatusEnum.ACTIVE,
+  credentialPayload: publicKey,
+  credentialChallenge: challenge
+}
+
 const consentId = retrievedConsent.id
+
+/* Mock the retrieved consent value. */
+const updatedConsent: Consent = {
+  id: '1234',
+  status: 'ACTIVE',
+  initiatorId: 'pispa',
+  participantId: 'sfsfdf23',
+  credentialId: '9876',
+  credentialType: 'FIDO',
+  credentialStatus: 'ACTIVE',
+  credentialPayload: publicKey,
+  credentialChallenge: 'string_representing_challenge_payload'
+}
 
 // Mock Outgoing Request Body
 const requestBody: SDKStandardComponents.PutConsentsRequest = {
@@ -218,33 +240,37 @@ describe('server/domain/consents/{ID}', (): void => {
 
   describe('retrieveValidConsent', (): void => {
     it('should retrieve a valid consent without any errors', async (): Promise<void> => {
-      const returnedConsent: Consent = await retrieveValidConsent(id, challenge)
+      const returnedConsent: Consent = await retrieveValidConsent(consentId, challenge)
 
       expect(returnedConsent).toStrictEqual(retrievedConsent)
-      expect(mockConsentDbRetrieve).toBeCalledWith(id)
+      expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
     })
 
     it('should propagate error in consent retrieval', async (): Promise<void> => {
       mockConsentDbRetrieve.mockRejectedValueOnce(new Error('ConsentDB Error'))
-      await expect(retrieveValidConsent(id, challenge)).rejects.toThrowError('ConsentDB Error')
+      await expect(retrieveValidConsent(consentId, challenge)).rejects.toThrowError('ConsentDB Error')
 
-      expect(mockConsentDbRetrieve).toBeCalledWith(id)
+      expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
     })
 
     it('should throw IncorrectStatusError if retrieved consent has REVOKED status',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(retrievedConsentRevoked)
-        await expect(retrieveValidConsent(id, challenge)).rejects.toThrow(new IncorrectCredentialStatusError(id))
+        await expect(retrieveValidConsent(consentId, challenge))
+          .rejects
+          .toThrow(new IncorrectConsentStatusError(consentId))
 
-        expect(mockConsentDbRetrieve).toBeCalledWith(id)
+        expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
       })
 
     it('should throw IncorrectChallengeError if mismatch between retrieved consent challenge and request credential challenge',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(retrievedConsentWrongChallenge)
-        await expect(retrieveValidConsent(id, challenge)).rejects.toThrow(new IncorrectChallengeError(id))
+        await expect(retrieveValidConsent(consentId, challenge))
+          .rejects
+          .toThrow(new IncorrectChallengeError(consentId))
 
-        expect(mockConsentDbRetrieve).toBeCalledWith(id)
+        expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
       })
   })
 
@@ -256,12 +282,19 @@ describe('server/domain/consents/{ID}', (): void => {
 
     it('should propagate IncorrectCredentialStatusError if credential status is not ACTIVE',
       (): void => {
-        expect((): void => { checkCredentialStatus('ACTIVE', consentId) })
+        expect((): void => { checkCredentialStatus('PENDING', consentId) })
           .toThrow(new IncorrectCredentialStatusError(consentId))
       })
   })
 
   describe('updateConsentCredential', (): void => {
+    afterEach((): void => {
+      // Reset Consent Object
+      retrievedConsent.credentialId = '9876'
+      retrievedConsent.credentialStatus = 'PENDING'
+      retrievedConsent.credentialPayload = 'string_representing_credential_payload'
+    })
+
     it('should update a consent with valid credentials without any errors',
       async (): Promise<void> => {
         const update = await updateConsentCredential(retrievedConsent, credentialActive)
@@ -283,28 +316,28 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should throw error if credential payload undefined',
       async (): Promise<void> => {
         // Make Credential Payload undefined
-        retrievedConsent.credentialPayload = undefined
+        credentialActive.credentialPayload = null
 
         await expect(updateConsentCredential(retrievedConsent, credentialActive))
           .rejects
           .toThrow('Payload not given')
 
-        expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
+        expect(mockConsentDbUpdate).not.toBeCalled()
 
         // Reset payload
-        retrievedConsent.credentialPayload = 'string_representing_credential_payload'
+        credentialActive.credentialPayload = 'string_representing_credential_payload'
       })
 
     it('should throw error if credential payload empty string',
       async (): Promise<void> => {
         // Make Credential Payload undefined
-        retrievedConsent.credentialPayload = ''
+        credentialActive.credentialPayload = ''
 
         await expect(updateConsentCredential(retrievedConsent, credentialActive))
           .rejects
           .toThrow('Payload not given')
 
-        expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
+        expect(mockConsentDbUpdate).not.toBeCalled()
 
         // Reset payload
         retrievedConsent.credentialPayload = 'string_representing_credential_payload'
@@ -335,7 +368,8 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should promulgate scope conversion error.',
       async (): Promise<void> => {
         mockConvertScopesToExternal.mockImplementationOnce(
-          (scopes: Scope[]): Scopes.ExternalScope[] => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          (_scopes: Scope[]): Scopes.ExternalScope[] => {
             throw new Error('Test')
           })
         await expect(buildConsentRequestBody(retrievedConsent, signature, publicKey))
