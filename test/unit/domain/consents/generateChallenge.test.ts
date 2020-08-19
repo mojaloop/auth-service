@@ -38,6 +38,7 @@ import {
   updateConsentCredential,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
+import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 
 // Declaring Mock Functions
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
@@ -85,9 +86,9 @@ const completeConsent: Consent = {
   credentialChallenge: 'xyhdushsoa82w92mzs='
 }
 
-const credential = {
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
+const credential: ConsentCredential = {
+  credentialType: 'FIDO' as 'FIDO',
+  credentialStatus: CredentialStatusEnum.PENDING,
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: null
 }

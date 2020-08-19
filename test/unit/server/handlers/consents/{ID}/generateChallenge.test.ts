@@ -43,6 +43,7 @@ import { thirdPartyRequest } from '~/lib/requests'
 import SDKStandardComponents, {
   GenericRequestResponse
 } from '@mojaloop/sdk-standard-components'
+import { CredentialStatusEnum } from '~/model/consent/consent'
 
 // Declaring Mocks
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
@@ -126,8 +127,8 @@ const completeConsentRevoked: Consent = {
 }
 
 const credential: ConsentCredential = {
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
+  credentialType: 'FIDO' as 'FIDO',
+  credentialStatus: CredentialStatusEnum.PENDING,
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: null
 }
