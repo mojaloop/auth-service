@@ -38,7 +38,7 @@
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent, ConsentCredential } from '~/model/consent'
-import { Logger } from '@mojaloop/central-services-logger'
+import Logger from '@mojaloop/central-services-logger'
 import * as SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '~/lib/requests'
 import {
