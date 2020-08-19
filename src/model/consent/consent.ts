@@ -67,7 +67,7 @@ export interface Consent {
  */
 
 export enum CredentialStatusEnum {
-  ACTIVE = 'ACTIVE',
+  VERIFIED = 'VERIFIED',
   PENDING = 'PENDING',
 }
 

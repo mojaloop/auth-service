@@ -181,10 +181,10 @@ const externalScopes: Scopes.ExternalScope[] = [
 ]
 
 /* Mock the ConsentCredential Value. */
-const credentialActive: ConsentCredential = {
+const credentialVerified: ConsentCredential = {
   credentialType: 'FIDO',
   credentialId: requestCredentialId,
-  credentialStatus: CredentialStatusEnum.ACTIVE,
+  credentialStatus: CredentialStatusEnum.VERIFIED,
   credentialPayload: publicKey,
   credentialChallenge: challenge
 }
@@ -199,7 +199,7 @@ const updatedConsent: Consent = {
   participantId: 'sfsfdf23',
   credentialId: '9876',
   credentialType: 'FIDO',
-  credentialStatus: 'ACTIVE',
+  credentialStatus: CredentialStatusEnum.VERIFIED,
   credentialPayload: publicKey,
   credentialChallenge: 'string_representing_challenge_payload'
 }
@@ -213,7 +213,7 @@ const requestBody: SDKStandardComponents.PutConsentsRequest = {
   credential: {
     id: requestCredentialId,
     credentialType: 'FIDO',
-    status: CredentialStatusEnum.ACTIVE,
+    status: CredentialStatusEnum.VERIFIED,
     challenge: {
       payload: retrievedConsent.credentialChallenge as string,
       signature
@@ -275,9 +275,9 @@ describe('server/domain/consents/{ID}', (): void => {
   })
 
   describe('checkCredentialStatus', (): void => {
-    it('should return nothing if credential status is ACTIVE',
+    it('should return nothing if credential status is VERIFIED',
       (): void => {
-        expect(checkCredentialStatus('ACTIVE', consentId)).toBeUndefined()
+        expect(checkCredentialStatus('VERIFIED', consentId)).toBeUndefined()
       })
 
     it('should propagate IncorrectCredentialStatusError if credential status is not ACTIVE',
@@ -297,7 +297,7 @@ describe('server/domain/consents/{ID}', (): void => {
 
     it('should update a consent with valid credentials without any errors',
       async (): Promise<void> => {
-        const update = await updateConsentCredential(retrievedConsent, credentialActive)
+        const update = await updateConsentCredential(retrievedConsent, credentialVerified)
 
         expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
         expect(update).toBe(2)
@@ -306,7 +306,7 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should propagate error in consentDB update',
       async (): Promise<void> => {
         mockConsentDbUpdate.mockRejectedValueOnce(new Error('ConsentDB Error'))
-        await expect(updateConsentCredential(retrievedConsent, credentialActive))
+        await expect(updateConsentCredential(retrievedConsent, credentialVerified))
           .rejects
           .toThrowError('ConsentDB Error')
 
@@ -316,24 +316,24 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should throw error if credential payload undefined',
       async (): Promise<void> => {
         // Make Credential Payload undefined
-        credentialActive.credentialPayload = null
+        credentialVerified.credentialPayload = null
 
-        await expect(updateConsentCredential(retrievedConsent, credentialActive))
+        await expect(updateConsentCredential(retrievedConsent, credentialVerified))
           .rejects
           .toThrow('Payload not given')
 
         expect(mockConsentDbUpdate).not.toBeCalled()
 
         // Reset payload
-        credentialActive.credentialPayload = 'string_representing_credential_payload'
+        credentialVerified.credentialPayload = 'string_representing_credential_payload'
       })
 
     it('should throw error if credential payload empty string',
       async (): Promise<void> => {
         // Make Credential Payload undefined
-        credentialActive.credentialPayload = ''
+        credentialVerified.credentialPayload = ''
 
-        await expect(updateConsentCredential(retrievedConsent, credentialActive))
+        await expect(updateConsentCredential(retrievedConsent, credentialVerified))
           .rejects
           .toThrow('Payload not given')
 

@@ -64,7 +64,7 @@ export async function retrieveValidConsent (
 export function checkCredentialStatus (
   credentialStatus: string,
   consentId: string): void {
-  if (credentialStatus !== CredentialStatusEnum.ACTIVE) {
+  if (credentialStatus !== CredentialStatusEnum.VERIFIED) {
     throw new IncorrectCredentialStatusError(consentId)
   }
 }
@@ -102,7 +102,7 @@ export async function buildConsentRequestBody (
     credential: {
       id: consent.credentialId as string,
       credentialType: 'FIDO',
-      status: CredentialStatusEnum.ACTIVE,
+      status: CredentialStatusEnum.VERIFIED,
       challenge: {
         payload: consent.credentialChallenge as string,
         signature: signature

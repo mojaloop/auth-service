@@ -135,10 +135,10 @@ const {
 } = request.payload as Handler.InboundPutConsentRequest
 
 /* Mock the ConsentCredential Value. */
-const credentialActive: ConsentCredential = {
+const credentialVerified: ConsentCredential = {
   credentialType: 'FIDO',
   credentialId: requestCredentialId,
-  credentialStatus: CredentialStatusEnum.ACTIVE,
+  credentialStatus: CredentialStatusEnum.VERIFIED,
   credentialPayload: publicKey,
   credentialChallenge: challenge
 }
@@ -172,7 +172,7 @@ const requestBody: SDKStandardComponents.PutConsentsRequest = {
   credential: {
     id: requestCredentialId,
     credentialType: 'FIDO',
-    status: CredentialStatusEnum.ACTIVE,
+    status: CredentialStatusEnum.VERIFIED,
     challenge: {
       payload: retrievedConsent.credentialChallenge as string,
       signature
@@ -208,7 +208,7 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialActive)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
         expect(mockBuildConsentRequestBody).toHaveBeenCalledWith(retrievedConsent, signature, publicKey)
         expect(mockPutConsents).toHaveBeenCalledWith(
           consentId, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
@@ -323,7 +323,7 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialActive)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
         expect(mockBuildConsentRequestBody).not.toHaveBeenCalled()
         expect(mockPutConsents).not.toHaveBeenCalled()
       })
@@ -342,7 +342,7 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockCheckCredentialStatus).toHaveBeenCalledWith(credentialStatus, consentId)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialActive)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
         expect(mockBuildConsentRequestBody).toHaveBeenCalledWith(retrievedConsent, signature, publicKey)
         expect(mockPutConsents).toHaveBeenCalledWith(
           consentId, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])

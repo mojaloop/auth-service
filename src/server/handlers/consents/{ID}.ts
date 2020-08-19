@@ -96,7 +96,7 @@ export async function retrieveUpdateAndPutConsent (
       credentialType: 'FIDO',
       credentialChallenge: challenge,
       credentialId: requestCredentialId,
-      credentialStatus: CredentialStatusEnum.ACTIVE,
+      credentialStatus: CredentialStatusEnum.VERIFIED,
       credentialPayload: publicKey
     }
     await updateConsentCredential(consent, credential)
