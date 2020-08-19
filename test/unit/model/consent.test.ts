@@ -293,7 +293,7 @@ describe('src/model/consent', (): void => {
           .rejects.toThrowError(NotFoundError)
       })
 
-    it('inserts consent, updates it to revoke it but then does not update a REVOKED consent',
+    it('inserts consent, updates it to REVOKE status and then fails to update a REVOKED consent',
       async (): Promise<void> => {
         // Action
         await Db<Consent>('Consent').del()

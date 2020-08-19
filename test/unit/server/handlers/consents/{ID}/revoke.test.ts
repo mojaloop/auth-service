@@ -145,7 +145,7 @@ describe('server/handlers/consents', (): void => {
   })
 
   describe('validateRequestAndRevokeConsent', (): void => {
-    it('Should finish with no errors',
+    it('Should resolve successfully with no errors',
       async (): Promise<void> => {
         await expect(Handler.validateRequestAndRevokeConsent(request))
           .resolves.toBe(undefined)
@@ -163,7 +163,7 @@ describe('server/handlers/consents', (): void => {
           )
       })
 
-    it('Should also resolve with no errors',
+    it('Should also resolve with no errors if consent retrieved is already revoked',
       async (): Promise<void> => {
         mockConsentRetrieve.mockResolvedValueOnce(completeConsentRevoked)
         mockRevokeConsentStatus.mockResolvedValueOnce(completeConsentRevoked)
@@ -198,7 +198,7 @@ describe('server/handlers/consents', (): void => {
         expect(mockPatchConsents).not.toBeCalled()
       })
 
-    it('Should throw an error due to invalid request',
+    it('Should throw an error if request is invalid',
       async (): Promise<void> => {
         mockIsConsentRequestValid.mockReturnValueOnce(false)
         await expect(Handler.validateRequestAndRevokeConsent(request))
