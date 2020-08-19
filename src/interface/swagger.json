@@ -649,7 +649,6 @@
       },
       "required": [
         "id",
-        "status",
         "scopes",
         "participantId",
         "initiatorId",

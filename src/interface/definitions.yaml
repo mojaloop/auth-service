@@ -60,7 +60,6 @@ Consent:
       $ref: '#/definitions/Credential'
   required:
     - id
-    - status
     - scopes
     - participantId
     - initiatorId
