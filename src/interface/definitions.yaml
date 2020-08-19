@@ -50,9 +50,7 @@ Consent:
       allOf:
         - $ref: '#/definitions/FspId'
       description: PISP identifier who uses this Consent
-    status: 
-      $ref: '#/definitions/ConsentStatusEnum'
-    revokedAt: 
+    revokedAt:
       $ref: '#/definitions/ConsentRevokedAt'
     scopes:
       type: array
@@ -60,12 +58,42 @@ Consent:
         $ref: '#/definitions/Scope'
     credential:
       $ref: '#/definitions/Credential'
-  required: 
+  required:
     - id
     - status
     - scopes
     - participantId
     - initiatorId
+    - credential
+
+UpdateConsentRequest:
+  title: UpdateConsentRequest
+  type: object
+  description: Data model for the complex type Consent
+  properties:
+    requestId:
+      allOf:
+        - $ref: '#/definitions/CorrelationId'
+      description: >
+        The id of the ConsentRequest that was used to initiate the
+        creation of this Consent
+    participantId:
+      $ref: '#/definitions/FspId'
+    initiatorId:
+      allOf:
+        - $ref: '#/definitions/FspId'
+      description: PISP identifier who uses this Consent
+    scopes:
+      type: array
+      items:
+        $ref: '#/definitions/Scope'
+    credential:
+      $ref: '#/definitions/UpdateCredentialRequest'
+  required:
+    - requestId
+    - participantId
+    - initiatorId
+    - scopes
     - credential
 
 ConsentStatusEnum:
@@ -107,6 +135,40 @@ Credential:
     - id
     - type
     - status
+
+# UpdateCredentialRequest is a special formatting of the credential to allow us to be
+# more explict about the `status` field - it should only ever be PENDING when updating
+# a credential
+UpdateCredentialRequest:
+  title: UpdateCredentialRequest
+  type: object
+  description: >
+    A credential used to allow a user to prove their identity and access to an account with a DFSP
+  properties:
+    id:
+      type: string
+      description: The id of a Credential
+    type:
+      $ref: '#/definitions/CredentialTypeEnum'
+    status:
+      title: CredentialStatus
+      type: string
+      enum:
+        - PENDING
+      description: |
+        The status of the Credential's creation
+        - "PENDING" - The PISP has requested a challenge, or the challenge has initialized but not yet answered by the auth-service
+    challenge:
+      $ref: '#/definitions/CredentialChallenge'
+    payload:
+      type: string
+      description: Base64 encoded bytes - The public key of the Public/Private keypair
+  required:
+    - id
+    - type
+    - status
+    - challenge
+    - payload
 
  # TODO: update me to be an empty body!
 GenerateChallengeRequest:
@@ -173,7 +235,7 @@ ThirdPartyAuthorizationRequest:
   type: object
   description: The Request object for verifying an authorization
   properties:
-    challenge: 
+    challenge:
       type: string
       description: The original Challenge (Quote response) object as a UTF-8 JSON string (Normalization Form C)
     value:
@@ -201,7 +263,7 @@ ThirdPartyAuthorizationRequest:
     - status
 
 
-# TODO: 
+# TODO:
 # replace with references to api-snippets, once api-snippets has Swagger 2.0 support
 BinaryString:
   description: 'The API data type BinaryString is a JSON String. The string is a base64url  encoding of a string of raw bytes, where padding (character ‘=’) is added at the end of the data if needed to ensure that the string is a multiple of 4 characters. The length restriction indicates the allowed number of characters.'
