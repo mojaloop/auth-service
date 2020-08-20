@@ -33,8 +33,8 @@ import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
-  completeConsentActive, externalScopes, request,
-  credential, partialConsentActive
+  externalScopes, request,
+  credential, partialConsentActive, completeConsentActiveNoCredentialID
 } from '../../data/data'
 import {
   updateConsentCredential,
@@ -48,15 +48,15 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 
 const putConsentRequestBody: PutConsentsRequest = {
   requestId: '1234',
-  initiatorId: completeConsentActive.initiatorId as string,
-  participantId: completeConsentActive.participantId as string,
+  initiatorId: completeConsentActiveNoCredentialID.initiatorId as string,
+  participantId: completeConsentActiveNoCredentialID.participantId as string,
   scopes: externalScopes,
   credential: {
     id: null,
     credentialType: 'FIDO',
     status: 'PENDING',
     challenge: {
-      payload: completeConsentActive.credentialChallenge as string,
+      payload: completeConsentActiveNoCredentialID.credentialChallenge as string,
       signature: null
     },
     payload: null
@@ -82,8 +82,8 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
       const updatedConsent = await updateConsentCredential(
         partialConsentActive, credential)
 
-      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActive)
-      expect(updatedConsent).toEqual(completeConsentActive)
+      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
+      expect(updatedConsent).toEqual(completeConsentActiveNoCredentialID)
     })
 
     // eslint-disable-next-line max-len
@@ -95,7 +95,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
         .rejects
         .toThrowError('Error updating Database')
 
-      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActive)
+      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
     })
   })
 
@@ -107,7 +107,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     })
 
     it('Should resolve successfully', async (): Promise<void> => {
-      expect(await generatePutConsentsRequest(completeConsentActive, externalScopes))
+      expect(await generatePutConsentsRequest(completeConsentActiveNoCredentialID, externalScopes))
         .toStrictEqual(putConsentRequestBody)
     })
 
