@@ -127,7 +127,7 @@ const completeConsentRevoked: Consent = {
 }
 
 const credential: ConsentCredential = {
-  credentialType: 'FIDO' as 'FIDO',
+  credentialType: 'FIDO',
   credentialStatus: CredentialStatusEnum.PENDING,
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: null
