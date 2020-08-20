@@ -27,13 +27,15 @@
 
  --------------
  ******/
-import { Request } from '@hapi/hapi'
 import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { ExternalScope } from '~/lib/scopes'
+import {
+  completeConsentActive, externalScopes, request,
+  credential, partialConsentActive
+} from '../../data/data'
 import {
   updateConsentCredential,
   generatePutConsentsRequest
@@ -44,77 +46,17 @@ const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  }
-}
-
-// @ts-ignore
-const requestNoHeaders: Request = {
-  params: {
-    id: '1234'
-  }
-}
-
-/*
- * Mock Consent Resources
- */
-const partialConsent: Consent = {
-  id: '1234',
-  status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123'
-}
-
-const completeConsent: Consent = {
-  id: '1234',
-  status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
-const credential = {
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs=',
-  credentialPayload: null
-}
-
-// const challenge = 'xyhdushsoa82w92mzs='
-
-const externalScopes: ExternalScope[] = [{
-  accountId: 'as2342',
-  actions: ['account.getAccess', 'account.transferMoney']
-},
-{
-  accountId: 'as22',
-  actions: ['account.getAccess']
-}
-]
-
 const putConsentRequestBody: PutConsentsRequest = {
   requestId: '1234',
-  initiatorId: completeConsent.initiatorId as string,
-  participantId: completeConsent.participantId as string,
+  initiatorId: completeConsentActive.initiatorId as string,
+  participantId: completeConsentActive.participantId as string,
   scopes: externalScopes,
   credential: {
     id: null,
     credentialType: 'FIDO',
     status: 'PENDING',
     challenge: {
-      payload: completeConsent.credentialChallenge as string,
+      payload: completeConsentActive.credentialChallenge as string,
       signature: null
     },
     payload: null
@@ -133,15 +75,15 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
   // Tests for updateConsentCredential
   describe('Updating Consent', (): void => {
-  // eslint-disable-next-line max-len
+    // eslint-disable-next-line max-len
     it('Should return a consent object with filled out credentials', async (): Promise<void> => {
       mockConsentDbUpdate.mockResolvedValueOnce(3)
 
       const updatedConsent = await updateConsentCredential(
-        partialConsent, credential)
+        partialConsentActive, credential)
 
-      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
-      expect(updatedConsent).toEqual(completeConsent)
+      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActive)
+      expect(updatedConsent).toEqual(completeConsentActive)
     })
 
     // eslint-disable-next-line max-len
@@ -149,11 +91,11 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
       mockConsentDbUpdate.mockRejectedValue(
         new Error('Error updating Database'))
 
-      await expect(updateConsentCredential(partialConsent, credential))
+      await expect(updateConsentCredential(partialConsentActive, credential))
         .rejects
         .toThrowError('Error updating Database')
 
-      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsent)
+      expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActive)
     })
   })
 
@@ -165,7 +107,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     })
 
     it('Should resolve successfully', async (): Promise<void> => {
-      expect(await generatePutConsentsRequest(completeConsent, externalScopes))
+      expect(await generatePutConsentsRequest(completeConsentActive, externalScopes))
         .toStrictEqual(putConsentRequestBody)
     })
 

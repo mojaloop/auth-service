@@ -34,61 +34,18 @@ import {
   revokeConsentStatus
 } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
+import {
+  partialConsentActive, completeConsentActive, completeConsentRevoked,
+  partialConsentRevoked, partialConsentActiveConflictingInitiatorId
+} from 'test/unit/data/data'
 
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
-/*
- * Mock Consent Resources
- */
-const partialConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'ACTIVE'
-}
-
-const partialConsentActive2: Consent = {
-  id: '1234',
-  initiatorId: 'pi2-2233',
-  participantId: 'dfs333-2123',
-  status: 'ACTIVE'
-}
-
-const partialConsentRevoked: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  revokedAt: 'now',
-  status: 'REVOKED'
-}
-
-const completeConsentRevoked: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'REVOKED',
-  revokedAt: 'now',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
-const completeConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  credentialId: '123',
-  credentialType: 'FIDO',
-  status: 'ACTIVE',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
 const requestBody: SDKStandardComponents.PatchConsentsRequest = {
   status: 'REVOKED',
-  revokedAt: 'now'
+  revokedAt: '2020-08-19T05:44:18.843Z'
 
 }
 
@@ -132,7 +89,7 @@ describe('server/domain/consents/revoke', (): void => {
       async (): Promise<void> => {
         const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
         expect(revokedConsent).toStrictEqual(completeConsentRevoked)
-        expect(mockLoggerPush).toHaveBeenCalled()
+        expect(mockLoggerPush).toHaveBeenCalledWith('Previously revoked consent was asked to be revoked')
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
@@ -153,7 +110,7 @@ describe('server/domain/consents/revoke', (): void => {
       async (): Promise<void> => {
         mockConsentUpdate.mockRejectedValue(new Error('Test Error'))
 
-        await expect(revokeConsentStatus(partialConsentActive2))
+        await expect(revokeConsentStatus(partialConsentActiveConflictingInitiatorId))
           .rejects
           .toThrowError('Test Error')
 

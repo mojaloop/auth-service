@@ -27,12 +27,12 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '~/lib/db'
 import { createAndStoreConsent } from '~/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
 import * as ScopeFunction from '~/lib/scopes'
+import { requestWithPayloadScopes } from '../data/data'
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
@@ -41,34 +41,6 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
 const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    participantId: 'auth121',
-    initiatorId: 'pispa',
-    scopes: [{
-      accountId: 'as2342',
-      actions: ['account.getAccess', 'account.transferMoney']
-    },
-    {
-      accountId: 'as22',
-      actions: ['account.getAccess']
-    }
-    ]
-  }
-}
 
 const consent = {
   id: '1234',
@@ -121,7 +93,9 @@ describe('server/domain/consents', (): void => {
   })
 
   it('Should return nothing and no errors thrown', async (): Promise<void> => {
-    await expect(createAndStoreConsent(request)).resolves.toBe(undefined)
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .resolves
+      .toBe(undefined)
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
@@ -130,7 +104,9 @@ describe('server/domain/consents', (): void => {
 
   it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
     mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
-    await expect(createAndStoreConsent(request)).rejects.toThrowError('Unable to Register Consent')
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .rejects
+      .toThrowError('Unable to Register Consent')
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)
@@ -139,7 +115,9 @@ describe('server/domain/consents', (): void => {
 
   it('Should throw an error due to error in registering Scopes', async (): Promise<void> => {
     mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
-    await expect(createAndStoreConsent(request)).rejects.toThrowError('Unable to Register Scopes')
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .rejects
+      .toThrowError('Unable to Register Scopes')
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(consent)

@@ -26,57 +26,17 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseToolkit } from '@hapi/hapi'
+import { Enum } from '@mojaloop/central-services-shared'
 import { post } from '~/server/handlers/consents'
 import * as Domain from '~/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
+import { requestWithPayloadScopes, h } from 'test/unit/data/data'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
 const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: null
-  }
-}
-
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
@@ -95,12 +55,12 @@ describe('server/handlers/consents', (): void => {
   it('Should return 202 success code',
     async (): Promise<void> => {
       const response = await post(
-        request as Request,
+        requestWithPayloadScopes as Request,
         h as ResponseToolkit
       )
-      expect(response).toBe(202)
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       jest.runAllImmediates()
-      expect(mockStoreConsent).toHaveBeenCalledWith(request)
+      expect(mockStoreConsent).toHaveBeenCalledWith(requestWithPayloadScopes)
       expect(setImmediate).toHaveBeenCalled()
     })
 
@@ -109,11 +69,11 @@ describe('server/handlers/consents', (): void => {
       mockIsPostRequestValid.mockReturnValueOnce(false)
 
       const response = await post(
-        request as Request,
+        requestWithPayloadScopes as Request,
         h as ResponseToolkit
       )
-      expect(response).toBe(400)
-      expect(mockIsPostRequestValid).toHaveBeenCalledWith(request)
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      expect(mockIsPostRequestValid).toHaveBeenCalledWith(requestWithPayloadScopes)
 
       expect(setImmediate).not.toHaveBeenCalled()
       expect(mockStoreConsent).not.toHaveBeenCalled()
@@ -124,12 +84,12 @@ describe('server/handlers/consents', (): void => {
       mockStoreConsent.mockRejectedValueOnce(
         new Error('Error Registering Consent'))
 
-      const response = await post(request as Request, h as ResponseToolkit)
-      expect(response).toBe(202)
+      const response = await post(requestWithPayloadScopes as Request, h as ResponseToolkit)
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       jest.runAllImmediates()
 
       expect(setImmediate).toHaveBeenCalled()
-      expect(mockStoreConsent).toHaveBeenLastCalledWith(request)
+      expect(mockStoreConsent).toHaveBeenLastCalledWith(requestWithPayloadScopes)
       expect(mockStoreConsent).not.toHaveLastReturnedWith('')
     })
 })
