@@ -18,6 +18,31 @@ export const request: Request = {
 }
 
 // @ts-ignore
+export const requestWithPayloadScopes: Request = {
+  headers: {
+    fspiopsource: 'pisp-2342-2233',
+    fspiopdestination: 'dfsp-3333-2123'
+  },
+  params: {
+    id: '1234'
+  },
+  payload: {
+    id: '1234',
+    participantId: 'auth121',
+    initiatorId: 'pispa',
+    scopes: [{
+      accountId: 'as2342',
+      actions: ['account.getAccess', 'account.transferMoney']
+    },
+    {
+      accountId: 'as22',
+      actions: ['account.getAccess']
+    }
+    ]
+  }
+}
+
+// @ts-ignore
 export const requestNoHeaders: Request = {
   params: {
     id: '1234'
@@ -58,7 +83,7 @@ export const partialConsentRevoked: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
-  revokedAt: 'now',
+  revokedAt: '2020-08-19T05:44:18.843Z',
   status: 'REVOKED'
 }
 
@@ -67,7 +92,7 @@ export const completeConsentRevoked: Consent = {
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   status: 'REVOKED',
-  revokedAt: 'now',
+  revokedAt: '2020-08-19T05:44:18.843Z',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs='
@@ -107,7 +132,7 @@ export const externalScopes: ExternalScope[] = [{
 }
 ]
 
-const scopes: Scope[] = [{
+export const scopes: Scope[] = [{
   id: 123234,
   consentId: '1234',
   accountId: 'as2342',
