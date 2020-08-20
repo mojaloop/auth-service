@@ -41,7 +41,8 @@ import * as Scopes from '~/lib/scopes'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   IncorrectChallengeError,
-  IncorrectConsentStatusError
+  IncorrectConsentStatusError,
+  EmptyCredentialPayloadError
 } from '~/domain/errors'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 import { UpdateCredentialRequest } from '~/server/handlers/consents/{ID}'
@@ -306,7 +307,7 @@ describe('server/domain/consents/{ID}', (): void => {
 
         await expect(updateConsentCredential(retrievedConsent, credentialVerified))
           .rejects
-          .toThrow('Payload not given')
+          .toThrow(new EmptyCredentialPayloadError(consentId))
 
         expect(mockConsentDbUpdate).not.toBeCalled()
 
@@ -321,7 +322,7 @@ describe('server/domain/consents/{ID}', (): void => {
 
         await expect(updateConsentCredential(retrievedConsent, credentialVerified))
           .rejects
-          .toThrow('Payload not given')
+          .toThrow(new EmptyCredentialPayloadError(consentId))
 
         expect(mockConsentDbUpdate).not.toBeCalled()
 

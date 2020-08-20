@@ -263,7 +263,7 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(Error('Invalid challenge'))
+        expect(mockLoggerPush).toBeCalledWith(new IncorrectChallengeError(consentId))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)

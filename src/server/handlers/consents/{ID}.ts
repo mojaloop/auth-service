@@ -49,6 +49,7 @@ import {
 import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import { IncorrectChallengeError } from '~/domain/errors'
 
 export interface UpdateCredentialRequest {
   credential: {
@@ -82,8 +83,7 @@ export async function validateAndUpdateConsent (
     const consent: Consent = await retrieveValidConsent(consentId, challenge)
     const verifyResult = verifySignature(challenge, signature, publicKey)
     if (!verifyResult) {
-      // TODO: domain specific error
-      throw new Error('Invalid challenge')
+      throw new IncorrectChallengeError(consentId)
     }
 
     const credential: ConsentCredential = {

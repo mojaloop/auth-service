@@ -40,7 +40,8 @@ import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
 import {
   IncorrectChallengeError,
-  IncorrectConsentStatusError
+  IncorrectConsentStatusError,
+  EmptyCredentialPayloadError
 } from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { ExternalScope, convertScopesToExternal } from '~/lib/scopes'
@@ -68,7 +69,7 @@ export async function updateConsentCredential (
   consent: Consent,
   credential: ConsentCredential): Promise<number> {
   if (!credential.credentialPayload || credential.credentialPayload === '') {
-    throw new Error('Payload not given')
+    throw new EmptyCredentialPayloadError(consent.id)
   }
   consent.credentialId = credential.credentialId
   consent.credentialStatus = credential.credentialStatus

@@ -49,3 +49,12 @@ export class IncorrectConsentStatusError extends Error {
     this.consentId = consentId
   }
 }
+
+export class EmptyCredentialPayloadError extends Error {
+  public consentId: string
+
+  public constructor (consentId: string) {
+    super(`Credential Payload not provided for ${consentId}`)
+    this.consentId = consentId
+  }
+}
