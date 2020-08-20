@@ -72,7 +72,7 @@ describe('server/handlers/consents', (): void => {
         requestWithPayloadScopes as Request,
         h as ResponseToolkit
       )
-      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.BADREQUEST.CODE)
       expect(mockIsPostRequestValid).toHaveBeenCalledWith(requestWithPayloadScopes)
 
       expect(setImmediate).not.toHaveBeenCalled()
