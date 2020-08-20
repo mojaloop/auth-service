@@ -111,6 +111,9 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.revokedAt).toBeDefined()
         expect(mockConsentUpdate).toHaveBeenCalled()
         expect(mockLoggerPush).not.toHaveBeenCalled()
+
+        // Reset Consent Status
+        partialConsentActive.status = 'ACTIVE'
       })
 
     it('Should return a revoked consent if given complete (with credentials) consent',
@@ -120,6 +123,9 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.revokedAt).toBeDefined()
         expect(mockConsentUpdate).toHaveBeenCalled()
         expect(mockLoggerPush).not.toHaveBeenCalled()
+
+        // Reset Consent Status
+        completeConsentActive.status = 'ACTIVE'
       })
 
     it('Should return the consent object without performing any operations, if already revoked',
@@ -127,6 +133,19 @@ describe('server/domain/consents/revoke', (): void => {
         const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
         expect(revokedConsent).toStrictEqual(completeConsentRevoked)
         expect(mockLoggerPush).toHaveBeenCalled()
+        expect(mockConsentUpdate).not.toHaveBeenCalled()
+      })
+
+    it('Should throw an error for invalid consent status and not perform update',
+      async (): Promise<void> => {
+        // Set Consent Status
+        completeConsentActive.status = 'RANDOM'
+
+        await expect(revokeConsentStatus(completeConsentActive))
+          .rejects
+          .toThrowError('Invalid Consent Status')
+
+        expect(mockLoggerPush).toHaveBeenCalledWith('Invalid Consent Status')
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
@@ -166,12 +185,25 @@ describe('server/domain/consents/revoke', (): void => {
 
     it('Should throw an error as consent is ACTIVE',
       (): void => {
-      // Reset Consent Status
+        expect((): void => {
+          generatePatchRevokedConsentRequest(completeConsentActive)
+        }).toThrowError('Attempting to generate request for non-revoked consent!')
+
+        // Reset Consent Status
         completeConsentActive.status = 'ACTIVE'
+      })
+
+    it('Should throw an error as consent is not a valid status',
+      (): void => {
+        // Set Consent Status
+        completeConsentActive.status = 'RANDOM'
 
         expect((): void => {
           generatePatchRevokedConsentRequest(completeConsentActive)
         }).toThrowError('Attempting to generate request for non-revoked consent!')
+
+        // Reset Consent Status
+        completeConsentActive.status = 'ACTIVE'
       })
   })
 })
