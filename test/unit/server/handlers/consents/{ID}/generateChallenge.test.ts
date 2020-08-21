@@ -117,7 +117,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
           )
       })
 
-    it('Should finish without any errors, NOT generating challenge or updating credentials, and making outgoing call',
+    it('Should resolve successfully, not generating challenge, not updating credentials, and making outgoing call',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentActive)
         await expect(Handler.generateChallengeAndPutConsent(request, completeConsentActive.id)).resolves.toBeUndefined()
@@ -138,7 +138,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
       })
 
-    it('Should throw an error due revoked consent', async (): Promise<void> => {
+    it('Should throw an error due to revoked consent', async (): Promise<void> => {
       mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentRevoked)
       await expect(Handler.generateChallengeAndPutConsent(request, completeConsentRevoked.id))
         .rejects.toThrowError('Revoked Consent')
@@ -156,7 +156,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsents).not.toHaveBeenCalled()
     })
 
-    it('Should throw an error due to error retrieving consent from database', async (): Promise<void> => {
+    it('Should propagate error in retrieving consent from database', async (): Promise<void> => {
       mockConsentDbRetrieve.mockRejectedValueOnce(new Error('Error retrieving consent'))
 
       await expect(Handler.generateChallengeAndPutConsent(request, partialConsentActive.id))
@@ -175,7 +175,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsents).not.toHaveBeenCalled()
     })
 
-    it('Should throw an error due to invalid request from database', async (): Promise<void> => {
+    it('Should throw an error due to invalid request', async (): Promise<void> => {
       mockIsConsentRequestValid.mockReturnValueOnce(false)
 
       await expect(Handler.generateChallengeAndPutConsent(request, partialConsentActive.id))
@@ -194,7 +194,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsents).not.toHaveBeenCalled()
     })
 
-    it('Should throw an error due to error updating credentials in database', async (): Promise<void> => {
+    it('Should propagate error in updating credentials in database', async (): Promise<void> => {
       mockUpdateConsentCredential.mockRejectedValueOnce(new Error('Error updating db'))
 
       await expect(Handler.generateChallengeAndPutConsent(request, partialConsentActive.id))
@@ -213,7 +213,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsents).not.toHaveBeenCalled()
     })
 
-    it('Should throw an error due to error in challenge generation', async (): Promise<void> => {
+    it('Should propagate error in challenge generation', async (): Promise<void> => {
       mockGenerate.mockRejectedValueOnce(new Error('Error generating challenge'))
 
       await expect(Handler.generateChallengeAndPutConsent(request, partialConsentActive.id))
@@ -232,7 +232,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockPutConsents).not.toHaveBeenCalled()
     })
 
-    it('Should throw an error due to error in PUT consents/{id}',
+    it('Should propagate error in making outgoing PUT consents/{id}',
       async (): Promise<void> => {
         mockPutConsents.mockRejectedValueOnce(new Error('Could not establish connection'))
 
@@ -255,7 +255,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
           )
       })
 
-    it('Should throw an error due to error in generating PUT request body',
+    it('Should propagate error in generating PUT request body',
       async (): Promise<void> => {
         mockGeneratePutConsentsRequest.mockRejectedValueOnce(new Error('Test'))
 
@@ -274,7 +274,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockPutConsents).not.toHaveBeenCalled()
       })
 
-    it('Should log an error due to ACTIVE credential in consent',
+    it('Should throw an error due to ACTIVE credential in consent',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(completeConsentActiveCredential)
         await expect(Handler.generateChallengeAndPutConsent(

@@ -50,7 +50,7 @@ const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
-const consentId = '1234'
+const consentId = partialConsentActive.id
 
 const requestBody: SDKStandardComponents.PatchConsentsRequest = {
   status: 'REVOKED',
@@ -93,7 +93,7 @@ describe('server/handlers/consents', (): void => {
           )
       })
 
-    it('Should also resolve with no errors if consent retrieved is already revoked',
+    it('Should also resolve successfully even if consent retrieved is already revoked',
       async (): Promise<void> => {
         mockConsentRetrieve.mockResolvedValueOnce(completeConsentRevoked)
         mockRevokeConsentStatus.mockResolvedValueOnce(completeConsentRevoked)

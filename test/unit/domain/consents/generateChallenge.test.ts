@@ -74,7 +74,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   })
 
   // Tests for updateConsentCredential
-  describe('Updating Consent', (): void => {
+  describe('Updating Consent successfully', (): void => {
     // eslint-disable-next-line max-len
     it('Should return a consent object with filled out credentials', async (): Promise<void> => {
       mockConsentDbUpdate.mockResolvedValueOnce(3)
@@ -87,7 +87,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
     })
 
     // eslint-disable-next-line max-len
-    it('Should throw an error due to an error updating credentials', async (): Promise<void> => {
+    it('Should propagate error in updating credentials in database', async (): Promise<void> => {
       mockConsentDbUpdate.mockRejectedValue(
         new Error('Error updating Database'))
 
