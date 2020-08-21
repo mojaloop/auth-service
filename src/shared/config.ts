@@ -28,9 +28,6 @@
  --------------
  ******/
 
-// import rc from 'rc'
-// import parse from 'parse-strings-in-object'
-// import Config from '../../config/default.json'
 import Convict from 'convict'
 import PACKAGE from '../../package.json'
 import path from 'path'
