@@ -28,8 +28,8 @@ export const requestWithPayloadScopes: Request = {
   },
   payload: {
     id: '1234',
-    participantId: 'auth121',
-    initiatorId: 'pispa',
+    participantId: 'dfsp-3333-2123',
+    initiatorId: 'pisp-2342-2233',
     scopes: [{
       accountId: 'as2342',
       actions: ['account.getAccess', 'account.transferMoney']
