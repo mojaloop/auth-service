@@ -26,7 +26,6 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request } from '@hapi/hapi'
 import { consentDB } from '~/lib/db'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
@@ -35,99 +34,18 @@ import {
   revokeConsentStatus
 } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
+import {
+  partialConsentActive, completeConsentActive, completeConsentRevoked,
+  partialConsentRevoked, partialConsentActiveConflictingInitiatorId
+} from 'test/unit/data/data'
 
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: null
-  }
-}
-
-// @ts-ignore
-const requestNoHeaders: Request = {
-  params: {
-    id: '1234'
-  }
-}
-
-/*
- * Mock Consent Resources
- */
-const partialConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'ACTIVE'
-}
-
-const partialConsentActive2: Consent = {
-  id: '1234',
-  initiatorId: 'pi2-2233',
-  participantId: 'dfs333-2123',
-  status: 'ACTIVE'
-}
-
-const partialConsentRevoked: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  revokedAt: 'now',
-  status: 'REVOKED'
-}
-
-const completeConsentRevoked: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'REVOKED',
-  revokedAt: 'now',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
-const completeConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  credentialId: '123',
-  credentialType: 'FIDO',
-  status: 'ACTIVE',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
 const requestBody: SDKStandardComponents.PatchConsentsRequest = {
   status: 'REVOKED',
-  revokedAt: 'now'
+  revokedAt: '2020-08-19T05:44:18.843Z'
 
 }
 
@@ -150,6 +68,9 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.revokedAt).toBeDefined()
         expect(mockConsentUpdate).toHaveBeenCalled()
         expect(mockLoggerPush).not.toHaveBeenCalled()
+
+        // Reset Consent Status
+        partialConsentActive.status = 'ACTIVE'
       })
 
     it('Should return a revoked consent if given complete (with credentials) consent',
@@ -159,13 +80,29 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.revokedAt).toBeDefined()
         expect(mockConsentUpdate).toHaveBeenCalled()
         expect(mockLoggerPush).not.toHaveBeenCalled()
+
+        // Reset Consent Status
+        completeConsentActive.status = 'ACTIVE'
       })
 
     it('Should return the consent object without performing any operations, if already revoked',
       async (): Promise<void> => {
         const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
         expect(revokedConsent).toStrictEqual(completeConsentRevoked)
-        expect(mockLoggerPush).toHaveBeenCalled()
+        expect(mockLoggerPush).toHaveBeenCalledWith('Previously revoked consent was asked to be revoked')
+        expect(mockConsentUpdate).not.toHaveBeenCalled()
+      })
+
+    it('Should throw an error for invalid consent status and not perform update',
+      async (): Promise<void> => {
+        // Set Consent Status
+        completeConsentActive.status = 'RANDOM'
+
+        await expect(revokeConsentStatus(completeConsentActive))
+          .rejects
+          .toThrowError('Invalid Consent Status')
+
+        expect(mockLoggerPush).toHaveBeenCalledWith('Invalid Consent Status')
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
@@ -173,7 +110,7 @@ describe('server/domain/consents/revoke', (): void => {
       async (): Promise<void> => {
         mockConsentUpdate.mockRejectedValue(new Error('Test Error'))
 
-        await expect(revokeConsentStatus(partialConsentActive2))
+        await expect(revokeConsentStatus(partialConsentActiveConflictingInitiatorId))
           .rejects
           .toThrowError('Test Error')
 
@@ -183,30 +120,47 @@ describe('server/domain/consents/revoke', (): void => {
   })
 
   describe('generatePatchRevokedConsentRequest', (): void => {
-    it('Should return correct request body', (): void => {
-      expect(generatePatchRevokedConsentRequest(completeConsentRevoked))
-        .toStrictEqual(requestBody)
-    })
+    it('Should return correct request body when complete consent given',
+      (): void => {
+        expect(generatePatchRevokedConsentRequest(completeConsentRevoked))
+          .toStrictEqual(requestBody)
+      })
 
-    it('Should also return correct request body', async (): Promise<void> => {
-      expect(generatePatchRevokedConsentRequest(partialConsentRevoked))
-        .toStrictEqual(requestBody)
-    })
+    it('Should return correct request body even if partial consent given',
+      (): void => {
+        expect(generatePatchRevokedConsentRequest(partialConsentRevoked))
+          .toStrictEqual(requestBody)
+      })
 
-    it('Should throw an error as consent is null value', (): void => {
-      expect((): void => {
-        generatePatchRevokedConsentRequest(
-          null as unknown as Consent)
-      }).toThrow()
-    })
+    it('Should throw an error as consent is null value',
+      (): void => {
+        expect((): void => {
+          generatePatchRevokedConsentRequest(
+            null as unknown as Consent)
+        }).toThrow()
+      })
 
-    it('Should throw an error as consent is ACTIVE', (): void => {
-      // Reset Consent Status
-      completeConsentActive.status = 'ACTIVE'
+    it('Should throw an error as consent is ACTIVE',
+      (): void => {
+        expect((): void => {
+          generatePatchRevokedConsentRequest(completeConsentActive)
+        }).toThrowError('Attempting to generate request for non-revoked consent!')
 
-      expect((): void => {
-        generatePatchRevokedConsentRequest(completeConsentActive)
-      }).toThrowError('Attempting to generate request for non-revoked consent!')
-    })
+        // Reset Consent Status
+        completeConsentActive.status = 'ACTIVE'
+      })
+
+    it('Should throw an error as consent is not a valid status',
+      (): void => {
+        // Set Consent Status
+        completeConsentActive.status = 'RANDOM'
+
+        expect((): void => {
+          generatePatchRevokedConsentRequest(completeConsentActive)
+        }).toThrowError('Attempting to generate request for non-revoked consent!')
+
+        // Reset Consent Status
+        completeConsentActive.status = 'ACTIVE'
+      })
   })
 })

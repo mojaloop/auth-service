@@ -27,12 +27,15 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '~/lib/db'
 import { createAndStoreConsent } from '~/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
 
 import * as ScopeFunction from '~/lib/scopes'
+import {
+  requestWithPayloadScopes, externalScopes,
+  partialConsentActive, scopes
+} from '../data/data'
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
@@ -41,71 +44,6 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
 const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    participantId: 'auth121',
-    initiatorId: 'pispa',
-    scopes: [{
-      accountId: 'as2342',
-      actions: ['account.getAccess', 'account.transferMoney']
-    },
-    {
-      accountId: 'as22',
-      actions: ['account.getAccess']
-    }
-    ]
-  }
-}
-
-const consent = {
-  id: '1234',
-  participantId: 'auth121',
-  initiatorId: 'pispa',
-  status: 'ACTIVE'
-}
-
-const externalScopes = [{
-  accountId: 'as2342',
-  actions: ['account.getAccess', 'account.transferMoney']
-},
-{
-  accountId: 'as22',
-  actions: ['account.getAccess']
-}
-]
-
-const scopes = [{
-  id: 123234,
-  consentId: '1234',
-  accountId: 'as2342',
-  action: 'account.getAccess'
-},
-{
-  id: 232234,
-  consentId: '1234',
-  accountId: 'as2342',
-  action: 'account.transferMoney'
-},
-{
-  id: 234,
-  consentId: '1234',
-  accountId: 'as22',
-  action: 'account.getAccess'
-}
-]
 
 describe('server/domain/consents', (): void => {
   beforeAll((): void => {
@@ -120,29 +58,35 @@ describe('server/domain/consents', (): void => {
     jest.clearAllMocks()
   })
 
-  it('Should return nothing and no errors thrown', async (): Promise<void> => {
-    await expect(createAndStoreConsent(request)).resolves.toBe(undefined)
+  it('Should resolve successfully', async (): Promise<void> => {
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .resolves
+      .toBe(undefined)
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consent)
+    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
 
-  it('Should throw an error due to error in registering Consent', async (): Promise<void> => {
+  it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
     mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
-    await expect(createAndStoreConsent(request)).rejects.toThrowError('Unable to Register Consent')
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .rejects
+      .toThrowError('Unable to Register Consent')
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consent)
+    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).not.toHaveBeenCalled()
   })
 
-  it('Should throw an error due to error in registering Scopes', async (): Promise<void> => {
+  it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
     mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
-    await expect(createAndStoreConsent(request)).rejects.toThrowError('Unable to Register Scopes')
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .rejects
+      .toThrowError('Unable to Register Scopes')
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consent)
+    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
 })

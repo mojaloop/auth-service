@@ -50,6 +50,13 @@ export async function revokeConsentStatus (
     Logger.push('Previously revoked consent was asked to be revoked')
     return consent
   }
+  // Protects against invalid consent status types
+  if (consent.status !== 'ACTIVE') {
+    Logger.push('Invalid Consent Status')
+    // TODO: specific Error here ?
+    throw Error('Invalid Consent Status')
+  }
+
   consent.status = 'REVOKED'
   consent.revokedAt = (new Date()).toISOString()
   await consentDB.update(consent)
@@ -62,8 +69,9 @@ export async function revokeConsentStatus (
 export function generatePatchRevokedConsentRequest (
   consent: Consent
 ): SDKStandardComponents.PatchConsentsRequest {
-  if (consent.status !== 'REVOKED')
+  if (consent.status !== 'REVOKED') {
     throw new Error('Attempting to generate request for non-revoked consent!')
+  }
 
   const requestBody: SDKStandardComponents.PatchConsentsRequest = {
     status: 'REVOKED',
