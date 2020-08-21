@@ -1,4 +1,4 @@
-import { Consent, ConsentCredential } from '~/model/consent'
+import { Consent } from '~/model/consent'
 import { ExternalScope } from '~/lib/scopes'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Scope } from '~/model/scope'
