@@ -26,7 +26,11 @@
       "createRetryIntervalMillis": 200
     },
     "migrations": {
-      "directory":,
+      "directory":,destroyTimeoutMillis: {
+        doc: 'Unacquired destory operations are rejected after these many milliseconds',
+        format: Number,
+        default: 5000,
+      },
       "tableName": string;
       "stub": string;
       "loadExtensions": string[];

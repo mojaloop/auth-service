@@ -24,7 +24,6 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Raman Mangla <ramanmangla@google.com>
  --------------
  ******/
@@ -34,6 +33,10 @@
 // import Config from '../../config/default.json'
 import Convict from 'convict'
 import PACKAGE from '../../package.json'
+import path from 'path'
+
+const migrationsDirectory = path.join(__dirname, '../../migrations')
+const seedsDirectory = path.join(__dirname, '../../seeds')
 
 interface DbConnection {
   host: string;
@@ -55,31 +58,31 @@ interface DbPool {
   createRetryIntervalMillis: number;
 }
 
-export interface ServiceConfig {
+interface DatabaseConfig {
+  client: string;
+  version?: string;
+  useNullAsDefault?: boolean;
+  connection: DbConnection | string;
+  pool?: DbPool;
+
+  migrations: {
+    directory: string;
+    tableName: string;
+    stub?: string;
+    loadExtensions: string[];
+  };
+
+  seeds: {
+    directory: string;
+    loadExtensions: string[];
+  };
+}
+
+interface ServiceConfig {
   ENV: string;
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
-
-  DATABASE: {
-    client: string;
-    version?: string;
-    useNullAsDefault?: boolean;
-    connection: DbConnection | string;
-    pool?: DbPool;
-
-    migrations: {
-      directory: string;
-      tableName: string;
-      stub?: string;
-      loadExtensions: string[];
-    };
-
-    seeds: {
-      directory: string;
-      loadExtensions: string[];
-    };
-  };
 
   INSPECT: {
     DEPTH: number;
@@ -88,7 +91,217 @@ export interface ServiceConfig {
   };
 }
 
-export const ConvictConfig = Convict<ServiceConfig>({
+const MySQLConfig = Convict<DatabaseConfig>({
+  client: {
+    doc: 'Database client name.',
+    format: String,
+    default: 'mysql'
+  },
+  version: {
+    doc: 'Database client version.',
+    format: String,
+    default: '5.5'
+  },
+  connection: {
+    host: {
+      doc: 'Database connection host.',
+      format: String,
+      default: 'localhost'
+    },
+    port: {
+      doc: 'The port to bind.',
+      format: 'port',
+      default: 3306
+    },
+    user: {
+      doc: 'Database user name.',
+      format: String,
+      default: 'auth-service'
+    },
+    password: {
+      doc: 'Database user password.',
+      format: String,
+      default: 'password'
+    },
+    database: {
+      doc: 'Database name.',
+      format: String,
+      default: 'auth-service'
+    },
+    timezone: {
+      doc: 'Database timezone.',
+      format: String,
+      default: 'UTC'
+    }
+  },
+  pool: {
+    min: {
+      doc: 'Minimum size.',
+      format: Number,
+      default: 10
+    },
+    max: {
+      doc: 'Maximum size.',
+      format: Number,
+      default: 10
+    },
+    acquireTimeoutMillis: {
+      doc: 'Unacquired promises are rejected after these many ms.',
+      format: Number,
+      default: 30000
+    },
+    createTimeoutMillis: {
+      doc: 'Unacquired create operations are rejected after these many ms.',
+      format: Number,
+      default: 30000
+    },
+    destroyTimeoutMillis: {
+      doc: 'Unacquired destory operations are rejected after these many ms.',
+      format: Number,
+      default: 5000
+    },
+    idleTimeoutMillis: {
+      doc: 'Free resources are destroyed after these many ms.',
+      format: Number,
+      default: 30000
+    },
+    reapIntervalMillis: {
+      doc: 'How often to check for idle resources to destroy.',
+      format: Number,
+      default: 1000
+    },
+    createRetryIntervalMillis: {
+      doc: 'Long idle after fialed create before trying again.',
+      format: Number,
+      default: 200
+    }
+  },
+  migrations: {
+    directory: {
+      doc: 'Migrations directory path.',
+      format: String,
+      default: migrationsDirectory
+    },
+    stub: {
+      doc: 'Migrations file stub,',
+      format: String,
+      default: `${migrationsDirectory}/migration.template`
+    },
+    tableName: {
+      doc: 'Migrations table name.',
+      format: String,
+      default: 'auth-service'
+    },
+    loadExtensions: {
+      doc: 'File Extension for migrations.',
+      format: Array,
+      default: ['.ts']
+    }
+  },
+  seeds: {
+    directory: {
+      doc: 'Seeds directory path.',
+      format: String,
+      default: seedsDirectory
+    },
+    loadExtensions: {
+      doc: 'File Extension for seeds.',
+      format: Array, // Check array elements?
+      default: ['.ts']
+    }
+  }
+})
+
+const SQLiteConfig = Convict<DatabaseConfig>({
+  client: {
+    doc: 'Database client name.',
+    format: String,
+    default: 'mysql'
+  },
+  connection: {
+    doc: 'Database type.',
+    format: String,
+    default: ':memory:'
+  },
+  pool: {
+    min: {
+      doc: 'Minimum size.',
+      format: Number,
+      default: 10
+    },
+    max: {
+      doc: 'Maximum size.',
+      format: Number,
+      default: 10
+    },
+    acquireTimeoutMillis: {
+      doc: 'Unacquired promises are rejected after these many ms.',
+      format: Number,
+      default: 30000
+    },
+    createTimeoutMillis: {
+      doc: 'Unacquired create operations are rejected after these many ms.',
+      format: Number,
+      default: 30000
+    },
+    destroyTimeoutMillis: {
+      doc: 'Unacquired destory operations are rejected after these many ms.',
+      format: Number,
+      default: 5000
+    },
+    idleTimeoutMillis: {
+      doc: 'Free resources are destroyed after these many ms.',
+      format: Number,
+      default: 30000
+    },
+    reapIntervalMillis: {
+      doc: 'How often to check for idle resources to destroy.',
+      format: Number,
+      default: 1000
+    },
+    createRetryIntervalMillis: {
+      doc: 'Long idle after fialed create before trying again.',
+      format: Number,
+      default: 200
+    }
+  },
+  migrations: {
+    directory: {
+      doc: 'Migrations directory path.',
+      format: String,
+      default: migrationsDirectory
+    },
+    stub: {
+      doc: 'Migrations file stub,',
+      format: String,
+      default: `${migrationsDirectory}/migration.template`
+    },
+    tableName: {
+      doc: 'Migrations table name.',
+      format: String,
+      default: 'auth-service'
+    },
+    loadExtensions: {
+      doc: 'File Extension for migrations.',
+      format: Array,
+      default: ['.ts']
+    }
+  },
+  seeds: {
+    directory: {
+      doc: 'Seeds directory path.',
+      format: String,
+      default: seedsDirectory
+    },
+    loadExtensions: {
+      doc: 'File Extension for seeds.',
+      format: Array, // Check array elements?
+      default: ['.ts']
+    }
+  }
+})
+
+const ConvictConfig = Convict<ServiceConfig>({
   ENV: {
     doc: 'The application environment.',
     format: ['production', 'development', 'test'],
@@ -105,7 +318,7 @@ export const ConvictConfig = Convict<ServiceConfig>({
   PORT: {
     doc: 'The port to bind.',
     format: 'port',
-    default: 8080,
+    default: 4004,
     env: 'PORT',
     arg: 'port'
   },
@@ -115,52 +328,6 @@ export const ConvictConfig = Convict<ServiceConfig>({
     default: 'auth-service',
     env: 'PARTICIPANT_ID',
     arg: 'participantId'
-  },
-  DATABASE: {
-    client: {
-      doc: 'Database client name.',
-      format: String,
-      default: 'sqlite3'
-    },
-    connection: {
-      doc: 'DB Connection Config.',
-      // Check object properties????
-      format: function check (val: string | object): void {
-        if (typeof val !== 'string' && typeof val !== 'object') {
-          throw new TypeError('Not a string or object')
-        }
-      },
-      default: ':memory:'
-    },
-    migrations: {
-      directory: {
-        doc: 'Migrations directory path.',
-        format: String,
-        default: ''
-      },
-      tableName: {
-        doc: 'Migrations table name.',
-        format: String,
-        default: 'auth-service'
-      },
-      loadExtensions: {
-        doc: 'File Extension for migrations.',
-        format: Array,
-        default: ['.ts']
-      }
-    },
-    seeds: {
-      directory: {
-        doc: 'Seeds directory path.',
-        format: String,
-        default: ''
-      },
-      loadExtensions: {
-        doc: 'File Extension for seeds.',
-        format: Array, // Check array elements?
-        default: ['.ts']
-      }
-    }
   },
   INSPECT: {
     DEPTH: {
