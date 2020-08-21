@@ -24,14 +24,14 @@
  ******/
 
 import HapiSwagger from 'hapi-swagger'
-import Config from '../../shared/config'
+import { PACKAGE } from '../../shared/config'
 
 export default {
   plugin: HapiSwagger,
   options: {
     info: {
       title: 'Auth-Service OpenAPI Documentation',
-      version: Config.PACKAGE.version
+      version: PACKAGE.version
     }
   }
 }

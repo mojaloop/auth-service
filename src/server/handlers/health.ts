@@ -24,10 +24,10 @@
  ******/
 
 import Shared from '@mojaloop/central-services-shared'
-import Config from '../../shared/config'
+import { PACKAGE } from '../../shared/config'
 import { defaultHealthHandler } from '@mojaloop/central-services-health'
 
-const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
+const healthCheck = new Shared.HealthCheck.HealthCheck(PACKAGE, [])
 
 /**
  * Operations on /health

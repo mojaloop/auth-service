@@ -312,14 +312,17 @@ const ConvictConfig = Convict<ServiceConfig>({
 const env = ConvictConfig.get('ENV')
 
 let DBConfig: Convict.Config<DatabaseConfig>
+let dbConfigName: string
 
 if (env === 'test') {
   DBConfig = SQLiteConfig
+  dbConfigName = 'sqlite'
 } else {
   DBConfig = MySQLConfig
+  dbConfigName = 'mysql'
 }
 
-DBConfig.loadFile(`${__dirname}/../../config/${env}.json`)
+DBConfig.loadFile(`${__dirname}/../../config/${dbConfigName}.json`)
 DBConfig.validate({ allowed: 'strict' })
 
 // Load and validate general config
@@ -342,5 +345,6 @@ const config: ServiceConfig = {
 
 export default config
 export {
-  PACKAGE
+  PACKAGE,
+  ServiceConfig
 }

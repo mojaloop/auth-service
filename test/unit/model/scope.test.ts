@@ -28,7 +28,7 @@
  ******/
 
 import Knex from 'knex'
-import Config from '../../../config/knexfile'
+import Config from '~/shared/config'
 import ScopeDB, { Scope } from '~/model/scope'
 import { Consent } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
@@ -77,7 +77,7 @@ describe('src/model/scope', (): void => {
   let scopeDB: ScopeDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(Config.test)
+    Db = Knex(Config.DATABASE as object)
     await Db.migrate.latest()
     // Enable Sqlite foreign key support
     await Db.raw('PRAGMA foreign_keys = ON')
