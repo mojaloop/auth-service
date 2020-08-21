@@ -44,7 +44,7 @@ describe('testing Consent table', (): void => {
   it('should properly select all the entries in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
     const users: Knex.QueryBuilder[] = await db.from('Consent').select('*')
-    expect(users.length).toEqual(3)
+    expect(users.length).toEqual(5)
     expect(users[0]).toMatchObject({
       id: '123',
       initiatorId: 'PISPA',
