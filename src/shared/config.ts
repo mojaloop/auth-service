@@ -83,6 +83,7 @@ interface ServiceConfig {
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
+  DATABASE?: object;
 
   INSPECT: {
     DEPTH: number;
@@ -223,58 +224,16 @@ const SQLiteConfig = Convict<DatabaseConfig>({
     format: String,
     default: ':memory:'
   },
-  pool: {
-    min: {
-      doc: 'Minimum size.',
-      format: Number,
-      default: 10
-    },
-    max: {
-      doc: 'Maximum size.',
-      format: Number,
-      default: 10
-    },
-    acquireTimeoutMillis: {
-      doc: 'Unacquired promises are rejected after these many ms.',
-      format: Number,
-      default: 30000
-    },
-    createTimeoutMillis: {
-      doc: 'Unacquired create operations are rejected after these many ms.',
-      format: Number,
-      default: 30000
-    },
-    destroyTimeoutMillis: {
-      doc: 'Unacquired destory operations are rejected after these many ms.',
-      format: Number,
-      default: 5000
-    },
-    idleTimeoutMillis: {
-      doc: 'Free resources are destroyed after these many ms.',
-      format: Number,
-      default: 30000
-    },
-    reapIntervalMillis: {
-      doc: 'How often to check for idle resources to destroy.',
-      format: Number,
-      default: 1000
-    },
-    createRetryIntervalMillis: {
-      doc: 'Long idle after fialed create before trying again.',
-      format: Number,
-      default: 200
-    }
+  useNullAsDefault: {
+    doc: 'Boolean for whether to use Null as default value',
+    format: Boolean,
+    default: true
   },
   migrations: {
     directory: {
       doc: 'Migrations directory path.',
       format: String,
       default: migrationsDirectory
-    },
-    stub: {
-      doc: 'Migrations file stub,',
-      format: String,
-      default: `${migrationsDirectory}/migration.template`
     },
     tableName: {
       doc: 'Migrations table name.',
@@ -349,24 +308,23 @@ const ConvictConfig = Convict<ServiceConfig>({
   }
 })
 
-// **************************************
-// What to do about optional properties or props with multiple types or
-// optional objects?
-// **************************************
-
-// Remove Knex file???????????????????/
-
-// Load environment dependent configuration
+// Load and validate database config
 const env = ConvictConfig.get('ENV')
 
-ConvictConfig.loadFile(`${__dirname}/../../config/${env}.json`)
+let DBConfig: Convict.Config<DatabaseConfig>
 
-// Perform configuration validation
+if (env === 'test') {
+  DBConfig = SQLiteConfig
+} else {
+  DBConfig = MySQLConfig
+}
+
+DBConfig.loadFile(`${__dirname}/../../config/${env}.json`)
+DBConfig.validate({ allowed: 'strict' })
+
+// Load and validate general config
+ConvictConfig.loadFile(`${__dirname}/../../config/config.json`)
 ConvictConfig.validate({ allowed: 'strict' })
-
-// **************************************
-// Extract optional properties or props with multiple types?
-// **************************************
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = {
@@ -374,35 +332,13 @@ const config: ServiceConfig = {
   PORT: ConvictConfig.get('PORT'),
   HOST: ConvictConfig.get('HOST'),
   PARTICIPANT_ID: ConvictConfig.get('PARTICIPANT_ID'),
-
-  DATABASE: {
-    client: ConvictConfig.get('client'),
-    version: '?????', // optional
-    useNullAsDefault: true, // optional
-    connection: ConvictConfig.get('DATABASE.connection'), // check this object?
-    pool: {} as unknown as DbPool, // optional
-
-    migrations: {
-      directory: ConvictConfig.get('DATABASE.migrations.directory'),
-      tableName: ConvictConfig.get('DATABASE.migrations.tableName'),
-      stub: 'wwww', // Optional
-      loadExtensions: ConvictConfig.get('DATABASE.migrations.loadExtensions')
-    },
-
-    seeds: {
-      directory: ConvictConfig.get('DATABASE.seeds.directory'),
-      loadExtensions: ConvictConfig.get('DATABASE.seeds.loadExtensions')
-    }
-  },
-
+  DATABASE: DBConfig.getProperties(),
   INSPECT: {
     DEPTH: ConvictConfig.get('INSPECT.DEPTH'),
     SHOW_HIDDEN: ConvictConfig.get('INSPECT.SHOW_HIDDEN'),
     COLOR: ConvictConfig.get('INSPECT.COLOR')
   }
 }
-
-// initialize paths here?
 
 export default config
 export {
