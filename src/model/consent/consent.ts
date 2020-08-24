@@ -65,9 +65,16 @@ export interface Consent {
 /*
  * Interface for Consent Credential resource type
  */
+
+export enum CredentialStatusEnum {
+  VERIFIED = 'VERIFIED',
+  PENDING = 'PENDING',
+}
+
 export interface ConsentCredential {
-  credentialType: string;
-  credentialStatus: string;
+  credentialId?: string;
+  credentialType: 'FIDO';
+  credentialStatus: CredentialStatusEnum;
   credentialPayload: string | null;
   credentialChallenge: string;
 }

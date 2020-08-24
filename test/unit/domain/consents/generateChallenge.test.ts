@@ -34,7 +34,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   externalScopes, request,
-  credential, partialConsentActive, completeConsentActiveNoCredentialID
+  credentialPending, partialConsentActive, completeConsentActiveNoCredentialID
 } from '../../data/data'
 import {
   updateConsentCredential,
@@ -80,7 +80,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
       mockConsentDbUpdate.mockResolvedValueOnce(3)
 
       const updatedConsent = await updateConsentCredential(
-        partialConsentActive, credential)
+        partialConsentActive, credentialPending)
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
       expect(updatedConsent).toEqual(completeConsentActiveNoCredentialID)
@@ -91,7 +91,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
       mockConsentDbUpdate.mockRejectedValue(
         new Error('Error updating Database'))
 
-      await expect(updateConsentCredential(partialConsentActive, credential))
+      await expect(updateConsentCredential(partialConsentActive, credentialPending))
         .rejects
         .toThrowError('Error updating Database')
 

@@ -99,8 +99,8 @@ paths:
   /consents:
     post:
       description: |
-        The HTTP request `POST /consents` is used to create a consent object. 
-        
+        The HTTP request `POST /consents` is used to create a consent object.
+
         - Called by `DFSP` after the succesful creation and validation of a consentRequest.
       summary: CreateConsent
       tags:
@@ -175,7 +175,7 @@ paths:
       - $ref: '#/parameters/FSPIOP-HTTP-Method'
     get:
       description: >
-        The HTTP request `GET /consents/{ID}` is used to get information regarding a consent object created or requested earlier. 
+        The HTTP request `GET /consents/{ID}` is used to get information regarding a consent object created or requested earlier.
         The `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.
       summary: GetConsent
       tags:
@@ -206,11 +206,11 @@ paths:
 
     put:
       description: |
-        The HTTP request `PUT /consents/{ID}` is used to update a specified consent object. 
+        The HTTP request `PUT /consents/{ID}` is used to update a specified consent object.
         The `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.
 
         - Called by a `auth-service` to add the credential details
-        
+
         - Called by a `PISP` to add a signature of the challenge
       summary: UpdateConsent
       tags:
@@ -220,9 +220,8 @@ paths:
         #Body
         - name: body
           in: body
-          # TODO: change me to UpdateConsentRequest
           schema:
-            $ref: '#/definitions/Consent'
+            $ref: '#/definitions/UpdateConsentRequest'
         #Headers
         - $ref: '#/parameters/Content-Length'
       x-examples:
@@ -264,11 +263,11 @@ paths:
           $ref: '#/responses/ErrorResponse501'
         503:
           $ref: '#/responses/ErrorResponse503'
-  
+
   /consents/{ID}/generateChallenge:
     post:
       description: |
-        The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a credential for the given Consent object. 
+        The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a credential for the given Consent object.
         The `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.
 
         - Called by a `PISP` to request a challenge from the `auth-service`, which will be returned to the PISP via `PUT /consents/{ID}`
@@ -298,7 +297,7 @@ paths:
       x-examples:
         application/json:
           {
-          
+
           }
       responses:
         202:

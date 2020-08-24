@@ -40,7 +40,6 @@ export interface ServiceConfig {
   PORT: number;
   HOST: string;
 
-  // TODO: Comment
   PARTICIPANT_ID: string;
 
   // ../lib/config.

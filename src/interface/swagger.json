@@ -144,7 +144,7 @@
     },
     "/consents": {
       "post": {
-        "description": "The HTTP request `POST /consents` is used to create a consent object. \n\n- Called by `DFSP` after the succesful creation and validation of a consentRequest.\n",
+        "description": "The HTTP request `POST /consents` is used to create a consent object.\n\n- Called by `DFSP` after the succesful creation and validation of a consentRequest.\n",
         "summary": "CreateConsent",
         "tags": [
           "consent"
@@ -280,7 +280,7 @@
         }
       ],
       "get": {
-        "description": "The HTTP request `GET /consents/{ID}` is used to get information regarding a consent object created or requested earlier.  The `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.\n",
+        "description": "The HTTP request `GET /consents/{ID}` is used to get information regarding a consent object created or requested earlier. The `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.\n",
         "summary": "GetConsent",
         "tags": [
           "consent"
@@ -322,7 +322,7 @@
         }
       },
       "put": {
-        "description": "The HTTP request `PUT /consents/{ID}` is used to update a specified consent object. \nThe `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.\n\n- Called by a `auth-service` to add the credential details\n\n- Called by a `PISP` to add a signature of the challenge\n",
+        "description": "The HTTP request `PUT /consents/{ID}` is used to update a specified consent object.\nThe `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.\n\n- Called by a `auth-service` to add the credential details\n\n- Called by a `PISP` to add a signature of the challenge\n",
         "summary": "UpdateConsent",
         "tags": [
           "consent"
@@ -333,7 +333,7 @@
             "name": "body",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/Consent"
+              "$ref": "#/definitions/UpdateConsentRequest"
             }
           },
           {
@@ -404,7 +404,7 @@
     },
     "/consents/{ID}/generateChallenge": {
       "post": {
-        "description": "The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a credential for the given Consent object. \nThe `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.\n\n- Called by a `PISP` to request a challenge from the `auth-service`, which will be returned to the PISP via `PUT /consents/{ID}`\n",
+        "description": "The HTTP request `POST /consents/{ID}/generateChallenge` is used to create a credential for the given Consent object.\nThe `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.\n\n- Called by a `PISP` to request a challenge from the `auth-service`, which will be returned to the PISP via `PUT /consents/{ID}`\n",
         "summary": "GenerateChallengeRequest",
         "tags": [
           "consent"
@@ -634,9 +634,6 @@
           ],
           "description": "PISP identifier who uses this Consent"
         },
-        "status": {
-          "$ref": "#/definitions/ConsentStatusEnum"
-        },
         "revokedAt": {
           "$ref": "#/definitions/ConsentRevokedAt"
         },
@@ -649,7 +646,56 @@
         "credential": {
           "$ref": "#/definitions/Credential"
         }
-      }
+      },
+      "required": [
+        "id",
+        "scopes",
+        "participantId",
+        "initiatorId",
+        "credential"
+      ]
+    },
+    "UpdateConsentRequest": {
+      "title": "UpdateConsentRequest",
+      "type": "object",
+      "description": "Data model for the complex type Consent",
+      "properties": {
+        "requestId": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/CorrelationId"
+            }
+          ],
+          "description": "The id of the ConsentRequest that was used to initiate the creation of this Consent\n"
+        },
+        "participantId": {
+          "$ref": "#/definitions/FspId"
+        },
+        "initiatorId": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/FspId"
+            }
+          ],
+          "description": "PISP identifier who uses this Consent"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Scope"
+          }
+        },
+        "credential": {
+          "$ref": "#/definitions/UpdateCredentialRequest"
+        }
+      },
+      "required": [
+        "requestId",
+        "participantId",
+        "initiatorId",
+        "scopes",
+        "credential"
+      ]
     },
     "ConsentStatusEnum": {
       "title": "ConsentStatus",
@@ -663,7 +709,7 @@
     "ConsentRevokedAt": {
       "title": "ConsentRevokedAt",
       "type": "string",
-      "description": "The time/date (ISO date string) at which the Consent was revoked, after which it is no longer valid"
+      "description": "The time/date (ISO date string) at which the Consent was revoked, after which it is no longer valid\n"
     },
     "Credential": {
       "title": "Credential",
@@ -692,6 +738,42 @@
         "id",
         "type",
         "status"
+      ]
+    },
+    "UpdateCredentialRequest": {
+      "title": "UpdateCredentialRequest",
+      "type": "object",
+      "description": "A credential used to allow a user to prove their identity and access to an account with a DFSP\n",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The id of a Credential"
+        },
+        "type": {
+          "$ref": "#/definitions/CredentialTypeEnum"
+        },
+        "status": {
+          "title": "CredentialStatus",
+          "type": "string",
+          "enum": [
+            "PENDING"
+          ],
+          "description": "The status of the Credential's creation\n- \"PENDING\" - The PISP has requested a challenge, or the challenge has initialized but not yet answered by the auth-service\n"
+        },
+        "challenge": {
+          "$ref": "#/definitions/CredentialChallenge"
+        },
+        "payload": {
+          "type": "string",
+          "description": "Base64 encoded bytes - The public key of the Public/Private keypair"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "status",
+        "challenge",
+        "payload"
       ]
     },
     "GenerateChallengeRequest": {
@@ -732,7 +814,7 @@
         "PENDING",
         "ACTIVE"
       ],
-      "description": "The status of the Credential's creation\n- \"PENDING\" - The PISP has requested a challenge, or the challenge has initialized but not yet answered by the PISP\n- \"ACTIVE\" - The Credential is valid, and ready to be used by the PISP\n"
+      "description": "The status of the Credential's creation\n- \"PENDING\" - The PISP has requested a challenge, or the challenge has initialized but not yet answered by the PISP\n- \"VERIFIED\" - The Credential is valid, and ready to be used by the PISP\n"
     },
     "CredentialTypeEnum": {
       "title": "CredentialTypeEnum",
@@ -766,11 +848,11 @@
       "properties": {
         "challenge": {
           "type": "string",
-          "description": "The original Challenge (Quote response) object as a JSON string"
+          "description": "The original Challenge (Quote response) object as a UTF-8 JSON string (Normalization Form C)"
         },
         "value": {
           "type": "string",
-          "description": "The signed Challenge (quote response) object as base64 encoded string"
+          "description": "The signed Challenge (Quote response) object as base64 encoded string"
         },
         "consentId": {
           "allOf": [
@@ -778,7 +860,7 @@
               "$ref": "#/definitions/CorrelationId"
             }
           ],
-          "description": "Common ID between the PISP and FSP for the Consent object decided by the DFSP who creates the Consent\n"
+          "description": "Common ID between the PISP and FSP for the Consent object decided by the DFSP who creates the Consent\nThis field is REQUIRED for POST /consent\n"
         },
         "sourceAccountId": {
           "allOf": [
