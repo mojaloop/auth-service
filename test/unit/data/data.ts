@@ -1,7 +1,8 @@
-import { Consent } from '~/model/consent'
+import { Consent, ConsentCredential } from '~/model/consent'
 import { ExternalScope } from '~/lib/scopes'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Scope } from '~/model/scope'
+import { CredentialStatusEnum } from '~/model/consent/consent'
 
 /*
  * Mock Request Resources
@@ -39,6 +40,43 @@ export const requestWithPayloadScopes: Request = {
       actions: ['account.getAccess']
     }
     ]
+  }
+}
+
+// @ts-ignore
+export const requestWithPayloadCredentialAndScope: Request = {
+  headers: {
+    fspiopsource: 'pisp-2342-2233',
+    fspiopdestination: 'dfsp-3333-2123'
+  },
+  params: {
+    id: '1234'
+  },
+  payload: {
+    id: '1234',
+    requestId: '475234',
+    initiatorId: 'pispa',
+    participantId: 'sfsfdf23',
+    scopes: [
+      {
+        accountId: '3423',
+        actions: ['acc.getMoney', 'acc.sendMoney']
+      },
+      {
+        accountId: '232345',
+        actions: ['acc.accessSaving']
+      }
+    ],
+    credential: {
+      id: '9876',
+      credentialType: 'FIDO',
+      status: 'PENDING',
+      challenge: {
+        payload: 'string_representing_challenge_payload',
+        signature: 'string_representing_challenge_signature'
+      },
+      payload: 'string_representing_credential_payload'
+    }
   }
 }
 
@@ -156,9 +194,9 @@ export const scopes: Scope[] = [{
  * Mock Credential Resources
 */
 
-export const credential = {
+export const credentialPending: ConsentCredential = {
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
+  credentialStatus: CredentialStatusEnum.PENDING,
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: null
 }
