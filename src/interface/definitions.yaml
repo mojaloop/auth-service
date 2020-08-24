@@ -169,7 +169,6 @@ UpdateCredentialRequest:
     - challenge
     - payload
 
- # TODO: update me to be an empty body!
 GenerateChallengeRequest:
   title: GenerateChallengeRequest
   type: object

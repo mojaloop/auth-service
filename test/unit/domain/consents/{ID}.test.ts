@@ -167,7 +167,6 @@ const {
   }
 } = request.payload as UpdateCredentialRequest
 
-/* TODO, fill out later. */
 /* Mock the converted scope value. */
 const externalScopes: Scopes.ExternalScope[] = [
   {
@@ -300,9 +299,9 @@ describe('server/domain/consents/{ID}', (): void => {
         expect(mockConsentDbUpdate).toBeCalledWith(updatedConsent)
       })
 
-    it('should throw error if credential payload undefined',
+    it('should throw error if credential payload null',
       async (): Promise<void> => {
-        // Make Credential Payload undefined
+        // Make Credential Payload null
         credentialVerified.credentialPayload = null
 
         await expect(updateConsentCredential(retrievedConsent, credentialVerified))
@@ -317,7 +316,7 @@ describe('server/domain/consents/{ID}', (): void => {
 
     it('should throw error if credential payload empty string',
       async (): Promise<void> => {
-        // Make Credential Payload undefined
+        // Make Credential Payload empty string
         credentialVerified.credentialPayload = ''
 
         await expect(updateConsentCredential(retrievedConsent, credentialVerified))
