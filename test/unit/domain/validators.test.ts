@@ -30,132 +30,82 @@ import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Consent } from '~/model/consent'
 import * as validators from '~/domain/validators'
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: null
-  }
-}
-
-// @ts-ignore
-const requestNoHeaders: Request = {
-  params: {
-    id: '1234'
-  }
-}
-
-/*
- * Mock Consent Resources
- */
-const partialConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'ACTIVE'
-}
-
-const partialConsentActive2: Consent = {
-  id: '1234',
-  initiatorId: 'pi2-2233',
-  participantId: 'dfs333-2123',
-  status: 'ACTIVE'
-}
-
+import {
+  request,
+  partialConsentActive,
+  partialConsentActiveConflictingInitiatorId,
+  requestNoHeaders
+} from '../data/data'
 
 describe('isConsentRequestInitiatedByValidSource', (): void => {
-    it('Should return true', (): void => {
-        expect(
-        validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request))
-        .toBe(true)
-    })
+  it('Should return true', (): void => {
+    expect(
+      validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request))
+      .toBe(true)
+  })
 
-    it('Should return false because consent is null', (): void => {
-        expect(validators.isConsentRequestInitiatedByValidSource(
-        null as unknown as Consent, request))
-        .toBeFalsy()
-    })
+  it('Should return false because consent is null', (): void => {
+    expect(validators.isConsentRequestInitiatedByValidSource(
+      null as unknown as Consent, request))
+      .toBeFalsy()
+  })
 
-    it('Should return false because initiator ID does not match', (): void => {
-        expect(
-        validators.isConsentRequestInitiatedByValidSource(partialConsentActive2, request))
-        .toBeFalsy()
-    })
+  it('Should return false because initiator ID does not match', (): void => {
+    expect(
+      validators.isConsentRequestInitiatedByValidSource(partialConsentActiveConflictingInitiatorId, request))
+      .toBeFalsy()
+  })
 
-    it('Should return false as source header is null', (): void => {
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = null as unknown as string
+  it('Should return false as source header is null', (): void => {
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = null as unknown as string
 
-        expect(
-        validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
-        ).toBe(false)
+    expect(
+      validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
+    ).toBe(false)
 
-        // Reset header
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
-    })
+    // Reset header
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
+  })
 
-    it('Should return false as source header is empty string', (): void => {
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = ''
+  it('Should return false as source header is empty string', (): void => {
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = ''
 
-        expect(
-        validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
-        ).toBe(false)
+    expect(
+      validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
+    ).toBe(false)
 
-        // Reset header
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
-    })
+    // Reset header
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
+  })
 
-    it('Should throw an error as request headers are missing', (): void => {
-        expect((): void => {
-        validators.isConsentRequestInitiatedByValidSource(
-            partialConsentActive, requestNoHeaders as Request)
-        }).toThrowError()
-    })
+  it('Should throw an error as request headers are missing', (): void => {
+    expect((): void => {
+      validators.isConsentRequestInitiatedByValidSource(
+        partialConsentActive, requestNoHeaders as Request)
+    }).toThrowError()
+  })
 
-    it('Should return false as consent is null and request header is empty string',
-        (): void => {
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = ''
-
-        expect(
-            validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
-        ).toBe(false)
-
-        // Reset header
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
-    })
-
-    it('Should return false as consent is null and source header is null',
+  it('Should return false as consent is null and request header is empty string',
     (): void => {
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = null as unknown as string
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = ''
 
-        expect(
+      expect(
         validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
-        ).toBe(false)
+      ).toBe(false)
 
-        // Reset header
-        request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
+      // Reset header
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
+    })
+
+  it('Should return false as consent is null and source header is null',
+    (): void => {
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = null as unknown as string
+
+      expect(
+        validators.isConsentRequestInitiatedByValidSource(partialConsentActive, request)
+      ).toBe(false)
+
+      // Reset header
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE] = 'pisp-2342-2233'
     })
 })

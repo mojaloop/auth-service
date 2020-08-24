@@ -1,4 +1,6 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.0.2](https://github.com/mojaloop/auth-service/compare/v11.0.1...v11.0.2) (2020-08-21)
+
 ### [11.0.1](https://github.com/mojaloop/auth-service/compare/v11.0.0...v11.0.1) (2020-08-17)
 
 ## [11.0.0](https://github.com/mojaloop/auth-service/compare/v0.1.7...v11.0.0) (2020-08-14)

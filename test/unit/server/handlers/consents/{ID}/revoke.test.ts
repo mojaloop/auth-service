@@ -26,7 +26,7 @@
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseToolkit } from '@hapi/hapi'
 import * as Handler from '~/server/handlers/consents/{ID}/revoke'
 import { thirdPartyRequest } from '~/lib/requests'
 import * as Domain from '~/domain/consents/revoke'
@@ -35,7 +35,10 @@ import { consentDB } from '~/lib/db'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
-import { Consent } from '~/model/consent'
+import {
+  request, h, partialConsentRevoked,
+  partialConsentActive, completeConsentRevoked
+} from 'test/unit/data/data'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
@@ -47,84 +50,11 @@ const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: null
-  }
-}
-
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return {
-          statusCode: num
-        } as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
-
-/*
- * Mock Consent Resources
- */
-const partialConsentActive: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'ACTIVE'
-}
-
-const partialConsentRevoked: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  revokedAt: 'now',
-  status: 'REVOKED'
-}
-
-const completeConsentRevoked: Consent = {
-  id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'REVOKED',
-  revokedAt: 'now',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
-
-const consentId = '1234'
+const consentId = partialConsentActive.id
 
 const requestBody: SDKStandardComponents.PatchConsentsRequest = {
   status: 'REVOKED',
-  revokedAt: 'now'
+  revokedAt: '2020-08-19T05:44:18.843Z'
 
 }
 
@@ -145,7 +75,7 @@ describe('server/handlers/consents', (): void => {
   })
 
   describe('validateRequestAndRevokeConsent', (): void => {
-    it('Should finish with no errors',
+    it('Should resolve successfully with no errors',
       async (): Promise<void> => {
         await expect(Handler.validateRequestAndRevokeConsent(request))
           .resolves.toBe(undefined)
@@ -163,7 +93,7 @@ describe('server/handlers/consents', (): void => {
           )
       })
 
-    it('Should also resolve with no errors',
+    it('Should also resolve successfully even if consent retrieved is already revoked',
       async (): Promise<void> => {
         mockConsentRetrieve.mockResolvedValueOnce(completeConsentRevoked)
         mockRevokeConsentStatus.mockResolvedValueOnce(completeConsentRevoked)
@@ -198,7 +128,7 @@ describe('server/handlers/consents', (): void => {
         expect(mockPatchConsents).not.toBeCalled()
       })
 
-    it('Should throw an error due to invalid request',
+    it('Should throw an error if request is invalid',
       async (): Promise<void> => {
         mockIsConsentRequestValid.mockReturnValueOnce(false)
         await expect(Handler.validateRequestAndRevokeConsent(request))

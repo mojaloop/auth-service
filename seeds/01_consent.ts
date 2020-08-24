@@ -68,6 +68,30 @@ const consents = [
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
     revokedAt: null
+  },
+  {
+    id: '126',
+    status: 'REVOKED',
+    initiatorId: 'PISPC',
+    participantId: 'DFSPA',
+    credentialId: '9875',
+    credentialType: 'FIDO',
+    credentialStatus: 'VERIFIED',
+    credentialPayload: 'string_representing_public_key_a',
+    credentialChallenge: 'string_representing_challenge_b',
+    revokedAt: '2011-10-05T14:48:00.000Z'
+  },
+  {
+    id: '127',
+    status: 'REVOKED',
+    initiatorId: 'PISPA',
+    participantId: 'DFSPA',
+    credentialId: null,
+    credentialType: null,
+    credentialStatus: null,
+    credentialPayload: null,
+    credentialChallenge: null,
+    revokedAt: '2020-08-19T05:44:18.843Z'
   }
 ]
 
