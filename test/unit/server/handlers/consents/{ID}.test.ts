@@ -27,7 +27,7 @@
  - Ahan Gupta <ahangupta@google.com>
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as Handler from '~/server/handlers/consents/{ID}'
 import * as Domain from '~/domain/consents/{ID}'
@@ -43,6 +43,7 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 import { ExternalScope } from '~/lib/scopes'
 import { thirdPartyRequest } from '~/lib/requests'
+import { requestWithPayloadCredentialAndScope, h } from 'test/unit/data/data'
 
 const mockRetrieveValidConsent = jest.spyOn(Domain, 'retrieveValidConsent')
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
@@ -51,46 +52,6 @@ const mockBuildConsentRequestBody = jest.spyOn(Domain, 'buildConsentRequestBody'
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockVerifySignature = jest.spyOn(Signature, 'verifySignature')
-
-/*
- * Mock Request Resources
- */
-// @ts-ignore
-const request: Request = {
-  headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
-  },
-  params: {
-    id: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: {
-      id: '9876',
-      credentialType: 'FIDO',
-      status: 'PENDING',
-      challenge: {
-        payload: 'string_representing_challenge_payload',
-        signature: 'string_representing_challenge_signature'
-      },
-      payload: 'string_representing_credential_payload'
-    }
-  }
-}
 
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
@@ -105,23 +66,10 @@ const retrievedConsent: Consent = {
   credentialChallenge: 'string_representing_challenge_payload'
 }
 
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return {
-          statusCode: num
-        } as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
-
 // Mock Variables from Request Payload
-const consentId = request.params.id
-const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-const credentialRequest = request.payload as Handler.UpdateCredentialRequest
+const consentId = requestWithPayloadCredentialAndScope.params.id
+const destinationParticipantId = requestWithPayloadCredentialAndScope.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+const credentialRequest = requestWithPayloadCredentialAndScope.payload as Handler.UpdateCredentialRequest
 
 const {
   credential: {
@@ -132,10 +80,10 @@ const {
     payload: publicKey,
     id: requestCredentialId
   }
-} = request.payload as Handler.UpdateCredentialRequest
+} = requestWithPayloadCredentialAndScope.payload as Handler.UpdateCredentialRequest
 
 /* Mock the ConsentCredential Value. */
-const credentialVerified: ConsentCredential = {
+const verifiedCredential: ConsentCredential = {
   credentialType: 'FIDO',
   credentialId: requestCredentialId,
   credentialStatus: CredentialStatusEnum.VERIFIED,
@@ -197,10 +145,10 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, verifiedCredential)
         expect(mockBuildConsentRequestBody).toHaveBeenCalledWith(retrievedConsent, signature, publicKey)
         expect(mockPutConsents).toHaveBeenCalledWith(
-          consentId, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
+          consentId, requestBody, requestWithPayloadCredentialAndScope.headers[Enum.Http.Headers.FSPIOP.SOURCE])
 
         expect(mockLoggerError).not.toHaveBeenCalled()
         expect(mockLoggerPush).not.toHaveBeenCalled()
@@ -286,7 +234,7 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, verifiedCredential)
         expect(mockBuildConsentRequestBody).not.toHaveBeenCalled()
         expect(mockPutConsents).not.toHaveBeenCalled()
       })
@@ -304,10 +252,10 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
         expect(mockVerifySignature).toHaveBeenCalledWith(challenge, signature, publicKey)
-        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, credentialVerified)
+        expect(mockUpdateConsentCredential).toHaveBeenCalledWith(retrievedConsent, verifiedCredential)
         expect(mockBuildConsentRequestBody).toHaveBeenCalledWith(retrievedConsent, signature, publicKey)
         expect(mockPutConsents).toHaveBeenCalledWith(
-          consentId, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
+          consentId, requestBody, requestWithPayloadCredentialAndScope.headers[Enum.Http.Headers.FSPIOP.SOURCE])
       })
   })
 
@@ -318,7 +266,7 @@ describe('server/handler/consents/{ID}', (): void => {
     })
 
     it('should return a 202 success code.', async (): Promise<void> => {
-      const response = await Handler.put(request as Request, h)
+      const response = await Handler.put(requestWithPayloadCredentialAndScope as Request, h)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
   })
