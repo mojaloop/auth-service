@@ -198,7 +198,7 @@ export async function validateAndVerifySignature (
  * The response is sent using outgoing request
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
-function post (
+export function post (
   request: Request,
   h: ResponseToolkit): ResponseObject {
   // Validate and process asynchronously

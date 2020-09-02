@@ -96,7 +96,7 @@ export async function validateRequestAndRevokeConsent (
  * The HTTP request `POST /consents/{id}/revoke` is used to revoke a consent
  * object - Called by either a PISP or DFSP
  */
-async function post (
+export async function post (
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Asynchronously validate request and revoke consent
