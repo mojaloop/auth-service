@@ -28,44 +28,16 @@ import GenerateChallenge from './consents/{ID}/generateChallenge'
 import RevokeConsent from './consents/{ID}/revoke'
 import Consent from './consents/{ID}'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
-import { wrapWithHistogram } from '~/shared/histogram'
+// import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
-  GenerateNewChallenge: wrapWithHistogram(
-    GenerateChallenge.post,
-    [
-      'consents_generateChallenge_post',
-      'Post consent generateChallenge request',
-      ['success']
-    ]
-  ),
-  RevokeConsent: wrapWithHistogram(
-    RevokeConsent.post,
-    [
-      'consent_revoke_post',
-      'Post consent revoke request',
-      ['success']
-    ]
-  ),
-  CreateConsent: wrapWithHistogram(
-    Consent.put,
-    [
-      'consent_put',
-      'Put consent',
-      ['success']
-    ]
-  ),
-  VerifyThirdPartyAuthorizations: wrapWithHistogram(
-    Authorizations.post,
-    [
-      'thirdpartyRequests_transactions_authorizations_post',
-      'Post thirdpartyRequests transactions authorizations request',
-      ['success']
-    ]
-  ),
+  GenerateNewChallenge: GenerateChallenge.post,
+  RevokeConsent: RevokeConsent.post,
+  CreateConsent: Consent.put,
+  VerifyThirdPartyAuthorizations: Authorizations.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
   methodNotAllowed: OpenapiBackend.methodNotAllowed
