@@ -34,10 +34,10 @@ const OpenapiBackend = Util.OpenapiBackend
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
-  GenerateNewChallenge: GenerateChallenge.post,
+  GenerateChallengeRequest: GenerateChallenge.post,
   RevokeConsent: RevokeConsent.post,
-  CreateConsent: Consent.put,
-  VerifyThirdPartyAuthorizations: Authorizations.post,
+  UpdateConsent: Consent.put,
+  VerifyThirdPartyAuthorization: Authorizations.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
   methodNotAllowed: OpenapiBackend.methodNotAllowed
