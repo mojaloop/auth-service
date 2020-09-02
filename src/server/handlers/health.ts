@@ -40,4 +40,8 @@ const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-export const get = defaultHealthHandler(healthCheck)
+const get = defaultHealthHandler(healthCheck)
+
+  export default {
+    get
+  }

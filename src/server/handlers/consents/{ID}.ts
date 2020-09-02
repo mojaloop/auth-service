@@ -111,7 +111,7 @@ export async function validateAndUpdateConsent (
   }
 }
 
-export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
   const updateConsentRequest = request.payload as UpdateCredentialRequest
   // The DFSP we need to reply to
@@ -121,4 +121,8 @@ export async function put (request: Request, h: ResponseToolkit): Promise<Respon
   validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  put
 }

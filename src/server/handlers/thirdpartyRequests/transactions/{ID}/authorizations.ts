@@ -198,7 +198,7 @@ export async function validateAndVerifySignature (
  * The response is sent using outgoing request
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
-export function post (
+function post (
   request: Request,
   h: ResponseToolkit): ResponseObject {
   // Validate and process asynchronously
@@ -206,4 +206,8 @@ export function post (
 
   // Return a 202 (Accepted) acknowledgement in the meantime
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  post
 }

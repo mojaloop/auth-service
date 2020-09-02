@@ -18,38 +18,55 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kenneth Zeng <kkzeng@gmail.com>
-
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
-
-import Path from 'path'
-import { Server, ServerRegisterPluginObject } from '@hapi/hapi'
 import { Util } from '@mojaloop/central-services-shared'
-import Handlers from '../handlers'
-
+import Health from './health'
+import Metrics from './metrics'
+import GenerateChallenge from './consents/{ID}/generateChallenge'
+import RevokeConsent from './consents/{ID}/revoke'
+import Consent from './consents/{ID}'
+import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
+import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function initialize (): Promise<ServerRegisterPluginObject<any>> {
-  return {
-    plugin: {
-      name: 'openapi',
-      version: '1.0.0',
-      multiple: true,
-      register: function (server: Server, options: {[index: string]: string | object}): void {
-        server.expose('openapi', options.openapi)
-      }
-    },
-    options: {
-      openapi: await OpenapiBackend.initialise(
-        Path.resolve(__dirname, '../../interface/api.yaml'),
-        Handlers
-      )
-    }
-  }
-}
-
 export default {
-  initialize
+  HealthGet: Health.get,
+  MetricsGet: Metrics.get,
+  GenerateNewChallenge: wrapWithHistogram(
+    GenerateChallenge.post,
+    [
+      'consents_generateChallenge_post',
+      'Post consent generateChallenge request',
+      ['success']
+    ]
+  ),
+  RevokeConsent: wrapWithHistogram(
+    RevokeConsent.post,
+    [
+      'consent_revoke_post',
+      'Post consent revoke request',
+      ['success']
+    ]
+  ),
+  CreateConsent: wrapWithHistogram(
+    Consent.put,
+    [
+      'consent_put',
+      'Put consent',
+      ['success']
+    ]
+  ),
+  VerifyThirdPartyAuthorizations: wrapWithHistogram(
+    Authorizations.post,
+    [
+      'thirdpartyRequests_transactions_authorizations_post',
+      'Post thirdpartyRequests transactions authorizations request',
+      ['success']
+    ]
+  ),
+  validationFail: OpenapiBackend.validationFail,
+  notFound: OpenapiBackend.notFound,
+  methodNotAllowed: OpenapiBackend.methodNotAllowed
 }
