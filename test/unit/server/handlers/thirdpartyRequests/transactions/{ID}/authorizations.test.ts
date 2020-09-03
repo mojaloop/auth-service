@@ -395,7 +395,16 @@ describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
     })
 
     it('Should return 202 (Accepted) and call async handler', (): void => {
-      const response = Handler.post(request, h)
+      const response = Handler.post(
+        {
+          method: request.method,
+          path: request.path,
+          body: request.payload,
+          query: request.query,
+          headers: request.headers
+        },
+        request,
+        h)
 
       expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
       expect(response.statusCode).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
