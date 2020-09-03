@@ -41,9 +41,10 @@ const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (_context: Context, _request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+export const get = async (_context: Context, _request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   return h.response(await healthCheck.getHealth()).code(200)
 }
+
 export default {
   get
 }
