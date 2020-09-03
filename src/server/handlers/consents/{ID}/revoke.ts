@@ -97,6 +97,7 @@ export async function validateRequestAndRevokeConsent (
  * object - Called by either a PISP or DFSP
  */
 export async function post (
+  _context: any,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Asynchronously validate request and revoke consent

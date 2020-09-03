@@ -48,6 +48,7 @@ import {
  * validation of a consentRequest.
  */
 export async function post (
+  _context: any,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Validate request

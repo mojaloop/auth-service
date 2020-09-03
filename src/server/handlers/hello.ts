@@ -26,7 +26,11 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { findHello } from '../../model/hello'
 
-export async function get (_: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function get (_context: any, _: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const hello = await findHello()
   return h.response(hello).code(200)
+}
+
+export default {
+  get
 }

@@ -24,6 +24,7 @@
 import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
+import Hello from './hello'
 import GenerateChallenge from './consents/{ID}/generateChallenge'
 import RevokeConsent from './consents/{ID}/revoke'
 import Consent from './consents/{ID}'
@@ -34,6 +35,7 @@ const OpenapiBackend = Util.OpenapiBackend
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
+  HelloGet: Hello.get,
   GenerateChallengeRequest: GenerateChallenge.post,
   RevokeConsent: RevokeConsent.post,
   UpdateConsent: Consent.put,

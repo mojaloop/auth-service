@@ -135,7 +135,7 @@ export async function generateChallengeAndPutConsent (
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
 export async function post (
-  request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  _context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
 
   // Asynchronously deals with validating request,

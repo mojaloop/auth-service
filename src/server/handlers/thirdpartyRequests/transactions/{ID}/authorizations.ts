@@ -199,6 +199,7 @@ export async function validateAndVerifySignature (
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
 export function post (
+  _context: any,
   request: Request,
   h: ResponseToolkit): ResponseObject {
   // Validate and process asynchronously
