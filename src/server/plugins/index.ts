@@ -19,13 +19,15 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
 import Inert from '@hapi/inert'
 import Vision from '@hapi/vision'
 import Blip from 'blipp'
-import { Server, ServerRoute } from '@hapi/hapi'
+import { Server, ServerRoute, Util as HapiUtil, RequestQuery } from '@hapi/hapi'
+import { Readable as StreamReadable } from 'stream'
 import ErrorHandling from '@mojaloop/central-services-error-handling'
 import { Util } from '@mojaloop/central-services-shared'
 import Good from './good'
@@ -66,6 +68,15 @@ async function register (server: Server): Promise<Server> {
       )
   })
   return server
+}
+
+// Context is required for OpenAPI
+export interface Context {
+  method: HapiUtil.HTTP_METHODS_PARTIAL_LOWERCASE;
+  path: string;
+  body: StreamReadable | Buffer | string | object;
+  query: RequestQuery;
+  headers: HapiUtil.Dictionary<string>;
 }
 
 export default {

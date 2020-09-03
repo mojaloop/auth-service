@@ -38,6 +38,7 @@
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Context } from '../plugins'
 import {
   createAndStoreConsent,
   isPostConsentRequestValid
@@ -48,7 +49,7 @@ import {
  * validation of a consentRequest.
  */
 export async function post (
-  _context: any,
+  _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Validate request

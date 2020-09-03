@@ -45,6 +45,7 @@ import * as validators from '~/domain/validators'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '~/lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Context } from '~/server/plugins'
 import { consentDB, scopeDB } from '~/lib/db'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { convertScopesToExternal } from '~/lib/scopes'
@@ -135,7 +136,7 @@ export async function generateChallengeAndPutConsent (
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
 export async function post (
-  _context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  _context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
 
   // Asynchronously deals with validating request,
