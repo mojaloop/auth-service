@@ -726,6 +726,44 @@ paths:
           $ref: '#/paths/~1hello/get/responses/501'
         '503':
           $ref: '#/paths/~1hello/get/responses/503'
+  '/consents/{ID}/revoke':
+    post:
+      description: |
+        The HTTP request `POST /consents/{ID}/revoke` is used to revoke a previously created consent.
+
+        - Called by a PISP when a user wants to unlink their account(s).
+      parameters:
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/0'
+        - $ref: '#/paths/~1consents/post/parameters/0'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/1'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/2'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/3'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/4'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/5'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/6'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/7'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/8'
+        - $ref: '#/paths/~1consents~1%7BID%7D/parameters/9'
+      operationId: RevokeConsent
+      responses:
+        '202':
+          $ref: '#/paths/~1consents/post/responses/202'
+        '400':
+          $ref: '#/paths/~1hello/get/responses/400'
+        '401':
+          $ref: '#/paths/~1hello/get/responses/401'
+        '403':
+          $ref: '#/paths/~1hello/get/responses/403'
+        '404':
+          $ref: '#/paths/~1hello/get/responses/404'
+        '405':
+          $ref: '#/paths/~1hello/get/responses/405'
+        '406':
+          $ref: '#/paths/~1hello/get/responses/406'
+        '501':
+          $ref: '#/paths/~1hello/get/responses/501'
+        '503':
+          $ref: '#/paths/~1hello/get/responses/503'
   '/thirdPartyRequests/transactions/{ID}/authorizations':
     post:
       description: |
