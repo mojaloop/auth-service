@@ -70,3 +70,7 @@ export async function post (
   // Return Success code informing source: request received
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
+
+export default {
+  post
+}
