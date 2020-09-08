@@ -54,8 +54,16 @@ describe('server/handlers/consents', (): void => {
 
   it('Should return 202 success code',
     async (): Promise<void> => {
+      const req = requestWithPayloadScopes as Request
       const response = await post(
-        requestWithPayloadScopes as Request,
+        {
+          method: req.method,
+          path: req.path,
+          body: req.payload,
+          query: req.query,
+          headers: req.headers
+        },
+        req,
         h as ResponseToolkit
       )
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
@@ -67,9 +75,16 @@ describe('server/handlers/consents', (): void => {
   it('Should return 400 code due to invalid request',
     async (): Promise<void> => {
       mockIsPostRequestValid.mockReturnValueOnce(false)
-
+      const req = requestWithPayloadScopes as Request
       const response = await post(
-        requestWithPayloadScopes as Request,
+        {
+          method: req.method,
+          path: req.path,
+          body: req.payload,
+          query: req.query,
+          headers: req.headers
+        },
+        req,
         h as ResponseToolkit
       )
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.BADREQUEST.CODE)
@@ -83,8 +98,17 @@ describe('server/handlers/consents', (): void => {
     async (): Promise<void> => {
       mockStoreConsent.mockRejectedValueOnce(
         new Error('Error Registering Consent'))
-
-      const response = await post(requestWithPayloadScopes as Request, h as ResponseToolkit)
+      const req = requestWithPayloadScopes as Request
+      const response = await post(
+        {
+          method: req.method,
+          path: req.path,
+          body: req.payload,
+          query: req.query,
+          headers: req.headers
+        },
+        req,
+        h as ResponseToolkit)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       jest.runAllImmediates()
 

@@ -24,9 +24,14 @@
  ******/
 
 import Metrics from '@mojaloop/central-services-metrics'
+import { Context } from '../plugins'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-export function get (_: Request, h: ResponseToolkit): ResponseObject {
+function get (_context: Context, _: Request, h: ResponseToolkit): ResponseObject {
   const metrics = Metrics.getMetricsForPrometheus()
   return h.response(metrics).code(200)
+}
+
+export default {
+  get
 }

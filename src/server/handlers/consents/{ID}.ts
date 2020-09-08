@@ -39,6 +39,7 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent, ConsentCredential } from '~/model/consent'
 import Logger from '@mojaloop/central-services-logger'
+import { Context } from '~/server/plugins'
 import * as SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '~/lib/requests'
 import {
@@ -111,7 +112,7 @@ export async function validateAndUpdateConsent (
   }
 }
 
-export async function put (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
   const updateConsentRequest = request.payload as UpdateCredentialRequest
   // The DFSP we need to reply to
@@ -121,4 +122,8 @@ export async function put (request: Request, h: ResponseToolkit): Promise<Respon
   validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  put
 }

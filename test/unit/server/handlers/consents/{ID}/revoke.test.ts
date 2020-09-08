@@ -173,6 +173,13 @@ describe('server/handlers/consents', (): void => {
     it('Should return 202 success code',
       async (): Promise<void> => {
         const response = await Handler.post(
+          {
+            method: request.method,
+            path: request.path,
+            body: request.payload,
+            query: request.query,
+            headers: request.headers
+          },
           request as Request,
           h as ResponseToolkit
         )

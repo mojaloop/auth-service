@@ -266,7 +266,17 @@ describe('server/handler/consents/{ID}', (): void => {
     })
 
     it('should return a 202 success code.', async (): Promise<void> => {
-      const response = await Handler.put(requestWithPayloadCredentialAndScope as Request, h)
+      const req = requestWithPayloadCredentialAndScope as Request
+      const response = await Handler.put(
+        {
+          method: req.method,
+          path: req.path,
+          body: req.payload,
+          query: req.query,
+          headers: req.headers
+        },
+        req,
+        h)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
   })

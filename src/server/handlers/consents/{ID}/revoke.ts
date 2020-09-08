@@ -39,6 +39,7 @@ import {
   revokeConsentStatus
 } from '~/domain/consents/revoke'
 import * as validators from '~/domain/validators'
+import { Context } from '~/server/plugins'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
@@ -97,6 +98,7 @@ export async function validateRequestAndRevokeConsent (
  * object - Called by either a PISP or DFSP
  */
 export async function post (
+  _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Asynchronously validate request and revoke consent
@@ -104,4 +106,8 @@ export async function post (
 
   // Return Success code informing source: request received
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  post
 }

@@ -37,6 +37,7 @@
 
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
+import { Context } from '~/server/plugins'
 import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
@@ -199,6 +200,7 @@ export async function validateAndVerifySignature (
  * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
  */
 export function post (
+  _context: Context,
   request: Request,
   h: ResponseToolkit): ResponseObject {
   // Validate and process asynchronously
@@ -206,4 +208,8 @@ export function post (
 
   // Return a 202 (Accepted) acknowledgement in the meantime
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  post
 }
