@@ -25,75 +25,111 @@
 
 import index from '~/index'
 import Config from '~/shared/config'
-import { Server } from '@hapi/hapi'
+import { Server, ResponseObject } from '@hapi/hapi'
+import PostConsent from '~/server/handlers/consents';
+import PutConsent from '~/server/handlers/consents/{ID}'
+import MockConsent from './data/mockConsent.json';
+
+// mock handlers
+const mockPostConsent = jest.spyOn(PostConsent, 'post');
+mockPostConsent.mockResolvedValue({} as ResponseObject);
+const mockPutConsent = jest.spyOn(PutConsent, 'put');
+mockPutConsent.mockResolvedValue({} as ResponseObject);
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
     expect(typeof index.server).toBeDefined()
     expect(typeof index.server.run).toEqual('function')
   })
+})
 
-  describe('api routes', (): void => {
-    let server: Server
+describe('api routes', (): void => {
+  let server: Server
 
-    beforeAll(async (): Promise<Server> => {
-      server = await index.server.run(Config)
-      return server
-    })
+  beforeAll(async (): Promise<Server> => {
+    server = await index.server.run(Config)
+    return server
+  })
 
-    afterAll(async (done): Promise<void> => {
-      server.events.on('stop', done)
-      await server.stop()
-    })
+  afterAll(async (done): Promise<void> => {
+    server.events.on('stop', done)
+    await server.stop()
+  })
 
-    it('/health', async (): Promise<void> => {
-      interface HealthResponse {
-        status: string;
-        uptime: number;
-        startTime: string;
-        versionNumber: string;
-      }
+  it('/health', async (): Promise<void> => {
+    interface HealthResponse {
+      status: string;
+      uptime: number;
+      startTime: string;
+      versionNumber: string;
+    }
 
-      const request = {
-        method: 'GET',
-        url: '/health'
-      }
+    const request = {
+      method: 'GET',
+      url: '/health'
+    }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(200)
+    expect(response.result).toBeDefined()
 
-      const result = response.result as HealthResponse
-      expect(result.status).toEqual('OK')
-      expect(result.uptime).toBeGreaterThan(1.0)
-    })
+    const result = response.result as HealthResponse
+    expect(result.status).toEqual('OK')
+    expect(result.uptime).toBeGreaterThan(1.0)
+  })
 
-    it('/hello', async (): Promise<void> => {
-      interface HelloResponse {
-        hello: string;
-      }
+  it('/hello', async (): Promise<void> => {
+    interface HelloResponse {
+      hello: string;
+    }
 
-      const request = {
-        method: 'GET',
-        url: '/hello'
-      }
+    const request = {
+      method: 'GET',
+      url: '/hello',
+    }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(200)
+    expect(response.result).toBeDefined()
 
-      const result = response.result as HelloResponse
-      expect(result.hello).toEqual('world')
-    })
+    const result = response.result as HelloResponse
+    expect(result.hello).toEqual('world')
+  })
 
-    it('/metrics', async (): Promise<void> => {
-      const request = {
-        method: 'GET',
-        url: '/metrics'
-      }
+  it('/metrics', async (): Promise<void> => {
+    const request = {
+      method: 'GET',
+      url: '/metrics'
+    }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-    })
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(200)
+  })
+
+
+  it('POST /consents/', async (): Promise<void> => {
+    const request = {
+      method: 'POST',
+      url: '/consents',
+      headers: MockConsent.headers,
+      payload: MockConsent.payload,
+    }
+
+    const response = await server.inject(request);
+    expect(response.statusCode).toBe(202);
+    expect(response.result).toBeDefined()
+  })
+
+  it('PUT /consents/{ID}', async (): Promise<void> => {
+    const request = {
+      method: 'PUT',
+      url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
+      headers: MockConsent.headers,
+      payload: MockConsent.payload,
+    }
+
+    const response = await server.inject(request);
+    expect(response.statusCode).toBe(202);
+    expect(response.result).toBeDefined();
   })
 })
