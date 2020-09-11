@@ -1,0 +1,30 @@
+{
+    "headers": {
+        "fspiop-source": "pisp-2342-2233",
+        "fspiop-destination": "dfsp-3333-2123",
+        "date": "Thu, 23 Jan 2020 10:22:12 GMT",
+        "accept": "application/json"
+    },
+    "payload": {
+        "id": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+        "requestId": "a71ec534-ee48-4575-b6a9-ead2955b8069",
+        "initiatorId": "pispa",
+        "participantId": "pisp-2342-2233",
+        "credential": {
+            "id": "9876",
+            "type": "FIDO",
+            "status": "PENDING",
+            "challenge": {
+                "payload": "challengepayload",
+                "signature": "signature"
+            },
+            "payload": "payloadstr"
+        },
+        "scopes": [
+            {
+                "accountId": "3423",
+                "scope": "accounts.transfer"
+            }
+        ]
+    }
+}

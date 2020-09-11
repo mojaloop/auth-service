@@ -28,7 +28,12 @@ import Config from '~/shared/config'
 import { Server, ResponseObject } from '@hapi/hapi'
 import PostConsent from '~/server/handlers/consents';
 import PutConsent from '~/server/handlers/consents/{ID}'
+
+// Mock data
 import MockConsent from './data/mockConsent.json';
+import MockUpdatedConsent from './data/mockUpdatedConsent.json';
+import MockGenerateChallengeReq from './data/mockGenerateChallenge.json';
+import Headers from './data/headers.json';
 
 // mock handlers
 const mockPostConsent = jest.spyOn(PostConsent, 'post');
@@ -111,7 +116,7 @@ describe('api routes', (): void => {
     const request = {
       method: 'POST',
       url: '/consents',
-      headers: MockConsent.headers,
+      headers: Headers,
       payload: MockConsent.payload,
     }
 
@@ -124,12 +129,39 @@ describe('api routes', (): void => {
     const request = {
       method: 'PUT',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
-      headers: MockConsent.headers,
-      payload: MockConsent.payload,
+      headers: MockUpdatedConsent.headers,
+      payload: MockUpdatedConsent.payload,
     }
 
     const response = await server.inject(request);
     expect(response.statusCode).toBe(202);
     expect(response.result).toBeDefined();
   })
+
+  it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
+    const request = {
+      method: 'POST',
+      url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
+      headers: Headers,
+      payload: MockGenerateChallengeReq.payload,
+    }
+
+    const response = await server.inject(request);
+    expect(response.statusCode).toBe(202);
+    expect(response.result).toBeDefined();
+  })
+
+  it('/consents/{ID}/revoke', async(): Promise<void> => {
+    const request = {
+      method: 'POST',
+      url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
+      headers: Headers,
+      payload: MockGenerateChallengeReq.payload,
+    }
+
+    const response = await server.inject(request);
+    expect(response.statusCode).toBe(202);
+    expect(response.result).toBeDefined();
+  })
+  
 })
