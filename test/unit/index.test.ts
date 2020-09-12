@@ -28,18 +28,21 @@ import Config from '~/shared/config'
 import { Server, ResponseObject } from '@hapi/hapi'
 import PostConsent from '~/server/handlers/consents';
 import PutConsent from '~/server/handlers/consents/{ID}'
+import GenerateChallenge from '~/server/handlers/consents/{ID}/generateChallenge';
+import RevokeConsent from '~/server/handlers/consents/{ID}/revoke'
 
 // Mock data
-import MockConsent from './data/mockConsent.json';
-import MockUpdatedConsent from './data/mockUpdatedConsent.json';
+import MockConsentData from './data/mockConsent.json';
+import MockUpdateConsentReq from './data/mockUpdatedConsent.json';
 import MockGenerateChallengeReq from './data/mockGenerateChallenge.json';
+import MockThirdPartyAuthorizationReq from './data/mockThirdPartyReqAuth.json'
 import Headers from './data/headers.json';
 
 // mock handlers
 const mockPostConsent = jest.spyOn(PostConsent, 'post');
-mockPostConsent.mockResolvedValue({} as ResponseObject);
 const mockPutConsent = jest.spyOn(PutConsent, 'put');
-mockPutConsent.mockResolvedValue({} as ResponseObject);
+const mockGenerateChallenge = jest.spyOn(GenerateChallenge, 'post');
+const mockRevokeConsent = jest.spyOn(RevokeConsent, 'post');
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -113,11 +116,13 @@ describe('api routes', (): void => {
 
 
   it('POST /consents/', async (): Promise<void> => {
+    mockPostConsent.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+
     const request = {
       method: 'POST',
       url: '/consents',
       headers: Headers,
-      payload: MockConsent.payload,
+      payload: MockConsentData.payload,
     }
 
     const response = await server.inject(request);
@@ -126,11 +131,13 @@ describe('api routes', (): void => {
   })
 
   it('PUT /consents/{ID}', async (): Promise<void> => {
+    mockPutConsent.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+
     const request = {
       method: 'PUT',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
-      headers: MockUpdatedConsent.headers,
-      payload: MockUpdatedConsent.payload,
+      headers: Headers,
+      payload: MockUpdateConsentReq.payload,
     }
 
     const response = await server.inject(request);
@@ -139,6 +146,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
+    mockGenerateChallenge.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+
     const request = {
       method: 'POST',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
@@ -151,12 +160,14 @@ describe('api routes', (): void => {
     expect(response.result).toBeDefined();
   })
 
-  it('/consents/{ID}/revoke', async(): Promise<void> => {
+  it('POST /consents/{ID}/revoke', async(): Promise<void> => {
+    mockRevokeConsent.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+
     const request = {
       method: 'POST',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
       headers: Headers,
-      payload: MockGenerateChallengeReq.payload,
+      payload: {},
     }
 
     const response = await server.inject(request);
@@ -164,4 +175,16 @@ describe('api routes', (): void => {
     expect(response.result).toBeDefined();
   })
   
+  it('POST /thirdPartyRequests/transactions/{id}/authorizations', async(): Promise<void> => {
+    const request = {
+      method: 'POST',
+      url: '/thirdPartyRequests/transactions/{id}/authorizations',
+      headers: Headers,
+      payload: MockThirdPartyAuthorizationReq.payload
+    }
+
+    const response = await server.inject(request);
+    expect(response.statusCode).toBe(202);
+    expect(response.result).toBeDefined();
+  })
 })

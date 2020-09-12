@@ -1,0 +1,9 @@
+{
+    "payload": {
+        "challenge": "abc123",
+        "value": "1234",
+        "consentId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+        "sourceAccountId": "123456",
+        "status": "PENDING"
+    }
+}
