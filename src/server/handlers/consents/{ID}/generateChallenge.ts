@@ -52,6 +52,7 @@ import { convertScopesToExternal } from '~/lib/scopes'
 import { Scope } from '~/model/scope'
 import { thirdPartyRequest } from '~/lib/requests'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import * as thisModule from './generateChallenge'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -142,7 +143,7 @@ export async function post (
   // Asynchronously deals with validating request,
   //  generating challenge, updating consent db
   //  and making outgoing PUT consent/{ID} call
-  generateChallengeAndPutConsent(request, id)
+  thisModule.generateChallengeAndPutConsent(request, id)
   // intentionally not await-ing we want to run it in background
 
   // Return Success code informing source: request received

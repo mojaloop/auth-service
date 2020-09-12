@@ -46,6 +46,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import { thirdPartyRequest } from '~/lib/requests'
+import * as thisModule from './revoke'
 
 /**
  * Asynchronously deals with validating request, revoking consent object
@@ -53,6 +54,8 @@ import { thirdPartyRequest } from '~/lib/requests'
  */
 export async function validateRequestAndRevokeConsent (
   request: Request): Promise<void> {
+  console.log('original func')
+
   const consentId = request.params.id
 
   try {
@@ -101,8 +104,10 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
+  console.log('revoke handler')
+
   // Asynchronously validate request and revoke consent
-  validateRequestAndRevokeConsent(request)
+  thisModule.validateRequestAndRevokeConsent(request)
 
   // Return Success code informing source: request received
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)

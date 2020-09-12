@@ -25,24 +25,25 @@
 
 import index from '~/index'
 import Config from '~/shared/config'
-import { Server, ResponseObject } from '@hapi/hapi'
-import PostConsent from '~/server/handlers/consents';
-import PutConsent from '~/server/handlers/consents/{ID}'
-import GenerateChallenge from '~/server/handlers/consents/{ID}/generateChallenge';
-import RevokeConsent from '~/server/handlers/consents/{ID}/revoke'
+import { Server } from '@hapi/hapi'
+import Logger from '@mojaloop/central-services-logger'
+
+// Mocked out functions
+import * as PutConsent from '~/server/handlers/consents/{ID}'
+import * as GenerateChallenge from '~/server/handlers/consents/{ID}/generateChallenge'
+import * as RevokeConsent from '~/server/handlers/consents/{ID}/revoke'
+import * as ThirdPartyRequestAuth from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import * as ConsentsDomain from '~/domain/consents'
 
 // Mock data
-import MockConsentData from './data/mockConsent.json';
-import MockUpdateConsentReq from './data/mockUpdatedConsent.json';
-import MockGenerateChallengeReq from './data/mockGenerateChallenge.json';
+import MockConsentData from './data/mockConsent.json'
+import MockUpdateConsentReq from './data/mockUpdatedConsent.json'
+import MockGenerateChallengeReq from './data/mockGenerateChallenge.json'
 import MockThirdPartyAuthorizationReq from './data/mockThirdPartyReqAuth.json'
-import Headers from './data/headers.json';
+import Headers from './data/headers.json'
 
-// mock handlers
-const mockPostConsent = jest.spyOn(PostConsent, 'post');
-const mockPutConsent = jest.spyOn(PutConsent, 'put');
-const mockGenerateChallenge = jest.spyOn(GenerateChallenge, 'post');
-const mockRevokeConsent = jest.spyOn(RevokeConsent, 'post');
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -55,6 +56,8 @@ describe('api routes', (): void => {
   let server: Server
 
   beforeAll(async (): Promise<Server> => {
+    mockLoggerPush.mockReturnValue(null)
+    mockLoggerError.mockReturnValue(null)
     server = await index.server.run(Config)
     return server
   })
@@ -62,6 +65,11 @@ describe('api routes', (): void => {
   afterAll(async (done): Promise<void> => {
     server.events.on('stop', done)
     await server.stop()
+    jest.clearAllMocks()
+  })
+
+  beforeEach((): void => {
+    jest.clearAllMocks()
   })
 
   it('/health', async (): Promise<void> => {
@@ -93,7 +101,7 @@ describe('api routes', (): void => {
 
     const request = {
       method: 'GET',
-      url: '/hello',
+      url: '/hello'
     }
 
     const response = await server.inject(request)
@@ -112,79 +120,85 @@ describe('api routes', (): void => {
 
     const response = await server.inject(request)
     expect(response.statusCode).toBe(200)
+    expect(response.result).toBeDefined()
   })
 
-
   it('POST /consents/', async (): Promise<void> => {
-    mockPostConsent.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+    const mockPostConsent = jest.spyOn(ConsentsDomain, 'createAndStoreConsent')
+    mockPostConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
       url: '/consents',
       headers: Headers,
-      payload: MockConsentData.payload,
+      payload: MockConsentData.payload
     }
 
-    const response = await server.inject(request);
-    expect(response.statusCode).toBe(202);
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(202)
     expect(response.result).toBeDefined()
   })
 
   it('PUT /consents/{ID}', async (): Promise<void> => {
-    mockPutConsent.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+    const mockPutConsent = jest.spyOn(PutConsent, 'validateAndUpdateConsent')
+    mockPutConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'PUT',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
       headers: Headers,
-      payload: MockUpdateConsentReq.payload,
+      payload: MockUpdateConsentReq.payload
     }
 
-    const response = await server.inject(request);
-    expect(response.statusCode).toBe(202);
-    expect(response.result).toBeDefined();
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(202)
+    expect(response.result).toBeDefined()
   })
 
   it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
-    mockGenerateChallenge.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+    const mockGenerateChallenge = jest.spyOn(GenerateChallenge, 'generateChallengeAndPutConsent')
+    mockGenerateChallenge.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
       headers: Headers,
-      payload: MockGenerateChallengeReq.payload,
+      payload: MockGenerateChallengeReq.payload
     }
 
-    const response = await server.inject(request);
-    expect(response.statusCode).toBe(202);
-    expect(response.result).toBeDefined();
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(202)
+    expect(response.result).toBeDefined()
   })
 
-  it('POST /consents/{ID}/revoke', async(): Promise<void> => {
-    mockRevokeConsent.mockImplementation((_context: any, _req: any, _toolkit: any) => Promise.resolve({} as ResponseObject));
+  it('POST /consents/{ID}/revoke', async (): Promise<void> => {
+    const mockRevokeConsent = jest.spyOn(RevokeConsent, 'validateRequestAndRevokeConsent')
+    mockRevokeConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
       url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
-      headers: Headers,
-      payload: {},
+      headers: Headers
     }
 
-    const response = await server.inject(request);
-    expect(response.statusCode).toBe(202);
-    expect(response.result).toBeDefined();
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(202)
+    expect(response.result).toBeDefined()
   })
-  
-  it('POST /thirdPartyRequests/transactions/{id}/authorizations', async(): Promise<void> => {
+
+  it('POST /thirdPartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
+    const mockRevokeConsent = jest.spyOn(ThirdPartyRequestAuth, 'validateAndVerifySignature')
+    mockRevokeConsent.mockResolvedValueOnce()
+
     const request = {
       method: 'POST',
-      url: '/thirdPartyRequests/transactions/{id}/authorizations',
+      url: '/thirdPartyRequests/transactions/123/authorizations',
       headers: Headers,
       payload: MockThirdPartyAuthorizationReq.payload
     }
 
-    const response = await server.inject(request);
-    expect(response.statusCode).toBe(202);
-    expect(response.result).toBeDefined();
+    const response = await server.inject(request)
+    expect(response.statusCode).toBe(202)
+    expect(response.result).toBeDefined()
   })
 })
