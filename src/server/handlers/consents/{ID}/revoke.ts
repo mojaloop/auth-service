@@ -54,8 +54,6 @@ import * as thisModule from './revoke'
  */
 export async function validateRequestAndRevokeConsent (
   request: Request): Promise<void> {
-  console.log('original func')
-
   const consentId = request.params.id
 
   try {

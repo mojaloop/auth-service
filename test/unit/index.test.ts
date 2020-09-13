@@ -29,7 +29,7 @@ import { Server } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
 // Mocked out functions
-import * as PutConsent from '~/server/handlers/consents/{ID}'
+import * as UpdateConsent from '~/server/handlers/consents/{ID}'
 import * as GenerateChallenge from '~/server/handlers/consents/{ID}/generateChallenge'
 import * as RevokeConsent from '~/server/handlers/consents/{ID}/revoke'
 import * as ThirdPartyRequestAuth from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
@@ -140,8 +140,8 @@ describe('api routes', (): void => {
   })
 
   it('PUT /consents/{ID}', async (): Promise<void> => {
-    const mockPutConsent = jest.spyOn(PutConsent, 'validateAndUpdateConsent')
-    mockPutConsent.mockResolvedValueOnce()
+    const mockUpdateConsent = jest.spyOn(UpdateConsent, 'validateAndUpdateConsent')
+    mockUpdateConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'PUT',
