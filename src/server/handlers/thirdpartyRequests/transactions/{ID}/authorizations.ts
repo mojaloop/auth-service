@@ -204,8 +204,6 @@ export function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): ResponseObject {
-  console.log('authorization handler')
-
   // Validate and process asynchronously
   thisModule.validateAndVerifySignature(request)
 

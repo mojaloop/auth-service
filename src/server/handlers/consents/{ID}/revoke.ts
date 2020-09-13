@@ -104,8 +104,6 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  console.log('revoke handler')
-
   // Asynchronously validate request and revoke consent
   thisModule.validateRequestAndRevokeConsent(request)
 
