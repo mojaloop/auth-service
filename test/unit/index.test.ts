@@ -131,7 +131,15 @@ describe('api routes', (): void => {
       payload: MockConsentData.payload
     }
 
+    const expectedArgs = expect.objectContaining({
+      path: '/consents',
+      method: 'post',
+      payload: MockConsentData.payload
+    })
+
     const response = await server.inject(request)
+    expect(mockCreateConsent).toHaveBeenCalledTimes(1)
+    expect(mockCreateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
     expect(response.statusCode).toBe(202)
     expect(response.result).toBeDefined()
   })
@@ -147,7 +155,15 @@ describe('api routes', (): void => {
       payload: MockUpdateConsentReq.payload
     }
 
+    const expectedArgs = expect.objectContaining({
+      path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
+      method: 'put',
+      payload: MockUpdateConsentReq.payload
+    })
+
     const response = await server.inject(request)
+    expect(mockUpdateConsent).toHaveBeenCalledTimes(1)
+    expect(mockUpdateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
     expect(response.statusCode).toBe(202)
     expect(response.result).toBeDefined()
   })
@@ -163,7 +179,15 @@ describe('api routes', (): void => {
       payload: MockGenerateChallengeReq.payload
     }
 
+    const expectedArgs = expect.objectContaining({
+      path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
+      method: 'post',
+      payload: MockGenerateChallengeReq.payload
+    })
+
     const response = await server.inject(request)
+    expect(mockGenerateChallenge).toHaveBeenCalledTimes(1)
+    expect(mockGenerateChallenge).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
     expect(response.statusCode).toBe(202)
     expect(response.result).toBeDefined()
   })
@@ -178,7 +202,15 @@ describe('api routes', (): void => {
       headers: Headers
     }
 
+    const expectedArgs = expect.objectContaining({
+      path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
+      method: 'post',
+      payload: null
+    })
+
     const response = await server.inject(request)
+    expect(mockRevokeConsent).toHaveBeenCalledTimes(1)
+    expect(mockRevokeConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
     expect(response.statusCode).toBe(202)
     expect(response.result).toBeDefined()
   })
@@ -194,7 +226,15 @@ describe('api routes', (): void => {
       payload: MockThirdPartyAuthorizationReq.payload
     }
 
+    const expectedArgs = expect.objectContaining({
+      path: '/thirdPartyRequests/transactions/123/authorizations',
+      method: 'post',
+      payload: MockThirdPartyAuthorizationReq.payload
+    })
+
     const response = await server.inject(request)
+    expect(mockThirdPartyAuthorizations).toHaveBeenCalledTimes(1)
+    expect(mockThirdPartyAuthorizations).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
     expect(response.statusCode).toBe(202)
     expect(response.result).toBeDefined()
   })
