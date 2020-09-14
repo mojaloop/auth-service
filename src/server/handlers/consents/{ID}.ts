@@ -51,7 +51,6 @@ import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { IncorrectChallengeError } from '~/domain/errors'
-import * as thisModule from './{ID}'
 
 export interface UpdateCredentialRequest {
   credential: {
@@ -115,12 +114,13 @@ export async function validateAndUpdateConsent (
 
 export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
+  console.log(id)
   const updateConsentRequest = request.payload as UpdateCredentialRequest
   // The DFSP we need to reply to
   const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
   // Note: not awaiting promise here
-  thisModule.validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
+  validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }

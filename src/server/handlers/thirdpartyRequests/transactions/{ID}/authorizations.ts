@@ -52,7 +52,6 @@ import {
   hasMatchingScopeForPayload,
   putErrorRequest
 } from '~/domain/authorizations'
-import * as thisModule from './authorizations'
 
 /*
  * TODO: There is a need to document and add Auth-Service
@@ -205,7 +204,7 @@ export function post (
   request: Request,
   h: ResponseToolkit): ResponseObject {
   // Validate and process asynchronously
-  thisModule.validateAndVerifySignature(request)
+  validateAndVerifySignature(request)
 
   // Return a 202 (Accepted) acknowledgement in the meantime
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
