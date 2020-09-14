@@ -52,11 +52,10 @@ describe('index', (): void => {
 describe('api routes', (): void => {
   let server: Server
 
-  beforeAll(async (): Promise<Server> => {
+  beforeAll(async (): Promise<void> => {
     mockLoggerPush.mockReturnValue(null)
     mockLoggerError.mockReturnValue(null)
     server = await index.server.run(Config)
-    return server
   })
 
   afterAll(async (done): Promise<void> => {
