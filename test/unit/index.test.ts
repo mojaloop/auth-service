@@ -25,15 +25,12 @@
 
 import index from '~/index'
 import Config from '~/shared/config'
-import { Server } from '@hapi/hapi'
+import { Server, Request, ResponseToolkit } from '@hapi/hapi'
+import { Context } from '~/server/plugins'
 import Logger from '@mojaloop/central-services-logger'
 
-// Mocked out functions
-import * as UpdateConsent from '~/server/handlers/consents/{ID}'
-import * as GenerateChallenge from '~/server/handlers/consents/{ID}/generateChallenge'
-import * as RevokeConsent from '~/server/handlers/consents/{ID}/revoke'
-import * as ThirdPartyRequestAuth from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
-import * as ConsentsDomain from '~/domain/consents'
+// Import handlers for mocking
+import Handlers from '~/server/handlers'
 
 // Mock data
 import MockConsentData from './data/mockConsent.json'
@@ -124,8 +121,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/', async (): Promise<void> => {
-    const mockCreateAndStoreConsent = jest.spyOn(ConsentsDomain, 'createAndStoreConsent')
-    mockCreateAndStoreConsent.mockResolvedValueOnce()
+    const mockCreateConsent = jest.spyOn(Handlers, 'CreateConsent')
+    mockCreateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
     const request = {
       method: 'POST',
@@ -140,8 +137,8 @@ describe('api routes', (): void => {
   })
 
   it('PUT /consents/{ID}', async (): Promise<void> => {
-    const mockValidateAndUpdateConsent = jest.spyOn(UpdateConsent, 'validateAndUpdateConsent')
-    mockValidateAndUpdateConsent.mockResolvedValueOnce()
+    const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
+    mockUpdateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
     const request = {
       method: 'PUT',
@@ -156,8 +153,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
-    const mockGenerateChallengeAndPutConsent = jest.spyOn(GenerateChallenge, 'generateChallengeAndPutConsent')
-    mockGenerateChallengeAndPutConsent.mockResolvedValueOnce()
+    const mockGenerateChallenge = jest.spyOn(Handlers, 'GenerateChallengeRequest')
+    mockGenerateChallenge.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
     const request = {
       method: 'POST',
@@ -172,8 +169,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/{ID}/revoke', async (): Promise<void> => {
-    const mockRequestAndRevokeConsent = jest.spyOn(RevokeConsent, 'validateRequestAndRevokeConsent')
-    mockRequestAndRevokeConsent.mockResolvedValueOnce()
+    const mockRevokeConsent = jest.spyOn(Handlers, 'RevokeConsent')
+    mockRevokeConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
     const request = {
       method: 'POST',
@@ -187,8 +184,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /thirdPartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
-    const mockValidateAndVerifySig = jest.spyOn(ThirdPartyRequestAuth, 'validateAndVerifySignature')
-    mockValidateAndVerifySig.mockResolvedValueOnce()
+    const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
+    mockThirdPartyAuthorizations.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202))
 
     const request = {
       method: 'POST',
