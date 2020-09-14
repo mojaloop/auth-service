@@ -124,8 +124,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/', async (): Promise<void> => {
-    const mockPostConsent = jest.spyOn(ConsentsDomain, 'createAndStoreConsent')
-    mockPostConsent.mockResolvedValueOnce()
+    const mockCreateAndStoreConsent = jest.spyOn(ConsentsDomain, 'createAndStoreConsent')
+    mockCreateAndStoreConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
@@ -140,8 +140,8 @@ describe('api routes', (): void => {
   })
 
   it('PUT /consents/{ID}', async (): Promise<void> => {
-    const mockUpdateConsent = jest.spyOn(UpdateConsent, 'validateAndUpdateConsent')
-    mockUpdateConsent.mockResolvedValueOnce()
+    const mockValidateAndUpdateConsent = jest.spyOn(UpdateConsent, 'validateAndUpdateConsent')
+    mockValidateAndUpdateConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'PUT',
@@ -156,8 +156,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
-    const mockGenerateChallenge = jest.spyOn(GenerateChallenge, 'generateChallengeAndPutConsent')
-    mockGenerateChallenge.mockResolvedValueOnce()
+    const mockGenerateChallengeAndPutConsent = jest.spyOn(GenerateChallenge, 'generateChallengeAndPutConsent')
+    mockGenerateChallengeAndPutConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
@@ -172,8 +172,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /consents/{ID}/revoke', async (): Promise<void> => {
-    const mockRevokeConsent = jest.spyOn(RevokeConsent, 'validateRequestAndRevokeConsent')
-    mockRevokeConsent.mockResolvedValueOnce()
+    const mockRequestAndRevokeConsent = jest.spyOn(RevokeConsent, 'validateRequestAndRevokeConsent')
+    mockRequestAndRevokeConsent.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
@@ -187,8 +187,8 @@ describe('api routes', (): void => {
   })
 
   it('POST /thirdPartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
-    const mockRevokeConsent = jest.spyOn(ThirdPartyRequestAuth, 'validateAndVerifySignature')
-    mockRevokeConsent.mockResolvedValueOnce()
+    const mockValidateAndVerifySig = jest.spyOn(ThirdPartyRequestAuth, 'validateAndVerifySignature')
+    mockValidateAndVerifySig.mockResolvedValueOnce()
 
     const request = {
       method: 'POST',
