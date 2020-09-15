@@ -137,7 +137,7 @@ export async function generateChallengeAndPutConsent (
  */
 export async function post (
   _context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const id = request.params.id
+  const id = request.params.ID
 
   // Asynchronously deals with validating request,
   //  generating challenge, updating consent db

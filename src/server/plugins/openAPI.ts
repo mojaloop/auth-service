@@ -18,7 +18,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kenneth Zeng <kkzeng@gmail.com>
+ - Kenneth Zeng <kkzeng@google.com>
 
  --------------
  ******/
