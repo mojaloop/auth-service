@@ -157,7 +157,10 @@ describe('api routes', (): void => {
     const expectedArgs = expect.objectContaining({
       path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
       method: 'put',
-      payload: MockUpdateConsentReq.payload
+      payload: MockUpdateConsentReq.payload,
+      params: {
+        ID: expect.any(String)
+      }
     })
 
     const response = await server.inject(request)
@@ -181,7 +184,10 @@ describe('api routes', (): void => {
     const expectedArgs = expect.objectContaining({
       path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
       method: 'post',
-      payload: MockGenerateChallengeReq.payload
+      payload: MockGenerateChallengeReq.payload,
+      params: {
+        ID: expect.any(String)
+      }
     })
 
     const response = await server.inject(request)
@@ -204,7 +210,10 @@ describe('api routes', (): void => {
     const expectedArgs = expect.objectContaining({
       path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
       method: 'post',
-      payload: null
+      payload: null,
+      params: {
+        ID: expect.any(String)
+      }
     })
 
     const response = await server.inject(request)
@@ -228,7 +237,10 @@ describe('api routes', (): void => {
     const expectedArgs = expect.objectContaining({
       path: '/thirdPartyRequests/transactions/123/authorizations',
       method: 'post',
-      payload: MockThirdPartyAuthorizationReq.payload
+      payload: MockThirdPartyAuthorizationReq.payload,
+      params: {
+        ID: expect.any(String)
+      }
     })
 
     const response = await server.inject(request)
