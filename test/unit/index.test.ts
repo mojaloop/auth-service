@@ -119,134 +119,271 @@ describe('api routes', (): void => {
     expect(response.result).toBeDefined()
   })
 
-  it('POST /consents/', async (): Promise<void> => {
-    const mockCreateConsent = jest.spyOn(Handlers, 'CreateConsent')
-    mockCreateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+  describe('Endpoint: /consents', (): void => {
+    it('POST /consents/', async (): Promise<void> => {
+      const mockCreateConsent = jest.spyOn(Handlers, 'CreateConsent')
+      mockCreateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
-    const request = {
-      method: 'POST',
-      url: '/consents',
-      headers: Headers,
-      payload: MockConsentData.payload
-    }
+      const request = {
+        method: 'POST',
+        url: '/consents',
+        headers: Headers,
+        payload: MockConsentData.payload
+      }
 
-    const expectedArgs = expect.objectContaining({
-      path: '/consents',
-      method: 'post',
-      payload: MockConsentData.payload
+      const expectedArgs = expect.objectContaining({
+        path: '/consents',
+        method: 'post',
+        payload: MockConsentData.payload
+      })
+
+      const response = await server.inject(request)
+      expect(mockCreateConsent).toHaveBeenCalledTimes(1)
+      expect(mockCreateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeDefined()
     })
 
-    const response = await server.inject(request)
-    expect(mockCreateConsent).toHaveBeenCalledTimes(1)
-    expect(mockCreateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-    expect(response.statusCode).toBe(202)
-    expect(response.result).toBeDefined()
+    it('schema validation - missing fields', async (): Promise<void> => {
+      const mockCreateConsent = jest.spyOn(Handlers, 'CreateConsent')
+      mockCreateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+
+      const payloadMissingId = Object.assign({}, MockConsentData.payload)
+      delete payloadMissingId.id
+
+      const request = {
+        method: 'POST',
+        url: '/consents',
+        headers: Headers,
+        payload: payloadMissingId
+      }
+
+      const expected = {
+        errorInformation: {
+          errorCode: '3102',
+          errorDescription: 'Missing mandatory element - .requestBody should have required property \'id\''
+        }
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(400)
+      expect(response.result).toStrictEqual(expected)
+    })
   })
 
-  it('PUT /consents/{ID}', async (): Promise<void> => {
-    const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
-    mockUpdateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+  describe('Endpoint: /consents/{ID}', (): void => {
+    it('PUT /consents/{ID}', async (): Promise<void> => {
+      const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
+      mockUpdateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
-    const request = {
-      method: 'PUT',
-      url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
-      headers: Headers,
-      payload: MockUpdateConsentReq.payload
-    }
-
-    const expectedArgs = expect.objectContaining({
-      path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
-      method: 'put',
-      payload: MockUpdateConsentReq.payload,
-      params: {
-        ID: expect.any(String)
+      const request = {
+        method: 'PUT',
+        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
+        headers: Headers,
+        payload: MockUpdateConsentReq.payload
       }
+
+      const expectedArgs = expect.objectContaining({
+        path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
+        method: 'put',
+        payload: MockUpdateConsentReq.payload,
+        params: {
+          ID: expect.any(String)
+        }
+      })
+
+      const response = await server.inject(request)
+      expect(mockUpdateConsent).toHaveBeenCalledTimes(1)
+      expect(mockUpdateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeDefined()
     })
 
-    const response = await server.inject(request)
-    expect(mockUpdateConsent).toHaveBeenCalledTimes(1)
-    expect(mockUpdateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-    expect(response.statusCode).toBe(202)
-    expect(response.result).toBeDefined()
+    it('schema validation - missing fields', async (): Promise<void> => {
+      const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
+      mockUpdateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+
+      const payloadMissingCredential = Object.assign({}, MockConsentData.payload)
+      delete payloadMissingCredential.credential
+
+      const request = {
+        method: 'PUT',
+        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
+        headers: Headers,
+        payload: payloadMissingCredential
+      }
+
+      const expected = {
+        errorInformation: {
+          errorCode: '3102',
+          errorDescription: 'Missing mandatory element - .requestBody should have required property \'credential\''
+        }
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(400)
+      expect(response.result).toStrictEqual(expected)
+    })
   })
 
-  it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
-    const mockGenerateChallenge = jest.spyOn(Handlers, 'GenerateChallengeRequest')
-    mockGenerateChallenge.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+  describe('Endpoint: /consents/{ID}/generateChallenge', (): void => {
+    it('POST /consents/{ID}/generateChallenge', async (): Promise<void> => {
+      const mockGenerateChallenge = jest.spyOn(Handlers, 'GenerateChallengeRequest')
+      mockGenerateChallenge.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
-    const request = {
-      method: 'POST',
-      url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
-      headers: Headers,
-      payload: MockGenerateChallengeReq.payload
-    }
-
-    const expectedArgs = expect.objectContaining({
-      path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
-      method: 'post',
-      payload: MockGenerateChallengeReq.payload,
-      params: {
-        ID: expect.any(String)
+      const request = {
+        method: 'POST',
+        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
+        headers: Headers,
+        payload: MockGenerateChallengeReq.payload
       }
+
+      const expectedArgs = expect.objectContaining({
+        path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
+        method: 'post',
+        payload: MockGenerateChallengeReq.payload,
+        params: {
+          ID: expect.any(String)
+        }
+      })
+
+      const response = await server.inject(request)
+      expect(mockGenerateChallenge).toHaveBeenCalledTimes(1)
+      expect(mockGenerateChallenge).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeDefined()
     })
 
-    const response = await server.inject(request)
-    expect(mockGenerateChallenge).toHaveBeenCalledTimes(1)
-    expect(mockGenerateChallenge).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-    expect(response.statusCode).toBe(202)
-    expect(response.result).toBeDefined()
+    it('schema validation - missing fields', async (): Promise<void> => {
+      const mockGenerateChallenge = jest.spyOn(Handlers, 'GenerateChallengeRequest')
+      mockGenerateChallenge.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+
+      const request = {
+        method: 'POST',
+        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
+        headers: Headers,
+        payload: {}
+      }
+
+      const expected = {
+        errorInformation: {
+          errorCode: '3102',
+          errorDescription: 'Missing mandatory element - .requestBody should have required property \'type\''
+        }
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(400)
+      expect(response.result).toStrictEqual(expected)
+    })
   })
 
-  it('POST /consents/{ID}/revoke', async (): Promise<void> => {
-    const mockRevokeConsent = jest.spyOn(Handlers, 'RevokeConsent')
-    mockRevokeConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+  describe('Endpoint: /consents/{ID}/revoke', (): void => {
+    it('POST /consents/{ID}/revoke', async (): Promise<void> => {
+      const mockRevokeConsent = jest.spyOn(Handlers, 'RevokeConsent')
+      mockRevokeConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
-    const request = {
-      method: 'POST',
-      url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
-      headers: Headers
-    }
-
-    const expectedArgs = expect.objectContaining({
-      path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
-      method: 'post',
-      payload: null,
-      params: {
-        ID: expect.any(String)
+      const request = {
+        method: 'POST',
+        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
+        headers: Headers
       }
-    })
 
-    const response = await server.inject(request)
-    expect(mockRevokeConsent).toHaveBeenCalledTimes(1)
-    expect(mockRevokeConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-    expect(response.statusCode).toBe(202)
-    expect(response.result).toBeDefined()
+      const expectedArgs = expect.objectContaining({
+        path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/revoke',
+        method: 'post',
+        payload: null,
+        params: {
+          ID: expect.any(String)
+        }
+      })
+
+      const response = await server.inject(request)
+      expect(mockRevokeConsent).toHaveBeenCalledTimes(1)
+      expect(mockRevokeConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeDefined()
+    })
   })
 
-  it('POST /thirdPartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
-    const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
-    mockThirdPartyAuthorizations.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202))
+  describe('Endpoint: /thirdPartyRequests/transactions/{ID}/authorizations', (): void => {
+    it('POST /thirdPartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
+      const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
+      mockThirdPartyAuthorizations.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202))
 
-    const request = {
-      method: 'POST',
-      url: '/thirdPartyRequests/transactions/123/authorizations',
-      headers: Headers,
-      payload: MockThirdPartyAuthorizationReq.payload
-    }
-
-    const expectedArgs = expect.objectContaining({
-      path: '/thirdPartyRequests/transactions/123/authorizations',
-      method: 'post',
-      payload: MockThirdPartyAuthorizationReq.payload,
-      params: {
-        ID: expect.any(String)
+      const request = {
+        method: 'POST',
+        url: '/thirdPartyRequests/transactions/123/authorizations',
+        headers: Headers,
+        payload: MockThirdPartyAuthorizationReq.payload
       }
+
+      const expectedArgs = expect.objectContaining({
+        path: '/thirdPartyRequests/transactions/123/authorizations',
+        method: 'post',
+        payload: MockThirdPartyAuthorizationReq.payload,
+        params: {
+          ID: expect.any(String)
+        }
+      })
+
+      const response = await server.inject(request)
+      expect(mockThirdPartyAuthorizations).toHaveBeenCalledTimes(1)
+      expect(mockThirdPartyAuthorizations).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeDefined()
     })
 
-    const response = await server.inject(request)
-    expect(mockThirdPartyAuthorizations).toHaveBeenCalledTimes(1)
-    expect(mockThirdPartyAuthorizations).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-    expect(response.statusCode).toBe(202)
-    expect(response.result).toBeDefined()
+    it('schema validation - missing fields', async (): Promise<void> => {
+      const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
+      mockThirdPartyAuthorizations.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202))
+
+      const payloadMissingChallenge = Object.assign({}, MockThirdPartyAuthorizationReq.payload)
+      delete payloadMissingChallenge.challenge
+
+      const request = {
+        method: 'POST',
+        url: '/thirdPartyRequests/transactions/123/authorizations',
+        headers: Headers,
+        payload: payloadMissingChallenge
+      }
+
+      const expected = {
+        errorInformation: {
+          errorCode: '3102',
+          errorDescription: 'Missing mandatory element - .requestBody should have required property \'challenge\''
+        }
+      }
+
+      const response = await server.inject(request)
+      expect(response.result).toStrictEqual(expected)
+      expect(response.statusCode).toBe(400)
+    })
+
+    it('schema validation - status !== PENDING results in 400', async (): Promise<void> => {
+      const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
+      mockThirdPartyAuthorizations.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202))
+
+      const payloadWithActiveStatus = Object.assign({}, MockThirdPartyAuthorizationReq.payload)
+      payloadWithActiveStatus.status = 'ACTIVE'
+
+      const request = {
+        method: 'POST',
+        url: '/thirdPartyRequests/transactions/123/authorizations',
+        headers: Headers,
+        payload: payloadWithActiveStatus
+      }
+
+      const expected = {
+        errorInformation: {
+          errorCode: '3100',
+          errorDescription: 'Generic validation error - .requestBody.status should be equal to one of the allowed values'
+        }
+      }
+
+      const response = await server.inject(request)
+      expect(response.result).toStrictEqual(expected)
+      expect(response.statusCode).toBe(400)
+    })
   })
 })
