@@ -67,7 +67,7 @@ const retrievedConsent: Consent = {
 }
 
 // Mock Variables from Request Payload
-const consentId = requestWithPayloadCredentialAndScope.params.id
+const consentId = requestWithPayloadCredentialAndScope.params.ID
 const destinationParticipantId = requestWithPayloadCredentialAndScope.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 const credentialRequest = requestWithPayloadCredentialAndScope.payload as Handler.UpdateCredentialRequest
 

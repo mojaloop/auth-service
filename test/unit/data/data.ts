@@ -14,7 +14,7 @@ export const request: Request = {
     'fspiop-destination': 'dfsp-3333-2123'
   },
   params: {
-    id: '1234'
+    ID: '1234'
   }
 }
 
@@ -25,7 +25,7 @@ export const requestWithPayloadScopes: Request = {
     fspiopdestination: 'dfsp-3333-2123'
   },
   params: {
-    id: '1234'
+    ID: '1234'
   },
   payload: {
     id: '1234',
@@ -50,7 +50,7 @@ export const requestWithPayloadCredentialAndScope: Request = {
     fspiopdestination: 'dfsp-3333-2123'
   },
   params: {
-    id: '1234'
+    ID: '1234'
   },
   payload: {
     id: '1234',
@@ -83,7 +83,7 @@ export const requestWithPayloadCredentialAndScope: Request = {
 // @ts-ignore
 export const requestNoHeaders: Request = {
   params: {
-    id: '1234'
+    ID: '1234'
   }
 }
 
