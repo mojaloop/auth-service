@@ -114,7 +114,7 @@ export async function validateAndUpdateConsent (
 
 export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const id = request.params.id
-  console.log(id)
+
   const updateConsentRequest = request.payload as UpdateCredentialRequest
   // The DFSP we need to reply to
   const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
