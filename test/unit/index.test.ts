@@ -276,6 +276,31 @@ describe('api routes', (): void => {
       expect(response.statusCode).toBe(400)
       expect(response.result).toStrictEqual(expected)
     })
+
+    it('schema validation - type !== FIDO results in 400', async (): Promise<void> => {
+      const mockGenerateChallenge = jest.spyOn(Handlers, 'GenerateChallengeRequest')
+      mockGenerateChallenge.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+
+      const request = {
+        method: 'POST',
+        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069/generateChallenge',
+        headers: Headers,
+        payload: {
+          type: 'OTHER'
+        }
+      }
+
+      const expected = {
+        errorInformation: {
+          errorCode: '3100',
+          errorDescription: 'Generic validation error - .requestBody.type should be equal to one of the allowed values'
+        }
+      }
+
+      const response = await server.inject(request)
+      expect(response.statusCode).toBe(400)
+      expect(response.result).toStrictEqual(expected)
+    })
   })
 
   describe('Endpoint: /consents/{ID}/revoke', (): void => {
