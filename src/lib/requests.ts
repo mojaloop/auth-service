@@ -43,7 +43,7 @@ import {
 
 // Config file to instantiate ThirdPartyRequest object
 const configRequest: BaseRequestConfigType = {
-  dfspId: config.get('PARTICIPANT_ID') as string,
+  dfspId: Config.PARTICIPANT_ID as string,
   logger: Logger,
   // TODO: Decide on below later - Handled in future ticket #361
   // Also decide on need for jwsSigningKey

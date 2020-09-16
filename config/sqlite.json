@@ -1,0 +1,12 @@
+{
+  "client": "sqlite",
+  "connection": ":memory:",
+  "useNullAsDefault": true,
+  "migrations": {
+    "tableName": "auth-service",
+    "loadExtensions": [".ts"]
+  },
+  "seeds": {
+    "loadExtensions": [".ts"]
+  }
+}

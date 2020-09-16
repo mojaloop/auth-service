@@ -23,7 +23,7 @@
  --------------
  ******/
 
-import Config from '../../../config/knexfile'
+import Config from '~/shared/config'
 import * as Knex from 'knex'
 import knex from 'knex'
 
@@ -31,8 +31,7 @@ describe('testing Consent table', (): void => {
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.development as object)
-    await db.migrate.latest()
+    db = knex(Config.DATABASE as object)
     await db.seed.run()
   })
 
