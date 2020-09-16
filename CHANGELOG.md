@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.2.0](https://github.com/mojaloop/auth-service/compare/v11.1.1...v11.2.0) (2020-09-16)
+
+
+### Features
+
+* **test:** api route testing ([#45](https://github.com/mojaloop/auth-service/issues/45)) ([35ed146](https://github.com/mojaloop/auth-service/commit/35ed14668f7cd83148c158737a4492479b70d6af))
+
 ### [11.1.1](https://github.com/mojaloop/auth-service/compare/v11.1.0...v11.1.1) (2020-09-08)
 
 ## [11.1.0](https://github.com/mojaloop/auth-service/compare/v11.0.2...v11.1.0) (2020-08-24)
