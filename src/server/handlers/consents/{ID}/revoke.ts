@@ -53,7 +53,7 @@ import { thirdPartyRequest } from '~/lib/requests'
  */
 export async function validateRequestAndRevokeConsent (
   request: Request): Promise<void> {
-  const consentId = request.params.id
+  const consentId = request.params.ID
 
   try {
     // Fetch consent from database using ID
