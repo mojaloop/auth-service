@@ -81,7 +81,7 @@ describe('src/model/scope', (): void => {
 
   beforeAll(async (): Promise<void> => {
     Db = Knex(DatabaseConfig)
-
+    await Db.migrate.latest()
     scopeDB = new ScopeDB(Db)
   })
 

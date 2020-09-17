@@ -103,7 +103,7 @@ describe('src/model/consent', (): void => {
 
   beforeAll(async (): Promise<void> => {
     Db = Knex(DatabaseConfig)
-
+    await Db.migrate.latest()
     consentDB = new ConsentDB(Db)
   })
 
