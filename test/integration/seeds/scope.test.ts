@@ -69,7 +69,7 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.test)
+    db = knex(Config.DATABASE as object)
     await db.migrate.latest()
     await db.seed.run()
   })
