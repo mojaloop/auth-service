@@ -25,6 +25,7 @@
 
  - Ahan Gupta <ahangupta.96@gmail.com>
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Kenneth Zeng <kkzeng@google.com>
 
  --------------
  ******/
@@ -95,6 +96,6 @@ const consents = [
   }
 ]
 
-export function seed (knex: Knex): Knex.QueryBuilder<number[]> {
-  return knex('Consent').insert(consents)
+export function seed (knex: Knex): Promise<Knex.QueryBuilder<number[]>> {
+  return knex('Consent').del().then(() => knex('Consent').insert(consents))
 }
