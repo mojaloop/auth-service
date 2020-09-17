@@ -99,6 +99,8 @@ jobs:
       - run:
           name: Execute unit tests
           command: npm run test:unit
+          environment:
+            SHOULD_USE_IN_MEMORY_DB: true
       - run:
           name: prepare test/results
           command: |
@@ -150,6 +152,8 @@ jobs:
       - run:
           name: Execute code coverage check
           command: npm run test:coverage-check
+          environment:
+            SHOULD_USE_IN_MEMORY_DB: true
       - store_artifacts:
           path: coverage
           prefix: test
@@ -204,6 +208,8 @@ jobs:
             cd ~/project/
             npm ci
             npm -s run test:integration
+          environment:
+            SHOULD_USE_IN_MEMORY_DB: false
       - run:
           name: Prepare test results
           command: |
