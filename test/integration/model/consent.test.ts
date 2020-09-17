@@ -104,6 +104,7 @@ describe('src/model/consent', (): void => {
   beforeAll(async (): Promise<void> => {
     Db = Knex(Config.DATABASE as object)
     consentDB = new ConsentDB(Db)
+    await Db.seed.run()
   })
 
   afterAll(async (): Promise<void> => {

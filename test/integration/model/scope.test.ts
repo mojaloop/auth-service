@@ -82,6 +82,7 @@ describe('src/model/scope', (): void => {
   beforeAll(async (): Promise<void> => {
     Db = Knex(Config.DATABASE as object)
     scopeDB = new ScopeDB(Db)
+    await Db.seed.run()
   })
 
   afterAll(async (): Promise<void> => {

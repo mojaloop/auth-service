@@ -32,6 +32,7 @@ describe('testing Consent table', (): void => {
 
   beforeAll(async (): Promise<void> => {
     db = knex(Config.DATABASE as object)
+    await db.seed.run()
   })
 
   afterAll(async (): Promise<void> => {
