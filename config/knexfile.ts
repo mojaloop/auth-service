@@ -1,5 +1,6 @@
 import { DatabaseConfig } from '../src/shared/config'
 import path from 'path'
+require('ts-node/register')
 const migrationsDirectory = path.join(__dirname, '../migrations')
 const seedsDirectory = path.join(__dirname, '../seeds')
 
@@ -62,3 +63,4 @@ const Config: KnexConfig = {
 }
 
 export default Config
+module.exports = Config
