@@ -6,6 +6,8 @@
     "DEPTH": 4,
     "SHOW_HIDDEN": false,
     "COLOR": true
-  }
+  },
+  // Optional param, otherwise explictly state `DATABASE`
+  "PATH_TO_DATABASE_CONFIG": ""
 }
   

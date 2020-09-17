@@ -8,7 +8,7 @@
     "dist"
   ],
   "config": {
-    "knex": "--knexfile ./config/knexfile.ts"
+    "knex": "--knexfile ./config/mysql.json"
   },
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit --production",

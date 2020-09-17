@@ -20,10 +20,12 @@
     "createRetryIntervalMillis": 200
   },
   "migrations": {
+    "directory": "../migrations",
     "tableName": "auth-service",
     "loadExtensions": [".ts"]
   },
   "seeds": {
+    "directory": "../seeds",
     "loadExtensions": [".ts"]
   }
 }

@@ -53,6 +53,7 @@ executors:
       - image: node:12.16.1-alpine
 
   default-machine:
+    working_directory: /home/circleci/project
     machine:
       image: ubuntu-1604:201903-01
 
@@ -173,37 +174,33 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Set up NVM
+          name: Set up tests
           command: |
             echo ${NVM_DIR}
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install v10.15.3
             nvm alias default v10.15.3
-      - run:
-          name: install modules
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            node --version
-            npm install
-      - run:
-          name: Create dir for test results
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            npm ci
             mkdir -p ./test/results
       - run:
-          name: Build docker images
+          name: Pull, Build and Run docker images
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
-            chmod +x ./scripts/wait4.js
             # TODO: are we waiting for the auth service?
             sh -c "./scripts/wait4.js my-sql"
+      - run:
+          name: Migrate and Seed the Database
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            # TODO: are we in the right place?
+            pwd
+            npm -s run migrate
+            npm -s run test:integration
       - run:
           name: Execute integration tests
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd ~/project/
-            npm ci
             npm -s run test:integration
       - run:
           name: Prepare test results

@@ -32,12 +32,12 @@ describe('testing scope table', (): void => {
 
   beforeAll(async (): Promise<void> => {
     db = knex(DatabaseConfig)
-    await db.migrate.latest()
-    await db.seed.run()
+    // await db.migrate.latest()
+    // await db.seed.run()
   })
 
   afterAll(async (): Promise<void> => {
-    await db.migrate.rollback()
+    // await db.migrate.rollback()
     db.destroy()
   })
 
