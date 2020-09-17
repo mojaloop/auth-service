@@ -28,7 +28,7 @@
  ******/
 
 import Knex from 'knex'
-import Config from '~/shared/config'
+import DatabaseConfig from '~/../config/mysql.json'
 import ScopeDB, { Scope } from '../../../src/model/scope'
 import { Consent } from '../../../src/model/consent'
 import { NotFoundError } from '../../../src/model/errors'
@@ -80,7 +80,7 @@ describe('src/model/scope', (): void => {
   let scopeDB: ScopeDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(Config.DATABASE as object)
+    Db = Knex(DatabaseConfig)
 
     scopeDB = new ScopeDB(Db)
   })
