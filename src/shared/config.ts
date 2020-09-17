@@ -77,7 +77,7 @@ interface ServiceConfig {
   HOST: string;
   PARTICIPANT_ID: string;
   DATABASE?: DatabaseConfig;
-  SHOULD_USE_IN_MEMORY_DB: boolean;
+  SHOULD_USE_IN_MEMORY_DB: string;
   INSPECT: {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
@@ -88,8 +88,8 @@ interface ServiceConfig {
 const ConvictConfig = Convict<ServiceConfig>({
   SHOULD_USE_IN_MEMORY_DB: {
     doc: 'Should we use the in memory database',
-    format: 'Boolean',
-    default: false,
+    format: ['true', 'false'],
+    default: 'false',
     env: 'SHOULD_USE_IN_MEMORY_DB'
   },
   HOST: {
@@ -134,7 +134,7 @@ const ConvictConfig = Convict<ServiceConfig>({
 })
 
 // Load and validate database config
-const shouldUseInMemoryDB = ConvictConfig.get('SHOULD_USE_IN_MEMORY_DB')
+const shouldUseInMemoryDB = ConvictConfig.get('SHOULD_USE_IN_MEMORY_DB') === 'true'
 let DBConfig: DatabaseConfig = DbConfig.development
 
 if (shouldUseInMemoryDB) {
