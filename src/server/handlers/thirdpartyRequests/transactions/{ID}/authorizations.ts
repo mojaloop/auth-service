@@ -1,11 +1,3 @@
-/* istanbul ignore file */
-
-/*
- * This flag is to ignore BDD testing for model
- * which will be addressed in the future in
- * Ticket #354
- */
-
 /*****
  License
  --------------
