@@ -33,7 +33,7 @@ describe('cli', (): void => {
       PARTICIPANT_ID: Config.PARTICIPANT_ID,
       PORT: Config.PORT,
       HOST: Config.HOST,
-      ENV: Config.ENV,
+      SHOULD_USE_IN_MEMORY_DB: Config.SHOULD_USE_IN_MEMORY_DB,
       INSPECT: {
         DEPTH: 4,
         SHOW_HIDDEN: false,

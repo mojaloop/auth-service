@@ -29,7 +29,7 @@
     "test:coverage-check": "jest --config './jest.coverage.config.js' --coverage",
     "test:integration": "jest --config './jest.integration.config.js' --runInBand --testMatch '**/test/integration/**/*.(test|spec).ts'",
     "test:junit": "jest --reporters=default --reporters=jest-junit",
-    "test:unit": "jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
+    "test:unit": "export SHOULD_USE_IN_MEMORY_DB=true && jest --testMatch '**/test/unit/**/*.(test|spec).ts'",
     "watch": "tsc -w",
     "migrate": "run-s migrate:latest seed:run",
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",

@@ -28,7 +28,7 @@
  ******/
 
 import Knex from 'knex'
-import DatabaseConfig from '~/../config/mysql.json'
+import Config from '~/shared/config'
 import ConsentDB, { Consent } from '../../../src/model/consent'
 import { Scope } from '../../../src/model/scope'
 import { NotFoundError } from '../../../src/model/errors'
@@ -102,8 +102,7 @@ describe('src/model/consent', (): void => {
   let consentDB: ConsentDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(DatabaseConfig)
-    await Db.migrate.latest()
+    Db = Knex(Config.DATABASE as object)
     consentDB = new ConsentDB(Db)
   })
 
