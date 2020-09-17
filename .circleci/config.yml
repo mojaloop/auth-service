@@ -207,6 +207,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             cd ~/project/
             npm ci
+            echo $SHOULD_USE_IN_MEMORY_DB
             npm -s run test:integration
           environment:
             SHOULD_USE_IN_MEMORY_DB: false
