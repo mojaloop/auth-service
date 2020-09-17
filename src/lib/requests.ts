@@ -32,7 +32,7 @@
 /* istanbul ignore file */
 // Testing will be covered in #354
 
-import { config } from './config'
+import Config from '~/shared/config'
 import Logger from '@mojaloop/central-services-logger'
 import {
   // TODO: Once Logger is implemented in sdk-standard-components - use that

@@ -24,7 +24,7 @@
  ******/
 
 import Shared from '@mojaloop/central-services-shared'
-import Config from '../../shared/config'
+import { PACKAGE } from '../../shared/config'
 import { Context } from '../plugins'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
