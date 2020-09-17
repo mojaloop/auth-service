@@ -76,11 +76,11 @@ interface DatabaseConfig {
 }
 
 interface ServiceConfig {
-  ENV: string;
+  SHOULD_USE_TEST_DATABASE: boolean;
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
-  DATABASE?: object;
+  DATABASE?: DatabaseConfig;
 
   INSPECT: {
     DEPTH: number;
@@ -258,11 +258,10 @@ const SQLiteConfig = Convict<DatabaseConfig>({
 })
 
 const ConvictConfig = Convict<ServiceConfig>({
-  ENV: {
-    doc: 'The application environment.',
-    format: ['production', 'development', 'test'],
-    default: 'test',
-    env: 'NODE_ENV'
+  SHOULD_USE_TEST_DATABASE: {
+    doc: 'Should we use sqlite (unit tests only)',
+    format: 'Boolean',
+    default: false
   },
   HOST: {
     doc: 'The Hostname/IP address to bind.',
@@ -306,17 +305,15 @@ const ConvictConfig = Convict<ServiceConfig>({
 })
 
 // Load and validate database config
-const env = ConvictConfig.get('ENV')
+//TODO: change this name
+const shouldUseTestDatabase = ConvictConfig.get('SHOULD_USE_TEST_DATABASE')
 
-let DBConfig: Convict.Config<DatabaseConfig>
-let dbConfigName: string
+let DBConfig: Convict.Config<DatabaseConfig> = MySQLConfig
+let dbConfigName = 'mysql'
 
-if (env === 'test') {
+if (shouldUseTestDatabase) {
   DBConfig = SQLiteConfig
   dbConfigName = 'sqlite'
-} else {
-  DBConfig = MySQLConfig
-  dbConfigName = 'mysql'
 }
 
 DBConfig.loadFile(`${__dirname}/../../config/${dbConfigName}.json`)
@@ -328,7 +325,7 @@ ConvictConfig.validate({ allowed: 'strict' })
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = {
-  ENV: ConvictConfig.get('ENV'),
+  SHOULD_USE_TEST_DATABASE: ConvictConfig.get('SHOULD_USE_TEST_DATABASE'),
   PORT: ConvictConfig.get('PORT'),
   HOST: ConvictConfig.get('HOST'),
   PARTICIPANT_ID: ConvictConfig.get('PARTICIPANT_ID'),
