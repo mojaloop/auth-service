@@ -29,11 +29,8 @@
  ******/
 
 import Convict from 'convict'
+import DbConfig from '~/../config/knexfile'
 import PACKAGE from '../../package.json'
-import path from 'path'
-
-const migrationsDirectory = path.join(__dirname, '../../migrations')
-const seedsDirectory = path.join(__dirname, '../../seeds')
 
 interface DbConnection {
   host: string;
@@ -76,12 +73,11 @@ interface DatabaseConfig {
 }
 
 interface ServiceConfig {
-  ENV: string;
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
-  DATABASE?: object;
-
+  DATABASE?: DatabaseConfig;
+  SHOULD_USE_IN_MEMORY_DB: boolean;
   INSPECT: {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
@@ -89,180 +85,12 @@ interface ServiceConfig {
   };
 }
 
-const MySQLConfig = Convict<DatabaseConfig>({
-  client: {
-    doc: 'Database client name.',
-    format: String,
-    default: 'mysql'
-  },
-  version: {
-    doc: 'Database client version.',
-    format: String,
-    default: '5.5'
-  },
-  connection: {
-    host: {
-      doc: 'Database connection host.',
-      format: String,
-      default: 'localhost'
-    },
-    port: {
-      doc: 'The port to bind.',
-      format: 'port',
-      default: 3306
-    },
-    user: {
-      doc: 'Database user name.',
-      format: String,
-      default: 'auth-service'
-    },
-    password: {
-      doc: 'Database user password.',
-      format: String,
-      default: 'password'
-    },
-    database: {
-      doc: 'Database name.',
-      format: String,
-      default: 'auth-service'
-    },
-    timezone: {
-      doc: 'Database timezone.',
-      format: String,
-      default: 'UTC'
-    }
-  },
-  pool: {
-    min: {
-      doc: 'Minimum size.',
-      format: Number,
-      default: 10
-    },
-    max: {
-      doc: 'Maximum size.',
-      format: Number,
-      default: 10
-    },
-    acquireTimeoutMillis: {
-      doc: 'Unacquired promises are rejected after these many ms.',
-      format: Number,
-      default: 30000
-    },
-    createTimeoutMillis: {
-      doc: 'Unacquired create operations are rejected after these many ms.',
-      format: Number,
-      default: 30000
-    },
-    destroyTimeoutMillis: {
-      doc: 'Unacquired destory operations are rejected after these many ms.',
-      format: Number,
-      default: 5000
-    },
-    idleTimeoutMillis: {
-      doc: 'Free resources are destroyed after these many ms.',
-      format: Number,
-      default: 30000
-    },
-    reapIntervalMillis: {
-      doc: 'How often to check for idle resources to destroy.',
-      format: Number,
-      default: 1000
-    },
-    createRetryIntervalMillis: {
-      doc: 'Long idle after fialed create before trying again.',
-      format: Number,
-      default: 200
-    }
-  },
-  migrations: {
-    directory: {
-      doc: 'Migrations directory path.',
-      format: String,
-      default: migrationsDirectory
-    },
-    stub: {
-      doc: 'Migrations file stub,',
-      format: String,
-      default: `${migrationsDirectory}/migration.template`
-    },
-    tableName: {
-      doc: 'Migrations table name.',
-      format: String,
-      default: 'auth-service'
-    },
-    loadExtensions: {
-      doc: 'File Extension for migrations.',
-      format: Array,
-      default: ['.ts']
-    }
-  },
-  seeds: {
-    directory: {
-      doc: 'Seeds directory path.',
-      format: String,
-      default: seedsDirectory
-    },
-    loadExtensions: {
-      doc: 'File Extension for seeds.',
-      format: Array, // Check array elements?
-      default: ['.ts']
-    }
-  }
-})
-
-const SQLiteConfig = Convict<DatabaseConfig>({
-  client: {
-    doc: 'Database client name.',
-    format: String,
-    default: 'mysql'
-  },
-  connection: {
-    doc: 'Database type.',
-    format: String,
-    default: ':memory:'
-  },
-  useNullAsDefault: {
-    doc: 'Boolean for whether to use Null as default value',
-    format: Boolean,
-    default: true
-  },
-  migrations: {
-    directory: {
-      doc: 'Migrations directory path.',
-      format: String,
-      default: migrationsDirectory
-    },
-    tableName: {
-      doc: 'Migrations table name.',
-      format: String,
-      default: 'auth-service'
-    },
-    loadExtensions: {
-      doc: 'File Extension for migrations.',
-      format: Array,
-      default: ['.ts']
-    }
-  },
-  seeds: {
-    directory: {
-      doc: 'Seeds directory path.',
-      format: String,
-      default: seedsDirectory
-    },
-    loadExtensions: {
-      doc: 'File Extension for seeds.',
-      format: Array, // Check array elements?
-      default: ['.ts']
-    }
-  }
-})
-
 const ConvictConfig = Convict<ServiceConfig>({
-  ENV: {
-    doc: 'The application environment.',
-    format: ['production', 'development', 'test'],
-    default: 'test',
-    env: 'NODE_ENV'
+  SHOULD_USE_IN_MEMORY_DB: {
+    doc: 'Should we use the in memory database',
+    format: 'Boolean',
+    default: false,
+    env: 'SHOULD_USE_IN_MEMORY_DB'
   },
   HOST: {
     doc: 'The Hostname/IP address to bind.',
@@ -306,21 +134,12 @@ const ConvictConfig = Convict<ServiceConfig>({
 })
 
 // Load and validate database config
-const env = ConvictConfig.get('ENV')
+const shouldUseInMemoryDB = ConvictConfig.get('SHOULD_USE_IN_MEMORY_DB')
+let DBConfig: DatabaseConfig = DbConfig.development
 
-let DBConfig: Convict.Config<DatabaseConfig>
-let dbConfigName: string
-
-if (env === 'test') {
-  DBConfig = SQLiteConfig
-  dbConfigName = 'sqlite'
-} else {
-  DBConfig = MySQLConfig
-  dbConfigName = 'mysql'
+if (shouldUseInMemoryDB) {
+  DBConfig = DbConfig.test
 }
-
-DBConfig.loadFile(`${__dirname}/../../config/${dbConfigName}.json`)
-DBConfig.validate({ allowed: 'strict' })
 
 // Load and validate general config
 ConvictConfig.loadFile(`${__dirname}/../../config/config.json`)
@@ -328,11 +147,11 @@ ConvictConfig.validate({ allowed: 'strict' })
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = {
-  ENV: ConvictConfig.get('ENV'),
   PORT: ConvictConfig.get('PORT'),
   HOST: ConvictConfig.get('HOST'),
+  SHOULD_USE_IN_MEMORY_DB: ConvictConfig.get('SHOULD_USE_IN_MEMORY_DB'),
   PARTICIPANT_ID: ConvictConfig.get('PARTICIPANT_ID'),
-  DATABASE: DBConfig.getProperties(),
+  DATABASE: DBConfig,
   INSPECT: {
     DEPTH: ConvictConfig.get('INSPECT.DEPTH'),
     SHOW_HIDDEN: ConvictConfig.get('INSPECT.SHOW_HIDDEN'),
@@ -343,5 +162,6 @@ const config: ServiceConfig = {
 export default config
 export {
   PACKAGE,
-  ServiceConfig
+  ServiceConfig,
+  DatabaseConfig
 }
