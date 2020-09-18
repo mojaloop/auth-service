@@ -200,7 +200,12 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
             chmod +x ./scripts/wait4.js
-            sh -c "./scripts/wait4.js my-sql"
+            sh -c "./scripts/wait4.js containers"
+      - run:
+          name: Migrate DB
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            npm -s run migrate
       - run:
           name: Execute integration tests
           command: |
