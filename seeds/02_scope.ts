@@ -32,6 +32,8 @@
 'use strict'
 import * as Knex from 'knex'
 
+const tableName = 'Scope'
+
 const scopes = [
   {
     consentId: '123',
@@ -51,5 +53,6 @@ const scopes = [
 ]
 
 export function seed (knex: Knex): Promise<Knex.QueryBuilder<number[]>> {
-  return knex('Scope').del().then(() => knex('Scope').insert(scopes))
+  return knex(tableName).del()
+    .then(() => knex('Scope').insert(scopes))
 }

@@ -77,9 +77,16 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
 
   it('should properly enforce the primary key constraint', async (): Promise<void> => {
     expect(db).toBeDefined()
+
+    // Retrieve an existing entry and add another entry using it's id
+    const users: Knex.QueryBuilder[] = await db.from('Scope').select('*')
+    expect(users.length).toBeGreaterThan(0)
+    const existingEntry = await users[0]
+    const existingId: string = existingEntry.id
+
     /* Tests for duplication */
     await expect(db.from('Scope').insert({
-      id: 1,
+      id: existingId,
       consentId: '125',
       action: 'accounts.transfer',
       accountId: '78901-12345'

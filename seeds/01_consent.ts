@@ -97,5 +97,6 @@ const consents = [
 ]
 
 export function seed (knex: Knex): Promise<Knex.QueryBuilder<number[]>> {
-  return knex('Consent').del().then(() => knex('Consent').insert(consents))
+  return knex('Consent').del()
+    .then(() => knex('Consent').insert(consents))
 }
