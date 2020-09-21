@@ -196,7 +196,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
 // Load and validate database config
 const env = process.env.NODE_ENV ?? 'development'
 ConvictDatabaseConfig.loadFile(`${__dirname}/${env}_db.json`)
-ConvictDatabaseConfig.validate({ allowed: 'strict' })
+ConvictDatabaseConfig.validate()
 
 // TODO: Check if connection config is working
 const Config: DatabaseConfig = ConvictDatabaseConfig.getProperties()
