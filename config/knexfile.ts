@@ -28,10 +28,10 @@
  ******/
 
 // import Convict from 'convict'
-// import path from 'path'
+import path from 'path'
 import ProductionDatabaseConfig from './production_db.json'
-// const migrationsDirectory = path.join(__dirname, '../migrations')
-// const seedsDirectory = path.join(__dirname, '../seeds')
+const migrationsDirectory = path.join(__dirname, '../migrations')
+const seedsDirectory = path.join(__dirname, '../seeds')
 
 interface DbConnection {
   host: string;
@@ -201,6 +201,9 @@ export interface DatabaseConfig {
 
 // TODO: Check if connection config is working
 const Config: DatabaseConfig = ProductionDatabaseConfig
+Config.migrations.directory = migrationsDirectory
+Config.migrations.stub = `${migrationsDirectory}/migration.template`
+Config.seeds.directory = seedsDirectory
 
 export default Config
 module.exports = Config
