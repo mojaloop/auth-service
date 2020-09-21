@@ -108,7 +108,6 @@ config.DATABASE = DBConfig
 
 export default config
 export {
-  env,
   PACKAGE,
   ServiceConfig,
   DatabaseConfig

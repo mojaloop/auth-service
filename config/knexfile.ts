@@ -29,7 +29,6 @@
 
 import Convict from 'convict'
 import path from 'path'
-import { env } from '../src/shared/config'
 const migrationsDirectory = path.join(__dirname, '../migrations')
 const seedsDirectory = path.join(__dirname, '../seeds')
 
@@ -195,6 +194,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
 })
 
 // Load and validate database config
+const env = process.env.NODE_ENV ?? 'development'
 ConvictDatabaseConfig.loadFile(`${__dirname}/${env}_db.json`)
 ConvictDatabaseConfig.validate({ allowed: 'strict' })
 
