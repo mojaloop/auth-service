@@ -27,69 +27,179 @@
  --------------
  ******/
 
-import { DatabaseConfig } from '../src/shared/config'
+import Convict from 'convict'
 import path from 'path'
-require('ts-node/register')
+import { env } from '../src/shared/config'
 const migrationsDirectory = path.join(__dirname, '../migrations')
 const seedsDirectory = path.join(__dirname, '../seeds')
 
-interface KnexConfig {
-  development: DatabaseConfig;
-  test: DatabaseConfig;
-  production: DatabaseConfig;
+interface DbConnection {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
+  timezone: string;
 }
 
-const mySQLConfig: DatabaseConfig = {
-  client: 'mysql',
-  version: '5.5',
-  connection: {
-    host: 'localhost',
-    port: 3306,
-    user: 'auth-service',
-    password: 'password',
-    database: 'auth-service',
-    timezone: 'UTC'
-  },
-  pool: {
-    min: 10,
-    max: 10,
-    acquireTimeoutMillis: 30000,
-    createTimeoutMillis: 30000,
-    destroyTimeoutMillis: 5000,
-    idleTimeoutMillis: 30000,
-    reapIntervalMillis: 1000,
-    createRetryIntervalMillis: 200
-  },
+interface DbPool {
+  min: number;
+  max: number;
+  acquireTimeoutMillis: number;
+  createTimeoutMillis: number;
+  destroyTimeoutMillis: number;
+  idleTimeoutMillis: number;
+  reapIntervalMillis: number;
+  createRetryIntervalMillis: number;
+}
+
+export interface DatabaseConfig {
+  client: string;
+  version?: string;
+  useNullAsDefault?: boolean;
+  connection: DbConnection | string;
+  pool?: DbPool;
+
   migrations: {
-    directory: migrationsDirectory,
-    tableName: 'auth-service',
-    stub: `${migrationsDirectory}/migration.template`,
-    loadExtensions: ['.ts']
-  },
+    directory: string;
+    tableName: string;
+    stub?: string;
+    loadExtensions: string[];
+  };
+
   seeds: {
-    directory: seedsDirectory,
-    loadExtensions: ['.ts']
-  }
+    directory: string;
+    loadExtensions: string[];
+  };
 }
 
-const Config: KnexConfig = {
-  development: mySQLConfig,
-  test: {
-    client: 'sqlite3',
-    connection: ':memory:',
-    useNullAsDefault: true,
-    migrations: {
-      directory: migrationsDirectory,
-      tableName: 'auth-service',
-      loadExtensions: ['.ts']
+const ConvictDatabaseConfig = Convict<DatabaseConfig>({
+  client: {
+    doc: 'Which database client should we use',
+    format: ['mysql', 'sqlite3'],
+    default: 'mysql'
+  },
+  version: {
+    doc: 'What database version should we use',
+    format: String,
+    default: '5.5'
+  },
+  connection: {
+    host: {
+      doc: 'The Hostname/IP address to bind.',
+      format: '*',
+      default: '0.0.0.0'
     },
-    seeds: {
-      directory: seedsDirectory,
-      loadExtensions: ['.ts']
+    port: {
+      doc: 'The port to bind.',
+      format: 'port',
+      default: 4004
+    },
+    user: {
+      doc: 'The username for the database',
+      format: String,
+      default: 'auth-service'
+    },
+    password: {
+      doc: 'The password for the database',
+      format: String,
+      default: 'password'
+    },
+    database: {
+      doc: 'The name of the database',
+      format: String,
+      default: 'auth-service'
+    },
+    timezone: {
+      doc: 'Timezone used for timestamps in the database',
+      format: String,
+      default: 'UTC'
     }
   },
-  production: mySQLConfig
-}
+  pool: {
+    min: {
+      doc: 'Minimum number of connections',
+      format: 'Number',
+      default: 10
+    },
+    max: {
+      doc: 'Maximum number of connections',
+      format: 'Number',
+      default: 10
+    },
+    acquireTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 30000
+    },
+    createTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 30000
+    },
+    destroyTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 5000
+    },
+    idleTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 30000
+    },
+    reapIntervalMillis: {
+      doc: '',
+      format: 'Number',
+      default: 1000
+    },
+    createRetryIntervalMillis: {
+      doc: '',
+      format: 'Number',
+      default: 200
+    }
+  },
+  migrations: {
+    directory: {
+      doc: 'Migration directory',
+      format: String,
+      default: migrationsDirectory
+    },
+    tableName: {
+      doc: 'Migration table name',
+      format: String,
+      default: 'auth-service'
+    },
+    stub: {
+      doc: '',
+      format: String,
+      default: `${migrationsDirectory}/migration.template`
+    },
+    loadExtensions: {
+      doc: 'Array of extensions to load',
+      format: 'Array',
+      default: ['.ts']
+    }
+  },
+  seeds: {
+    directory: {
+      doc: '',
+      format: String,
+      default: seedsDirectory
+    },
+    loadExtensions: {
+      doc: 'Array of extensions to load',
+      format: 'Array',
+      default: ['.ts']
+    }
+  }
+})
+
+// Load and validate database config
+ConvictDatabaseConfig.loadFile(`${__dirname}/${env}_db.json`)
+ConvictDatabaseConfig.validate({ allowed: 'strict' })
+
+// TODO: Check if connection config is working
+const Config: DatabaseConfig = ConvictDatabaseConfig.getProperties()
 
 export default Config
 module.exports = Config

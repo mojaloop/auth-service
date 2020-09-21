@@ -30,55 +30,15 @@
  ******/
 
 import Convict from 'convict'
-import DbConfig from '~/../config/knexfile'
+import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
 import PACKAGE from '../../package.json'
-
-interface DbConnection {
-  host: string;
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-  timezone: string;
-}
-
-interface DbPool {
-  min: number;
-  max: number;
-  acquireTimeoutMillis: number;
-  createTimeoutMillis: number;
-  destroyTimeoutMillis: number;
-  idleTimeoutMillis: number;
-  reapIntervalMillis: number;
-  createRetryIntervalMillis: number;
-}
-
-interface DatabaseConfig {
-  client: string;
-  version?: string;
-  useNullAsDefault?: boolean;
-  connection: DbConnection | string;
-  pool?: DbPool;
-
-  migrations: {
-    directory: string;
-    tableName: string;
-    stub?: string;
-    loadExtensions: string[];
-  };
-
-  seeds: {
-    directory: string;
-    loadExtensions: string[];
-  };
-}
 
 interface ServiceConfig {
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
   DATABASE?: DatabaseConfig;
-  SHOULD_USE_IN_MEMORY_DB: string;
+  ENV: string;
   INSPECT: {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
@@ -87,11 +47,11 @@ interface ServiceConfig {
 }
 
 const ConvictConfig = Convict<ServiceConfig>({
-  SHOULD_USE_IN_MEMORY_DB: {
-    doc: 'Should we use the in memory database',
-    format: ['true', 'false'],
-    default: 'false',
-    env: 'SHOULD_USE_IN_MEMORY_DB'
+  ENV: {
+    doc: 'The environment that the auth-service is running in',
+    format: ['development', 'test', 'production'],
+    default: 'development',
+    env: 'NODE_ENV'
   },
   HOST: {
     doc: 'The Hostname/IP address to bind.',
@@ -134,34 +94,21 @@ const ConvictConfig = Convict<ServiceConfig>({
   }
 })
 
-// Load and validate database config
-const shouldUseInMemoryDB = ConvictConfig.get('SHOULD_USE_IN_MEMORY_DB') === 'true'
-let DBConfig: DatabaseConfig = DbConfig.development
-
-if (shouldUseInMemoryDB) {
-  DBConfig = DbConfig.test
-}
-
 // Load and validate general config
-ConvictConfig.loadFile(`${__dirname}/../../config/config.json`)
+const env = ConvictConfig.get('ENV')
+
+ConvictConfig.loadFile(`${__dirname}/../../config/${env}.json`)
 ConvictConfig.validate({ allowed: 'strict' })
 
 // Extract simplified config from Convict object
-const config: ServiceConfig = {
-  PORT: ConvictConfig.get('PORT'),
-  HOST: ConvictConfig.get('HOST'),
-  SHOULD_USE_IN_MEMORY_DB: ConvictConfig.get('SHOULD_USE_IN_MEMORY_DB'),
-  PARTICIPANT_ID: ConvictConfig.get('PARTICIPANT_ID'),
-  DATABASE: DBConfig,
-  INSPECT: {
-    DEPTH: ConvictConfig.get('INSPECT.DEPTH'),
-    SHOW_HIDDEN: ConvictConfig.get('INSPECT.SHOW_HIDDEN'),
-    COLOR: ConvictConfig.get('INSPECT.COLOR')
-  }
-}
+const config: ServiceConfig = ConvictConfig.getProperties()
+
+// Inject DBConfig into shared config
+config.DATABASE = DBConfig
 
 export default config
 export {
+  env,
   PACKAGE,
   ServiceConfig,
   DatabaseConfig
