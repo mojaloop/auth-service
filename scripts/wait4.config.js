@@ -12,7 +12,7 @@ module.exports = {
   // services definitions
   services: [
     {
-      name: 'containers',
+      name: 'cicd-integration-tests',
 
       // list of services to wait for
       wait4: [
