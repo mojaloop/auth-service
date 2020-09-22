@@ -176,14 +176,15 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   }
 })
 
-const env = process.env.NODE_ENV ?? 'development'
+const env = process.env.NODE_ENV ?? 'production'
 const dbConfigFile = `${__dirname}/${env}_db.json`
 console.log(dbConfigFile)
 ConvictDatabaseConfig.loadFile(dbConfigFile)
 ConvictDatabaseConfig.validate({allowed: 'warn'})
 
-// TODO: Check if connection config is working
 const Config: DatabaseConfig = ConvictDatabaseConfig.getProperties()
+
+// Inject directory paths here
 Config.migrations.directory = migrationsDirectory
 Config.migrations.stub = `${migrationsDirectory}/migration.template`
 Config.seeds.directory = seedsDirectory

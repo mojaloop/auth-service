@@ -50,7 +50,7 @@ const ConvictConfig = Convict<ServiceConfig>({
   ENV: {
     doc: 'The environment that the auth-service is running in',
     format: ['development', 'test', 'production', 'integration'],
-    default: 'development',
+    default: 'production',
     env: 'NODE_ENV'
   },
   HOST: {
