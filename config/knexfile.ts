@@ -29,7 +29,7 @@
 
 import Convict from 'convict'
 import path from 'path'
-import { DbConnectionFormat } from './custom-convict-formats'
+import { DbConnectionFormat, DbPoolFormat } from './custom-convict-formats'
 const migrationsDirectory = path.join(__dirname, '../migrations')
 const seedsDirectory = path.join(__dirname, '../seeds')
 
@@ -75,6 +75,7 @@ export interface DatabaseConfig {
 }
 
 Convict.addFormat(DbConnectionFormat)
+Convict.addFormat(DbPoolFormat)
 
 const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   ENV: {
@@ -86,12 +87,15 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   client: {
     doc: 'Which database client should we use',
     format: ['mysql', 'sqlite3'],
-    default: 'mysql'
+    default: null
   },
   version: {
     doc: 'What database version should we use',
-    format: String,
-    default: '5.5'
+    format: function (val) {
+      if (val === null || typeof val === 'string') return true
+      throw Error('Database version was specified in the wrong format')
+    },
+    default: null
   },
   useNullAsDefault: {
     doc: 'whether or not to use null for everything not specified',
@@ -101,56 +105,12 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   connection: {
     doc: 'Connection object specifying properties like host, port, user etc.',
     format: DbConnectionFormat.name,
-    default: {
-      host: 'localhost',
-      port: 3306,
-      user: 'auth-service',
-      password: 'password',
-      database: 'auth-service',
-      timezone: 'UTC'
-    }
+    default: null
   },
   pool: {
-    min: {
-      doc: 'Minimum number of connections',
-      format: 'Number',
-      default: 10
-    },
-    max: {
-      doc: 'Maximum number of connections',
-      format: 'Number',
-      default: 10
-    },
-    acquireTimeoutMillis: {
-      doc: 'How long knex should wait when acquiring a connection before throwing a timeout error',
-      format: 'Number',
-      default: 30000
-    },
-    createTimeoutMillis: {
-      doc: 'How long knex should wait when establishing a new connection before throwing a timeout error',
-      format: 'Number',
-      default: 30000
-    },
-    destroyTimeoutMillis: {
-      doc: 'How long knex should wait when destroying new connection before throwing a timeout error',
-      format: 'Number',
-      default: 5000
-    },
-    idleTimeoutMillis: {
-      doc: 'How long a connection must sit idle in the pool and not be checked out before it is automatically closed',
-      format: 'Number',
-      default: 30000
-    },
-    reapIntervalMillis: {
-      doc: 'How often to check for idle resources to destroy',
-      format: 'Number',
-      default: 1000
-    },
-    createRetryIntervalMillis: {
-      doc: 'How long knex should wait before trying to create a connection again',
-      format: 'Number',
-      default: 200
-    }
+    doc: 'Pool object specifying tarn pool properties',
+    format: DbPoolFormat.name,
+    default: null
   },
   migrations: {
     directory: {
