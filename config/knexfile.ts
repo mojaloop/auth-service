@@ -27,13 +27,13 @@
  --------------
  ******/
 
-// import Convict from 'convict'
+import Convict from 'convict'
 import path from 'path'
-import ProductionDatabaseConfig from './production_db.json'
+import { DbConnectionFormat } from './custom-convict-formats'
 const migrationsDirectory = path.join(__dirname, '../migrations')
 const seedsDirectory = path.join(__dirname, '../seeds')
 
-interface DbConnection {
+export interface DbConnection {
   host: string;
   port: number;
   user: string;
@@ -42,7 +42,7 @@ interface DbConnection {
   timezone: string;
 }
 
-interface DbPool {
+export interface DbPool {
   min: number;
   max: number;
   acquireTimeoutMillis: number;
@@ -73,134 +73,117 @@ export interface DatabaseConfig {
   };
 }
 
-// const ConvictDatabaseConfig = Convict<DatabaseConfig>({
-//   client: {
-//     doc: 'Which database client should we use',
-//     format: ['mysql', 'sqlite3'],
-//     default: 'mysql'
-//   },
-//   version: {
-//     doc: 'What database version should we use',
-//     format: String,
-//     default: '5.5'
-//   },
-//   connection: {
-//     host: {
-//       doc: 'The Hostname/IP address to bind.',
-//       format: '*',
-//       default: '0.0.0.0'
-//     },
-//     port: {
-//       doc: 'The port to bind.',
-//       format: 'port',
-//       default: 4004
-//     },
-//     user: {
-//       doc: 'The username for the database',
-//       format: String,
-//       default: 'auth-service'
-//     },
-//     password: {
-//       doc: 'The password for the database',
-//       format: String,
-//       default: 'password'
-//     },
-//     database: {
-//       doc: 'The name of the database',
-//       format: String,
-//       default: 'auth-service'
-//     },
-//     timezone: {
-//       doc: 'Timezone used for timestamps in the database',
-//       format: String,
-//       default: 'UTC'
-//     }
-//   },
-//   pool: {
-//     min: {
-//       doc: 'Minimum number of connections',
-//       format: 'Number',
-//       default: 10
-//     },
-//     max: {
-//       doc: 'Maximum number of connections',
-//       format: 'Number',
-//       default: 10
-//     },
-//     acquireTimeoutMillis: {
-//       doc: '',
-//       format: 'Number',
-//       default: 30000
-//     },
-//     createTimeoutMillis: {
-//       doc: '',
-//       format: 'Number',
-//       default: 30000
-//     },
-//     destroyTimeoutMillis: {
-//       doc: '',
-//       format: 'Number',
-//       default: 5000
-//     },
-//     idleTimeoutMillis: {
-//       doc: '',
-//       format: 'Number',
-//       default: 30000
-//     },
-//     reapIntervalMillis: {
-//       doc: '',
-//       format: 'Number',
-//       default: 1000
-//     },
-//     createRetryIntervalMillis: {
-//       doc: '',
-//       format: 'Number',
-//       default: 200
-//     }
-//   },
-//   migrations: {
-//     directory: {
-//       doc: 'Migration directory',
-//       format: String,
-//       default: migrationsDirectory
-//     },
-//     tableName: {
-//       doc: 'Migration table name',
-//       format: String,
-//       default: 'auth-service'
-//     },
-//     stub: {
-//       doc: '',
-//       format: String,
-//       default: `${migrationsDirectory}/migration.template`
-//     },
-//     loadExtensions: {
-//       doc: 'Array of extensions to load',
-//       format: 'Array',
-//       default: ['.ts']
-//     }
-//   },
-//   seeds: {
-//     directory: {
-//       doc: '',
-//       format: String,
-//       default: seedsDirectory
-//     },
-//     loadExtensions: {
-//       doc: 'Array of extensions to load',
-//       format: 'Array',
-//       default: ['.ts']
-//     }
-//   }
-// })
+Convict.addFormat(DbConnectionFormat);
 
-// Load and validate database config
-// const env = process.env.NODE_ENV ?? 'development'
-// ConvictDatabaseConfig.loadFile(`${__dirname}/${env}_db.json`)
-// ConvictDatabaseConfig.validate()
+const ConvictDatabaseConfig = Convict<DatabaseConfig>({
+  client: {
+    doc: 'Which database client should we use',
+    format: ['mysql', 'sqlite3'],
+    default: 'mysql'
+  },
+  version: {
+    doc: 'What database version should we use',
+    format: String,
+    default: '5.5'
+  },
+  connection: {
+    doc: 'Connection object specifying properties like host, port, user etc.',
+    format: DbConnectionFormat.name,
+    default: {
+      host: 'localhost',
+      port: 3306,
+      user: 'auth-service',
+      password: 'password',
+      database: 'auth-service',
+      timezone: 'UTC'
+    },
+  },
+  pool: {
+    min: {
+      doc: 'Minimum number of connections',
+      format: 'Number',
+      default: 10
+    },
+    max: {
+      doc: 'Maximum number of connections',
+      format: 'Number',
+      default: 10
+    },
+    acquireTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 30000
+    },
+    createTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 30000
+    },
+    destroyTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 5000
+    },
+    idleTimeoutMillis: {
+      doc: '',
+      format: 'Number',
+      default: 30000
+    },
+    reapIntervalMillis: {
+      doc: '',
+      format: 'Number',
+      default: 1000
+    },
+    createRetryIntervalMillis: {
+      doc: '',
+      format: 'Number',
+      default: 200
+    }
+  },
+  migrations: {
+    directory: {
+      doc: 'Migration directory',
+      format: String,
+      default: migrationsDirectory
+    },
+    tableName: {
+      doc: 'Migration table name',
+      format: String,
+      default: 'auth-service'
+    },
+    stub: {
+      doc: '',
+      format: String,
+      default: `${migrationsDirectory}/migration.template`
+    },
+    loadExtensions: {
+      doc: 'Array of extensions to load',
+      format: 'Array',
+      default: ['.ts']
+    }
+  },
+  seeds: {
+    directory: {
+      doc: '',
+      format: String,
+      default: seedsDirectory
+    },
+    loadExtensions: {
+      doc: 'Array of extensions to load',
+      format: 'Array',
+      default: ['.ts']
+    }
+  }
+})
+
+const env = process.env.NODE_ENV ?? 'development'
+const dbConfigFile = `${__dirname}/${env}_db.json`
+console.log(dbConfigFile)
+ConvictDatabaseConfig.loadFile(dbConfigFile)
+ConvictDatabaseConfig.validate({allowed: 'warn'})
 
 // TODO: Check if connection config is working
-const Config: DatabaseConfig = ProductionDatabaseConfig
+const Config: DatabaseConfig = ConvictDatabaseConfig.getProperties()
 Config.migrations.directory = migrationsDirectory
 Config.migrations.stub = `${migrationsDirectory}/migration.template`
 Config.seeds.directory = seedsDirectory
