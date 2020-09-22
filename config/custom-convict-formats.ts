@@ -12,13 +12,26 @@ export const DbConnectionFormat = {
 
             // Check that object is DbConnection and has DbConnection fields - 
             // i.e. PG and MySQL use a DbConnection object to configure
-            if (connection.host == null ||
-                connection.port == null ||
-                connection.database == null ||
-                connection.user == null ||
-                connection.password == null) {
-                    throw new Error('Connection object missing a mandatory field')
-                }
+            // Verify that all fields are filled AND they are the right format - presence + format check
+            if (connection.host == null || typeof connection.host !== 'string') {
+                throw new Error("Mandatory field: 'host' is missing or is in the wrong format")
+            }
+            
+            if (connection.port == null || typeof connection.port !== 'number') {
+                throw new Error("Mandatory field: 'port' is missing or is in the wrong format")
+            }
+
+            if (connection.database == null || typeof connection.database !== 'string') {
+                throw new Error("Mandatory field: 'database' is missing or is in the wrong format")
+            }
+
+            if (connection.user == null || typeof connection.user !== 'string') {
+                throw new Error("Mandatory field: 'user' is missing or is in the wrong format")
+            }
+
+            if (connection.password == null || typeof connection.user !== 'string') {
+                throw new Error("Mandatory field: 'password' is missing or is in the wrong format")
+            }
 
             return true;
         }
@@ -40,6 +53,7 @@ export const DbPoolFormat = {
         else if(typeof val === 'object') {
             const pool = val as DbPool
 
+            // Fields are allowed to be missing so only validate their format if the field is not undefined or null
             if(pool.min != null && typeof pool.min !== 'number') {
                 throw new Error('min is not a number')
             }
