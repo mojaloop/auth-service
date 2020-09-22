@@ -54,6 +54,7 @@ export interface DbPool {
 }
 
 export interface DatabaseConfig {
+  ENV: string;
   client: string;
   version?: string;
   useNullAsDefault?: boolean;
@@ -73,9 +74,15 @@ export interface DatabaseConfig {
   };
 }
 
-Convict.addFormat(DbConnectionFormat);
+Convict.addFormat(DbConnectionFormat)
 
 const ConvictDatabaseConfig = Convict<DatabaseConfig>({
+  ENV: {
+    doc: 'The application environment.',
+    format: ['production', 'development', 'test', 'integration'],
+    default: 'production',
+    env: 'NODE_ENV'
+  },
   client: {
     doc: 'Which database client should we use',
     format: ['mysql', 'sqlite3'],
@@ -101,7 +108,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
       password: 'password',
       database: 'auth-service',
       timezone: 'UTC'
-    },
+    }
   },
   pool: {
     min: {
@@ -181,7 +188,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   }
 })
 
-const env = process.env.NODE_ENV ?? 'production'
+const env = ConvictDatabaseConfig.get('ENV')
 const dbConfigFile = `${__dirname}/${env}_db.json`
 ConvictDatabaseConfig.loadFile(dbConfigFile)
 ConvictDatabaseConfig.validate({ allowed: 'strict' })
