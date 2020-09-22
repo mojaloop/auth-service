@@ -94,7 +94,7 @@ const ConvictConfig = Convict<ServiceConfig>({
   }
 })
 
-// Load and validate general config
+// Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
 
 ConvictConfig.loadFile(`${__dirname}/../../config/${env}.json`)
