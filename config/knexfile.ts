@@ -86,6 +86,11 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
     format: String,
     default: '5.5'
   },
+  useNullAsDefault: {
+    doc: 'whether or not to use null for everything not specified',
+    format: 'Boolean',
+    default: false
+  },
   connection: {
     doc: 'Connection object specifying properties like host, port, user etc.',
     format: DbConnectionFormat.name,
@@ -110,32 +115,32 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
       default: 10
     },
     acquireTimeoutMillis: {
-      doc: '',
+      doc: 'How long knex should wait when acquiring a connection before throwing a timeout error',
       format: 'Number',
       default: 30000
     },
     createTimeoutMillis: {
-      doc: '',
+      doc: 'How long knex should wait when establishing a new connection before throwing a timeout error',
       format: 'Number',
       default: 30000
     },
     destroyTimeoutMillis: {
-      doc: '',
+      doc: 'How long knex should wait when destroying new connection before throwing a timeout error',
       format: 'Number',
       default: 5000
     },
     idleTimeoutMillis: {
-      doc: '',
+      doc: 'How long a connection must sit idle in the pool and not be checked out before it is automatically closed',
       format: 'Number',
       default: 30000
     },
     reapIntervalMillis: {
-      doc: '',
+      doc: 'How often to check for idle resources to destroy',
       format: 'Number',
       default: 1000
     },
     createRetryIntervalMillis: {
-      doc: '',
+      doc: 'How long knex should wait before trying to create a connection again',
       format: 'Number',
       default: 200
     }
@@ -152,7 +157,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
       default: 'auth-service'
     },
     stub: {
-      doc: '',
+      doc: 'Where the stubs for migration are located',
       format: String,
       default: `${migrationsDirectory}/migration.template`
     },
@@ -164,7 +169,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   },
   seeds: {
     directory: {
-      doc: '',
+      doc: 'Seeds directory',
       format: String,
       default: seedsDirectory
     },
@@ -178,9 +183,8 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
 
 const env = process.env.NODE_ENV ?? 'production'
 const dbConfigFile = `${__dirname}/${env}_db.json`
-console.log(dbConfigFile)
 ConvictDatabaseConfig.loadFile(dbConfigFile)
-ConvictDatabaseConfig.validate({allowed: 'warn'})
+ConvictDatabaseConfig.validate({ allowed: 'strict' })
 
 const Config: DatabaseConfig = ConvictDatabaseConfig.getProperties()
 
