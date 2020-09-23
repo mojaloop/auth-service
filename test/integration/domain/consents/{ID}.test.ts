@@ -35,7 +35,7 @@ import {
 } from '~/domain/consents/{ID}'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
-import knex from 'knex'
+import Knex from 'knex'
 import Config from '~/shared/config'
 import * as Scopes from '~/lib/scopes'
 import { NotFoundError } from '~/model/errors'
@@ -56,10 +56,15 @@ describe('server/domain/consents/{ID}', (): void => {
   })
 
   describe('retrieveValidConsent', (): void => {
+    let db: Knex<unknown[]>
     beforeAll(async (): Promise<void> => {
       // Seed the database before we can test for retrieval functions
-      const db = knex(Config.DATABASE as object);
+      db = Knex(Config.DATABASE as object);
       await db.seed.run()
+    })
+
+    afterAll(async (): Promise<void> => {
+      await db.destroy()
     })
 
     it('should retrieve a valid consent without any errors', async (): Promise<void> => {
@@ -88,10 +93,16 @@ describe('server/domain/consents/{ID}', (): void => {
   })
 
   describe('updateConsentCredential', (): void => {
+    let db: Knex<unknown[]>
+
     beforeAll(async (): Promise<void> => {
       // Seed the database before we can test for retrieval functions
-      const db = knex(Config.DATABASE as object);
+      db = Knex(Config.DATABASE as object);
       await db.seed.run()
+    })
+
+    afterAll(async (): Promise<void> => {
+      await db.destroy()
     })
 
     it('should update a consent with valid credentials without any errors',
