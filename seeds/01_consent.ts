@@ -33,7 +33,7 @@
 'use strict'
 import * as Knex from 'knex'
 
-const consents = [
+export const consents = [
   {
     id: '123',
     status: 'ACTIVE',
