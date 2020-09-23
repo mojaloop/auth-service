@@ -27,7 +27,6 @@
 
  --------------
  ******/
-import Logger from '@mojaloop/central-services-logger'
 import {
   retrieveValidConsent,
   updateConsentCredential,
@@ -46,15 +45,7 @@ import {
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { consents } from '~/../seeds/01_consent'
 
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
-
 describe('server/domain/consents/{ID}', (): void => {
-  beforeAll((): void => {
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
-  })
-
   describe('retrieveValidConsent', (): void => {
     let db: Knex<unknown[]>
     beforeAll(async (): Promise<void> => {
@@ -74,7 +65,9 @@ describe('server/domain/consents/{ID}', (): void => {
     })
 
     it('should propagate error in consent retrieval from DB', async (): Promise<void> => {
-      await expect(retrieveValidConsent('1', 'challenge_str')).rejects.toThrowError(new NotFoundError('Consent', '1'))
+      await expect(retrieveValidConsent('1', 'challenge_str'))
+        .rejects
+        .toThrowError(new NotFoundError('Consent', '1'))
     })
 
     it('should throw IncorrectStatusError if retrieved consent has REVOKED status',
