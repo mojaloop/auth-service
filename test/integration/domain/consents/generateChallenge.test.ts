@@ -24,7 +24,6 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Kenneth Zeng <kkzeng@google.com>
-
  --------------
  ******/
 import { updateConsentCredential } from '~/domain/consents/generateChallenge'
