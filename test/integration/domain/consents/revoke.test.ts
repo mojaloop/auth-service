@@ -26,19 +26,12 @@
  - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import Knex from 'knex'
 import { consents } from '~/../seeds/01_consent'
 import Config from '~/shared/config'
 import { NotFoundError } from '~/model/errors'
 import { revokeConsentStatus } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
-
-const requestBody: SDKStandardComponents.PatchConsentsRequest = {
-  status: 'REVOKED',
-  revokedAt: '2020-08-19T05:44:18.843Z'
-
-}
 
 describe('server/domain/consents/revoke', (): void => {
   describe('revokeConsentStatus', (): void => {
