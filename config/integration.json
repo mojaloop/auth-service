@@ -1,0 +1,10 @@
+{
+    "PORT": 4004,
+    "HOST": "0.0.0.0",
+    "PARTICIPANT_ID": "auth_service",
+    "INSPECT": {
+        "DEPTH": 4,
+        "SHOW_HIDDEN": false,
+        "COLOR": true
+    }
+}

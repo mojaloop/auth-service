@@ -23,21 +23,19 @@
  --------------
  ******/
 
-import Config from '../../../config/knexfile'
 import knex from 'knex'
 import * as Knex from 'knex'
+import Config from '~/shared/config'
 
 describe('testing scope table', (): void => {
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.development as object)
-    await db.migrate.latest()
+    db = knex(Config.DATABASE as object)
     await db.seed.run()
   })
 
   afterAll(async (): Promise<void> => {
-    await db.migrate.rollback()
     db.destroy()
   })
 
@@ -70,9 +68,7 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.test)
-    await db.migrate.latest()
-    await db.seed.run()
+    db = knex(Config.DATABASE as object)
   })
 
   afterAll(async (): Promise<void> => {
@@ -81,9 +77,16 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
 
   it('should properly enforce the primary key constraint', async (): Promise<void> => {
     expect(db).toBeDefined()
+
+    // Retrieve an existing entry and add another entry using it's id
+    const users: Knex.QueryBuilder[] = await db.from('Scope').select('*')
+    expect(users.length).toBeGreaterThan(0)
+    const existingEntry = await users[0]
+    const existingId: string = existingEntry.id
+
     /* Tests for duplication */
     await expect(db.from('Scope').insert({
-      id: 1,
+      id: existingId,
       consentId: '125',
       action: 'accounts.transfer',
       accountId: '78901-12345'

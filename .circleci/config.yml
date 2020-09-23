@@ -99,6 +99,8 @@ jobs:
       - run:
           name: Execute unit tests
           command: npm run test:unit
+          environment:
+            NODE_ENV: "test"
       - run:
           name: prepare test/results
           command: |
@@ -150,6 +152,8 @@ jobs:
       - run:
           name: Execute code coverage check
           command: npm run test:coverage-check
+          environment:
+            NODE_ENV: "test"
       - store_artifacts:
           path: coverage
           prefix: test
@@ -196,7 +200,12 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
             chmod +x ./scripts/wait4.js
-            sh -c "./scripts/wait4.js auth-service-integration"
+            sh -c "./scripts/wait4.js cicd-integration-tests"
+      - run:
+          name: Migrate DB
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            npm -s run migrate
       - run:
           name: Execute integration tests
           command: |
@@ -204,6 +213,8 @@ jobs:
             cd ~/project/
             npm ci
             npm -s run test:integration
+          environment:
+            NODE_ENV: "integration"
       - run:
           name: Prepare test results
           command: |
