@@ -12,7 +12,7 @@ module.exports = {
   // services definitions
   services: [
     {
-      name: 'my-sql',
+      name: 'auth-service-integration',
 
       // list of services to wait for
       wait4: [
@@ -21,6 +21,13 @@ module.exports = {
           /* Change host:port accordingly based on default.json attributbes. */
           uri: 'localhost:3306',
           method: 'mysql',
+          retries: 30
+        },
+        {
+          description: 'Auth Service',
+          /* Change host:port accordingly based on default.json attributbes. */
+          uri: 'localhost:4004',
+          method: 'ncat',
           retries: 30
         }
       ]
