@@ -23,40 +23,26 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
 import axios from 'axios'
-
+import headers from '~/../test/data/headers.json'
+import mockThirdPartyAuthorizationReq from '~/../test/data/mockThirdPartyReqAuth.json'
 describe('server/handlers/thirdpartyRequests/transactions/{ID}/authorizations',
   (): void => {
     it('Should return 202 (Accepted) status code',
       async (): Promise<void> => {
-        const transactionId = '179395e8-8dd7-16a0-99f9-0da8f0c51c7f'
+        const transactionId = mockThirdPartyAuthorizationReq.payload.consentId
 
         // TODO: URI should be
         // `/thirdpartyRequests/transactions/{ID}/authorizations`
         // Test needs to be changed once OpenAPI spec is updated
         // in Ticket #412.
-        const scenariosURI = `http://0.0.0.0:4004/thirdPartyRequests/transactions/${transactionId}/authorizations`
+        const scenariosURI = `http://localhost:4004/thirdPartyRequests/transactions/${transactionId}/authorizations`
 
-        // Request parameters
-        const body = {
-          challenge: 'I am trying ot test this',
-          value: 'dhX6AGncg6kxnXAwsZlBotrqjDsHVAm9Fz8NaAwdwDkfhDNDclM74==',
-          consentId: 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec',
-          sourceAccountId: 'dfspa.alice.1234',
-          status: 'PENDING'
-        }
-
-        const headers = {
-          date: new Date().toJSON(),
-          'fspiop-source': 'dfspa',
-          'fspiop-destination': 'auth-service'
-        }
-
-        const response = await axios.post(scenariosURI, body, {
+        const response = await axios.post(scenariosURI, mockThirdPartyAuthorizationReq.payload, {
           headers: headers
         })
 

@@ -29,17 +29,15 @@
 
 import axios from 'axios'
 import headers from '~/../test/data/headers.json'
-import mockGenerateChallengeReq from '~/../test/data/mockGenerateChallenge.json'
 
 describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
   it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {
       const consentId = 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec'
 
-      // Endpoint
-      const scenariosURI = `http://localhost:4004/consents/${consentId}/generateChallenge`
+      const scenariosURI = `http://localhost:4004/consents/${consentId}/revoke`
 
-      const response = await axios.post(scenariosURI, mockGenerateChallengeReq.payload, {
+      const response = await axios.post(scenariosURI, {}, {
         headers: headers
       })
 

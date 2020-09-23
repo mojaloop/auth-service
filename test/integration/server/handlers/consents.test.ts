@@ -23,61 +23,25 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
 import axios from 'axios'
+import headers from '~/../test/data/headers.json'
+import mockCreateConsent from '~/../test/data/mockConsent.json'
 
 describe('server/handlers/consents', (): void => {
   it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {
       // Endpoint
-      const scenariosURI = 'http://0.0.0.0:4004/consents'
+      const scenariosURI = 'http://localhost:4004/consents'
 
-      // Request parameters
-      const body = {
-        id: 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec',
-        requestId: '179395e8-8dd7-16a0-99f9-0da8f0c51c7f',
-        initiatorId: 'pispa',
-        participantId: 'dfspa',
+      // TODO: Credential should be `null`.
+      // Test needs to be changed once OpenAPI spec is updated
+      // in Ticket #412.
 
-        // TODO: `scope` should be `action` and should be an array of strings.
-        // Test needs to be changed once OpenAPI spec is updated
-        // in Ticket #412.
-        scopes: [
-          {
-            scope: 'accounts.getBalance',
-            accountId: 'dfspa.alice.1234'
-          },
-          {
-            scope: 'accounts.transfer',
-            accountId: 'dfspa.alice.1234'
-          }
-        ],
-
-        // TODO: Credential should be `null`.
-        // Test needs to be changed once OpenAPI spec is updated
-        // in Ticket #412.
-        credential: {
-          id: '5678',
-          type: 'FIDO',
-          status: 'ACTIVE',
-          challenge: {
-            payload: 'base64(...)',
-            signature: 'base64(...)'
-          },
-          payload: 'base64(...)'
-        }
-      }
-
-      const headers = {
-        date: new Date().toJSON(),
-        'fspiop-source': body.participantId,
-        'fspiop-destination': 'auth-service'
-      }
-
-      const response = await axios.post(scenariosURI, body, {
+      const response = await axios.post(scenariosURI, mockCreateConsent.payload, {
         headers: headers
       })
 
