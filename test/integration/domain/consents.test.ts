@@ -36,8 +36,8 @@ import {
 
 const mockConvertExternalToScope = jest.spyOn(ScopeFunction, 'convertExternalToScope')
 describe('server/domain/consents', (): void => {
-  mockConvertExternalToScope.mockReturnValueOnce(scopes)
   it('Should resolve successfully', async (): Promise<void> => {
+    mockConvertExternalToScope.mockReturnValueOnce(scopes)
     await expect(createAndStoreConsent(requestWithPayloadScopes))
       .resolves
       .toBe(undefined)
