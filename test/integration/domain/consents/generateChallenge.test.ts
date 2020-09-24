@@ -37,7 +37,7 @@ import { closeKnexConnection } from '~/lib/db'
 
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   afterAll(async (): Promise<void> => {
-    closeKnexConnection()
+    await closeKnexConnection()
   })
 
   describe('updateConsentCredential', (): void => {

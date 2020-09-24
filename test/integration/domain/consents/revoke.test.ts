@@ -36,7 +36,7 @@ import { closeKnexConnection } from '~/lib/db'
 
 describe('server/domain/consents/revoke', (): void => {
   afterAll(async (): Promise<void> => {
-    closeKnexConnection()
+    await closeKnexConnection()
   })
   
   describe('revokeConsentStatus', (): void => {

@@ -47,7 +47,7 @@ import { consents } from '~/../seeds/01_consent'
 
 describe('server/domain/consents/{ID}', (): void => {
   afterAll(async (): Promise<void> => {
-    closeKnexConnection()
+    await closeKnexConnection()
   })
   
   describe('retrieveValidConsent', (): void => {

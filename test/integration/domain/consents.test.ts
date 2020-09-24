@@ -39,7 +39,7 @@ const mockConvertExternalToScope = jest.spyOn(ScopeFunction, 'convertExternalToS
 
 describe('server/domain/consents', (): void => {
   afterAll(async (): Promise<void> => {
-    closeKnexConnection()
+    await closeKnexConnection()
   })
 
   it('Should resolve successfully', async (): Promise<void> => {
