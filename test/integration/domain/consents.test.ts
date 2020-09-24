@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -33,7 +32,7 @@ import { closeKnexConnection } from '~/lib/db'
 import {
   requestWithPayloadScopes,
   scopes
-} from '../../data/data'
+} from 'test/data/data'
 
 const mockConvertExternalToScope = jest.spyOn(ScopeFunction, 'convertExternalToScope')
 
