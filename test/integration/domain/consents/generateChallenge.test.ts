@@ -33,8 +33,13 @@ import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { NotFoundError } from '~/model/errors'
 import { consents } from '~/../seeds/01_consent'
+import { closeKnexConnection } from '~/lib/db'
 
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
+  afterAll(async (): Promise<void> => {
+    closeKnexConnection();
+  })
+
   describe('updateConsentCredential', (): void => {
     let db: Knex<unknown[]>
     beforeAll(async (): Promise<void> => {
@@ -102,18 +107,4 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
         .toThrow(new NotFoundError('Consent', nonexistentConsentId))
     })
   })
-
-  // Tests for putConsentId
-  describe('generatePutConsentsRequest', (): void => {
-    it('Should resolve successfully', async (): Promise<void> => {
-
-    })
-
-    it('Should throw an error as consent is null value',
-      async (): Promise<void> => {
-
-      }
-    )
-  })
-}
-)
+})

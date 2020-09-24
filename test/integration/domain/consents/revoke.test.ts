@@ -32,8 +32,13 @@ import Config from '~/shared/config'
 import { NotFoundError } from '~/model/errors'
 import { revokeConsentStatus } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
+import { closeKnexConnection } from '~/lib/db'
 
 describe('server/domain/consents/revoke', (): void => {
+  afterAll(async (): Promise<void> => {
+    closeKnexConnection();
+  })
+  
   describe('revokeConsentStatus', (): void => {
     let db: Knex<unknown[]>
     beforeAll(async (): Promise<void> => {

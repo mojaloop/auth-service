@@ -34,6 +34,7 @@ import {
 import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import Knex from 'knex'
+import { closeKnexConnection } from '~/lib/db'
 import Config from '~/shared/config'
 import * as Scopes from '~/lib/scopes'
 import { NotFoundError } from '~/model/errors'
@@ -45,6 +46,10 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { consents } from '~/../seeds/01_consent'
 
 describe('server/domain/consents/{ID}', (): void => {
+  afterAll(async (): Promise<void> => {
+    closeKnexConnection();
+  })
+  
   describe('retrieveValidConsent', (): void => {
     let db: Knex<unknown[]>
     beforeAll(async (): Promise<void> => {

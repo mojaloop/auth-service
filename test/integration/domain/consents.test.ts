@@ -29,6 +29,7 @@
  ******/
 import { createAndStoreConsent } from '~/domain/consents'
 import * as ScopeFunction from '~/lib/scopes'
+import { closeKnexConnection } from '~/lib/db'
 import {
   requestWithPayloadScopes,
   scopes
@@ -36,6 +37,10 @@ import {
 
 const mockConvertExternalToScope = jest.spyOn(ScopeFunction, 'convertExternalToScope')
 describe('server/domain/consents', (): void => {
+  afterAll(async (): Promise<void> => {
+    closeKnexConnection();
+  })
+
   it('Should resolve successfully', async (): Promise<void> => {
     mockConvertExternalToScope.mockReturnValueOnce(scopes)
     await expect(createAndStoreConsent(requestWithPayloadScopes))
