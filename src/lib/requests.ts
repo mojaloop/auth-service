@@ -49,6 +49,7 @@ const configRequest: BaseRequestConfigType = {
   // TODO: Confirm if this is the correct way to invoke JWS SIGNING
   //        Is type provided Buffer?
   jwsSigningKey: config.get('JWS_SIGNING_KEY') as unknown as Buffer,
+  // TODO: use jwsVerification keys to set up tls credential?
   tls: {
     outbound: {
       mutualTLS: {
