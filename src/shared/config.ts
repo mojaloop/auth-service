@@ -42,6 +42,16 @@ export interface ServiceConfig {
 
   PARTICIPANT_ID: string;
 
+  JWS_SIGN: boolean;
+  JWS_SIGNING_KEY: string;
+  TLS: {
+    outbound: {
+      mutualTLS: {
+        enabled: boolean;
+      };
+    };
+  };
+
   // ../lib/config.
   DB_ENVIRONMENT: string;
   DATABASE?: {

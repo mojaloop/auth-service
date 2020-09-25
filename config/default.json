@@ -2,6 +2,15 @@
   "PORT": 4004,
   "HOST": "0.0.0.0",
   "PARTICIPANT_ID": "auth_service",
+  "JWS_SIGN": false,
+  "JWS_SIGNING_KEY": "./secrets/jwsSigningKey.key",
+  "TLS": {
+    "outbound": {
+        "mutualTLS": {
+            "enabled": false
+        }
+    }
+  },
   "DB_ENVIRONMENT": "development",
   "DATABASE": {
     "DIALECT": "mysql",

@@ -38,6 +38,15 @@ const RC = convict(Config)
 export const config = convict({
   PORT: RC.get('PORT') as number,
   PARTICIPANT_ID: RC.get('PARTICIPANT_ID') as string,
+  JWS_SIGN: RC.get('JWS_SIGN') as boolean,
+  JWS_SIGNING_KEY: RC.get('JWS_SIGNING_KEY'),
+  TLS: {
+    outbound: {
+      mutualTLS: {
+        enabled: RC.get('TLS').outbound.mutualTLS.enabled as boolean
+      }
+    }
+  },
   RUN_MIGRATIONS: !RC.get('MIGRATIONS').DISABLED,
   RUN_DATA_MIGRATIONS: RC.get('MIGRATIONS').RUN_DATA_MIGRATIONS as boolean,
   DB_ENVIRONMENT: RC.get('DB_ENVIRONMENT') as string,
