@@ -46,6 +46,7 @@ import { NotFoundError } from '~/model/errors'
 const partialConsent: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
+  status: 'ACTIVE',
   participantId: 'dfsp-3333-2123'
 }
 
@@ -53,6 +54,7 @@ const completeConsent: Consent = {
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
+  status: 'ACTIVE',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
@@ -60,9 +62,23 @@ const completeConsent: Consent = {
   credentialPayload: 'dwuduwd&e2idjoj0w'
 }
 
+const completeConsentRevoked: Consent = {
+  id: '1234',
+  initiatorId: 'pisp-2342-2233',
+  participantId: 'dfsp-3333-2123',
+  status: 'REVOKED',
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'PENDING',
+  credentialChallenge: 'xyhdushsoa82w92mzs',
+  credentialPayload: 'dwuduwd&e2idjoj0w',
+  revokedAt: (new Date()).toISOString()
+}
+
 const consentWithOnlyUpdateFields: Consent = {
   id: '1234',
   credentialId: '123',
+  status: 'ACTIVE',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -75,6 +91,7 @@ const conflictingConsent: Consent = {
   // between completeConsent and this Consent
   initiatorId: 'pisp-0000-1133',
   participantId: 'dfs-1233-5623',
+  status: 'ACTIVE',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'ACTIVE',
@@ -107,161 +124,206 @@ describe('src/model/consent', (): void => {
   })
 
   describe('insert', (): void => {
-    it('adds consent with partial info to the database', async (): Promise<void> => {
+    it('adds consent with partial info to the database',
+      async (): Promise<void> => {
       // Action
-      const inserted: boolean = await consentDB.insert(partialConsent)
+        const inserted: boolean = await consentDB.insert(partialConsent)
 
-      expect(inserted).toEqual(true)
+        expect(inserted).toEqual(true)
 
-      // Assertion
-      const consents: Consent[] = await Db<Consent>('Consent')
-        .select('*')
-        .where({
-          id: partialConsent.id
+        // Assertion
+        const consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: partialConsent.id
+          })
+
+        expect(consents[0]).toEqual({
+          id: '1234',
+          initiatorId: 'pisp-2342-2233',
+          participantId: 'dfsp-3333-2123',
+          status: 'ACTIVE',
+          createdAt: expect.any(String),
+          credentialId: null,
+          credentialType: null,
+          credentialStatus: null,
+          credentialPayload: null,
+          credentialChallenge: null,
+          revokedAt: null
         })
-
-      expect(consents[0]).toEqual({
-        id: '1234',
-        initiatorId: 'pisp-2342-2233',
-        participantId: 'dfsp-3333-2123',
-        createdAt: expect.any(String),
-        credentialId: null,
-        credentialType: null,
-        credentialStatus: null,
-        credentialPayload: null,
-        credentialChallenge: null
-      })
-    })
-
-    it('throws an error on adding a consent with existing consentId', async (): Promise<void> => {
-      // Action
-      const inserted: boolean = await consentDB.insert(partialConsent)
-
-      expect(inserted).toEqual(true)
-
-      // Assertion
-      const consents: Consent[] = await Db<Consent>('Consent')
-        .select('*')
-        .where({
-          id: partialConsent.id
-        })
-
-      // Consent has been added
-      expect(consents[0]).toEqual({
-        id: '1234',
-        initiatorId: 'pisp-2342-2233',
-        participantId: 'dfsp-3333-2123',
-        createdAt: expect.any(String),
-        credentialId: null,
-        credentialType: null,
-        credentialStatus: null,
-        credentialPayload: null,
-        credentialChallenge: null
       })
 
-      // Fail primary key constraint
-      await expect(consentDB.insert(partialConsent))
-        .rejects.toThrow()
-    })
-
-    it('throws an error on adding consent without an id', async (): Promise<void> => {
+    it('throws an error on adding a consent with existing consentId',
+      async (): Promise<void> => {
       // Action
-      await expect(consentDB.insert({
-        id: null as unknown as string,
-        initiatorId: '494949',
-        participantId: '3030303'
-      })).rejects.toThrow()
-    })
+        const inserted: boolean = await consentDB.insert(partialConsent)
+
+        expect(inserted).toEqual(true)
+
+        // Assertion
+        const consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: partialConsent.id
+          })
+
+        // Consent has been added
+        expect(consents[0]).toEqual({
+          id: '1234',
+          initiatorId: 'pisp-2342-2233',
+          participantId: 'dfsp-3333-2123',
+          status: 'ACTIVE',
+          createdAt: expect.any(String),
+          credentialId: null,
+          credentialType: null,
+          credentialStatus: null,
+          credentialPayload: null,
+          credentialChallenge: null,
+          revokedAt: null
+        })
+
+        // Fail primary key constraint
+        await expect(consentDB.insert(partialConsent))
+          .rejects.toThrow()
+      })
+
+    it('throws an error on adding consent without an id',
+      async (): Promise<void> => {
+      // Action
+        await expect(consentDB.insert({
+          id: null as unknown as string,
+          status: 'ACTIVE',
+          initiatorId: '494949',
+          participantId: '3030303'
+        })).rejects.toThrow()
+      })
   })
 
   describe('update', (): void => {
-    it('updates existing consent from a consent having only required fields', async (): Promise<void> => {
+    it('updates existing consent from a consent having only required fields',
+      async (): Promise<void> => {
       // Inserting record to update
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
+        await Db<Consent>('Consent')
+          .insert(partialConsent)
 
-      // Action
-      const updateCount: number = await consentDB.update(consentWithOnlyUpdateFields)
+        // Action
+        const updateCount: number = await consentDB.update(consentWithOnlyUpdateFields)
 
-      expect(updateCount).toEqual(1)
+        expect(updateCount).toEqual(1)
 
-      // Assertion
-      const consents: Consent[] = await Db<Consent>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+        // Assertion
+        const consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: completeConsent.id
+          })
 
-      expect(consents[0].id).toEqual(partialConsent.id)
-      expect(consents[0].createdAt).toEqual(expect.any(String))
-      expect(consents[0]).toEqual(expect.objectContaining(consentWithOnlyUpdateFields))
-    })
+        expect(consents[0].id).toEqual(partialConsent.id)
+        expect(consents[0].createdAt).toEqual(expect.any(String))
+        expect(consents[0])
+          .toEqual(expect.objectContaining(consentWithOnlyUpdateFields))
+      })
 
     // Non conflicting fields imply
     // * credentialStatus is not `ACTIVE` or
     // * field is null
-    it('updates existing consent with only non-conflicting fields from a consent', async (): Promise<void> => {
+    it('updates existing consent with only non-conflicting fields from a consent',
+      async (): Promise<void> => {
       // Inserting record to update
-      await Db<Consent>('Consent')
-        .insert(partialConsent)
+        await Db<Consent>('Consent')
+          .insert(partialConsent)
 
-      // Action
-      const updateCount: number = await consentDB.update(conflictingConsent)
+        // Action
+        const updateCount: number = await consentDB.update(conflictingConsent)
 
-      expect(updateCount).toEqual(1)
+        expect(updateCount).toEqual(1)
 
-      // Assertion
-      const consents: Consent[] = await Db<Consent>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+        // Assertion
+        const consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: completeConsent.id
+          })
 
-      expect(consents[0]).toEqual(expect.objectContaining({
+        expect(consents[0]).toEqual(expect.objectContaining({
         // Conflicting fields (initiatorId and participantId) are still the same
-        ...partialConsent,
-        // SQLite string date type
-        createdAt: expect.any(String),
-        // Rest of the fields are updated
-        credentialId: conflictingConsent.credentialId,
-        credentialStatus: conflictingConsent.credentialStatus,
-        credentialType: conflictingConsent.credentialType,
-        credentialPayload: conflictingConsent.credentialPayload,
-        credentialChallenge: conflictingConsent.credentialChallenge
-      }))
-    })
+          ...partialConsent,
+          // SQLite string date type
+          createdAt: expect.any(String),
+          // Rest of the fields are updated
+          credentialId: conflictingConsent.credentialId,
+          credentialStatus: conflictingConsent.credentialStatus,
+          credentialType: conflictingConsent.credentialType,
+          credentialPayload: conflictingConsent.credentialPayload,
+          credentialChallenge: conflictingConsent.credentialChallenge
+        }))
+      })
 
-    it('updates credentialStatus if it is not null but also not ACTIVE', async (): Promise<void> => {
+    it('updates credentialStatus if it is not null but also not ACTIVE',
+      async (): Promise<void> => {
       // Inserting record to update
-      await Db<Consent>('Consent')
-        .insert(completeConsent)
+        await Db<Consent>('Consent')
+          .insert(completeConsent)
 
-      // Action
-      const updateCount: number = await consentDB.update(conflictingConsent)
+        // Action
+        const updateCount: number = await consentDB.update(conflictingConsent)
 
-      expect(updateCount).toEqual(1)
+        expect(updateCount).toEqual(1)
 
-      // Assertion
-      const consents: Consent[] = await Db<Consent>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+        // Assertion
+        const consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: completeConsent.id
+          })
 
-      expect(consents[0]).toEqual(expect.objectContaining({
+        expect(consents[0]).toEqual(expect.objectContaining({
         // Conflicting fields (initiatorId and participantId) are still the same
         // Even other fields are the same
-        ...completeConsent,
-        // credentialStatus is updated to 'ACTIVE'
-        credentialStatus: 'ACTIVE'
-      }))
-    })
+          ...completeConsent,
+          // credentialStatus is updated to 'ACTIVE'
+          credentialStatus: 'ACTIVE'
+        }))
+      })
 
-    it('throws an error for a non-existent consent', async (): Promise<void> => {
+    it('throws an error for a non-existent consent',
+      async (): Promise<void> => {
       // Action
-      await expect(consentDB.update(completeConsent))
-        .rejects.toThrowError(NotFoundError)
-    })
+        await expect(consentDB.update(completeConsent))
+          .rejects.toThrowError(NotFoundError)
+      })
+
+    it('inserts consent, updates it to REVOKE status and then fails to update a REVOKED consent',
+      async (): Promise<void> => {
+        // Action
+        await Db<Consent>('Consent').del()
+        const inserted = await consentDB.insert(completeConsent)
+        const updated = await consentDB.update(completeConsentRevoked)
+
+        const consents: Consent[] = await Db<Consent>('Consent')
+          .select('*')
+          .where({
+            id: completeConsent.id
+          })
+        // Assert
+        expect(inserted).toBe(true)
+        expect(updated).toBe(1)
+        expect(consents[0]).toEqual(expect.objectContaining({
+          ...completeConsentRevoked,
+          createdAt: expect.any(String)
+        }))
+
+        // Action/Assert
+        await expect(consentDB.update({
+          id: '1234',
+          status: 'ACTIVE',
+          credentialId: '123',
+          credentialType: 'FIDO',
+          credentialStatus: 'ACTIVE',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialPayload: 'dwuduwd&e2idjoj0w'
+        })).rejects.toThrowError('Cannot modify Revoked Consent')
+      })
   })
 
   describe('retrieve', (): void => {
@@ -278,11 +340,12 @@ describe('src/model/consent', (): void => {
       expect(consent).toEqual(expect.objectContaining(completeConsent))
     })
 
-    it('throws an error for a non-existent consent', async (): Promise<void> => {
+    it('throws an error for a non-existent consent',
+      async (): Promise<void> => {
       // Action
-      await expect(consentDB.retrieve(completeConsent.id))
-        .rejects.toThrowError(NotFoundError)
-    })
+        await expect(consentDB.retrieve(completeConsent.id))
+          .rejects.toThrowError(NotFoundError)
+      })
   })
 
   describe('delete', (): void => {
@@ -315,53 +378,55 @@ describe('src/model/consent', (): void => {
       expect(consents.length).toEqual(0)
     })
 
-    it('throws an error for a non-existent consent', async (): Promise<void> => {
+    it('throws an error for a non-existent consent',
+      async (): Promise<void> => {
       // Action
-      await expect(consentDB.delete(completeConsent.id))
-        .rejects.toThrowError(NotFoundError)
-    })
+        await expect(consentDB.delete(completeConsent.id))
+          .rejects.toThrowError(NotFoundError)
+      })
 
-    it('deletes associated scopes on deleting a consent', async (): Promise<void> => {
+    it('deletes associated scopes on deleting a consent',
+      async (): Promise<void> => {
       // Setup
-      await Db<Consent>('Consent')
-        .insert(completeConsent)
+        await Db<Consent>('Consent')
+          .insert(completeConsent)
 
-      // Pre action Assertion
-      await Db('Scope')
-        .insert({
-          consentId: '1234',
-          action: 'accounts.transfer',
-          accountId: '78901-12345'
-        })
+        // Pre action Assertion
+        await Db('Scope')
+          .insert({
+            consentId: '1234',
+            action: 'accounts.transfer',
+            accountId: '78901-12345'
+          })
 
-      await Db('Scope')
-        .insert({
-          consentId: '1234',
-          action: 'accounts.balance',
-          accountId: '38383-22992'
-        })
+        await Db('Scope')
+          .insert({
+            consentId: '1234',
+            action: 'accounts.balance',
+            accountId: '38383-22992'
+          })
 
-      let scopes = await Db('Scope')
-        .select('*')
-        .where({ consentId: completeConsent.id })
+        let scopes = await Db('Scope')
+          .select('*')
+          .where({ consentId: completeConsent.id })
 
-      expect(scopes.length).toEqual(2)
+        expect(scopes.length).toEqual(2)
 
-      // Action
-      const deleteCount: number = await consentDB.delete(completeConsent.id)
+        // Action
+        const deleteCount: number = await consentDB.delete(completeConsent.id)
 
-      expect(deleteCount).toEqual(1)
+        expect(deleteCount).toEqual(1)
 
-      scopes = await Db('Scope')
-        .select('*')
-        .where({ consentId: completeConsent.id })
+        scopes = await Db('Scope')
+          .select('*')
+          .where({ consentId: completeConsent.id })
 
-      const consents = await Db('Consent')
-        .select('*')
-        .where({ id: completeConsent.id })
+        const consents = await Db('Consent')
+          .select('*')
+          .where({ id: completeConsent.id })
 
-      expect(consents.length).toEqual(0)
-      expect(scopes.length).toEqual(0)
-    })
+        expect(consents.length).toEqual(0)
+        expect(scopes.length).toEqual(0)
+      })
   })
 })

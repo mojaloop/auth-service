@@ -38,12 +38,14 @@ import { NotFoundError } from '../../../src/model/errors'
  */
 const partialConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123'
 }
 
 const completeConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
@@ -56,6 +58,7 @@ const completeConsent: Consent = {
 // Intentional lack of initiatorId and participantId
 const consentWithOnlyUpdateFields: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
@@ -65,6 +68,7 @@ const consentWithOnlyUpdateFields: Consent = {
 
 const conflictingConsent: Consent = {
   id: '1234',
+  status: 'ACTIVE',
   // Conflicting initiatorId and participantId
   // between completeConsent and this Consent
   initiatorId: 'pisp-0000-1133',
@@ -78,6 +82,7 @@ const conflictingConsent: Consent = {
 
 const expectedPartialConsent: object = {
   id: '1234',
+  status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   createdAt: expect.any(Date),
@@ -85,7 +90,8 @@ const expectedPartialConsent: object = {
   credentialType: null,
   credentialStatus: null,
   credentialPayload: null,
-  credentialChallenge: null
+  credentialChallenge: null,
+  revokedAt: null
 }
 
 /*
@@ -153,6 +159,7 @@ describe('src/model/consent', (): void => {
       async (): Promise<void> => {
         const consentWithoutId: Consent = {
           id: null as unknown as string,
+          status: 'ACTIVE',
           initiatorId: '494949',
           participantId: '3030303'
         }
@@ -206,7 +213,7 @@ describe('src/model/consent', (): void => {
             id: completeConsent.id
           })
 
-        const expectedConsent: Consent = {
+        const expectedConsent: object = {
           // Conflicting fields (initiatorId, participantId) are still the same
           ...partialConsent,
           createdAt: expect.any(Date),
@@ -215,7 +222,8 @@ describe('src/model/consent', (): void => {
           credentialStatus: conflictingConsent.credentialStatus,
           credentialType: conflictingConsent.credentialType,
           credentialPayload: conflictingConsent.credentialPayload,
-          credentialChallenge: conflictingConsent.credentialChallenge
+          credentialChallenge: conflictingConsent.credentialChallenge,
+          revokedAt: null
         }
 
         expect(consents[0]).toEqual(expectedConsent)
@@ -237,13 +245,14 @@ describe('src/model/consent', (): void => {
             id: completeConsent.id
           })
 
-        const expectedConsent: Consent = {
+        const expectedConsent: object = {
           // Conflicting fields (initiatorId, participantId) are still the same
           // Even other fields are the same
           ...completeConsent,
           createdAt: expect.any(Date),
           // credentialStatus is updated to 'ACTIVE'
-          credentialStatus: 'ACTIVE'
+          credentialStatus: 'ACTIVE',
+          revokedAt: null
         }
 
         expect(consents[0]).toEqual(expectedConsent)

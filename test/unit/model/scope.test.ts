@@ -37,12 +37,14 @@ import { NotFoundError } from '~/model/errors'
  * Mock Consent Resources
  */
 const partialConsent1: Consent = {
+  status: 'ACTIVE',
   id: '1234',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123'
 }
 
 const partialConsent2: Consent = {
+  status: 'ACTIVE',
   id: '948',
   initiatorId: 'pisp-2342-2013',
   participantId: 'dfsp-3333-2773'

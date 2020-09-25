@@ -1,4 +1,11 @@
-/* eslint-disable max-len */
+/* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing for model
+ * which will be addressed in the future in
+ * ticket #354
+ */
+
 /*****
  License
  --------------
@@ -24,42 +31,51 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
  --------------
  ******/
-/* istanbul ignore file */
-// Testing will be covered in #354
 
-import { config } from './config'
+import { consentDB } from '~/lib/db'
+import { Consent } from '~/model/consent'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  // TODO: Once Logger is implemented in sdk-standard-components - use that
-  // Logger,
-  ThirdpartyRequests,
-  BaseRequestConfigType
-} from '@mojaloop/sdk-standard-components'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
-// Config file to instantiate ThirdPartyRequest object
-const configRequest: BaseRequestConfigType = {
-  dfspId: config.get('PARTICIPANT_ID') as string,
-  logger: Logger,
-  jwsSign: true,
-  jwsSigningKey: (config.get('jwsSigningKey') as Buffer).toString('base64'),
-  // TODO: Decide on below later - Handled in future ticket #361
-  tls: {
-    outbound: {
-      mutualTLS: {
-        enabled: false
-      }
-    }
+/**
+ * Revoke status of consent object, update in the database
+ * and return consent
+ */
+export async function revokeConsentStatus (
+  consent: Consent): Promise<Consent> {
+  if (consent.status === 'REVOKED') {
+    Logger.push('Previously revoked consent was asked to be revoked')
+    return consent
+  }
+  // Protects against invalid consent status types
+  if (consent.status !== 'ACTIVE') {
+    Logger.push('Invalid Consent Status')
+    // TODO: specific Error here ?
+    throw Error('Invalid Consent Status')
   }
 
+  consent.status = 'REVOKED'
+  consent.revokedAt = (new Date()).toISOString()
+  await consentDB.update(consent)
+  return consent
 }
 
-const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
+/**
+ * Generate outgoing PATCH consent/{id}/revoke request body
+ */
+export function generatePatchRevokedConsentRequest (
+  consent: Consent
+): SDKStandardComponents.PatchConsentsRequest {
+  if (consent.status !== 'REVOKED') {
+    throw new Error('Attempting to generate request for non-revoked consent!')
+  }
 
-export {
-  thirdPartyRequest
+  const requestBody: SDKStandardComponents.PatchConsentsRequest = {
+    status: 'REVOKED',
+    revokedAt: consent.revokedAt as string
+  }
+  return requestBody
 }

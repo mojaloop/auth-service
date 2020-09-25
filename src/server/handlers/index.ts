@@ -18,20 +18,31 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
-
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
-
-import HapiSwagger from 'hapi-swagger'
-import Config from '../../shared/config'
+import { Util } from '@mojaloop/central-services-shared'
+import Health from './health'
+import Metrics from './metrics'
+import Hello from './hello'
+import GenerateChallenge from './consents/{ID}/generateChallenge'
+import RevokeConsent from './consents/{ID}/revoke'
+import CreateConsent from './consents'
+import UpdateConsent from './consents/{ID}'
+import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
+// import { wrapWithHistogram } from '~/shared/histogram'
+const OpenapiBackend = Util.OpenapiBackend
 
 export default {
-  plugin: HapiSwagger,
-  options: {
-    info: {
-      title: 'Auth-Service OpenAPI Documentation',
-      version: Config.PACKAGE.version
-    }
-  }
+  HealthGet: Health.get,
+  MetricsGet: Metrics.get,
+  HelloGet: Hello.get,
+  CreateConsent: CreateConsent.post,
+  RevokeConsent: RevokeConsent.post,
+  UpdateConsent: UpdateConsent.put,
+  GenerateChallengeRequest: GenerateChallenge.post,
+  VerifyThirdPartyAuthorization: Authorizations.post,
+  validationFail: OpenapiBackend.validationFail,
+  notFound: OpenapiBackend.notFound,
+  methodNotAllowed: OpenapiBackend.methodNotAllowed
 }

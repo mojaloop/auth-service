@@ -44,36 +44,42 @@ describe('testing Consent table', (): void => {
   it('should properly select all the entries in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
     const users: Knex.QueryBuilder[] = await db.from('Consent').select('*')
-    expect(users.length).toEqual(3)
+    expect(users.length).toEqual(5)
     expect(users[0]).toMatchObject({
       id: '123',
       initiatorId: 'PISPA',
       participantId: 'DFSPA',
+      status: 'ACTIVE',
       credentialId: null,
       credentialType: null,
       credentialStatus: null,
       credentialPayload: null,
-      credentialChallenge: null
+      credentialChallenge: null,
+      revokedAt: null
     })
     expect(users[1]).toMatchObject({
       id: '124',
       initiatorId: 'PISPB',
       participantId: 'DFSPA',
+      status: 'ACTIVE',
       credentialId: '9876',
       credentialType: 'FIDO',
       credentialStatus: 'PENDING',
       credentialPayload: null,
-      credentialChallenge: 'string_representing_challenge_a'
+      credentialChallenge: 'string_representing_challenge_a',
+      revokedAt: null
     })
     expect(users[2]).toMatchObject({
       id: '125',
       initiatorId: 'PISPC',
       participantId: 'DFSPA',
+      status: 'ACTIVE',
       credentialId: '9875',
       credentialType: 'FIDO',
       credentialStatus: 'VERIFIED',
       credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b'
+      credentialChallenge: 'string_representing_challenge_b',
+      revokedAt: null
     })
   })
 })
@@ -98,22 +104,26 @@ describe('testing that constraints are enforced in the consent table', (): void 
       id: '123',
       initiatorId: 'PISPA',
       participantId: 'DFSPA',
+      status: 'ACTIVE',
       credentialId: null,
       credentialType: null,
       credentialStatus: null,
       credentialPayload: null,
-      credentialChallenge: null
+      credentialChallenge: null,
+      revokedAt: null
     })).rejects.toThrow()
     /* Tests for non-nullity */
     await expect(db.from('Consent').insert({
       id: null,
       initiatorId: 'PISPA',
       participantId: 'DFSPA',
+      status: 'ACTIVE',
       credentialId: null,
       credentialType: null,
       credentialStatus: null,
       credentialPayload: null,
-      credentialChallenge: null
+      credentialChallenge: null,
+      revokedAt: null
     })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for initiatorId', async (): Promise<void> => {
@@ -129,17 +139,34 @@ describe('testing that constraints are enforced in the consent table', (): void 
       credentialChallenge: null
     })).rejects.toThrow()
   })
+  it('should properly enforce the non-nullable constraint for status', async (): Promise<void> => {
+    expect(db).toBeDefined()
+    await expect(db.from('Consent').insert({
+      id: '126',
+      initiatorId: 'PISPA',
+      participantId: 'DFSPA',
+      status: null,
+      credentialId: null,
+      credentialType: null,
+      credentialStatus: null,
+      credentialPayload: null,
+      credentialChallenge: null,
+      revokedAt: null
+    })).rejects.toThrow()
+  })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
     expect(db).toBeDefined()
     await expect(db.from('Consent').insert({
       id: '126',
       initiatorId: 'PISPA',
+      status: 'ACTIVE',
       participantId: null,
       credentialId: null,
       credentialType: null,
       credentialStatus: null,
       credentialPayload: null,
-      credentialChallenge: null
+      credentialChallenge: null,
+      revokedAt: null
     })).rejects.toThrow()
   })
 })

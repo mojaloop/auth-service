@@ -18,38 +18,43 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kenneth Zeng <kkzeng@google.com>
+ - Ahan Gupta <ahangupta.96@gmail.com>
 
  --------------
  ******/
 
-import Path from 'path'
-import { Server, ServerRegisterPluginObject } from '@hapi/hapi'
-import { Util } from '@mojaloop/central-services-shared'
-import Handlers from '../handlers'
+export class IncorrectChallengeError extends Error {
+  public consentId: string
 
-const OpenapiBackend = Util.OpenapiBackend
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function initialize (): Promise<ServerRegisterPluginObject<any>> {
-  return {
-    plugin: {
-      name: 'openapi',
-      version: '1.0.0',
-      multiple: true,
-      register: function (server: Server, options: {[index: string]: string | object}): void {
-        server.expose('openapi', options.openapi)
-      }
-    },
-    options: {
-      openapi: await OpenapiBackend.initialise(
-        Path.resolve(__dirname, '../../interface/api.yaml'),
-        Handlers
-      )
-    }
+  public constructor (consentId: string) {
+    super(`Incorrect Challenge ${consentId}$`)
+    this.consentId = consentId
   }
 }
 
-export default {
-  initialize
+export class IncorrectCredentialStatusError extends Error {
+  public consentId: string
+
+  public constructor (consentId: string) {
+    super(`Incorrect Credential status ${consentId}`)
+    this.consentId = consentId
+  }
+}
+
+export class IncorrectConsentStatusError extends Error {
+  public consentId: string
+
+  public constructor (consentId: string) {
+    super(`Incorrect Consent status ${consentId}`)
+    this.consentId = consentId
+  }
+}
+
+export class EmptyCredentialPayloadError extends Error {
+  public consentId: string
+
+  public constructor (consentId: string) {
+    super(`Credential Payload not provided for ${consentId}`)
+    this.consentId = consentId
+  }
 }

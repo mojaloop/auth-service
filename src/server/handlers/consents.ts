@@ -1,11 +1,3 @@
-/* istanbul ignore file */
-
-/*
- * This flag is to ignore BDD testing for model
- * which will be addressed in the future in
- * ticket #354
- */
-
 /*****
  License
  --------------
@@ -38,6 +30,7 @@
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Context } from '../plugins'
 import {
   createAndStoreConsent,
   isPostConsentRequestValid
@@ -48,6 +41,7 @@ import {
  * validation of a consentRequest.
  */
 export async function post (
+  _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
   // Validate request
@@ -67,4 +61,8 @@ export async function post (
 
   // Return Success code informing source: request received
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  post
 }

@@ -85,6 +85,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
       async (): Promise<void> => {
         const activeConsent: Consent = {
           id: '1234',
+          status: 'ACTIVE',
           initiatorId: 'pisp-2342-2233',
           participantId: 'dfsp-3333-2123',
           credentialId: '123',
@@ -104,6 +105,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
       async (): Promise<void> => {
         const nullConsent: Consent = {
           id: '1234',
+          status: 'ACTIVE',
           initiatorId: 'pisp-2342-2233',
           participantId: 'dfsp-3333-2123',
           credentialId: '123',
@@ -123,6 +125,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
       async (): Promise<void> => {
         const pendingConsent: Consent = {
           id: '1234',
+          status: 'ACTIVE',
           initiatorId: 'pisp-2342-2233',
           participantId: 'dfsp-3333-2123',
           credentialId: '123',

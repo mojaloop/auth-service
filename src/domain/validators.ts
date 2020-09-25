@@ -1,3 +1,11 @@
+/* istanbul ignore file */
+
+/*
+ * This flag is to ignore BDD testing for model
+ * which will be addressed in the future in
+ * ticket #354
+ */
+
 /*****
  License
  --------------
@@ -23,18 +31,22 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- * Paweł Marzec <pawel.marzec@modusbox.com>
-
+ - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  --------------
  ******/
 
-import Boom from '@hapi/boom'
-import { Request, Lifecycle, ResponseToolkit } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
+import { Consent } from '~/model/consent'
+import { Enum } from '@mojaloop/central-services-shared'
 
-export default function onValidateFail (
-  _request: Request,
-  _h: ResponseToolkit,
-  err?: Error
-): Lifecycle.ReturnValue {
-  throw Boom.boomify(err as Error)
+/**
+ * Validates if a request is initiated by a valid source
+ * Compares Consent object's initiator ID with source
+ */
+export function isConsentRequestInitiatedByValidSource (
+  consent: Consent,
+  request: Request): boolean {
+  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  if (fspiopSource === null || fspiopSource === '') return false
+  return (consent?.initiatorId === fspiopSource)
 }

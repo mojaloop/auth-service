@@ -28,28 +28,22 @@
  --------------
  ******/
 
-/* istanbul ignore file */
-
-/*
- * This flag is to ignore BDD testing
- * which will be addressed in the future in
- * ticket #354
- */
-
 import {
   updateConsentCredential,
-  isConsentRequestInitiatedByValidSource,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
 import Logger from '@mojaloop/central-services-logger'
+import * as validators from '~/domain/validators'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '~/lib/challenge'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Context } from '~/server/plugins'
 import { consentDB, scopeDB } from '~/lib/db'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { convertScopesToExternal } from '~/lib/scopes'
 import { Scope } from '~/model/scope'
 import { thirdPartyRequest } from '~/lib/requests'
+import { CredentialStatusEnum } from '~/model/consent/consent'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -73,10 +67,18 @@ export async function generateChallengeAndPutConsent (
       throw (new Error('NotImplementedYetError'))
     }
 
-    if (!isConsentRequestInitiatedByValidSource(request, consent)) {
+    if (!validators.isConsentRequestInitiatedByValidSource(consent, request)) {
       // TODO: Error Handling dealt with in future ticket #355
       // send PUT ...error back
       throw (new Error('NotImplementedYetError'))
+    }
+
+    // Revoked consent should NOT be touched.
+    if (consent.status === 'REVOKED') {
+      // TODO: Confirm what to do here
+      // Error Handling dealt with in future ticket #355
+      // send PUT ...error back ?
+      throw (new Error('Revoked Consent'))
     }
 
     // If there is no pre-existing challenge for the consent id
@@ -88,7 +90,7 @@ export async function generateChallengeAndPutConsent (
       // Updating credentials with generated challenge
       const credential: ConsentCredential = {
         credentialChallenge: challengeValue,
-        credentialStatus: 'PENDING',
+        credentialStatus: CredentialStatusEnum.PENDING,
         credentialType: 'FIDO',
         credentialPayload: null
       }
@@ -126,8 +128,8 @@ export async function generateChallengeAndPutConsent (
  * will be returned to the PISP via `PUT /consents/{ID}`
  */
 export async function post (
-  request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const id = request.params.id
+  _context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  const id = request.params.ID
 
   // Asynchronously deals with validating request,
   //  generating challenge, updating consent db
@@ -137,4 +139,8 @@ export async function post (
 
   // Return Success code informing source: request received
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+}
+
+export default {
+  post
 }

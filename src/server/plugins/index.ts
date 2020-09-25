@@ -19,38 +19,66 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
 import Inert from '@hapi/inert'
 import Vision from '@hapi/vision'
 import Blip from 'blipp'
-import { Server } from '@hapi/hapi'
-
+import { Server, ServerRoute, Util as HapiUtil, RequestQuery } from '@hapi/hapi'
+import { Readable as StreamReadable } from 'stream'
 import ErrorHandling from '@mojaloop/central-services-error-handling'
-import Shared from '@mojaloop/central-services-shared'
+import { Util } from '@mojaloop/central-services-shared'
 import Good from './good'
-import Swagger from './swagger'
 import OpenAPI from './openAPI'
 
-const plugins = [
-  Swagger,
-  Good,
-  OpenAPI,
-  Inert,
-  Vision,
-  Blip,
-  ErrorHandling,
-  Shared.Util.Hapi.HapiEventPlugin,
-  Shared.Util.Hapi.FSPIOPHeaderValidation
-]
-
 async function register (server: Server): Promise<Server> {
+  const openapiBackend = await OpenAPI.initialize()
+
+  const plugins = [
+    Util.Hapi.OpenapiBackendValidator,
+    Good,
+    openapiBackend,
+    Inert,
+    Vision,
+    Blip,
+    ErrorHandling,
+    Util.Hapi.HapiEventPlugin,
+    Util.Hapi.FSPIOPHeaderValidation
+  ]
+
   await server.register(plugins)
+
+  // use as a catch-all handler
+  server.route({
+    method: ['GET', 'POST', 'PUT', 'DELETE'],
+    path: '/{path*}',
+    handler: (req, h): ServerRoute =>
+      openapiBackend.options.openapi.handleRequest(
+        {
+          method: req.method,
+          path: req.path,
+          body: req.payload,
+          query: req.query,
+          headers: req.headers
+        },
+        req,
+        h
+      )
+  })
   return server
 }
 
+// Context is required for OpenAPI
+export interface Context {
+  method: HapiUtil.HTTP_METHODS_PARTIAL_LOWERCASE;
+  path: string;
+  body: StreamReadable | Buffer | string | object;
+  query: RequestQuery;
+  headers: HapiUtil.Dictionary<string>;
+}
+
 export default {
-  register,
-  plugins
+  register
 }

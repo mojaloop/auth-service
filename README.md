@@ -51,7 +51,7 @@ We use `multi-file-swagger` to make our swagger files more manageable.
 After making changes to the `.yaml` files in `./src/interface/`, update the `swagger.json` file like so:
 
 ```bash
-./node_modules/.bin/multi-file-swagger ./src/interface/template.yaml > src/interface/swagger.json
+    npm run build:openapi
 ```
 
 > Note: We will likely want to move to swagger 3.0 at some point, and once we do, we will be able to use the [common api snippets](https://github.com/mojaloop/api-snippets) library to factor out common Mojaloop snippets.
