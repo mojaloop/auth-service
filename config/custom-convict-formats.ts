@@ -7,29 +7,29 @@ export const DbConnectionFormat = {
         if (typeof val === 'string' || val instanceof String) return true;
 
         //  Object check
-        if (typeof val === 'object' && val !== null) {
+        if (typeof val === 'object' && val) {
             const connection = val as DbConnection;
 
             // Check that object is DbConnection and has DbConnection fields - 
             // i.e. PG and MySQL use a DbConnection object to configure
             // Verify that all fields are filled AND they are the right format - presence + format check
-            if (connection.host == null || typeof connection.host !== 'string') {
+            if (typeof connection.host !== 'string') {
                 throw new Error("Mandatory field: 'host' is missing or is in the wrong format")
             }
             
-            if (connection.port == null || typeof connection.port !== 'number') {
+            if (typeof connection.port !== 'number') {
                 throw new Error("Mandatory field: 'port' is missing or is in the wrong format")
             }
 
-            if (connection.database == null || typeof connection.database !== 'string') {
+            if (typeof connection.database !== 'string') {
                 throw new Error("Mandatory field: 'database' is missing or is in the wrong format")
             }
 
-            if (connection.user == null || typeof connection.user !== 'string') {
+            if (typeof connection.user !== 'string') {
                 throw new Error("Mandatory field: 'user' is missing or is in the wrong format")
             }
 
-            if (connection.password == null || typeof connection.user !== 'string') {
+            if (typeof connection.user !== 'string') {
                 throw new Error("Mandatory field: 'password' is missing or is in the wrong format")
             }
 
