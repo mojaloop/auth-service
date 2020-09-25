@@ -45,13 +45,14 @@ import {
 const configRequest: BaseRequestConfigType = {
   dfspId: config.get('PARTICIPANT_ID') as string,
   logger: Logger,
-  jwsSign: true,
-  jwsSigningKey: (config.get('jwsSigningKey') as Buffer).toString('base64'),
-  // TODO: Decide on below later - Handled in future ticket #361
+  jwsSign: config.get('JWS_SIGN') as boolean,
+  // TODO: Confirm if this is the correct way to invoke JWS SIGNING
+  //        Is type provided Buffer?
+  jwsSigningKey: config.get('JWS_SIGNING_KEY') as unknown as Buffer,
   tls: {
     outbound: {
       mutualTLS: {
-        enabled: false
+        enabled: config.get('TLS').outbound.mutualTLS.enabled
       }
     }
   }
