@@ -35,7 +35,7 @@
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
     "seed:run": "knex $npm_package_config_knex seed:run",
-    "wait-4-docker": "node ./scripts/wait4.js my-sql"
+    "wait-4-docker": "node ./scripts/wait4.js cicd-integration-tests"
   },
   "husky": {
     "hooks": {

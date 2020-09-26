@@ -18,8 +18,6 @@ RUN adduser -D as-user
 USER as-user
 COPY --chown=as-user --from=builder /opt/auth-service .
 # cleanup
-
-# disable until problems with TS->JS transpilation solved
-# RUN npm prune --production
+RUN npm prune --production
 EXPOSE 4004
 CMD ["npm", "run", "start"]

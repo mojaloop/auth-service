@@ -73,7 +73,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
       const updatedConsent: Consent = await updateConsentCredential(consentMissingCred, credentialUpdate)
 
-      const expectedConsent: Consent = Object.assign({}, consentMissingCred)
+      const expectedConsent: Consent = { ...consentMissingCred }
       expectedConsent.credentialType = credentialUpdate.credentialType
       expectedConsent.credentialStatus = credentialUpdate.credentialStatus
       expectedConsent.credentialChallenge = credentialUpdate.credentialChallenge
