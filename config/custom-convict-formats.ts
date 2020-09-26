@@ -74,7 +74,7 @@ export const DbPoolFormat = {
                 throw new Error('createTimeoutMillis is not a number')
             }
 
-            if(pool.reapIntervalMillis != null && typeof pool.reapIntervalMillis === 'number') {
+            if(pool.reapIntervalMillis != null && typeof pool.reapIntervalMillis !== 'number') {
                 throw new Error('reapIntervalMillis is not a number')
             }
 
