@@ -35,7 +35,7 @@ import {
   partialConsentActive,
   partialConsentActiveConflictingInitiatorId,
   requestNoHeaders
-} from '../data/data'
+} from '../../data/data'
 
 describe('isConsentRequestInitiatedByValidSource', (): void => {
   it('Should return true', (): void => {

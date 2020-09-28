@@ -23,22 +23,21 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
+import { createAndStoreConsent } from '~/domain/consents'
+import { closeKnexConnection } from '~/lib/db'
+import { requestWithPayloadScopes } from 'test/data/data'
 
-import Knex from 'knex'
-import Config from '../shared/config'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+describe('server/domain/consents', (): void => {
+  afterAll(async (): Promise<void> => {
+    await closeKnexConnection()
+  })
 
-const Db: Knex = Knex(Config.DATABASE as object)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
-const closeKnexConnection = async () => { await Db.destroy() }
-
-export {
-  consentDB,
-  scopeDB,
-  closeKnexConnection
-}
+  it('Should resolve successfully', async (): Promise<void> => {
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .resolves
+      .toBe(undefined)
+  })
+})

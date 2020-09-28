@@ -23,22 +23,29 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
-import Knex from 'knex'
-import Config from '../shared/config'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import axios from 'axios'
+import headers from '~/../test/data/headers.json'
+import mockCreateConsent from '~/../test/data/mockConsent.json'
 
-const Db: Knex = Knex(Config.DATABASE as object)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
-const closeKnexConnection = async () => { await Db.destroy() }
+describe('server/handlers/consents', (): void => {
+  it('Should return 202 (Accepted) status code',
+    async (): Promise<void> => {
+      // Endpoint
+      const scenariosURI = 'http://localhost:4004/consents'
 
-export {
-  consentDB,
-  scopeDB,
-  closeKnexConnection
-}
+      // TODO: Credential should be `null`.
+      // Test needs to be changed once OpenAPI spec is updated
+      // in Ticket #412.
+
+      const response = await axios.post(scenariosURI, mockCreateConsent.payload, {
+        headers: headers
+      })
+
+      expect(response.status).toEqual(202)
+    }
+  )
+})

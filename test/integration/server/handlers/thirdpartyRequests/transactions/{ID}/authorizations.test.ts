@@ -23,22 +23,31 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
-import Knex from 'knex'
-import Config from '../shared/config'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import axios from 'axios'
+import headers from '~/../test/data/headers.json'
+import mockThirdPartyAuthorizationReq from '~/../test/data/mockThirdPartyReqAuth.json'
+describe('server/handlers/thirdpartyRequests/transactions/{ID}/authorizations',
+  (): void => {
+    it('Should return 202 (Accepted) status code',
+      async (): Promise<void> => {
+        const transactionId = mockThirdPartyAuthorizationReq.payload.consentId
 
-const Db: Knex = Knex(Config.DATABASE as object)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
-const closeKnexConnection = async () => { await Db.destroy() }
+        // TODO: URI should be
+        // `/thirdpartyRequests/transactions/{ID}/authorizations`
+        // Test needs to be changed once OpenAPI spec is updated
+        // in Ticket #412.
+        const scenariosURI = `http://localhost:4004/thirdPartyRequests/transactions/${transactionId}/authorizations`
 
-export {
-  consentDB,
-  scopeDB,
-  closeKnexConnection
-}
+        const response = await axios.post(scenariosURI, mockThirdPartyAuthorizationReq.payload, {
+          headers: headers
+        })
+
+        expect(response.status).toEqual(202)
+      }
+    )
+  }
+)
