@@ -31,7 +31,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { post } from '~/server/handlers/consents'
 import * as Domain from '~/domain/consents'
 import Logger from '@mojaloop/central-services-logger'
-import { requestWithPayloadScopes, h } from 'test/unit/data/data'
+import { requestWithPayloadScopes, h } from 'test/data/data'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
 const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')

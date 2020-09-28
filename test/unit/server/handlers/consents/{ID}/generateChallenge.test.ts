@@ -45,7 +45,7 @@ import {
   externalScopes, challenge, credentialPending,
   completeConsentRevoked, completeConsentActiveCredential, h,
   completeConsentActive, partialConsentActive, scopes, request
-} from 'test/unit/data/data'
+} from 'test/data/data'
 
 // Declaring Mocks
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')

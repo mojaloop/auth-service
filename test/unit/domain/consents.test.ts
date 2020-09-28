@@ -35,7 +35,7 @@ import * as ScopeFunction from '~/lib/scopes'
 import {
   requestWithPayloadScopes, externalScopes,
   partialConsentActive, scopes
-} from '../data/data'
+} from '../../data/data'
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')

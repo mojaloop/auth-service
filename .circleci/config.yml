@@ -181,8 +181,8 @@ jobs:
           command: |
             echo ${NVM_DIR}
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install v10.15.3
-            nvm alias default v10.15.3
+            nvm install v12.16.1
+            nvm alias default v12.16.1
       - run:
           name: install modules
           command: |
@@ -201,6 +201,8 @@ jobs:
             docker-compose up -d
             chmod +x ./scripts/wait4.js
             sh -c "./scripts/wait4.js cicd-integration-tests"
+          environment:
+            NODE_ENV: "integration"
       - run:
           name: Migrate DB
           command: |
@@ -210,6 +212,7 @@ jobs:
           name: Execute integration tests
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            node --version
             cd ~/project/
             npm ci
             npm -s run test:integration

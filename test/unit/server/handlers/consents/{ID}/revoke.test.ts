@@ -38,7 +38,7 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   request, h, partialConsentRevoked,
   partialConsentActive, completeConsentRevoked
-} from 'test/unit/data/data'
+} from 'test/data/data'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
