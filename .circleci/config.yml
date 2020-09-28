@@ -181,8 +181,8 @@ jobs:
           command: |
             echo ${NVM_DIR}
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install v12.18.4
-            nvm alias default v12.18.4
+            nvm install v12.16.1
+            nvm alias default v12.16.1
       - run:
           name: install modules
           command: |
