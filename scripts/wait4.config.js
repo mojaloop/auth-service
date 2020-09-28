@@ -12,15 +12,21 @@ module.exports = {
   // services definitions
   services: [
     {
-      name: 'my-sql',
+      name: 'cicd-integration-tests',
 
       // list of services to wait for
       wait4: [
         {
           description: 'MySQL Database',
-          /* Change host:port accordingly based on default.json attributbes. */
+          /* Change host:port accordingly based on knexfile.ts attributbes. */
           uri: 'localhost:3306',
           method: 'mysql',
+          retries: 30
+        },
+        {
+          description: 'auth-service',
+          uri: 'localhost:4004',
+          method: 'ncat',
           retries: 30
         }
       ]

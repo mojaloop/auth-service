@@ -23,21 +23,19 @@
  --------------
  ******/
 
-import Config from '../../../config/knexfile'
 import * as Knex from 'knex'
 import knex from 'knex'
+import Config from '~/shared/config'
 
 describe('testing Consent table', (): void => {
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.development as object)
-    await db.migrate.latest()
+    db = knex(Config.DATABASE as object)
     await db.seed.run()
   })
 
   afterAll(async (): Promise<void> => {
-    await db.migrate.rollback()
     db.destroy()
   })
 
@@ -88,9 +86,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.test)
-    await db.migrate.latest()
-    await db.seed.run()
+    db = knex(Config.DATABASE as object)
   })
 
   afterAll(async (): Promise<void> => {
