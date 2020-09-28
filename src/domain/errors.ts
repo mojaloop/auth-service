@@ -19,12 +19,48 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
-
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
 
-export class IncorrectChallengeError extends Error {
+import Logger from '@mojaloop/central-services-logger'
+import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
+import { thirdPartyRequest } from '../lib/requests'
+import { Request } from '@hapi/hapi'
+import { Enum } from '@mojaloop/central-services-shared'
+
+// TODO: Replace all codes with agreed on codes
+
+/*
+ * Domain function make an error request using Mojaloop internal codes
+ */
+export async function putConsentError (
+  request: Request,
+  error: TErrorInformation): Promise<void> {
+  const errorInfoObj: TErrorInformationObject = {
+    errorInformation: {
+      errorCode: error.errorCode,
+      errorDescription: error.errorDescription
+    }
+  }
+
+  try {
+    await
+    thirdPartyRequest.putConsentsError(
+      request.params.id,
+      errorInfoObj,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not make PUT error request')
+  }
+}
+
+export class IncorrectChallengeError extends Error implements TErrorInformation {
   public consentId: string
+  public readonly errorCode: string = '3150'
+  public readonly errorDescription: string = 'Incorrect Challenge'
 
   public constructor (consentId: string) {
     super(`Incorrect Challenge ${consentId}$`)
@@ -32,8 +68,10 @@ export class IncorrectChallengeError extends Error {
   }
 }
 
-export class IncorrectCredentialStatusError extends Error {
+export class IncorrectCredentialStatusError extends Error implements TErrorInformation {
   public consentId: string
+  public readonly errorCode: string = '3151'
+  public readonly errorDescription: string = 'Incorrect Credential status'
 
   public constructor (consentId: string) {
     super(`Incorrect Credential status ${consentId}`)
@@ -41,8 +79,10 @@ export class IncorrectCredentialStatusError extends Error {
   }
 }
 
-export class IncorrectConsentStatusError extends Error {
+export class IncorrectConsentStatusError extends Error implements TErrorInformation {
   public consentId: string
+  public readonly errorCode: string = '3152'
+  public readonly errorDescription: string = 'Incorrect Consent status'
 
   public constructor (consentId: string) {
     super(`Incorrect Consent status ${consentId}`)
@@ -50,8 +90,10 @@ export class IncorrectConsentStatusError extends Error {
   }
 }
 
-export class EmptyCredentialPayloadError extends Error {
+export class EmptyCredentialPayloadError extends Error implements TErrorInformation {
   public consentId: string
+  public readonly errorCode: string = '3153'
+  public readonly errorDescription: string = 'Credential Payload not provided'
 
   public constructor (consentId: string) {
     super(`Credential Payload not provided for ${consentId}`)
