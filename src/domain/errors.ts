@@ -29,8 +29,6 @@ import { thirdPartyRequest } from '../lib/requests'
 import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 
-// TODO: Replace all codes with agreed on codes
-
 /*
  * Domain function make an error request using Mojaloop internal codes
  */
@@ -57,13 +55,15 @@ export async function putConsentError (
   }
 }
 
+// TODO: Replace all codes with agreed on codes
 export class IncorrectChallengeError extends Error implements TErrorInformation {
   public consentId: string
   public readonly errorCode: string = '3150'
-  public readonly errorDescription: string = 'Incorrect Challenge'
+  public readonly errorDescription: string
 
   public constructor (consentId: string) {
     super(`Incorrect Challenge ${consentId}$`)
+    this.errorDescription = this.message
     this.consentId = consentId
   }
 }
@@ -71,10 +71,11 @@ export class IncorrectChallengeError extends Error implements TErrorInformation 
 export class IncorrectCredentialStatusError extends Error implements TErrorInformation {
   public consentId: string
   public readonly errorCode: string = '3151'
-  public readonly errorDescription: string = 'Incorrect Credential status'
+  public readonly errorDescription: string
 
   public constructor (consentId: string) {
     super(`Incorrect Credential status ${consentId}`)
+    this.errorDescription = this.message
     this.consentId = consentId
   }
 }
@@ -82,10 +83,11 @@ export class IncorrectCredentialStatusError extends Error implements TErrorInfor
 export class IncorrectConsentStatusError extends Error implements TErrorInformation {
   public consentId: string
   public readonly errorCode: string = '3152'
-  public readonly errorDescription: string = 'Incorrect Consent status'
+  public readonly errorDescription: string
 
   public constructor (consentId: string) {
     super(`Incorrect Consent status ${consentId}`)
+    this.errorDescription = this.message
     this.consentId = consentId
   }
 }
@@ -93,10 +95,34 @@ export class IncorrectConsentStatusError extends Error implements TErrorInformat
 export class EmptyCredentialPayloadError extends Error implements TErrorInformation {
   public consentId: string
   public readonly errorCode: string = '3153'
-  public readonly errorDescription: string = 'Credential Payload not provided'
+  public readonly errorDescription: string
 
   public constructor (consentId: string) {
     super(`Credential Payload not provided for ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class InvalidSignatureError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3154'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Signature provided was invalid for consent: ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+export class SignatureVerificationError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3155'
+  public readonly errorDescription: string = 'Signature verification ran into errors'
+
+  public constructor (consentId: string) {
+    super(`Signature verification ran into errors for ${consentId}`)
+    this.errorDescription = this.message
     this.consentId = consentId
   }
 }

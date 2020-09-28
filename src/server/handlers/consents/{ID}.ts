@@ -42,7 +42,7 @@ import {
 import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
-import { IncorrectChallengeError } from '~/domain/errors'
+import { IncorrectChallengeError, InvalidSignatureError, SignatureVerificationError, putConsentError } from '~/domain/errors'
 
 export interface UpdateCredentialRequest {
   credential: {
@@ -57,10 +57,12 @@ export interface UpdateCredentialRequest {
   };
 }
 
-export async function validateAndUpdateConsent (
-  consentId: string,
-  request: UpdateCredentialRequest,
-  destinationParticipantId: string): Promise<void> {
+export async function validateAndUpdateConsent (request: Request): Promise<void> {
+  const consentId = request.params.ID
+  const updateConsentRequest = request.payload as UpdateCredentialRequest
+  // The DFSP we need to reply to
+  const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+
   const {
     credential: {
       challenge: {
@@ -70,13 +72,24 @@ export async function validateAndUpdateConsent (
       payload: publicKey,
       id: requestCredentialId
     }
-  } = request
+  } = updateConsentRequest
 
   try {
     const consent: Consent = await retrieveValidConsent(consentId, challenge)
-    const verifyResult = verifySignature(challenge, signature, publicKey)
+    let verifyResult: boolean
+
+    // Use a nested try-catch to convert verifySignature errors to mojaloop
+    // accepted errors
+    try {
+      verifyResult = verifySignature(challenge, signature, publicKey)
+    } catch (error) {
+      // Signature validity was not determined
+      throw new SignatureVerificationError(consentId)
+    }
+
+    // If signature is invalid for given key and challenge
     if (!verifyResult) {
-      throw new IncorrectChallengeError(consentId)
+      throw new InvalidSignatureError(consentId)
     }
 
     const credential: ConsentCredential = {
@@ -99,19 +112,14 @@ export async function validateAndUpdateConsent (
   } catch (error) {
     Logger.push(error)
     Logger.error('Error: Outgoing PUT consents/{ID} call not made')
-    /* TODO, make outbound call to PUT consents/{ID}/error
-    to be addressed in ticket number 355 */
+    const mojaloopError: SDKStandardComponents.TErrorInformation = error
+    await putConsentError(request, mojaloopError)
   }
 }
 
 export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const id = request.params.ID
-  const updateConsentRequest = request.payload as UpdateCredentialRequest
-  // The DFSP we need to reply to
-  const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-
   // Note: not awaiting promise here
-  validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
+  validateAndUpdateConsent(request)
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
