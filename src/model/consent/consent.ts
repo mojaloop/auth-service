@@ -42,7 +42,7 @@
  * of 'createdAt' field may need to be tested in the future.
  */
 
-import { NotFoundError } from '../errors'
+import { NotFoundError, RevokedConsentModificationError } from '../errors'
 import Knex from 'knex'
 
 /*
@@ -119,7 +119,7 @@ export class ConsentDB {
 
       // Cannot overwrite REVOKED status Consent
       if (consents[0].status === 'REVOKED') {
-        throw new Error('Cannot modify Revoked Consent')
+        throw new RevokedConsentModificationError('Consent', consent.id)
       }
 
       const existingConsent: Consent = consents[0]
