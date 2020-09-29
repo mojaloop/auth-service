@@ -33,7 +33,8 @@ import * as Handler from '~/server/handlers/consents/{ID}'
 import * as Domain from '~/domain/consents/{ID}'
 import {
   IncorrectChallengeError,
-  IncorrectConsentStatusError
+  IncorrectConsentStatusError,
+  InvalidSignatureError
 } from '~/domain/errors'
 import { NotFoundError } from '~/model/errors'
 import * as Signature from '~/lib/challenge'
@@ -211,7 +212,7 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(new IncorrectChallengeError(consentId))
+        expect(mockLoggerPush).toBeCalledWith(new InvalidSignatureError(consentId))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)

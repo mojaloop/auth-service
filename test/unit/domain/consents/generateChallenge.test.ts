@@ -40,6 +40,7 @@ import {
   updateConsentCredential,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
+import * as DomainError from '~/domain/errors'
 
 // Declaring Mock Functions
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
@@ -88,14 +89,15 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
     // eslint-disable-next-line max-len
     it('Should propagate error in updating credentials in database', async (): Promise<void> => {
-      mockConsentDbUpdate.mockRejectedValue(
-        new Error('Error updating Database'))
+      const testError = new Error('Error updating Database')
+      mockConsentDbUpdate.mockRejectedValue(testError)
 
       await expect(updateConsentCredential(partialConsentActive, credentialPending))
         .rejects
-        .toThrowError('Error updating Database')
+        .toThrowError(new DomainError.DatabaseError(completeConsentActiveNoCredentialID.id))
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
+      expect(mockLoggerPush).toHaveBeenLastCalledWith(testError)
     })
   })
 

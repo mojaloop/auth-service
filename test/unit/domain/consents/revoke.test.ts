@@ -38,6 +38,7 @@ import {
   partialConsentActive, completeConsentActive, completeConsentRevoked,
   partialConsentRevoked, partialConsentActiveConflictingInitiatorId
 } from 'test/unit/data/data'
+import { DatabaseError, InvalidConsentStatusError } from '~/domain/errors'
 
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -100,7 +101,7 @@ describe('server/domain/consents/revoke', (): void => {
 
         await expect(revokeConsentStatus(completeConsentActive))
           .rejects
-          .toThrowError('Invalid Consent Status')
+          .toThrowError(new InvalidConsentStatusError(completeConsentActive.id))
 
         expect(mockLoggerPush).toHaveBeenCalledWith('Invalid Consent Status')
         expect(mockConsentUpdate).not.toHaveBeenCalled()
@@ -108,14 +109,15 @@ describe('server/domain/consents/revoke', (): void => {
 
     it('Should propagate error in updating consent',
       async (): Promise<void> => {
-        mockConsentUpdate.mockRejectedValue(new Error('Test Error'))
+        const testError = new Error('Test Error')
+        mockConsentUpdate.mockRejectedValue(testError)
 
         await expect(revokeConsentStatus(partialConsentActiveConflictingInitiatorId))
           .rejects
-          .toThrowError('Test Error')
+          .toThrowError(new DatabaseError(partialConsentActiveConflictingInitiatorId.id))
 
         expect(mockConsentUpdate).toHaveBeenCalled()
-        expect(mockLoggerPush).not.toHaveBeenCalled()
+        expect(mockLoggerPush).toHaveBeenCalledWith(testError)
       })
   })
 

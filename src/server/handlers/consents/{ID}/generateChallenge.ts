@@ -49,9 +49,11 @@ import {
   DatabaseError,
   RevokedConsentStatusError,
   InvalidInitiatorSourceError,
-  ActiveConsentChallengeRequestError
+  ActiveConsentChallengeRequestError,
+  ChallengeGenerationError,
+  PutRequestCreationError
 } from '~/domain/errors'
-import { TErrorInformation } from '@mojaloop/sdk-standard-components'
+import SDKStandardComponents, { TErrorInformation } from '@mojaloop/sdk-standard-components'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -87,7 +89,14 @@ export async function generateChallengeAndPutConsent (
     // Generate one and update database
     if (!consent.credentialChallenge) {
       // Challenge generation
-      const challengeValue = await challenge.generate()
+      let challengeValue: string
+      try {
+        challengeValue = await challenge.generate()
+      } catch (error) {
+        Logger.push(error)
+        Logger.error('Error encountered while generating challenge')
+        throw new ChallengeGenerationError(id)
+      }
 
       // Updating credentials with generated challenge
       const credential: ConsentCredential = {
@@ -117,7 +126,15 @@ export async function generateChallengeAndPutConsent (
 
     // Outgoing call to PUT consents/{ID}
     // Build Request Body
-    const requestBody = await generatePutConsentsRequest(consent, scopes)
+    let requestBody: SDKStandardComponents.PutConsentsRequest
+    try {
+      requestBody = await generatePutConsentsRequest(consent, scopes)
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Failed to create put consent request')
+      // Convert error to Mojaloop understood error
+      throw new PutRequestCreationError(id)
+    }
     // Use sdk-standard-components library to send request
     await thirdPartyRequest.putConsents(
       consent.id, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])

@@ -175,13 +175,37 @@ export class RevokedConsentStatusError extends Error implements TErrorInformatio
   }
 }
 
-export class ActiveConsentChallengeRequestError extends Error implements TErrorInformation {
+export class ChallengeGenerationError extends Error implements TErrorInformation {
   public consentId: string
   public readonly errorCode: string = '3159'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
+    super(`Error generating challenge for ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class ActiveConsentChallengeRequestError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3160'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
     super(`Active consent ${consentId} has requested for a challenge`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class PutRequestCreationError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3161'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Error creating outgoing put request for ${consentId}`)
     this.errorDescription = this.message
     this.consentId = consentId
   }

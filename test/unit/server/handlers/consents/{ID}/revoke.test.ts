@@ -39,6 +39,7 @@ import {
   request, h, partialConsentRevoked,
   partialConsentActive, completeConsentRevoked
 } from 'test/unit/data/data'
+import * as DomainError from '~/domain/errors'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
@@ -49,6 +50,7 @@ const mockIsConsentRequestValid = jest.spyOn(
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
+const mockPutConsentError = jest.spyOn(DomainError, 'putConsentError')
 
 const consentId = partialConsentActive.id
 
@@ -68,6 +70,7 @@ describe('server/handlers/consents', (): void => {
     mockLoggerError.mockReturnValue(null)
     mockLoggerPush.mockReturnValue(null)
     mockConsentRetrieve.mockResolvedValue(partialConsentActive)
+    mockPutConsentError.mockResolvedValue()
   })
 
   beforeEach((): void => {
@@ -115,13 +118,21 @@ describe('server/handlers/consents', (): void => {
           )
       })
 
-    it('Should propagate consent retrieval error from consentDB.retrieve()',
+    it('Should propagate and convert consent retrieval error from consentDB.retrieve()',
       async (): Promise<void> => {
-        mockConsentRetrieve.mockRejectedValueOnce(new Error('Test'))
+        const testErr = new Error('Test')
+        mockConsentRetrieve.mockRejectedValueOnce(testErr)
         await expect(Handler.validateRequestAndRevokeConsent(request))
-          .rejects.toThrowError('NotImplementedYetError')
+          .resolves
+          .toBeUndefined()
 
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
+        expect(mockLoggerPush).toHaveBeenCalledWith(testErr)
+        expect(mockPutConsentError).toHaveBeenCalledWith(
+          consentId,
+          new DomainError.DatabaseError(consentId),
+          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        )
         expect(mockIsConsentRequestValid).not.toBeCalled()
         expect(mockRevokeConsentStatus).not.toBeCalled()
         expect(mockGeneratePatchConsentRequest).not.toBeCalled()
@@ -132,10 +143,16 @@ describe('server/handlers/consents', (): void => {
       async (): Promise<void> => {
         mockIsConsentRequestValid.mockReturnValueOnce(false)
         await expect(Handler.validateRequestAndRevokeConsent(request))
-          .rejects.toThrowError('NotImplementedYetError')
+          .resolves
+          .toBeUndefined()
 
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
         expect(mockIsConsentRequestValid).toBeCalledWith(partialConsentActive, request)
+        expect(mockPutConsentError).toHaveBeenCalledWith(
+          consentId,
+          new DomainError.InvalidInitiatorSourceError(consentId),
+          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        )
         expect(mockRevokeConsentStatus).not.toBeCalled()
         expect(mockGeneratePatchConsentRequest).not.toBeCalled()
         expect(mockPatchConsents).not.toBeCalled()
@@ -145,7 +162,8 @@ describe('server/handlers/consents', (): void => {
       async (): Promise<void> => {
         mockPatchConsents.mockRejectedValue(new Error('Test Error'))
         await expect(Handler.validateRequestAndRevokeConsent(request))
-          .rejects.toThrowError('Test Error')
+          .resolves
+          .toBeUndefined()
 
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
         expect(mockIsConsentRequestValid)
@@ -153,11 +171,15 @@ describe('server/handlers/consents', (): void => {
         expect(mockRevokeConsentStatus).toBeCalledWith(partialConsentActive)
         expect(mockGeneratePatchConsentRequest)
           .toBeCalledWith(partialConsentRevoked)
-        expect(mockPatchConsents)
-          .toBeCalledWith(consentId,
-            requestBody,
-            request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-          )
+        expect(mockPatchConsents).toBeCalledWith(consentId,
+          requestBody,
+          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        )
+        expect(mockPutConsentError).toHaveBeenCalledWith(
+          consentId,
+          new Error('Test Error'),
+          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        )
       }
     )
   })
