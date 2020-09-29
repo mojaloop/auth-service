@@ -163,3 +163,27 @@ export class InvalidConsentStatusError extends Error implements TErrorInformatio
     this.consentId = consentId
   }
 }
+
+export class RevokedConsentStatusError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3159'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Consent ${consentId} has been revoked`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class ActiveConsentChallengeRequestError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3159'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Active consent ${consentId} has requested for a challenge`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}

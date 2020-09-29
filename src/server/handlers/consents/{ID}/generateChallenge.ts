@@ -44,6 +44,14 @@ import { convertScopesToExternal } from '~/lib/scopes'
 import { Scope } from '~/model/scope'
 import { thirdPartyRequest } from '~/lib/requests'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import {
+  putConsentError,
+  DatabaseError,
+  RevokedConsentStatusError,
+  InvalidInitiatorSourceError,
+  ActiveConsentChallengeRequestError
+} from '~/domain/errors'
+import { TErrorInformation } from '@mojaloop/sdk-standard-components'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -62,23 +70,17 @@ export async function generateChallengeAndPutConsent (
       Logger.push(error)
       Logger.error('Error in retrieving consent')
 
-      // If consent cannot be retrieved using given ID, send PUT ...error back
-      // TODO: Error Handling dealt with in future ticket #355
-      throw (new Error('NotImplementedYetError'))
+      // Convert error to Mojaloop understood error
+      throw new DatabaseError(id)
     }
 
     if (!validators.isConsentRequestInitiatedByValidSource(consent, request)) {
-      // TODO: Error Handling dealt with in future ticket #355
-      // send PUT ...error back
-      throw (new Error('NotImplementedYetError'))
+      throw new InvalidInitiatorSourceError(id)
     }
 
     // Revoked consent should NOT be touched.
     if (consent.status === 'REVOKED') {
-      // TODO: Confirm what to do here
-      // Error Handling dealt with in future ticket #355
-      // send PUT ...error back ?
-      throw (new Error('Revoked Consent'))
+      throw new RevokedConsentStatusError(id)
     }
 
     // If there is no pre-existing challenge for the consent id
@@ -97,17 +99,21 @@ export async function generateChallengeAndPutConsent (
 
       consent = await updateConsentCredential(consent, credential)
     } else if (consent.credentialStatus === 'ACTIVE') {
-      // TODO: Error handling here - dealt with in #355
       Logger.error('ACTIVE credential consent has requested challenge')
-      throw (new Error('NotImplementedYetError'))
+      throw new ActiveConsentChallengeRequestError(id)
     }
 
     // Retrieve Scopes
-    const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
+    let scopesRetrieved: Scope[]
+    try {
+      scopesRetrieved = await scopeDB.retrieveAll(id)
+    } catch (error) {
+      // Convert error to Mojaloop understood error
+      throw new DatabaseError(id)
+    }
     const scopes = convertScopesToExternal(scopesRetrieved)
 
     // Outgoing call to PUT consents/{ID}
-
     // Build Request Body
     const requestBody = await generatePutConsentsRequest(consent, scopes)
     // Use sdk-standard-components library to send request
@@ -116,8 +122,8 @@ export async function generateChallengeAndPutConsent (
   } catch (error) {
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${id}`)
-    // TODO: Decide on error handling HERE - dealt with in future ticket #355
-    throw error
+    const mojaloopError: TErrorInformation = error
+    await putConsentError(request, mojaloopError)
   }
 }
 

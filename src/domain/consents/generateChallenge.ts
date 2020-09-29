@@ -40,6 +40,7 @@ import { consentDB } from '~/lib/db'
 import { Consent, ConsentCredential } from '~/model/consent'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { ExternalScope } from '~/lib/scopes'
+import { DatabaseError } from '../errors'
 
 /**
  * Assigns credentials to given consent object and updates in the database
@@ -58,7 +59,12 @@ export async function updateConsentCredential (
 
   // Update in database,
   // relying on database validation for any null or relational aspects.
-  await consentDB.update(consent)
+  try {
+    await consentDB.update(consent)
+  } catch (error) {
+    throw new DatabaseError(consent.id)
+  }
+
   return consent
 }
 
