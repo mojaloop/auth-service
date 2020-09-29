@@ -42,7 +42,12 @@ import {
 import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
-import { InvalidSignatureError, SignatureVerificationError, putConsentError } from '~/domain/errors'
+import { 
+  InvalidSignatureError, 
+  SignatureVerificationError, 
+  putConsentError, 
+  isMojaloopError 
+} from '~/domain/errors'
 
 export interface UpdateCredentialRequest {
   credential: {
@@ -110,9 +115,10 @@ export async function validateAndUpdateConsent (
       )
   } catch (error) {
     Logger.push(error)
-    Logger.error('Error: Outgoing PUT consents/{ID} call not made')
-    const mojaloopError: SDKStandardComponents.TErrorInformation = error
-    await putConsentError(consentId, mojaloopError, destinationParticipantId)
+    Logger.error('Error: Outgoing PUT consents/{ID} call not made') 
+    if(isMojaloopError(error)) {
+      await putConsentError(consentId, error, destinationParticipantId)
+    }
   }
 }
 

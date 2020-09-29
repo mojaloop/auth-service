@@ -41,9 +41,8 @@ import { thirdPartyRequest } from '~/lib/requests'
 import {
   putConsentError,
   DatabaseError,
-  InvalidInitiatorSourceError
+  InvalidInitiatorSourceError, isMojaloopError
 } from '~/domain/errors'
-import { TErrorInformation } from '@mojaloop/sdk-standard-components'
 
 /**
  * Asynchronously deals with validating request, revoking consent object
@@ -84,9 +83,10 @@ export async function validateRequestAndRevokeConsent (
   } catch (error) {
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)
-    const mojaloopError: TErrorInformation = error
-    const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-    await putConsentError(consentId, mojaloopError, participantId)
+    if(isMojaloopError(error)) {
+      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      await putConsentError(consentId, error, participantId)
+    }
   }
 }
 

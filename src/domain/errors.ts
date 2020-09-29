@@ -27,6 +27,15 @@ import Logger from '@mojaloop/central-services-logger'
 import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '../lib/requests'
 
+// Type guard for Mojaloop errors
+export function isMojaloopError(error: any): error is TErrorInformation {
+  const mojaloopError = (error as TErrorInformation)
+  if(mojaloopError.errorCode && mojaloopError.errorDescription) {
+    return true
+  }
+  return false
+}
+
 /*
  * Domain function make an error request using Mojaloop internal codes
  */

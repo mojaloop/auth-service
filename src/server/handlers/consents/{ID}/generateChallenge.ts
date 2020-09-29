@@ -51,9 +51,9 @@ import {
   InvalidInitiatorSourceError,
   ActiveConsentChallengeRequestError,
   ChallengeGenerationError,
-  PutRequestCreationError
+  PutRequestCreationError, isMojaloopError
 } from '~/domain/errors'
-import SDKStandardComponents, { TErrorInformation } from '@mojaloop/sdk-standard-components'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -141,9 +141,10 @@ export async function generateChallengeAndPutConsent (
   } catch (error) {
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${id}`)
-    const mojaloopError: TErrorInformation = error
-    const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-    await putConsentError(id, mojaloopError, participantId)
+    if(isMojaloopError(error)) {
+      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      await putConsentError(id, error, participantId)
+    }
   }
 }
 

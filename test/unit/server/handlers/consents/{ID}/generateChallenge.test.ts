@@ -282,11 +282,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockGeneratePutConsentsRequest).toHaveBeenCalledWith(completeConsentActive, externalScopes)
         expect(mockLoggerPush).toHaveBeenCalledWith(Error('Could not establish connection'))
         expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-        expect(mockPutConsentError).toHaveBeenCalledWith(
-          completeConsentActive.id,
-          new Error('Could not establish connection'),
-          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-        )
+        expect(mockPutConsentError).not.toHaveBeenCalled()
       })
 
     it('Should propagate error in generating PUT request body',

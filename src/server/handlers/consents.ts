@@ -36,8 +36,10 @@ import {
   createAndStoreConsent,
   isPostConsentRequestValid
 } from '~/domain/consents'
-import { TErrorInformation } from '@mojaloop/sdk-standard-components'
-import { putConsentError } from '~/domain/errors'
+import { 
+  isMojaloopError, 
+  putConsentError 
+} from '~/domain/errors'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and
@@ -58,10 +60,11 @@ export async function post (
     } catch (error) {
       Logger.push(error)
       Logger.error('Error: Unable to create/store consent')
-      const mojaloopError: TErrorInformation = error
-      const consentId = (request.payload as PostConsentPayload).id
-      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-      await putConsentError(consentId, mojaloopError, participantId)
+      if(isMojaloopError(error)) {
+        const consentId = (request.payload as PostConsentPayload).id
+        const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        await putConsentError(consentId, error, participantId)
+      }
     }
   })
 

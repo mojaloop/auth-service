@@ -175,11 +175,7 @@ describe('server/handlers/consents', (): void => {
           requestBody,
           request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
         )
-        expect(mockPutConsentError).toHaveBeenCalledWith(
-          consentId,
-          new Error('Test Error'),
-          request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-        )
+        expect(mockPutConsentError).not.toHaveBeenCalled()
       }
     )
   })
