@@ -26,15 +26,14 @@
 import Logger from '@mojaloop/central-services-logger'
 import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '../lib/requests'
-import { Request } from '@hapi/hapi'
-import { Enum } from '@mojaloop/central-services-shared'
 
 /*
  * Domain function make an error request using Mojaloop internal codes
  */
 export async function putConsentError (
-  request: Request,
-  error: TErrorInformation): Promise<void> {
+  consentId: string,
+  error: TErrorInformation,
+  destParticipantId: string): Promise<void> {
   const errorInfoObj: TErrorInformationObject = {
     errorInformation: {
       errorCode: error.errorCode,
@@ -45,9 +44,9 @@ export async function putConsentError (
   try {
     await
     thirdPartyRequest.putConsentsError(
-      request.params.id,
+      consentId,
       errorInfoObj,
-      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      destParticipantId
     )
   } catch (error) {
     Logger.push(error)

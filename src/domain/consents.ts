@@ -42,8 +42,9 @@ import { Consent } from '../model/consent'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { ExternalScope, convertExternalToScope } from '../lib/scopes'
+import { DatabaseError } from './errors'
 
-interface PostConsentPayload {
+export interface PostConsentPayload {
   id: string;
   initiatorId: string;
   participantId: string;
@@ -84,6 +85,6 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
   } catch (error) {
     Logger.push(error)
     Logger.error('Error: Unable to store consent and scopes')
-    throw error
+    throw new DatabaseError(consent.id)
   }
 }

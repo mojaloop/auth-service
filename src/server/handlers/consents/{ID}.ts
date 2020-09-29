@@ -113,7 +113,8 @@ export async function validateAndUpdateConsent (request: Request): Promise<void>
     Logger.push(error)
     Logger.error('Error: Outgoing PUT consents/{ID} call not made')
     const mojaloopError: SDKStandardComponents.TErrorInformation = error
-    await putConsentError(request, mojaloopError)
+    const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    await putConsentError(consentId, mojaloopError, participantId)
   }
 }
 

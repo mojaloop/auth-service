@@ -123,7 +123,8 @@ export async function generateChallengeAndPutConsent (
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${id}`)
     const mojaloopError: TErrorInformation = error
-    await putConsentError(request, mojaloopError)
+    const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    await putConsentError(id, mojaloopError, participantId)
   }
 }
 

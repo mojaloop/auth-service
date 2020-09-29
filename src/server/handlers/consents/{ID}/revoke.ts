@@ -85,7 +85,8 @@ export async function validateRequestAndRevokeConsent (
     Logger.push(error)
     Logger.error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)
     const mojaloopError: TErrorInformation = error
-    await putConsentError(request, mojaloopError)
+    const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    await putConsentError(consentId, mojaloopError, participantId)
   }
 }
 
