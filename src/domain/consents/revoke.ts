@@ -63,6 +63,8 @@ export async function revokeConsentStatus (
   try {
     await consentDB.update(consent)
   } catch (error) {
+    Logger.push(error)
+    Logger.error('Error: consentDB failed to update consent')
     throw new DatabaseError(consent.id)
   }
 

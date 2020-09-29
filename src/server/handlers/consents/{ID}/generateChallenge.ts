@@ -108,6 +108,8 @@ export async function generateChallengeAndPutConsent (
     try {
       scopesRetrieved = await scopeDB.retrieveAll(id)
     } catch (error) {
+      Logger.push(error)
+      Logger.error('Error: scopeDB failed to retrieve scopes')
       // Convert error to Mojaloop understood error
       throw new DatabaseError(id)
     }

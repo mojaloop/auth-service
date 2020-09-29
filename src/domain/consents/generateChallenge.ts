@@ -35,9 +35,9 @@
 
  --------------
  ******/
-
 import { consentDB } from '~/lib/db'
 import { Consent, ConsentCredential } from '~/model/consent'
+import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { ExternalScope } from '~/lib/scopes'
 import { DatabaseError } from '../errors'
@@ -62,6 +62,8 @@ export async function updateConsentCredential (
   try {
     await consentDB.update(consent)
   } catch (error) {
+    Logger.push(error)
+    Logger.error('Error: consentDB failed to update consent')
     throw new DatabaseError(consent.id)
   }
 

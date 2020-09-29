@@ -83,7 +83,8 @@ export async function validateAndUpdateConsent (request: Request): Promise<void>
     try {
       verifyResult = verifySignature(challenge, signature, publicKey)
     } catch (error) {
-      // Signature validity was not determined
+      Logger.push(error)
+      Logger.error('Error: Signature validity was not determined.')
       throw new SignatureVerificationError(consentId)
     }
 
