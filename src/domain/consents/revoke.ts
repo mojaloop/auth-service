@@ -39,6 +39,7 @@ import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import Logger from '@mojaloop/central-services-logger'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { DatabaseError, InvalidConsentStatusError } from '~/domain/errors'
 
 /**
  * Revoke status of consent object, update in the database
@@ -53,13 +54,18 @@ export async function revokeConsentStatus (
   // Protects against invalid consent status types
   if (consent.status !== 'ACTIVE') {
     Logger.push('Invalid Consent Status')
-    // TODO: specific Error here ?
-    throw Error('Invalid Consent Status')
+    throw new InvalidConsentStatusError(consent.id)
   }
 
   consent.status = 'REVOKED'
   consent.revokedAt = (new Date()).toISOString()
-  await consentDB.update(consent)
+
+  try {
+    await consentDB.update(consent)
+  } catch (error) {
+    throw new DatabaseError(consent.id)
+  }
+
   return consent
 }
 

@@ -115,13 +115,50 @@ export class InvalidSignatureError extends Error implements TErrorInformation {
     this.consentId = consentId
   }
 }
+
 export class SignatureVerificationError extends Error implements TErrorInformation {
   public consentId: string
   public readonly errorCode: string = '3155'
-  public readonly errorDescription: string = 'Signature verification ran into errors'
+  public readonly errorDescription: string
 
   public constructor (consentId: string) {
     super(`Signature verification ran into errors for ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class DatabaseError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3156'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Auth service database error for ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class InvalidInitiatorSourceError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3157'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Consent request initiated by an invalid source for ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class InvalidConsentStatusError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3158'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Consent status is invalid for ${consentId}`)
     this.errorDescription = this.message
     this.consentId = consentId
   }
