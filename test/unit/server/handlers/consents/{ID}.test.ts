@@ -44,7 +44,7 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 import { ExternalScope } from '~/lib/scopes'
 import { thirdPartyRequest } from '~/lib/requests'
-import { requestWithPayloadCredentialAndScope, h } from 'test/unit/data/data'
+import { requestWithPayloadCredentialAndScope, h } from 'test/data/data'
 
 const mockRetrieveValidConsent = jest.spyOn(Domain, 'retrieveValidConsent')
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')

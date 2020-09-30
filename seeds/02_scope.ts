@@ -24,6 +24,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Ahan Gupta <ahangupta.96@gmail.com>
+ - Kenneth Zeng <kkzeng@google.com>
 
  --------------
  ******/
@@ -49,6 +50,7 @@ const scopes = [
   }
 ]
 
-export function seed (knex: Knex): Knex.QueryBuilder<number[]> {
-  return knex('Scope').insert(scopes)
+export function seed (knex: Knex): Promise<Knex.QueryBuilder<number[]>> {
+  return knex('Scope').del()
+    .then(() => knex('Scope').insert(scopes))
 }

@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -24,42 +23,21 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
-/* istanbul ignore file */
-// Testing will be covered in #354
+import { createAndStoreConsent } from '~/domain/consents'
+import { closeKnexConnection } from '~/lib/db'
+import { requestWithPayloadScopes } from 'test/data/data'
 
-import Config from '~/shared/config'
-import Logger from '@mojaloop/central-services-logger'
-import {
-  // TODO: Once Logger is implemented in sdk-standard-components - use that
-  // Logger,
-  ThirdpartyRequests,
-  BaseRequestConfigType
-} from '@mojaloop/sdk-standard-components'
+describe('server/domain/consents', (): void => {
+  afterAll(async (): Promise<void> => {
+    await closeKnexConnection()
+  })
 
-// Config file to instantiate ThirdPartyRequest object
-const configRequest: BaseRequestConfigType = {
-  dfspId: Config.PARTICIPANT_ID as string,
-  logger: Logger,
-  // TODO: Decide on below later - Handled in future ticket #361
-  // Also decide on need for jwsSigningKey
-  jwsSign: false,
-  tls: {
-    outbound: {
-      mutualTLS: {
-        enabled: false
-      }
-    }
-  }
-
-}
-
-const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
-
-export {
-  thirdPartyRequest
-}
+  it('Should resolve successfully', async (): Promise<void> => {
+    await expect(createAndStoreConsent(requestWithPayloadScopes))
+      .resolves
+      .toBe(undefined)
+  })
+})

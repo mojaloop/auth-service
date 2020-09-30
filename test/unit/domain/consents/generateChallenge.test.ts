@@ -35,7 +35,7 @@ import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   externalScopes, request,
   credentialPending, partialConsentActive, completeConsentActiveNoCredentialID
-} from '../../data/data'
+} from '../../../data/data'
 import {
   updateConsentCredential,
   generatePutConsentsRequest

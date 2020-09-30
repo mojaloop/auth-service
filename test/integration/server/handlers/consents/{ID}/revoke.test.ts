@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -24,42 +23,25 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
+ - Kenneth Zeng <kkzeng@google.com>
  --------------
  ******/
-/* istanbul ignore file */
-// Testing will be covered in #354
 
-import Config from '~/shared/config'
-import Logger from '@mojaloop/central-services-logger'
-import {
-  // TODO: Once Logger is implemented in sdk-standard-components - use that
-  // Logger,
-  ThirdpartyRequests,
-  BaseRequestConfigType
-} from '@mojaloop/sdk-standard-components'
+import axios from 'axios'
+import headers from '~/../test/data/headers.json'
 
-// Config file to instantiate ThirdPartyRequest object
-const configRequest: BaseRequestConfigType = {
-  dfspId: Config.PARTICIPANT_ID as string,
-  logger: Logger,
-  // TODO: Decide on below later - Handled in future ticket #361
-  // Also decide on need for jwsSigningKey
-  jwsSign: false,
-  tls: {
-    outbound: {
-      mutualTLS: {
-        enabled: false
-      }
+describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
+  it('Should return 202 (Accepted) status code',
+    async (): Promise<void> => {
+      const consentId = 'e3488c3a-a4f3-25a7-aa7a-fdc3994bb3ec'
+
+      const scenariosURI = `http://localhost:4004/consents/${consentId}/revoke`
+
+      const response = await axios.post(scenariosURI, {}, {
+        headers: headers
+      })
+
+      expect(response.status).toEqual(202)
     }
-  }
-
-}
-
-const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
-
-export {
-  thirdPartyRequest
-}
+  )
+})

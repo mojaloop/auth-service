@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/auth-service",
-  "version": "11.2.1",
+  "version": "11.2.2",
   "description": "PISP authorization service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -35,7 +35,7 @@
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
     "seed:run": "knex $npm_package_config_knex seed:run",
-    "wait-4-docker": "node ./scripts/wait4.js my-sql"
+    "wait-4-docker": "node ./scripts/wait4.js cicd-integration-tests"
   },
   "husky": {
     "hooks": {
@@ -80,6 +80,7 @@
     "@typescript-eslint/eslint-plugin": "1.13.0",
     "@typescript-eslint/parser": "1.13.0",
     "add": "^2.0.6",
+    "axios": "^0.19.2",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-config-standard": "14.1.1",
@@ -103,7 +104,6 @@
     "standard-version": "^8.0.2",
     "swagger-cli": "^4.0.4",
     "ts-jest": "^26.0.0",
-    "ts-node": "8.3.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "3.9.2"
   },
@@ -133,6 +133,7 @@
     "parse-strings-in-object": "^2.0.0",
     "path": "^0.12.7",
     "rc": "^1.2.8",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^4.2.0",
+    "ts-node": "^8.3.0"
   }
 }

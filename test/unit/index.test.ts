@@ -33,11 +33,11 @@ import Logger from '@mojaloop/central-services-logger'
 import Handlers from '~/server/handlers'
 
 // Mock data
-import MockConsentData from './data/mockConsent.json'
-import MockUpdateConsentReq from './data/mockUpdatedConsent.json'
-import MockGenerateChallengeReq from './data/mockGenerateChallenge.json'
-import MockThirdPartyAuthorizationReq from './data/mockThirdPartyReqAuth.json'
-import Headers from './data/headers.json'
+import MockConsentData from '../data/mockConsent.json'
+import MockUpdateConsentReq from '../data/mockUpdatedConsent.json'
+import MockGenerateChallengeReq from '../data/mockGenerateChallenge.json'
+import MockThirdPartyAuthorizationReq from '../data/mockThirdPartyReqAuth.json'
+import Headers from '../data/headers.json'
 
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')

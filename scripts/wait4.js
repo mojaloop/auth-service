@@ -84,9 +84,9 @@ function getWaiters (wait4, config) {
 async function wrapWithRetries (method, waitJob, retries, waitTimeMs) {
   try {
     // generate method's RC config
-    const RC = getRC(waitJob)
+    const CC = getConvictConfig(waitJob)
     // method do it's wait job
-    waitJob = await method(waitJob, RC)
+    waitJob = await method(waitJob, CC)
     waitJob.status = 'connected'
     return Promise.resolve(waitJob)
   } catch (err) {
@@ -106,21 +106,21 @@ async function wrapWithRetries (method, waitJob, retries, waitTimeMs) {
 }
 
 /**
- * @function getRC
- * @description - create RC config instance
+ * @function getConvictConfig
+ * @description - create convict config instance
  * @param {object} waitJob
  */
-function getRC (waitJob) {
-  // acquire rc parameters
-  const namespace = (waitJob.rc && waitJob.rc.namespace) || 'CLEDG'
-  const configPath = (waitJob.rc && waitJob.rc.configPath) || '../config/default.json'
-
-  // require rc to deliver config
-  try {
-    return require('rc')(namespace, require(configPath))
-  } catch (err) {
-    return waitJob.rc || {}
+function getConvictConfig (waitJob) {
+  // Load config based on environment variable NODE_ENV
+  // defaults to integration environment
+  var environment = 'integration'
+  if(process.env.NODE_ENV) {
+    var environment = process.env.NODE_ENV
   }
+
+  // acquire rc parameters
+  const configPath = `../config/${environment}_db.json`
+  return require(configPath)
 }
 
 /**
@@ -149,18 +149,9 @@ async function methodMongoDB (waitJob, RC) {
  * @param {*} waitJob
  * @param {*} RC
  */
-async function methodMySQL (waitJob, RC) {
+async function methodMySQL (waitJob, CC) {
   // make connection to MySQL using `knex`
-  const knex = require('knex')({
-    client: RC.DATABASE.DIALECT,
-    connection: {
-      host: RC.DATABASE.HOST.replace(/\/$/, ''),
-      port: RC.DATABASE.PORT,
-      user: RC.DATABASE.USER,
-      password: RC.DATABASE.PASSWORD,
-      database: RC.DATABASE.SCHEMA
-    }
-  })
+  const knex = require('knex')(CC)
   await knex.select(1)
 
   return waitJob

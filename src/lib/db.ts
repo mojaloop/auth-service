@@ -28,15 +28,17 @@
  ******/
 
 import Knex from 'knex'
-import Config from '../../config/knexfile'
+import Config from '../shared/config'
 import ConsentDB from '../model/consent'
 import ScopeDB from '../model/scope'
 
-const Db: Knex = Knex(Config.test)
+const Db: Knex = Knex(Config.DATABASE as object)
 const consentDB: ConsentDB = new ConsentDB(Db)
 const scopeDB: ScopeDB = new ScopeDB(Db)
+const closeKnexConnection = async () => { await Db.destroy() }
 
 export {
   consentDB,
-  scopeDB
+  scopeDB,
+  closeKnexConnection
 }
