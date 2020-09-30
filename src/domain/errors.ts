@@ -39,6 +39,33 @@ export function isMojaloopError (error: unknown): error is TErrorInformation {
 /*
  * Domain function make an error request using Mojaloop internal codes
  */
+export async function putAuthorizationErrorRequest (
+  consentId: string,
+  error: TErrorInformation,
+  destParticipantId: string): Promise<void> {
+  const errorInfoObj: TErrorInformationObject = {
+    errorInformation: {
+      errorCode: error.errorCode,
+      errorDescription: error.errorDescription
+    }
+  }
+
+  try {
+    await
+    thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizationsError(
+      errorInfoObj,
+      consentId,
+      destParticipantId
+    )
+  } catch (error) {
+    Logger.push(error)
+    Logger.error('Could not make PUT error request')
+  }
+}
+
+/*
+ * Domain function make an error request using Mojaloop internal codes
+ */
 export async function putConsentError (
   consentId: string,
   error: TErrorInformation,
@@ -215,6 +242,42 @@ export class PutRequestCreationError extends Error implements TErrorInformation 
 
   public constructor (consentId: string) {
     super(`Error creating outgoing put request for ${consentId}`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class PayloadNotPendingError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3161'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`Incoming payload for ${consentId} transaction not pending`)
+    this.errorDescription = this.message
+    this.consentId = consentId
+  }
+}
+
+export class MissingScopeError extends Error implements TErrorInformation {
+  public sourceAccountId: string
+  public readonly errorCode: string = '3161'
+  public readonly errorDescription: string
+
+  public constructor (sourceAccountId: string) {
+    super(`Missing scope for ${sourceAccountId}`)
+    this.errorDescription = this.message
+    this.sourceAccountId = sourceAccountId
+  }
+}
+
+export class InactiveOrMissingCredentialError extends Error implements TErrorInformation {
+  public consentId: string
+  public readonly errorCode: string = '3161'
+  public readonly errorDescription: string
+
+  public constructor (consentId: string) {
+    super(`The credential for ${consentId} is either inactive or missing`)
     this.errorDescription = this.message
     this.consentId = consentId
   }
