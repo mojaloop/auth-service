@@ -37,7 +37,7 @@ import { Consent } from '~/model/consent'
 import {
   partialConsentActive, completeConsentActive, completeConsentRevoked,
   partialConsentRevoked, partialConsentActiveConflictingInitiatorId
-} from 'test/unit/data/data'
+} from '~/../test/data/data'
 import { DatabaseError, InvalidConsentStatusError } from '~/domain/errors'
 
 const mockConsentUpdate = jest.spyOn(consentDB, 'update')

@@ -35,7 +35,7 @@ import * as ScopeFunction from '~/lib/scopes'
 import {
   requestWithPayloadScopes, externalScopes,
   partialConsentActive, scopes
-} from '../data/data'
+} from '~/../test/data/data'
 import { DatabaseError } from '~/domain/errors'
 
 // Declare Mocks

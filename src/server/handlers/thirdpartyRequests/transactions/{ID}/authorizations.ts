@@ -41,7 +41,6 @@ import {
   putAuthorizationErrorRequest,
   DatabaseError,
   MissingScopeError,
-  MissingConsentError,
   InactiveOrMissingCredentialError,
   PayloadNotPendingError,
   InvalidSignatureError,
@@ -53,7 +52,6 @@ import {
   hasActiveCredentialForPayload,
   hasMatchingScopeForPayload
 } from '~/domain/authorizations'
-import { NotFoundError } from '~/model/errors'
 
 /*
  * Asynchronous POST handler helper function to

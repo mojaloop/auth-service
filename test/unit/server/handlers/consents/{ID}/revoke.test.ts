@@ -38,7 +38,7 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
   request, h, partialConsentRevoked,
   partialConsentActive, completeConsentRevoked
-} from 'test/unit/data/data'
+} from '~/../test/data/data'
 import * as DomainError from '~/domain/errors'
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
