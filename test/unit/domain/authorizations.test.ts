@@ -37,9 +37,10 @@ import {
   AuthPayload,
   isPayloadPending,
   hasActiveCredentialForPayload,
-  hasMatchingScopeForPayload,
-  putErrorRequest
+  hasMatchingScopeForPayload
 } from '~/domain/authorizations'
+import { putAuthorizationErrorRequest } from '~/domain/errors'
+import { TErrorInformation } from '@mojaloop/sdk-standard-components'
 
 /*
  * POST /thirdpartyRequests/transactions/{ID}/authorizations
@@ -236,7 +237,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
     )
   })
 
-  describe('putErrorRequest', (): void => {
+  describe('putAuthorizationErrorRequest', (): void => {
     let mockSdkErrorMethod: jest.SpyInstance
     let request: Request
 
@@ -252,7 +253,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           'fspiop-source': 'switch'
         },
         params: {
-          id: '1234'
+          ID: '1234'
         },
         payload: {
           consentId: '1234',
@@ -269,7 +270,14 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         // GenericRequestResponse
         mockSdkErrorMethod.mockResolvedValue({})
 
-        await putErrorRequest(request, '3001', 'Bad Request')
+        const error: TErrorInformation = {
+          errorCode: '3001',
+          errorDescription: 'Bad Request'
+        }
+
+        const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+
+        await putAuthorizationErrorRequest(request.params.ID, error, destParticipantId)
 
         expect(mockSdkErrorMethod).toHaveBeenCalledWith(
           {
@@ -278,7 +286,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
               errorDescription: 'Bad Request'
             }
           },
-          request.params.id,
+          request.params.ID,
           request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
         )
       }
@@ -288,12 +296,18 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
       async (): Promise<void> => {
         const mockLoggerPush = jest.spyOn(Logger, 'push')
         const mockLoggerError = jest.spyOn(Logger, 'error').mockImplementation(
-          (): void => {}
+          (): void => { }
         )
 
         mockSdkErrorMethod.mockRejectedValue('Internal Error')
+        const error: TErrorInformation = {
+          errorCode: '3001',
+          errorDescription: 'Bad Request'
+        }
 
-        await putErrorRequest(request, '3001', 'Bad Request')
+        const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+
+        await putAuthorizationErrorRequest(request.params.ID, error, destParticipantId)
 
         expect(mockSdkErrorMethod).toHaveBeenCalledWith(
           {
@@ -302,7 +316,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
               errorDescription: 'Bad Request'
             }
           },
-          request.params.id,
+          request.params.ID,
           request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
         )
 

@@ -123,7 +123,7 @@ export async function validateAndVerifySignature (
     // PUT request to switch to inform about verification
     await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
       payload,
-      request.params.id,
+      request.params.ID,
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
   } catch (error) {
