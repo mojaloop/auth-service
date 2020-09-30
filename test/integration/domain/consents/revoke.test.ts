@@ -29,10 +29,14 @@
 import Knex from 'knex'
 import { consents } from '~/../seeds/01_consent'
 import Config from '~/shared/config'
+import Logger from '@mojaloop/central-services-logger'
 import { NotFoundError } from '~/model/errors'
 import { revokeConsentStatus } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
 import { closeKnexConnection } from '~/lib/db'
+import { DatabaseError } from '~/domain/errors'
+
+const mockLoggerPush = jest.spyOn(Logger, 'push')
 
 describe('server/domain/consents/revoke', (): void => {
   afterAll(async (): Promise<void> => {
@@ -84,7 +88,7 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.revokedAt).toBeDefined()
       })
 
-    it('Should propagate error in updating consent',
+    it('Should log NotFoundError and propagate converted DatabaseError when updating nonexistent consent',
       async (): Promise<void> => {
         const nonexistentConsentId = '200'
         const nonexistentConsent: Consent = {
@@ -100,7 +104,9 @@ describe('server/domain/consents/revoke', (): void => {
 
         await expect(revokeConsentStatus(nonexistentConsent))
           .rejects
-          .toThrowError(new NotFoundError('Consent', nonexistentConsentId))
+          .toThrowError(new DatabaseError(nonexistentConsentId))
+
+        expect(mockLoggerPush).toBeCalledWith(new NotFoundError('Consent', nonexistentConsentId))
       })
   })
 })
