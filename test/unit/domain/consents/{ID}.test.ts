@@ -40,7 +40,7 @@ import { thirdPartyRequest } from '~/lib/requests'
 import * as Scopes from '~/lib/scopes'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import {
-  IncorrectChallengeError,
+  ChallengeMismatchError,
   IncorrectConsentStatusError,
   EmptyCredentialPayloadError
 } from '~/domain/errors'
@@ -262,12 +262,12 @@ describe('server/domain/consents/{ID}', (): void => {
         expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
       })
 
-    it('should throw IncorrectChallengeError if mismatch between retrieved consent challenge and request credential challenge',
+    it('should throw ChallengeMismatchError if mismatch between retrieved consent challenge and request credential challenge',
       async (): Promise<void> => {
         mockConsentDbRetrieve.mockResolvedValueOnce(retrievedConsentWrongChallenge)
         await expect(retrieveValidConsent(consentId, challenge))
           .rejects
-          .toThrow(new IncorrectChallengeError(consentId))
+          .toThrow(new ChallengeMismatchError(consentId))
 
         expect(mockConsentDbRetrieve).toBeCalledWith(consentId)
       })

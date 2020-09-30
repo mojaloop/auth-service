@@ -32,7 +32,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import * as Handler from '~/server/handlers/consents/{ID}'
 import * as Domain from '~/domain/consents/{ID}'
 import {
-  IncorrectChallengeError,
+  ChallengeMismatchError,
   IncorrectConsentStatusError,
   InvalidSignatureError
 } from '~/domain/errors'
@@ -157,11 +157,11 @@ describe('server/handler/consents/{ID}', (): void => {
 
     it('should propagate retrieveValidConsent IncorrectChallenge error',
       async (): Promise<void> => {
-        mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectChallengeError(consentId))
+        mockRetrieveValidConsent.mockRejectedValueOnce(new ChallengeMismatchError(consentId))
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(new IncorrectChallengeError(consentId))
+        expect(mockLoggerPush).toBeCalledWith(new ChallengeMismatchError(consentId))
         expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)

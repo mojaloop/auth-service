@@ -91,13 +91,13 @@ export async function putConsentError (
 }
 
 // TODO: Replace all codes with agreed on codes
-export class IncorrectChallengeError extends Error implements TErrorInformation {
+export class ChallengeMismatchError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3150'
+  public readonly errorCode: string = '6205'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
-    super(`Incorrect Challenge ${consentId}$`)
+    super(`Challenge in payload different from challenge in consent ${consentId}$`)
     this.errorDescription = this.message
     this.consentId = consentId
   }
@@ -105,7 +105,7 @@ export class IncorrectChallengeError extends Error implements TErrorInformation 
 
 export class IncorrectCredentialStatusError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3151'
+  public readonly errorCode: string = '6206'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -117,7 +117,7 @@ export class IncorrectCredentialStatusError extends Error implements TErrorInfor
 
 export class IncorrectConsentStatusError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3152'
+  public readonly errorCode: string = '6207'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -129,7 +129,7 @@ export class IncorrectConsentStatusError extends Error implements TErrorInformat
 
 export class EmptyCredentialPayloadError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3153'
+  public readonly errorCode: string = '6208'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -141,7 +141,7 @@ export class EmptyCredentialPayloadError extends Error implements TErrorInformat
 
 export class InvalidSignatureError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3154'
+  public readonly errorCode: string = '6209'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -153,7 +153,7 @@ export class InvalidSignatureError extends Error implements TErrorInformation {
 
 export class SignatureVerificationError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3155'
+  public readonly errorCode: string = '6210'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -165,7 +165,7 @@ export class SignatureVerificationError extends Error implements TErrorInformati
 
 export class DatabaseError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3156'
+  public readonly errorCode: string = '6211'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -177,7 +177,7 @@ export class DatabaseError extends Error implements TErrorInformation {
 
 export class InvalidInitiatorSourceError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3157'
+  public readonly errorCode: string = '6212'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -189,7 +189,7 @@ export class InvalidInitiatorSourceError extends Error implements TErrorInformat
 
 export class InvalidConsentStatusError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3158'
+  public readonly errorCode: string = '6213'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -201,7 +201,7 @@ export class InvalidConsentStatusError extends Error implements TErrorInformatio
 
 export class RevokedConsentStatusError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3159'
+  public readonly errorCode: string = '6214'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -213,7 +213,7 @@ export class RevokedConsentStatusError extends Error implements TErrorInformatio
 
 export class ChallengeGenerationError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3159'
+  public readonly errorCode: string = '6215'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -225,7 +225,7 @@ export class ChallengeGenerationError extends Error implements TErrorInformation
 
 export class ActiveConsentChallengeRequestError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3160'
+  public readonly errorCode: string = '6216'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -237,7 +237,7 @@ export class ActiveConsentChallengeRequestError extends Error implements TErrorI
 
 export class PutRequestCreationError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3161'
+  public readonly errorCode: string = '6217'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -249,7 +249,7 @@ export class PutRequestCreationError extends Error implements TErrorInformation 
 
 export class PayloadNotPendingError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3161'
+  public readonly errorCode: string = '6218'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
@@ -261,7 +261,7 @@ export class PayloadNotPendingError extends Error implements TErrorInformation {
 
 export class MissingScopeError extends Error implements TErrorInformation {
   public sourceAccountId: string
-  public readonly errorCode: string = '3161'
+  public readonly errorCode: string = '6219'
   public readonly errorDescription: string
 
   public constructor (sourceAccountId: string) {
@@ -273,7 +273,7 @@ export class MissingScopeError extends Error implements TErrorInformation {
 
 export class InactiveOrMissingCredentialError extends Error implements TErrorInformation {
   public consentId: string
-  public readonly errorCode: string = '3161'
+  public readonly errorCode: string = '6220'
   public readonly errorDescription: string
 
   public constructor (consentId: string) {
