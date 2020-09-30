@@ -41,6 +41,7 @@ import {
   putAuthorizationErrorRequest,
   DatabaseError,
   MissingScopeError,
+  MissingConsentError,
   InactiveOrMissingCredentialError,
   PayloadNotPendingError,
   InvalidSignatureError,
@@ -52,6 +53,7 @@ import {
   hasActiveCredentialForPayload,
   hasMatchingScopeForPayload
 } from '~/domain/authorizations'
+import { NotFoundError } from '~/model/errors'
 
 /*
  * Asynchronous POST handler helper function to
@@ -75,7 +77,6 @@ export async function validateAndVerifySignature (
     } catch (error) {
       Logger.push(error)
       Logger.error('Could not retrieve consent')
-
       throw new DatabaseError(payload.consentId)
     }
 
@@ -87,12 +88,11 @@ export async function validateAndVerifySignature (
     } catch (error) {
       Logger.push(error)
       Logger.error('Could not retrieve scope')
-
       throw new DatabaseError(payload.consentId)
     }
 
     if (!hasMatchingScopeForPayload(consentScopes, payload)) {
-      throw new MissingScopeError(payload.sourceAccountId)
+      throw new MissingScopeError(payload.consentId)
     }
 
     if (!hasActiveCredentialForPayload(consent)) {

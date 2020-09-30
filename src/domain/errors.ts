@@ -260,14 +260,14 @@ export class PayloadNotPendingError extends Error implements TErrorInformation {
 }
 
 export class MissingScopeError extends Error implements TErrorInformation {
-  public sourceAccountId: string
+  public consentId: string
   public readonly errorCode: string = '6219'
   public readonly errorDescription: string
 
-  public constructor (sourceAccountId: string) {
-    super(`Missing scope for ${sourceAccountId}`)
+  public constructor (consentId: string) {
+    super(`Missing scope for ${consentId}`)
     this.errorDescription = this.message
-    this.sourceAccountId = sourceAccountId
+    this.consentId = consentId
   }
 }
 

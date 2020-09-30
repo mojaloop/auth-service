@@ -235,7 +235,7 @@ describe('validateAndVerifySignature', (): void => {
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.MissingScopeError((request.payload as Domain.AuthPayload).sourceAccountId),
+        new DomainError.MissingScopeError((request.payload as Domain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
