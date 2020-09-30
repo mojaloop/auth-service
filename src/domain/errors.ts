@@ -28,9 +28,9 @@ import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standa
 import { thirdPartyRequest } from '../lib/requests'
 
 // Type guard for Mojaloop errors
-export function isMojaloopError(error: any): error is TErrorInformation {
+export function isMojaloopError (error: unknown): error is TErrorInformation {
   const mojaloopError = (error as TErrorInformation)
-  if(mojaloopError.errorCode && mojaloopError.errorDescription) {
+  if (mojaloopError.errorCode && mojaloopError.errorDescription) {
     return true
   }
   return false
