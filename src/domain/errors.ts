@@ -30,10 +30,7 @@ import { thirdPartyRequest } from '../lib/requests'
 // Type guard for Mojaloop errors
 export function isMojaloopError (error: unknown): error is TErrorInformation {
   const mojaloopError = (error as TErrorInformation)
-  if (mojaloopError.errorCode && mojaloopError.errorDescription) {
-    return true
-  }
-  return false
+  return !!(mojaloopError.errorCode && mojaloopError.errorDescription)
 }
 
 /*
