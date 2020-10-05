@@ -33,6 +33,7 @@
 import Convict from 'convict'
 import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
 import PACKAGE from '../../package.json'
+import fs, { PathLike } from 'fs'
 
 interface ServiceConfig {
   PORT: number;
@@ -44,7 +45,45 @@ interface ServiceConfig {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
     COLOR: boolean;
-  };
+  },
+  SHARED: {
+    PEER_ENDPOINT: string;
+    ALS_ENDPOINT: string;
+    QUOTES_ENDPOINT: string;
+    TRANSFERS_ENDPOINT: string;
+    BULK_TRANSFERS_ENDPOINT: string;
+    DFSP_ID: string;
+    JWS_SIGN: boolean;
+    JWS_SIGNING_KEY: PathLike | Buffer;
+    WSO2_AUTH: {
+      staticToken: string;
+      tokenEndpoint: string;
+      clientKey: string;
+      clientSecret: string;
+      refreshSeconds: number;
+    },
+    TLS: {
+      mutualTLS: {
+        enabled: boolean;
+      },
+      creds: {
+        ca: string | Array<Buffer>;
+        cert: string | Array<Buffer>;
+        key: string | Array<Buffer>;
+      }
+    }
+  }
+}
+
+function getFileContent(path: PathLike): Buffer {
+  if (!fs.existsSync(path)) {
+    throw new Error('File doesn\'t exist')
+  }
+  return fs.readFileSync(path)
+}
+
+function getFileListContent(pathList: string): Array<Buffer> {
+  return pathList.split(',').map((path) => getFileContent(path))
 }
 
 const ConvictConfig = Convict<ServiceConfig>({
@@ -91,6 +130,35 @@ const ConvictConfig = Convict<ServiceConfig>({
       doc: 'Show colors in output',
       format: 'Boolean',
       default: true
+    },
+  },
+  // TODO: Add documentation
+  SHARED: {
+    PEER_ENDPOINT: '0.0.0.0:4003',
+    ALS_ENDPOINT: '0.0.0.0:4002',
+    QUOTES_ENDPOINT: '0.0.0.0:3002',
+    TRANSFERS_ENDPOINT: '0.0.0.0:3000',
+    BULK_TRANSFERS_ENDPOINT: '',
+    DFSP_ID: 'dfsp_a',
+    JWS_SIGN: false,
+    JWS_SIGNING_KEY: '',
+    WSO2_AUTH: {
+      staticToken: '',
+      tokenEndpoint: '',
+      clientKey: '',
+      clientSecret: '',
+      refreshSeconds: 60
+    },
+    // TODO: Investigate proper key setup
+    TLS: {
+      mutualTLS: {
+        enabled: false
+      },
+      creds: {
+        ca: '',
+        cert: '',
+        key: ''
+      }
     }
   }
 })
@@ -100,6 +168,15 @@ const env = ConvictConfig.get('ENV')
 
 ConvictConfig.loadFile(`${__dirname}/../../config/${env}.json`)
 ConvictConfig.validate({ allowed: 'strict' })
+
+// Load file contents for keys and secrets
+ConvictConfig.set('SHARED.JWS_SIGNING_KEY', getFileContent(ConvictConfig.get('SHARED').JWS_SIGNING_KEY))
+
+// Note: Have not seen these be comma seperated value strings. mimicking sdk-scheme-adapter for now
+ConvictConfig.set('SHARED.TLS.creds.ca', getFileListContent(<string>ConvictConfig.get('SHARED').TLS.creds.ca))
+ConvictConfig.set('SHARED.TLS.creds.cert', getFileListContent(<string>ConvictConfig.get('SHARED').TLS.creds.cert))
+ConvictConfig.set('SHARED.TLS.creds.key', getFileListContent(<string>ConvictConfig.get('SHARED').TLS.creds.key))
+
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()
