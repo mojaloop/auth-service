@@ -45,7 +45,7 @@ interface ServiceConfig {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
     COLOR: boolean;
-  },
+  };
   SHARED: {
     PEER_ENDPOINT: string;
     ALS_ENDPOINT: string;
@@ -60,29 +60,29 @@ interface ServiceConfig {
       clientKey: string;
       clientSecret: string;
       refreshSeconds: number;
-    },
+    };
     TLS: {
       mutualTLS: {
         enabled: boolean;
-      },
+      };
       creds: {
-        ca: string | Array<Buffer>;
-        cert: string | Array<Buffer>;
-        key: string | Array<Buffer>;
-      }
-    }
-  }
+        ca: string | Buffer[];
+        cert: string | Buffer[];
+        key: string | Buffer[];
+      };
+    };
+  };
 }
 
-function getFileContent(path: PathLike): Buffer {
+function getFileContent (path: PathLike): Buffer {
   if (!fs.existsSync(path)) {
     throw new Error('File doesn\'t exist')
   }
   return fs.readFileSync(path)
 }
 
-function getFileListContent(pathList: string): Array<Buffer> {
-  return pathList.split(',').map((path) => getFileContent(path))
+function getFileListContent (pathList: string): Buffer[] {
+  return pathList.split(',').map((path): Buffer => getFileContent(path))
 }
 
 const ConvictConfig = Convict<ServiceConfig>({
@@ -129,7 +129,7 @@ const ConvictConfig = Convict<ServiceConfig>({
       doc: 'Show colors in output',
       format: 'Boolean',
       default: true
-    },
+    }
   },
   // TODO: Add documentation
   SHARED: {
@@ -171,10 +171,9 @@ ConvictConfig.validate({ allowed: 'strict' })
 ConvictConfig.set('SHARED.JWS_SIGNING_KEY', getFileContent(ConvictConfig.get('SHARED').JWS_SIGNING_KEY))
 
 // Note: Have not seen these be comma seperated value strings. mimicking sdk-scheme-adapter for now
-ConvictConfig.set('SHARED.TLS.creds.ca', getFileListContent(<string>ConvictConfig.get('SHARED').TLS.creds.ca))
-ConvictConfig.set('SHARED.TLS.creds.cert', getFileListContent(<string>ConvictConfig.get('SHARED').TLS.creds.cert))
-ConvictConfig.set('SHARED.TLS.creds.key', getFileListContent(<string>ConvictConfig.get('SHARED').TLS.creds.key))
-
+ConvictConfig.set('SHARED.TLS.creds.ca', getFileListContent(ConvictConfig.get('SHARED').TLS.creds.ca as string))
+ConvictConfig.set('SHARED.TLS.creds.cert', getFileListContent(ConvictConfig.get('SHARED').TLS.creds.cert as string))
+ConvictConfig.set('SHARED.TLS.creds.key', getFileListContent(ConvictConfig.get('SHARED').TLS.creds.key as string))
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()
