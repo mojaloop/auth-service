@@ -13,7 +13,6 @@
     "QUOTES_ENDPOINT": "0.0.0.0:3002",
     "TRANSFERS_ENDPOINT": "0.0.0.0:3000",
     "BULK_TRANSFERS_ENDPOINT": "",
-    "DFSP_ID": "dfsp_a",
     "JWS_SIGN": false,
     "JWS_SIGNING_KEY": "./secrets/jwsSigningKey.key",
     "WSO2_AUTH": {

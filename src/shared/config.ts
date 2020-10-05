@@ -52,7 +52,6 @@ interface ServiceConfig {
     QUOTES_ENDPOINT: string;
     TRANSFERS_ENDPOINT: string;
     BULK_TRANSFERS_ENDPOINT: string;
-    DFSP_ID: string;
     JWS_SIGN: boolean;
     JWS_SIGNING_KEY: PathLike | Buffer;
     WSO2_AUTH: {
@@ -139,7 +138,6 @@ const ConvictConfig = Convict<ServiceConfig>({
     QUOTES_ENDPOINT: '0.0.0.0:3002',
     TRANSFERS_ENDPOINT: '0.0.0.0:3000',
     BULK_TRANSFERS_ENDPOINT: '',
-    DFSP_ID: 'dfsp_a',
     JWS_SIGN: false,
     JWS_SIGNING_KEY: '',
     WSO2_AUTH: {

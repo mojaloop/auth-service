@@ -45,10 +45,14 @@ import {
 const configRequest: BaseRequestConfigType = {
   dfspId: Config.PARTICIPANT_ID,
   logger: Logger,
-  // TODO: Decide on below later - Handled in future ticket #361
-  // Also decide on need for jwsSigningKey
-  jwsSign: false,
-  tls: Config.SHARED.TLS
+  peerEndpoint: Config.SHARED.PEER_ENDPOINT,
+  alsEndpoint: Config.SHARED.ALS_ENDPOINT,
+  quotesEndpoint: Config.SHARED.QUOTES_ENDPOINT,
+  transfersEndpoint: Config.SHARED.TRANSFERS_ENDPOINT,
+  bulkTransfersEndpoint: Config.SHARED.BULK_TRANSFERS_ENDPOINT,
+  tls: Config.SHARED.TLS,
+  jwsSign: Config.SHARED.JWS_SIGN,
+  jwsSigningKey: <Buffer> Config.SHARED.JWS_SIGNING_KEY
 }
 
 const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
