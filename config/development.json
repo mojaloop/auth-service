@@ -27,9 +27,9 @@
         "enabled": false
       },
       "creds": {
-        "ca": "./secrets/dfsp_a_client.crt",
-        "cert": "./secrets/dfsp_a_client.crt",
-        "key": "./secrets/dfsp_a_client.crt"
+        "ca": "./secrets/client.crt",
+        "cert": "./secrets/client.crt",
+        "key": "./secrets/client.crt"
       }
     }
   }
