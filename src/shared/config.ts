@@ -125,7 +125,6 @@ const ConvictConfig = Convict<ServiceConfig>({
       default: true
     }
   },
-  // TODO: Add documentation
   SHARED: {
     PEER_ENDPOINT: '0.0.0.0:4003',
     ALS_ENDPOINT: '0.0.0.0:4002',
@@ -143,7 +142,6 @@ const ConvictConfig = Convict<ServiceConfig>({
       clientSecret: '',
       refreshSeconds: 60
     },
-    // TODO: Investigate proper key setup
     TLS: {
       mutualTLS: {
         enabled: false
