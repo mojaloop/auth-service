@@ -50,6 +50,8 @@ const configRequest: BaseRequestConfigType = {
   quotesEndpoint: Config.SHARED.QUOTES_ENDPOINT,
   transfersEndpoint: Config.SHARED.TRANSFERS_ENDPOINT,
   bulkTransfersEndpoint: Config.SHARED.BULK_TRANSFERS_ENDPOINT,
+  thirdpartyRequestsEndpoint: Config.SHARED.THIRDPARTY_REQUESTS_ENDPOINT,
+  transactionRequestsEndpoint: Config.SHARED.TRANSACTION_REQUEST_ENDPOINT,
   tls: Config.SHARED.TLS,
   jwsSign: Config.SHARED.JWS_SIGN,
   jwsSigningKey: Config.SHARED.JWS_SIGNING_KEY as Buffer

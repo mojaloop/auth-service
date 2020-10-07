@@ -34,6 +34,7 @@ import Convict from 'convict'
 import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
 import PACKAGE from '../../package.json'
 import fs, { PathLike } from 'fs'
+import { BaseRequestTLSConfig } from '@mojaloop/sdk-standard-components'
 
 interface ServiceConfig {
   PORT: number;
@@ -48,10 +49,12 @@ interface ServiceConfig {
   };
   SHARED: {
     PEER_ENDPOINT: string;
-    ALS_ENDPOINT: string;
-    QUOTES_ENDPOINT: string;
-    TRANSFERS_ENDPOINT: string;
-    BULK_TRANSFERS_ENDPOINT: string;
+    ALS_ENDPOINT?: string;
+    QUOTES_ENDPOINT?: string;
+    TRANSFERS_ENDPOINT?: string;
+    BULK_TRANSFERS_ENDPOINT?: string;
+    THIRDPARTY_REQUESTS_ENDPOINT?: string;
+    TRANSACTION_REQUEST_ENDPOINT?: string;
     JWS_SIGN: boolean;
     JWS_SIGNING_KEY: PathLike | Buffer;
     WSO2_AUTH: {
@@ -61,16 +64,7 @@ interface ServiceConfig {
       clientSecret: string;
       refreshSeconds: number;
     };
-    TLS: {
-      mutualTLS: {
-        enabled: boolean;
-      };
-      creds: {
-        ca: string | Buffer[];
-        cert: string | Buffer[];
-        key: string | Buffer[];
-      };
-    };
+    TLS: BaseRequestTLSConfig;
   };
 }
 
@@ -138,6 +132,8 @@ const ConvictConfig = Convict<ServiceConfig>({
     QUOTES_ENDPOINT: '0.0.0.0:3002',
     TRANSFERS_ENDPOINT: '0.0.0.0:3000',
     BULK_TRANSFERS_ENDPOINT: '',
+    THIRDPARTY_REQUESTS_ENDPOINT: '',
+    TRANSACTION_REQUEST_ENDPOINT: '',
     JWS_SIGN: false,
     JWS_SIGNING_KEY: '',
     WSO2_AUTH: {
