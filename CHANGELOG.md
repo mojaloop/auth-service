@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.2.4](https://github.com/mojaloop/auth-service/compare/v11.2.3...v11.2.4) (2020-10-09)
+
+
+### Bug Fixes
+
+* **ci/cd:** explicitly disable `license-scan` and `image-scan` steps ([#54](https://github.com/mojaloop/auth-service/issues/54)) ([6c75243](https://github.com/mojaloop/auth-service/commit/6c752436eec1127ee887c8fd5e66bcbef3eece03))
+
 ### [11.2.3](https://github.com/mojaloop/auth-service/compare/v11.2.2...v11.2.3) (2020-10-09)
 
 
