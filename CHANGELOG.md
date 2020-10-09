@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.2.3](https://github.com/mojaloop/auth-service/compare/v11.2.2...v11.2.3) (2020-10-09)
+
+
+### Bug Fixes
+
+* **ci/cd:** disable license scan and audit temporarily. Waiting for fix in mojaloop/mojaloop[#415](https://github.com/mojaloop/auth-service/issues/415) ([#53](https://github.com/mojaloop/auth-service/issues/53)) ([79d7d8c](https://github.com/mojaloop/auth-service/commit/79d7d8c82acff8f6a3dae26c1fb75ce2d940f9a7))
+
 ### [11.2.2](https://github.com/mojaloop/auth-service/compare/v11.2.1...v11.2.2) (2020-09-28)
 
 ### [11.2.1](https://github.com/mojaloop/auth-service/compare/v11.2.0...v11.2.1) (2020-09-17)
