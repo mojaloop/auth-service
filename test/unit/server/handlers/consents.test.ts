@@ -20,30 +20,28 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { post } from '~/server/handlers/consents'
 import * as Domain from '~/domain/consents'
-import Logger from '@mojaloop/central-services-logger'
 import { requestWithPayloadScopes, h } from 'test/data/data'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
 const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
+
+jest.mock('~/shared/logger')
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
     mockIsPostRequestValid.mockReturnValue(true)
     mockStoreConsent.mockResolvedValue()
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
+    // mockLoggerError.mockReturnValue(null)
+    // mockLoggerPush.mockReturnValue(null)
     jest.useFakeTimers()
   })
 

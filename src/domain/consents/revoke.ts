@@ -28,18 +28,16 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
 import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
-import Logger from '@mojaloop/central-services-logger'
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
-
+import { logger } from '~/shared/logger'
+import { PatchConsentsRequest } from '@mojaloop/sdk-standard-components'
 /**
  * Revoke status of consent object, update in the database
  * and return consent
@@ -47,12 +45,12 @@ import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 export async function revokeConsentStatus (
   consent: Consent): Promise<Consent> {
   if (consent.status === 'REVOKED') {
-    Logger.push('Previously revoked consent was asked to be revoked')
+    logger.push({ consent }).log('Previously revoked consent was asked to be revoked')
     return consent
   }
   // Protects against invalid consent status types
   if (consent.status !== 'ACTIVE') {
-    Logger.push('Invalid Consent Status')
+    logger.push({ consent }).error('Invalid Consent Status')
     // TODO: specific Error here ?
     throw Error('Invalid Consent Status')
   }
@@ -68,12 +66,12 @@ export async function revokeConsentStatus (
  */
 export function generatePatchRevokedConsentRequest (
   consent: Consent
-): SDKStandardComponents.PatchConsentsRequest {
+): PatchConsentsRequest {
   if (consent.status !== 'REVOKED') {
     throw new Error('Attempting to generate request for non-revoked consent!')
   }
 
-  const requestBody: SDKStandardComponents.PatchConsentsRequest = {
+  const requestBody: PatchConsentsRequest = {
     status: 'REVOKED',
     revokedAt: consent.revokedAt as string
   }

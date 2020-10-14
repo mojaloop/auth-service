@@ -21,15 +21,13 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import { consentDB, scopeDB } from '~/lib/db'
 import { createAndStoreConsent } from '~/domain/consents'
-import Logger from '@mojaloop/central-services-logger'
 
 import * as ScopeFunction from '~/lib/scopes'
 import {
@@ -37,10 +35,12 @@ import {
   partialConsentActive, scopes
 } from '../../data/data'
 
+import { logger } from '~/shared/logger'
+
+jest.mock('~/shared/logger')
+
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
 const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
@@ -50,14 +50,16 @@ describe('server/domain/consents', (): void => {
     mockInsertConsent.mockResolvedValue(true)
     mockInsertScopes.mockResolvedValue(true)
     mockConvertExternalToScope.mockReturnValue(scopes)
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
   })
 
   beforeEach((): void => {
     jest.clearAllMocks()
   })
 
+  it('test logger', (): void => {
+    expect(logger).toBeDefined()
+    expect(logger.push({})).toBeDefined()
+  })
   it('Should resolve successfully', async (): Promise<void> => {
     await expect(createAndStoreConsent(requestWithPayloadScopes))
       .resolves

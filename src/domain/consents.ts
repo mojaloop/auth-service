@@ -28,10 +28,9 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
@@ -39,7 +38,7 @@ import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../lib/db'
 import { Scope } from '../model/scope'
 import { Consent } from '../model/consent'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { ExternalScope, convertExternalToScope } from '../lib/scopes'
 
@@ -82,8 +81,7 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
     await consentDB.insert(consent)
     await scopeDB.insert(scopes)
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Error: Unable to store consent and scopes')
+    logger.push({ error }).error('Error: Unable to store consent and scopes')
     throw error
   }
 }

@@ -20,12 +20,12 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+
 import { Request, ResponseToolkit } from '@hapi/hapi'
 import * as Handler from '~/server/handlers/consents/{ID}/revoke'
 import { thirdPartyRequest } from '~/lib/requests'
@@ -33,12 +33,13 @@ import * as Domain from '~/domain/consents/revoke'
 import * as validators from '~/domain/validators'
 import { consentDB } from '~/lib/db'
 import { Enum } from '@mojaloop/central-services-shared'
-import Logger from '@mojaloop/central-services-logger'
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { GenericRequestResponse, PatchConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   request, h, partialConsentRevoked,
   partialConsentActive, completeConsentRevoked
 } from 'test/data/data'
+
+jest.mock('~/shared/logger')
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
 const mockPatchConsents = jest.spyOn(thirdPartyRequest, 'patchConsents')
@@ -47,12 +48,8 @@ const mockGeneratePatchConsentRequest = jest.spyOn(
 const mockIsConsentRequestValid = jest.spyOn(
   validators, 'isConsentRequestInitiatedByValidSource')
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
-
 const consentId = partialConsentActive.id
-
-const requestBody: SDKStandardComponents.PatchConsentsRequest = {
+const requestBody: PatchConsentsRequest = {
   status: 'REVOKED',
   revokedAt: '2020-08-19T05:44:18.843Z'
 
@@ -63,10 +60,7 @@ describe('server/handlers/consents', (): void => {
     mockIsConsentRequestValid.mockReturnValue(true)
     mockRevokeConsentStatus.mockResolvedValue(partialConsentRevoked)
     mockGeneratePatchConsentRequest.mockReturnValue(requestBody)
-    mockPatchConsents
-      .mockResolvedValue(1 as unknown as SDKStandardComponents.GenericRequestResponse)
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
+    mockPatchConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
     mockConsentRetrieve.mockResolvedValue(partialConsentActive)
   })
 

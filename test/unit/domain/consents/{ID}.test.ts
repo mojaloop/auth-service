@@ -20,16 +20,14 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '~/lib/db'
-import Logger from '@mojaloop/central-services-logger'
 import {
   retrieveValidConsent,
   updateConsentCredential,
@@ -38,7 +36,7 @@ import {
 import { Consent } from '~/model/consent'
 import { thirdPartyRequest } from '~/lib/requests'
 import * as Scopes from '~/lib/scopes'
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   IncorrectChallengeError,
   IncorrectConsentStatusError,
@@ -48,8 +46,6 @@ import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent
 import { UpdateCredentialRequest } from '~/server/handlers/consents/{ID}'
 import { Scope } from '~/model/scope'
 
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
 const mockScopeDbRetrieveAll = jest.spyOn(scopeDB, 'retrieveAll')
@@ -59,7 +55,6 @@ const mockConvertScopesToExternal = jest.spyOn(Scopes, 'convertScopesToExternal'
 /*
  * Mock Request Resources
  */
-// @ts-ignore
 const request: Request = {
   headers: {
     'fspiop-source': 'pisp-2342-2233',
@@ -94,7 +89,7 @@ const request: Request = {
       payload: 'string_representing_credential_payload'
     }
   }
-}
+} as unknown as Request
 
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
@@ -204,7 +199,7 @@ const updatedConsent: Consent = {
 }
 
 // Mock Outgoing Request Body
-const requestBody: SDKStandardComponents.PutConsentsRequest = {
+const requestBody: PutConsentsRequest = {
   requestId: consentId,
   scopes: externalScopes,
   initiatorId: retrievedConsent.initiatorId as string,
@@ -223,9 +218,6 @@ const requestBody: SDKStandardComponents.PutConsentsRequest = {
 
 describe('server/domain/consents/{ID}', (): void => {
   beforeAll((): void => {
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
-
     mockConsentDbRetrieve.mockResolvedValue(retrievedConsent)
     mockScopeDbRetrieveAll.mockResolvedValue(retrievedScopes)
     mockPutConsentsOutbound.mockResolvedValue(undefined)

@@ -15,19 +15,16 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
-
  --------------
  ******/
 
 import { Server } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 
 export default async function start (server: Server): Promise<Server> {
   await server.start()
-  Logger.info(`auth-service is running @ ${server.info.uri}`)
+  logger.info(`auth-service is running @ ${server.info.uri}`)
   return server
 }

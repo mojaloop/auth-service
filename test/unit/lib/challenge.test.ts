@@ -24,13 +24,17 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+
 import crypto from 'crypto'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import Credential from './credential'
 import { generate, verifySignature } from '~/lib/challenge'
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 describe('Challenge Generation', (): void => {
   it('Should return a 32 byte string by default', async (): Promise<void> => {
@@ -271,12 +275,6 @@ describe('Signature Verification', (): void => {
           throw new Error('Unable to create Verify in mock')
         })
 
-      const loggerPushSpy = jest.spyOn(Logger, 'push')
-      // Mocking `Logger.error` because it indirectly calls
-      // Logger.push and we want to only test usage of Logger's interface
-      const loggerErrorSpy = jest.spyOn(Logger, 'error')
-        .mockImplementation((): void => {})
-
       // Setting up the signature
       const anotherChallenge = 'This is a different message'
       const anotherSigner = crypto.createSign('SHA256')
@@ -295,11 +293,11 @@ describe('Signature Verification', (): void => {
       expect(createVerifySpy).toHaveBeenCalledTimes(1)
 
       // Verify that logger functions are called correctly
-      expect(loggerPushSpy)
-        .toHaveBeenCalledWith(new Error('Unable to create Verify in mock'))
-      expect(loggerPushSpy).toHaveBeenCalledTimes(1)
+      expect(mocked(logger.push))
+        .toHaveBeenCalledWith({ error: new Error('Unable to create Verify in mock') })
+      expect(mocked(logger.push)).toHaveBeenCalledTimes(1)
 
-      expect(loggerErrorSpy).toHaveBeenCalledTimes(1)
-      expect(loggerErrorSpy).toHaveBeenCalledWith('Unable to verify signature')
+      expect(mocked(logger.error)).toHaveBeenCalledTimes(1)
+      expect(mocked(logger.error)).toHaveBeenCalledWith('Unable to verify signature')
     })
 })

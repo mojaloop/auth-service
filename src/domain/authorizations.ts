@@ -28,14 +28,13 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { Request } from '@hapi/hapi'
@@ -102,7 +101,6 @@ export async function putErrorRequest (
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not make PUT error request')
+    logger.push({ error }).error('Could not make PUT error request')
   }
 }

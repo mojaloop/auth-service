@@ -20,11 +20,9 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
@@ -32,7 +30,7 @@ import {
   updateConsentCredential,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import * as validators from '~/domain/validators'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '~/lib/challenge'
@@ -59,8 +57,7 @@ export async function generateChallengeAndPutConsent (
     try {
       consent = await consentDB.retrieve(id)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Error in retrieving consent')
+      logger.push({ error }).error('Error in retrieving consent')
 
       // If consent cannot be retrieved using given ID, send PUT ...error back
       // TODO: Error Handling dealt with in future ticket #355
@@ -98,7 +95,7 @@ export async function generateChallengeAndPutConsent (
       consent = await updateConsentCredential(consent, credential)
     } else if (consent.credentialStatus === 'ACTIVE') {
       // TODO: Error handling here - dealt with in #355
-      Logger.error('ACTIVE credential consent has requested challenge')
+      logger.push({ consent }).error('ACTIVE credential consent has requested challenge')
       throw (new Error('NotImplementedYetError'))
     }
 
@@ -114,8 +111,7 @@ export async function generateChallengeAndPutConsent (
     await thirdPartyRequest.putConsents(
       consent.id, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
   } catch (error) {
-    Logger.push(error)
-    Logger.error(`Outgoing call NOT made to PUT consent/${id}`)
+    logger.push({ error }).error(`Outgoing call NOT made to PUT consent/${id}`)
     // TODO: Decide on error handling HERE - dealt with in future ticket #355
     throw error
   }
