@@ -20,16 +20,15 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
 import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { thirdPartyRequest } from '~/lib/requests'
@@ -40,6 +39,9 @@ import {
   hasMatchingScopeForPayload,
   putErrorRequest
 } from '~/domain/authorizations'
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 /*
  * POST /thirdpartyRequests/transactions/{ID}/authorizations
@@ -286,11 +288,6 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
 
     it('logs error in case there is an internal sdk-standard-components error',
       async (): Promise<void> => {
-        const mockLoggerPush = jest.spyOn(Logger, 'push')
-        const mockLoggerError = jest.spyOn(Logger, 'error').mockImplementation(
-          (): void => {}
-        )
-
         mockSdkErrorMethod.mockRejectedValue('Internal Error')
 
         await putErrorRequest(request, '3001', 'Bad Request')
@@ -306,8 +303,8 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
         )
 
-        expect(mockLoggerError).toHaveBeenCalled()
-        expect(mockLoggerPush).toHaveBeenCalled()
+        expect(mocked(logger.error)).toHaveBeenCalled()
+        expect(mocked(logger.push)).toHaveBeenCalled()
       }
     )
   })

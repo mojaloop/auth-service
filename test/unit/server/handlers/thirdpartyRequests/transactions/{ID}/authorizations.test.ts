@@ -20,14 +20,13 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
@@ -41,6 +40,9 @@ import {
 import * as Challenge from '~/lib/challenge'
 import * as Domain from '~/domain/authorizations'
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 /*
  * Mock Handler Functions
@@ -57,9 +59,6 @@ const mockVerifySignature = jest.spyOn(Challenge, 'verifySignature')
 
 const mockRetrieveConsent = jest.spyOn(consentDB, 'retrieve')
 const mockRetrieveAllScopes = jest.spyOn(scopeDB, 'retrieveAll')
-
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 
 const mockPutThirdpartyTransactionsAuth = jest.spyOn(
   thirdPartyRequest,
@@ -141,10 +140,6 @@ describe('validateAndVerifySignature', (): void => {
     mockHasMatchingScope.mockReturnValue(true)
     mockVerifySignature.mockReturnValue(true)
     mockPutErrorRequest.mockResolvedValue(undefined)
-
-    mockLoggerPush.mockReturnValue(null)
-    mockLoggerError.mockReturnValue(null)
-
     mockRetrieveConsent.mockResolvedValue(mockConsent)
     mockRetrieveAllScopes.mockResolvedValue(mockScopes)
 
@@ -251,8 +246,8 @@ describe('validateAndVerifySignature', (): void => {
 
       expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
       expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockLoggerPush).toHaveBeenCalled()
-      expect(mockLoggerError).toHaveBeenCalled()
+      expect(mocked(logger.push)).toHaveBeenCalled()
+      expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request,
@@ -272,8 +267,8 @@ describe('validateAndVerifySignature', (): void => {
 
       expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
       expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockLoggerPush).toHaveBeenCalled()
-      expect(mockLoggerError).toHaveBeenCalled()
+      expect(mocked(logger.push)).toHaveBeenCalled()
+      expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request,
@@ -295,8 +290,8 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
       expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
       expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockLoggerPush).toHaveBeenCalled()
-      expect(mockLoggerError).toHaveBeenCalled()
+      expect(mocked(logger.push)).toHaveBeenCalled()
+      expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request,
@@ -317,8 +312,8 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
       expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
       expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockLoggerPush).toHaveBeenCalled()
-      expect(mockLoggerError).toHaveBeenCalled()
+      expect(mocked(logger.push)).toHaveBeenCalled()
+      expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
         request,

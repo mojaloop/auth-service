@@ -20,14 +20,13 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Context } from '~/server/plugins'
 import { Consent } from '~/model/consent'
@@ -100,8 +99,7 @@ export async function validateAndVerifySignature (
   try {
     consent = await consentDB.retrieve(payload.consentId)
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not retrieve consent')
+    logger.push({ error }).error('Could not retrieve consent')
 
     if (error instanceof NotFoundError) {
       return putErrorRequest(
@@ -120,8 +118,7 @@ export async function validateAndVerifySignature (
   try {
     consentScopes = await scopeDB.retrieveAll(payload.consentId)
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not retrieve scope')
+    logger.push({ error }).error('Could not retrieve scope')
 
     if (error instanceof NotFoundError) {
       return putErrorRequest(
@@ -169,8 +166,7 @@ export async function validateAndVerifySignature (
 
     payload.status = 'VERIFIED'
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not verify signature')
+    logger.push({ error }).error('Could not verify signature')
 
     return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
   }

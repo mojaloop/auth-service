@@ -20,11 +20,10 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import { Request } from '@hapi/hapi'
@@ -37,20 +36,21 @@ import {
 } from '~/domain/errors'
 import { NotFoundError } from '~/model/errors'
 import * as Signature from '~/lib/challenge'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Consent } from '~/model/consent'
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { GenericRequestResponse, PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 import { ExternalScope } from '~/lib/scopes'
 import { thirdPartyRequest } from '~/lib/requests'
 import { requestWithPayloadCredentialAndScope, h } from 'test/data/data'
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 const mockRetrieveValidConsent = jest.spyOn(Domain, 'retrieveValidConsent')
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
 const mockUpdateConsentCredential = jest.spyOn(Domain, 'updateConsentCredential')
 const mockBuildConsentRequestBody = jest.spyOn(Domain, 'buildConsentRequestBody')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockVerifySignature = jest.spyOn(Signature, 'verifySignature')
 
 /* Mock the retrieved consent value. */
@@ -103,7 +103,7 @@ const externalScopes: ExternalScope[] = [
 ]
 
 // Mock Outgoing Request Body
-const requestBody: SDKStandardComponents.PutConsentsRequest = {
+const requestBody: PutConsentsRequest = {
   requestId: consentId,
   scopes: externalScopes,
   initiatorId: retrievedConsent.initiatorId as string,
@@ -123,11 +123,9 @@ const requestBody: SDKStandardComponents.PutConsentsRequest = {
 describe('server/handler/consents/{ID}', (): void => {
   beforeAll((): void => {
     mockRetrieveValidConsent.mockResolvedValue(retrievedConsent)
-    mockPutConsents.mockResolvedValue(1 as unknown as SDKStandardComponents.GenericRequestResponse)
+    mockPutConsents.mockResolvedValue(1 as unknown as GenericRequestResponse)
     mockUpdateConsentCredential.mockResolvedValue(0)
     mockBuildConsentRequestBody.mockResolvedValue(requestBody)
-    mockLoggerPush.mockReturnValue(null)
-    mockLoggerError.mockReturnValue(null)
     mockVerifySignature.mockReturnValue(true)
   })
 
@@ -150,8 +148,8 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mockPutConsents).toHaveBeenCalledWith(
           consentId, requestBody, requestWithPayloadCredentialAndScope.headers[Enum.Http.Headers.FSPIOP.SOURCE])
 
-        expect(mockLoggerError).not.toHaveBeenCalled()
-        expect(mockLoggerPush).not.toHaveBeenCalled()
+        expect(mocked(logger.error)).not.toHaveBeenCalled()
+        expect(mocked(logger.push)).not.toHaveBeenCalled()
       })
 
     it('should propagate retrieveValidConsent IncorrectChallenge error',
@@ -160,8 +158,8 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(new IncorrectChallengeError(consentId))
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
+        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectChallengeError(consentId) })
+        expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
@@ -177,8 +175,8 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(new IncorrectConsentStatusError(consentId))
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
+        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectConsentStatusError(consentId) })
+        expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
@@ -194,8 +192,8 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(new NotFoundError('Consent', consentId))
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
+        expect(mocked(logger.push)).toBeCalledWith({ error: new NotFoundError('Consent', consentId) })
+        expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
@@ -211,8 +209,8 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(new IncorrectChallengeError(consentId))
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
+        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectChallengeError(consentId) })
+        expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
@@ -228,8 +226,8 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(err)
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
+        expect(mocked(logger.push)).toBeCalledWith({ error: err })
+        expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 
@@ -246,8 +244,8 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mockLoggerPush).toBeCalledWith(err)
-        expect(mockLoggerError).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
+        expect(mocked(logger.push)).toBeCalledWith({ error: err })
+        expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
 

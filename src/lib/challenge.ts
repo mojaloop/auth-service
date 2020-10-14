@@ -20,12 +20,10 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Raman Mangla <ramanmangla@google.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
@@ -39,7 +37,7 @@
 
 import util from 'util'
 import crypto from 'crypto'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 
 // Async promisified randomBytes function
 const randomBytesAsync = util.promisify(crypto.randomBytes)
@@ -54,8 +52,7 @@ export async function generate (size: number = 32): Promise<string> {
     const buf = await randomBytesAsync(Math.round(Math.abs(size)))
     return buf.toString('base64')
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Unable to generate challenge string')
+    logger.push({ error }).error('Unable to generate challenge string')
     throw error
   }
 }
@@ -81,8 +78,7 @@ export function verifySignature (
 
     return verifier.verify(publicKey, signature, 'base64')
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Unable to verify signature')
+    logger.push({ error }).error('Unable to verify signature')
     throw error
   }
 }

@@ -20,14 +20,13 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Context } from '../plugins'
@@ -53,8 +52,7 @@ export async function post (
     try {
       await createAndStoreConsent(request)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Error: Unable to create/store consent')
+      logger.push({ error }).error('Error: Unable to create/store consent')
       // TODO: Decide what to do with this error. (TICKET #355)
     }
   })

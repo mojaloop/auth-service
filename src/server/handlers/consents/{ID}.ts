@@ -20,17 +20,15 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Ahan Gupta <ahangupta@google.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Consent, ConsentCredential } from '~/model/consent'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Context } from '~/server/plugins'
 import * as SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '~/lib/requests'
@@ -97,8 +95,7 @@ export async function validateAndUpdateConsent (
         destinationParticipantId
       )
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Error: Outgoing PUT consents/{ID} call not made')
+    logger.push({ error }).error('Error: Outgoing PUT consents/{ID} call not made')
     /* TODO, make outbound call to PUT consents/{ID}/error
     to be addressed in ticket number 355 */
   }

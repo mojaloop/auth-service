@@ -20,15 +20,15 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+
 import { consentDB } from '~/lib/db'
-import Logger from '@mojaloop/central-services-logger'
-import SDKStandardComponents from '@mojaloop/sdk-standard-components'
+import { logger } from '~/shared/logger'
+import { PatchConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   generatePatchRevokedConsentRequest,
   revokeConsentStatus
@@ -39,11 +39,13 @@ import {
   partialConsentRevoked, partialConsentActiveConflictingInitiatorId
 } from 'test/data/data'
 
-const mockConsentUpdate = jest.spyOn(consentDB, 'update')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
+import { mocked } from 'ts-jest/utils'
 
-const requestBody: SDKStandardComponents.PatchConsentsRequest = {
+jest.mock('~/shared/logger')
+
+const mockConsentUpdate = jest.spyOn(consentDB, 'update')
+
+const requestBody: PatchConsentsRequest = {
   status: 'REVOKED',
   revokedAt: '2020-08-19T05:44:18.843Z'
 
@@ -52,8 +54,6 @@ const requestBody: SDKStandardComponents.PatchConsentsRequest = {
 describe('server/domain/consents/revoke', (): void => {
   beforeAll((): void => {
     mockConsentUpdate.mockResolvedValue(2)
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
   })
 
   beforeEach((): void => {
@@ -67,7 +67,7 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.status).toBe('REVOKED')
         expect(revokedConsent.revokedAt).toBeDefined()
         expect(mockConsentUpdate).toHaveBeenCalled()
-        expect(mockLoggerPush).not.toHaveBeenCalled()
+        expect(mocked(logger.push)).not.toHaveBeenCalled()
 
         // Reset Consent Status
         partialConsentActive.status = 'ACTIVE'
@@ -79,7 +79,7 @@ describe('server/domain/consents/revoke', (): void => {
         expect(revokedConsent.status).toBe('REVOKED')
         expect(revokedConsent.revokedAt).toBeDefined()
         expect(mockConsentUpdate).toHaveBeenCalled()
-        expect(mockLoggerPush).not.toHaveBeenCalled()
+        expect(mocked(logger.push)).not.toHaveBeenCalled()
 
         // Reset Consent Status
         completeConsentActive.status = 'ACTIVE'
@@ -89,7 +89,8 @@ describe('server/domain/consents/revoke', (): void => {
       async (): Promise<void> => {
         const revokedConsent = await revokeConsentStatus(completeConsentRevoked)
         expect(revokedConsent).toStrictEqual(completeConsentRevoked)
-        expect(mockLoggerPush).toHaveBeenCalledWith('Previously revoked consent was asked to be revoked')
+        expect(mocked(logger.push)).toHaveBeenCalledWith({ consent: completeConsentRevoked })
+        expect(mocked(logger.log)).toHaveBeenCalledWith('Previously revoked consent was asked to be revoked')
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
@@ -102,7 +103,8 @@ describe('server/domain/consents/revoke', (): void => {
           .rejects
           .toThrowError('Invalid Consent Status')
 
-        expect(mockLoggerPush).toHaveBeenCalledWith('Invalid Consent Status')
+        expect(mocked(logger.push)).toHaveBeenCalledWith({ consent: completeConsentActive })
+        expect(mocked(logger.error)).toHaveBeenCalledWith('Invalid Consent Status')
         expect(mockConsentUpdate).not.toHaveBeenCalled()
       })
 
@@ -115,7 +117,7 @@ describe('server/domain/consents/revoke', (): void => {
           .toThrowError('Test Error')
 
         expect(mockConsentUpdate).toHaveBeenCalled()
-        expect(mockLoggerPush).not.toHaveBeenCalled()
+        expect(mocked(logger.push)).not.toHaveBeenCalled()
       })
   })
 
