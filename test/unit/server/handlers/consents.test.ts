@@ -40,8 +40,6 @@ describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
     mockIsPostRequestValid.mockReturnValue(true)
     mockStoreConsent.mockResolvedValue()
-    // mockLoggerError.mockReturnValue(null)
-    // mockLoggerPush.mockReturnValue(null)
     jest.useFakeTimers()
   })
 

@@ -54,8 +54,6 @@ const requestBody: PatchConsentsRequest = {
 describe('server/domain/consents/revoke', (): void => {
   beforeAll((): void => {
     mockConsentUpdate.mockResolvedValue(2)
-    // mockLoggerError.mockReturnValue(null)
-    // mockLoggerPush.mockReturnValue(null)
   })
 
   beforeEach((): void => {
