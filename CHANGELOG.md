@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.2.7](https://github.com/mojaloop/auth-service/compare/v11.2.6...v11.2.7) (2020-10-14)
+
+
+### Bug Fixes
+
+* 432 logger ([#56](https://github.com/mojaloop/auth-service/issues/56)) ([71ec4e8](https://github.com/mojaloop/auth-service/commit/71ec4e852469f28cf3a45d68e9ebf91838fca001))
+
 ### [11.2.6](https://github.com/mojaloop/auth-service/compare/v11.2.5...v11.2.6) (2020-10-14)
 
 ### [11.2.5](https://github.com/mojaloop/auth-service/compare/v11.2.4...v11.2.5) (2020-10-14)
