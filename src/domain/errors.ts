@@ -98,182 +98,111 @@ export class ChallengeMismatchError extends Error implements TErrorInformation {
   }
 }
 
-export class IncorrectCredentialStatusError extends Error implements TErrorInformation {
-  public consentId: string
+export class MojaloopError extends Error implements TErrorInformation {
   public readonly errorCode: string = '6206'
   public readonly errorDescription: string
 
-  public constructor (consentId: string) {
-    super(`Incorrect Credential status ${consentId}`)
-    this.errorDescription = this.message
+  public constructor (errorCode: string, errorDescription: string) {
+    super(errorDescription)
+    this.errorDescription = errorDescription
+    this.errorCode = errorCode
+  }
+}
+
+export class ConsentError extends MojaloopError {
+  public consentId: string
+  public constructor (errorCode: string, errorDescription: string, consentId: string) {
+    super(errorCode, errorDescription)
     this.consentId = consentId
   }
 }
 
-export class IncorrectConsentStatusError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6207'
-  public readonly errorDescription: string
-
+export class IncorrectCredentialStatusError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Incorrect Consent status ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6206', `Incorrect Credential status ${consentId}`, consentId)
   }
 }
 
-export class EmptyCredentialPayloadError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6208'
-  public readonly errorDescription: string
-
+export class IncorrectConsentStatusError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Credential Payload not provided for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6207', `Incorrect Consent status ${consentId}`, consentId)
   }
 }
 
-export class InvalidSignatureError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6209'
-  public readonly errorDescription: string
-
+export class EmptyCredentialPayloadError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Signature provided was invalid for consent: ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6208', `Credential Payload not provided for ${consentId}`, consentId)
   }
 }
 
-export class SignatureVerificationError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6210'
-  public readonly errorDescription: string
-
+export class InvalidSignatureError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Signature verification ran into errors for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6209', `Signature provided was invalid for consent: ${consentId}`, consentId)
   }
 }
 
-export class DatabaseError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6211'
-  public readonly errorDescription: string
-
+export class SignatureVerificationError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Auth service database error for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6210', `Signature verification ran into errors for ${consentId}`, consentId)
   }
 }
 
-export class InvalidInitiatorSourceError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6212'
-  public readonly errorDescription: string
-
+export class DatabaseError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Consent request initiated by an invalid source for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6211', `Auth service database error for ${consentId}`, consentId)
   }
 }
 
-export class InvalidConsentStatusError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6213'
-  public readonly errorDescription: string
-
+export class InvalidInitiatorSourceError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Consent status is invalid for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6212', `Consent request initiated by an invalid source for ${consentId}`, consentId)
   }
 }
 
-export class RevokedConsentStatusError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6214'
-  public readonly errorDescription: string
-
+export class InvalidConsentStatusError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Consent ${consentId} has been revoked`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6213', `Consent status is invalid for ${consentId}`, consentId)
   }
 }
 
-export class ChallengeGenerationError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6215'
-  public readonly errorDescription: string
-
+export class RevokedConsentStatusError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Error generating challenge for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6214', `Consent ${consentId} has been revoked`, consentId)
   }
 }
 
-export class ActiveConsentChallengeRequestError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6216'
-  public readonly errorDescription: string
-
+export class ChallengeGenerationError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Active consent ${consentId} has requested for a challenge`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6215', `Error generating challenge for ${consentId}`, consentId)
   }
 }
 
-export class PutRequestCreationError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6217'
-  public readonly errorDescription: string
-
+export class ActiveConsentChallengeRequestError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Error creating outgoing put request for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6216', `Active consent ${consentId} has requested for a challenge`, consentId)
   }
 }
 
-export class PayloadNotPendingError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6218'
-  public readonly errorDescription: string
-
+export class PutRequestCreationError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Incoming payload for ${consentId} transaction not pending`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6217', `Error creating outgoing put request for ${consentId}`, consentId)
   }
 }
 
-export class MissingScopeError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6219'
-  public readonly errorDescription: string
-
+export class PayloadNotPendingError extends ConsentError {
   public constructor (consentId: string) {
-    super(`Missing scope for ${consentId}`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6218', `Incoming payload for ${consentId} transaction not pending`, consentId)
   }
 }
 
-export class InactiveOrMissingCredentialError extends Error implements TErrorInformation {
-  public consentId: string
-  public readonly errorCode: string = '6220'
-  public readonly errorDescription: string
-
+export class MissingScopeError extends ConsentError {
   public constructor (consentId: string) {
-    super(`The credential for ${consentId} is either inactive or missing`)
-    this.errorDescription = this.message
-    this.consentId = consentId
+    super('6129', `Missing scope for ${consentId}`, consentId)
+  }
+}
+
+export class InactiveOrMissingCredentialError extends ConsentError {
+  public constructor (consentId: string) {
+    super('6120', `The credential for ${consentId} is either inactive or missing`, consentId)
   }
 }
