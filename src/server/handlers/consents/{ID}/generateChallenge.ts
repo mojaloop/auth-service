@@ -20,11 +20,9 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
@@ -32,7 +30,7 @@ import {
   updateConsentCredential,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import * as validators from '~/domain/validators'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as challenge from '~/lib/challenge'
@@ -69,8 +67,7 @@ export async function generateChallengeAndPutConsent (
     try {
       consent = await consentDB.retrieve(id)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Error in retrieving consent')
+      logger.push({ error }).error('Error in retrieving consent')
 
       // Convert error to Mojaloop understood error
       throw new DatabaseError(id)
@@ -93,8 +90,7 @@ export async function generateChallengeAndPutConsent (
       try {
         challengeValue = await challenge.generate()
       } catch (error) {
-        Logger.push(error)
-        Logger.error('Error encountered while generating challenge')
+        logger.push({ consent }).error('Error encountered while generating challenge')
         throw new ChallengeGenerationError(id)
       }
 
@@ -108,7 +104,7 @@ export async function generateChallengeAndPutConsent (
 
       consent = await updateConsentCredential(consent, credential)
     } else if (consent.credentialStatus === 'ACTIVE') {
-      Logger.error('ACTIVE credential consent has requested challenge')
+      logger.push({ consent }).error('ACTIVE credential consent has requested challenge')
       throw new ActiveConsentChallengeRequestError(id)
     }
 
@@ -117,8 +113,7 @@ export async function generateChallengeAndPutConsent (
     try {
       scopesRetrieved = await scopeDB.retrieveAll(id)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Error: scopeDB failed to retrieve scopes')
+      logger.push({ consent }).error('Error: scopeDB failed to retrieve scopes')
       // Convert error to Mojaloop understood error
       throw new DatabaseError(id)
     }
@@ -130,8 +125,7 @@ export async function generateChallengeAndPutConsent (
     try {
       requestBody = await generatePutConsentsRequest(consent, scopes)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Failed to create put consent request')
+      logger.push({ consent }).error('Failed to create put consent request')
       // Convert error to Mojaloop understood error
       throw new PutRequestCreationError(id)
     }
@@ -139,8 +133,7 @@ export async function generateChallengeAndPutConsent (
     await thirdPartyRequest.putConsents(
       consent.id, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
   } catch (error) {
-    Logger.push(error)
-    Logger.error(`Outgoing call NOT made to PUT consent/${id}`)
+    logger.push({ error }).error(`Outgoing call NOT made to PUT consent/${id}`)
     if(isMojaloopError(error)) {
       const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       await putConsentError(id, error, participantId)

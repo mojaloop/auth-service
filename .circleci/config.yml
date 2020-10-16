@@ -547,27 +547,29 @@ workflows:
             tags:
               only: /.*/
 
-      - license-scan:
-          context: org-global
-          requires:
-            - build-local
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              only:
-                - master
+      # Disabled temporarily until we can ignore devDependencies
+      # see mojaloop/mojaloop#415 for more information
+      # - license-scan:
+      #     context: org-global
+      #     requires:
+      #       - build-local
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      #       branches:
+      #         only:
+      #           - master
 
-      - image-scan:
-          context: org-global
-          requires:
-            - build-local
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              only:
-                - master
+      # - image-scan:
+      #     context: org-global
+      #     requires:
+      #       - build-local
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      #       branches:
+      #         only:
+      #           - master
 
       # New commits to master release automatically
       - release:
@@ -580,8 +582,10 @@ workflows:
             - audit-licenses
             - linting-check
             - vulnerability-check
-            - image-scan
-            - license-scan
+            # Disabled temporarily until we can ignore devDependencies
+            # see mojaloop/mojaloop#415 for more information
+            # - image-scan
+            # - license-scan
           filters:
             branches:
               only:
@@ -601,8 +605,11 @@ workflows:
       - publish:
           context: org-global
           requires:
-            - license-scan
-            - image-scan
+            # Disabled temporarily until we can ignore devDependencies
+            # see mojaloop/mojaloop#415 for more information
+            # - license-scan
+            # - image-scan
+            - build-local
             - test-unit
             - test-coverage
           filters:

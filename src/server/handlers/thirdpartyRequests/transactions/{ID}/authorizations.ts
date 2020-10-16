@@ -27,7 +27,7 @@
  --------------
  ******/
 
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Context } from '~/server/plugins'
 import { Consent } from '~/model/consent'
@@ -73,8 +73,7 @@ export async function validateAndVerifySignature (
     try {
       consent = await consentDB.retrieve(payload.consentId)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Could not retrieve consent')
+      logger.push({ error }).error('Could not retrieve consent')
       throw new DatabaseError(payload.consentId)
     }
 
@@ -84,8 +83,7 @@ export async function validateAndVerifySignature (
     try {
       consentScopes = await scopeDB.retrieveAll(payload.consentId)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Could not retrieve scope')
+      logger.push({ error }).error('Could not retrieve scope')
       throw new DatabaseError(payload.consentId)
     }
 
@@ -107,8 +105,7 @@ export async function validateAndVerifySignature (
         consent.credentialPayload as string
       )
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Could not verify signature')
+      logger.push({error}).error('Could not verify signature')
       throw new SignatureVerificationError(payload.consentId)
     }
 
@@ -125,8 +122,7 @@ export async function validateAndVerifySignature (
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Outgoing PUT request not made for transaction authorizations')
+    logger.push({error}).error('Outgoing PUT request not made for transaction authorizations')
     if (isMojaloopError(error)) {
       const id = request.params.ID
       const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]

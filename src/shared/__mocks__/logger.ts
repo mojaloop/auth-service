@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -22,39 +21,21 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- - Raman Mangla <ramanmangla@google.com>
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-/* istanbul ignore file */
-// Testing will be covered in #354
 
-import Config from '~/shared/config'
-import {
-  ThirdpartyRequests,
-  BaseRequestConfigType
-} from '@mojaloop/sdk-standard-components'
-import { logger } from '~/shared/logger'
+import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
-// Config file to instantiate ThirdPartyRequest object
-const configRequest: BaseRequestConfigType = {
-  dfspId: Config.PARTICIPANT_ID,
-  logger: logger,
-  peerEndpoint: Config.SHARED.PEER_ENDPOINT,
-  alsEndpoint: Config.SHARED.ALS_ENDPOINT,
-  quotesEndpoint: Config.SHARED.QUOTES_ENDPOINT,
-  transfersEndpoint: Config.SHARED.TRANSFERS_ENDPOINT,
-  bulkTransfersEndpoint: Config.SHARED.BULK_TRANSFERS_ENDPOINT,
-  thirdpartyRequestsEndpoint: Config.SHARED.THIRDPARTY_REQUESTS_ENDPOINT,
-  transactionRequestsEndpoint: Config.SHARED.TRANSACTION_REQUEST_ENDPOINT,
-  tls: Config.SHARED.TLS,
-  jwsSign: Config.SHARED.JWS_SIGN,
-  jwsSigningKey: Config.SHARED.JWS_SIGNING_KEY as Buffer
-}
+const mockLog = jest.fn()
+const mockError = jest.fn()
+const mockInfo = jest.fn()
 
-const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
+export const logger: SDKLogger.Logger = {
+  log: mockLog,
+  error: mockError,
+  info: mockInfo,
+  push: jest.fn((): SDKLogger.Logger => logger)
+} as unknown as SDKLogger.Logger
 
-export {
-  thirdPartyRequest
-}
+export const logResponse = jest.fn()

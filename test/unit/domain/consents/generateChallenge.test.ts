@@ -20,17 +20,15 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
-
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+
 import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
-import Logger from '@mojaloop/central-services-logger'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   externalScopes, request,
@@ -44,8 +42,6 @@ import * as DomainError from '~/domain/errors'
 
 // Declaring Mock Functions
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 
 const putConsentRequestBody: PutConsentsRequest = {
   requestId: '1234',
@@ -65,11 +61,6 @@ const putConsentRequestBody: PutConsentsRequest = {
 }
 
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
-  beforeAll((): void => {
-    mockLoggerError.mockReturnValue(null)
-    mockLoggerPush.mockReturnValue(null)
-  })
-
   beforeEach((): void => {
     jest.clearAllMocks()
   })

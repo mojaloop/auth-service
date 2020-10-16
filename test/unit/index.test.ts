@@ -15,8 +15,6 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  * Lewis Daly <lewis@vesselstech.com>
  * Paweł Marzec <pawel.marzec@modusbox.com>
@@ -27,7 +25,6 @@ import index from '~/index'
 import Config from '~/shared/config'
 import { Server, Request, ResponseToolkit } from '@hapi/hapi'
 import { Context } from '~/server/plugins'
-import Logger from '@mojaloop/central-services-logger'
 
 // Import handlers for mocking
 import Handlers from '~/server/handlers'
@@ -39,8 +36,7 @@ import MockGenerateChallengeReq from '../data/mockGenerateChallenge.json'
 import MockThirdPartyAuthorizationReq from '../data/mockThirdPartyReqAuth.json'
 import Headers from '../data/headers.json'
 
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
+jest.mock('~/shared/logger')
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -53,8 +49,6 @@ describe('api routes', (): void => {
   let server: Server
 
   beforeAll(async (): Promise<void> => {
-    mockLoggerPush.mockReturnValue(null)
-    mockLoggerError.mockReturnValue(null)
     server = await index.server.run(Config)
   })
 

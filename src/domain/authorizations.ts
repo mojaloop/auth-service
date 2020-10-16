@@ -28,13 +28,13 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
+import { logger } from '~/shared/logger'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 
@@ -74,4 +74,30 @@ export function hasMatchingScopeForPayload (
   return consentScopes.some((scope: Scope): boolean =>
     scope.accountId === payload.sourceAccountId
   )
+}
+
+/*
+ * Domain function make an error request using Mojaloop internal codes
+ */
+export async function putErrorRequest (
+  request: Request,
+  errorCode: string,
+  errorDescription: string): Promise<void> {
+  const errorResponse = {
+    errorInformation: {
+      errorCode,
+      errorDescription
+    }
+  }
+
+  try {
+    await
+    thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizationsError(
+      errorResponse,
+      request.params.id,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
+  } catch (error) {
+    logger.push({ error }).error('Could not make PUT error request')
+  }
 }

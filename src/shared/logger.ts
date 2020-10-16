@@ -27,20 +27,25 @@
  --------------
  ******/
 
-import logger from '@mojaloop/central-services-logger'
-import inspect from './inspect'
 import { Request, ResponseObject } from '@hapi/hapi'
+import inspect from './inspect'
+import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
-interface RequestLogged extends Request {
-  response: ResponseLogged;
+// default SDKLogger instance
+export const logger = new SDKLogger.Logger()
+export function createLogger (params?: SDKLogger.LoggerConstructorParams): SDKLogger.Logger {
+  return new SDKLogger.Logger(params)
 }
 
-interface ResponseLogged extends ResponseObject {
+export interface ResponseLogged extends ResponseObject {
   source: string;
   statusCode: number;
 }
+export interface RequestLogged extends Request {
+  response: ResponseLogged;
+}
 
-function logResponse (request: RequestLogged): void {
+export function logResponse (request: RequestLogged): void {
   if (request && request.response) {
     let response
     try {
@@ -54,10 +59,4 @@ function logResponse (request: RequestLogged): void {
       logger.info(`AS-Trace - Response: ${response} Status: ${request.response.statusCode}`)
     }
   }
-}
-
-export {
-  logResponse,
-  RequestLogged,
-  ResponseLogged
 }

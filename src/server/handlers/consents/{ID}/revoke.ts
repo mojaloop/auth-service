@@ -20,10 +20,9 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import {
@@ -33,7 +32,7 @@ import {
 import * as validators from '~/domain/validators'
 import { Context } from '~/server/plugins'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
@@ -58,8 +57,7 @@ export async function validateRequestAndRevokeConsent (
     try {
       consent = await consentDB.retrieve(consentId)
     } catch (error) {
-      Logger.push(error)
-      Logger.error('Error in retrieving consent')
+      logger.push({ error }).error('Error in retrieving consent')
 
       // After logging, convert specific error to generic DatabaseError
       throw new DatabaseError(consentId)
@@ -81,8 +79,7 @@ export async function validateRequestAndRevokeConsent (
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
   } catch (error) {
-    Logger.push(error)
-    Logger.error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)
+    logger.push({ error }).error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)
     if(isMojaloopError(error)) {
       const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       await putConsentError(consentId, error, participantId)
