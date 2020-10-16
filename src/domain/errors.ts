@@ -55,7 +55,7 @@ export async function putAuthorizationErrorRequest (
       destParticipantId
     )
   } catch (error) {
-    logger.push({error}).error('Could not make putThirdpartyRequestsTransactionsAuthorizationsError request')
+    logger.push({ error }).error('Could not make putThirdpartyRequestsTransactionsAuthorizationsError request')
   }
 }
 
@@ -81,7 +81,7 @@ export async function putConsentError (
       destParticipantId
     )
   } catch (error) {
-    logger.push({error}).error('Could not make putConsentsError request')
+    logger.push({ error }).error('Could not make putConsentsError request')
   }
 }
 

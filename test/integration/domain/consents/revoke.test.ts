@@ -30,7 +30,6 @@ import Knex from 'knex'
 import { consents } from '~/../seeds/01_consent'
 import Config from '~/shared/config'
 import { logger } from '~/shared/logger'
-import { NotFoundError } from '~/model/errors'
 import { revokeConsentStatus } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
 import { closeKnexConnection } from '~/lib/db'
@@ -108,8 +107,8 @@ describe('server/domain/consents/revoke', (): void => {
           .rejects
           .toThrowError(new DatabaseError(nonexistentConsentId))
 
-        expect(mocked(logger.error)).toHaveBeenCalled()
-        expect(mocked(logger.push)).toBeCalledWith(new NotFoundError('Consent', nonexistentConsentId))
+        expect(mocked(logger.error)).toHaveBeenCalledWith('consentDB failed to update consent')
+        expect(mocked(logger.push)).toBeCalledWith({ consent: expect.objectContaining(nonexistentConsent) })
       })
   })
 })

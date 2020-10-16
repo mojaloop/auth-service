@@ -111,8 +111,8 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
         .rejects
         .toThrow(new DatabaseError(nonexistentConsentId))
 
-      expect(mocked(logger.error)).toHaveBeenCalled()
-      expect(mocked(logger.push)).toBeCalledWith(new NotFoundError('Consent', nonexistentConsentId))
+      expect(mocked(logger.error)).toHaveBeenCalledWith('Error: consentDB failed to update consent')
+      expect(mocked(logger.push)).toBeCalledWith({ error: new NotFoundError('Consent', nonexistentConsentId) })
     })
   })
 })
