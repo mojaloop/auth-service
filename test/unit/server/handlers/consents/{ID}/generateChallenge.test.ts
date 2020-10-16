@@ -49,7 +49,6 @@ import {
 import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
-} from '~/../test/data/data'
 import * as DomainError from '~/domain/errors'
 
 // Declaring Mocks
@@ -61,8 +60,6 @@ const mockIsConsentRequestValid = jest.spyOn(validators, 'isConsentRequestInitia
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockScopeDbRetrieve = jest.spyOn(scopeDB, 'retrieveAll')
 const mockConvertScopesToExternal = jest.spyOn(ScopeFunctions, 'convertScopesToExternal')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockPutConsentError = jest.spyOn(DomainError, 'putConsentError')
 
 const putConsentRequestBody: PutConsentsRequest = {
@@ -153,15 +150,13 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsentRevoked.id)
       expect(mockIsConsentRequestValid).toHaveBeenCalledWith(completeConsentRevoked, request)
-      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mockLoggerPush).toHaveBeenCalledWith(new DomainError.RevokedConsentStatusError(completeConsentRevoked.id))
       expect(mockPutConsentError).toHaveBeenCalledWith(
         completeConsentRevoked.id,
         new DomainError.RevokedConsentStatusError(completeConsentRevoked.id),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
       expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new Error('Revoked Consent') })
+      expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new DomainError.RevokedConsentStatusError(completeConsentRevoked.id)})
 
       expect(mockGenerate).not.toHaveBeenCalled()
       expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -182,8 +177,6 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockIsConsentRequestValid).not.toHaveBeenCalled()
       expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
       expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new Error('Error retrieving consent') })
-      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mockLoggerPush).toHaveBeenCalledWith(Error('Error retrieving consent'))
       expect(mockPutConsentError).toHaveBeenCalledWith(
         partialConsentActive.id,
         new DomainError.DatabaseError(partialConsentActive.id),
@@ -207,14 +200,13 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 
       expect(mockConsentDbRetrieve).toHaveBeenCalledWith(partialConsentActive.id)
       expect(mockIsConsentRequestValid).toHaveBeenCalledWith(partialConsentActive, request)
-      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
+      expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new DomainError.InvalidInitiatorSourceError('1234') })
+      expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
       expect(mockPutConsentError).toHaveBeenCalledWith(
         partialConsentActive.id,
         new DomainError.InvalidInitiatorSourceError(partialConsentActive.id),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
-      expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new Error('NotImplementedYetError') })
 
       expect(mockGenerate).not.toHaveBeenCalled()
       expect(mockUpdateConsentCredential).not.toHaveBeenCalled()
@@ -236,9 +228,7 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mockUpdateConsentCredential).toHaveBeenCalledWith(partialConsentActive, credentialPending)
       expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new Error('Error updating db') })
-      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mockLoggerPush).toHaveBeenCalledWith(new DomainError.DatabaseError(partialConsentActive.id))
+      expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new DomainError.DatabaseError(partialConsentActive.id) })
       expect(mockPutConsentError).toHaveBeenCalledWith(
         partialConsentActive.id,
         new DomainError.DatabaseError(partialConsentActive.id),
@@ -263,9 +253,6 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
       expect(mockGenerate).toHaveBeenCalledWith()
       expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new Error('Error generating challenge') })
       expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-      expect(mockLoggerPush).toHaveBeenCalledWith(Error('Error generating challenge'))
-      expect(mockLoggerError).toHaveBeenCalledWith('Error encountered while generating challenge')
-      expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
       expect(mockPutConsentError).toHaveBeenCalledWith(
         partialConsentActive.id,
         new DomainError.ChallengeGenerationError(partialConsentActive.id),
@@ -301,8 +288,6 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
             putConsentRequestBody,
             request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
           )
-        expect(mockLoggerPush).toHaveBeenCalledWith(Error('Could not establish connection'))
-        expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
         expect(mockPutConsentError).not.toHaveBeenCalled()
       })
 
@@ -322,8 +307,6 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
         expect(mockGeneratePutConsentsRequest).toHaveBeenCalledWith(completeConsentActive, externalScopes)
         expect(mocked(logger.push)).toHaveBeenCalledWith({ error: new Error('Test') })
         expect(mocked(logger.error)).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
-        expect(mockLoggerPush).toHaveBeenCalledWith(Error('Test'))
-        expect(mockLoggerError).toHaveBeenCalledWith('Outgoing call NOT made to PUT consent/1234')
         expect(mockPutConsentError).toHaveBeenCalledWith(
           partialConsentActive.id,
           new DomainError.PutRequestCreationError(partialConsentActive.id),
@@ -343,7 +326,6 @@ describe('server/handlers/consents/{ID}/generateChallenge', (): void => {
 
         expect(mockConsentDbRetrieve).toHaveBeenCalledWith(completeConsentActiveCredential.id)
         expect(mockIsConsentRequestValid).toHaveBeenCalledWith(completeConsentActiveCredential, request)
-        expect(mockLoggerError).toHaveBeenCalledWith('ACTIVE credential consent has requested challenge')
         expect(mockPutConsentError).toHaveBeenCalledWith(
           completeConsentRevoked.id,
           new DomainError.ActiveConsentChallengeRequestError(completeConsentRevoked.id),

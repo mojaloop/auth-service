@@ -81,7 +81,7 @@ describe('server/domain/consents', (): void => {
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).not.toHaveBeenCalled()
-    expect(mockLoggerPush).toHaveBeenCalledWith(testError)
+    expect(mocked(logger.push)).toHaveBeenCalledWith(testError)
   })
 
   it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
@@ -94,6 +94,6 @@ describe('server/domain/consents', (): void => {
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
-    expect(mockLoggerPush).toHaveBeenCalledWith(testError)
+    expect(mocked(logger.push)).toHaveBeenCalledWith(testError)
   })
 })

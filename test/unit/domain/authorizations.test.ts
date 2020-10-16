@@ -296,10 +296,6 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
 
     it('logs error in case there is an internal sdk-standard-components error',
       async (): Promise<void> => {
-        const mockLoggerPush = jest.spyOn(Logger, 'push')
-        const mockLoggerError = jest.spyOn(Logger, 'error').mockImplementation(
-          (): void => { }
-        )
 
         mockSdkErrorMethod.mockRejectedValue('Internal Error')
         const error: TErrorInformation = {

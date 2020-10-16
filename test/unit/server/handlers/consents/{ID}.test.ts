@@ -47,7 +47,6 @@ import { requestWithPayloadCredentialAndScope, h } from 'test/data/data'
 import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
-import { requestWithPayloadCredentialAndScope, h } from '~/../test/data/data'
 
 const mockRetrieveValidConsent = jest.spyOn(Domain, 'retrieveValidConsent')
 const mockPutConsents = jest.spyOn(thirdPartyRequest, 'putConsents')
@@ -154,13 +153,13 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mocked(logger.push)).not.toHaveBeenCalled()
       })
 
-    it('should propagate retrieveValidConsent IncorrectChallenge error',
+    it('should propagate retrieveValidConsent InvalidSignatureError error',
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new ChallengeMismatchError(consentId))
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectChallengeError(consentId) })
+        expect(mocked(logger.push)).toBeCalledWith({ error: new InvalidSignatureError(consentId) })
         expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
@@ -211,7 +210,7 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectChallengeError(consentId) })
+        expect(mocked(logger.push)).toBeCalledWith({ error: new InvalidSignatureError(consentId) })
         expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)

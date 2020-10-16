@@ -34,7 +34,6 @@
  --------------
  ******/
 
-import { logger } from '~/shared/logger'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 
@@ -74,30 +73,4 @@ export function hasMatchingScopeForPayload (
   return consentScopes.some((scope: Scope): boolean =>
     scope.accountId === payload.sourceAccountId
   )
-}
-
-/*
- * Domain function make an error request using Mojaloop internal codes
- */
-export async function putErrorRequest (
-  request: Request,
-  errorCode: string,
-  errorDescription: string): Promise<void> {
-  const errorResponse = {
-    errorInformation: {
-      errorCode,
-      errorDescription
-    }
-  }
-
-  try {
-    await
-    thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizationsError(
-      errorResponse,
-      request.params.id,
-      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-    )
-  } catch (error) {
-    logger.push({ error }).error('Could not make PUT error request')
-  }
 }

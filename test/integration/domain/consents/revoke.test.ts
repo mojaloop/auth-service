@@ -29,14 +29,16 @@
 import Knex from 'knex'
 import { consents } from '~/../seeds/01_consent'
 import Config from '~/shared/config'
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { NotFoundError } from '~/model/errors'
 import { revokeConsentStatus } from '~/domain/consents/revoke'
 import { Consent } from '~/model/consent'
 import { closeKnexConnection } from '~/lib/db'
 import { DatabaseError } from '~/domain/errors'
 
-const mockLoggerPush = jest.spyOn(Logger, 'push')
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 describe('server/domain/consents/revoke', (): void => {
   afterAll(async (): Promise<void> => {
@@ -106,7 +108,8 @@ describe('server/domain/consents/revoke', (): void => {
           .rejects
           .toThrowError(new DatabaseError(nonexistentConsentId))
 
-        expect(mockLoggerPush).toBeCalledWith(new NotFoundError('Consent', nonexistentConsentId))
+        expect(mocked(logger.error)).toHaveBeenCalled()
+        expect(mocked(logger.push)).toBeCalledWith(new NotFoundError('Consent', nonexistentConsentId))
       })
   })
 })

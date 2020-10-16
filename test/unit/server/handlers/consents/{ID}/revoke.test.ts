@@ -38,8 +38,9 @@ import {
   request, h, partialConsentRevoked,
   partialConsentActive, completeConsentRevoked
 } from '~/../test/data/data'
+import { logger } from '~/shared/logger'
 import * as DomainError from '~/domain/errors'
-
+import { mocked } from 'ts-jest/utils'
 jest.mock('~/shared/logger')
 
 const mockRevokeConsentStatus = jest.spyOn(Domain, 'revokeConsentStatus')
@@ -49,8 +50,6 @@ const mockGeneratePatchConsentRequest = jest.spyOn(
 const mockIsConsentRequestValid = jest.spyOn(
   validators, 'isConsentRequestInitiatedByValidSource')
 const mockConsentRetrieve = jest.spyOn(consentDB, 'retrieve')
-const mockLoggerPush = jest.spyOn(Logger, 'push')
-const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockPutConsentError = jest.spyOn(DomainError, 'putConsentError')
 
 const consentId = partialConsentActive.id
@@ -124,7 +123,7 @@ describe('server/handlers/consents', (): void => {
           .toBeUndefined()
 
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
-        expect(mockLoggerPush).toHaveBeenCalledWith(testErr)
+        expect(mocked(logger.push)).toHaveBeenCalledWith(testErr)
         expect(mockPutConsentError).toHaveBeenCalledWith(
           consentId,
           new DomainError.DatabaseError(consentId),

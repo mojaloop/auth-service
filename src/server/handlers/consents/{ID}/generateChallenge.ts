@@ -77,7 +77,7 @@ export async function generateChallengeAndPutConsent (
       throw new InvalidInitiatorSourceError(id)
     }
 
-    // Revoked consent should NOT be touched.
+    // Revoked consent should NOT be touched
     if (consent.status === 'REVOKED') {
       throw new RevokedConsentStatusError(id)
     }

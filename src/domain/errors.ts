@@ -23,7 +23,7 @@
  --------------
  ******/
 
-import Logger from '@mojaloop/central-services-logger'
+import { logger } from '~/shared/logger'
 import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '../lib/requests'
 
@@ -55,8 +55,7 @@ export async function putAuthorizationErrorRequest (
       destParticipantId
     )
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not make PUT error request')
+    logger.push({error}).error('Could not make putThirdpartyRequestsTransactionsAuthorizationsError request')
   }
 }
 
@@ -82,8 +81,7 @@ export async function putConsentError (
       destParticipantId
     )
   } catch (error) {
-    Logger.push(error)
-    Logger.error('Could not make PUT error request')
+    logger.push({error}).error('Could not make putConsentsError request')
   }
 }
 

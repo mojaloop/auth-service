@@ -30,6 +30,7 @@ import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
+import { logger } from '~/shared/logger'
 import {
   externalScopes, request,
   credentialPending, partialConsentActive, completeConsentActiveNoCredentialID
@@ -39,6 +40,10 @@ import {
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
 import * as DomainError from '~/domain/errors'
+
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 // Declaring Mock Functions
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
@@ -88,7 +93,8 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
         .toThrowError(new DomainError.DatabaseError(completeConsentActiveNoCredentialID.id))
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
-      expect(mockLoggerPush).toHaveBeenLastCalledWith(testError)
+      expect(mocked(logger.error)).toHaveBeenCalled()
+      expect(mocked(logger.push)).toHaveBeenLastCalledWith(testError)
     })
   })
 
