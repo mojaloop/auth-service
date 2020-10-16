@@ -40,7 +40,6 @@ import {
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
 import * as DomainError from '~/domain/errors'
-
 import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
@@ -94,7 +93,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
       expect(mocked(logger.error)).toHaveBeenCalled()
-      expect(mocked(logger.push)).toHaveBeenLastCalledWith(testError)
+      expect(mocked(logger.push)).toHaveBeenLastCalledWith({ error: testError })
     })
   })
 

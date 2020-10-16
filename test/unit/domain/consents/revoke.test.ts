@@ -119,7 +119,8 @@ describe('server/domain/consents/revoke', (): void => {
           .toThrowError(new DatabaseError(partialConsentActiveConflictingInitiatorId.id))
 
         expect(mockConsentUpdate).toHaveBeenCalled()
-        expect(mocked(logger.push)).not.toHaveBeenCalled()
+        expect(mocked(logger.error)).toHaveBeenCalledWith('consentDB failed to update consent')
+        expect(mocked(logger.push)).toHaveBeenCalledWith({ consent: expect.objectContaining(partialConsentActiveConflictingInitiatorId) })
       })
   })
 

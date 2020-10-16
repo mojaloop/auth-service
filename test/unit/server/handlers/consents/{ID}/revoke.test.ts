@@ -123,7 +123,7 @@ describe('server/handlers/consents', (): void => {
           .toBeUndefined()
 
         expect(mockConsentRetrieve).toBeCalledWith(consentId)
-        expect(mocked(logger.push)).toHaveBeenCalledWith(testErr)
+        expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testErr })
         expect(mockPutConsentError).toHaveBeenCalledWith(
           consentId,
           new DomainError.DatabaseError(consentId),

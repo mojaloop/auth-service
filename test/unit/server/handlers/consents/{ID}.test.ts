@@ -153,13 +153,13 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mocked(logger.push)).not.toHaveBeenCalled()
       })
 
-    it('should propagate retrieveValidConsent InvalidSignatureError error',
+    it('should propagate retrieveValidConsent ChallengeMismatchError error',
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new ChallengeMismatchError(consentId))
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mocked(logger.push)).toBeCalledWith({ error: new InvalidSignatureError(consentId) })
+        expect(mocked(logger.push)).toBeCalledWith({ error: new ChallengeMismatchError(consentId) })
         expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
