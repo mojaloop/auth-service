@@ -30,14 +30,19 @@ import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import { Enum } from '@mojaloop/central-services-shared'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
+import { logger } from '~/shared/logger'
 import {
   externalScopes, request,
   credentialPending, partialConsentActive, completeConsentActiveNoCredentialID
-} from '../../../data/data'
+} from '~/../test/data/data'
 import {
   updateConsentCredential,
   generatePutConsentsRequest
 } from '~/domain/consents/generateChallenge'
+import * as DomainError from '~/domain/errors'
+import { mocked } from 'ts-jest/utils'
+
+jest.mock('~/shared/logger')
 
 // Declaring Mock Functions
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
@@ -79,14 +84,16 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
     // eslint-disable-next-line max-len
     it('Should propagate error in updating credentials in database', async (): Promise<void> => {
-      mockConsentDbUpdate.mockRejectedValue(
-        new Error('Error updating Database'))
+      const testError = new Error('Error updating Database')
+      mockConsentDbUpdate.mockRejectedValue(testError)
 
       await expect(updateConsentCredential(partialConsentActive, credentialPending))
         .rejects
-        .toThrowError('Error updating Database')
+        .toThrowError(new DomainError.DatabaseError(completeConsentActiveNoCredentialID.id))
 
       expect(mockConsentDbUpdate).toHaveBeenLastCalledWith(completeConsentActiveNoCredentialID)
+      expect(mocked(logger.error)).toHaveBeenCalled()
+      expect(mocked(logger.push)).toHaveBeenLastCalledWith({ error: testError })
     })
   })
 

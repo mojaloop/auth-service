@@ -31,9 +31,14 @@ import Knex from 'knex'
 import Config from '~/shared/config'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import { logger } from '~/shared/logger'
 import { NotFoundError } from '~/model/errors'
 import { consents } from '~/../seeds/01_consent'
 import { closeKnexConnection } from '~/lib/db'
+import { DatabaseError } from '~/domain/errors'
+
+import { mocked } from 'ts-jest/utils'
+jest.mock('~/shared/logger')
 
 describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
   afterAll(async (): Promise<void> => {
@@ -82,7 +87,7 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
       expect(updatedConsent).toStrictEqual(expectedConsent)
     })
 
-    it('should propagate consent retrieval error', async (): Promise<void> => {
+    it('should log NotFoundError and propagate converted DatabaseError when updating nonexistent consent', async (): Promise<void> => {
       const nonexistentConsentId = '200'
       const toBeUpdated: Consent = {
         id: nonexistentConsentId,
@@ -104,7 +109,10 @@ describe('Tests for src/domain/consents/{ID}/generateChallenge', (): void => {
 
       await expect(updateConsentCredential(toBeUpdated, credentialUpdate))
         .rejects
-        .toThrow(new NotFoundError('Consent', nonexistentConsentId))
+        .toThrow(new DatabaseError(nonexistentConsentId))
+
+      expect(mocked(logger.error)).toHaveBeenCalledWith('Error: consentDB failed to update consent')
+      expect(mocked(logger.push)).toBeCalledWith({ error: new NotFoundError('Consent', nonexistentConsentId) })
     })
   })
 })

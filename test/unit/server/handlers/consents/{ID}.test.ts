@@ -31,8 +31,9 @@ import { Enum } from '@mojaloop/central-services-shared'
 import * as Handler from '~/server/handlers/consents/{ID}'
 import * as Domain from '~/domain/consents/{ID}'
 import {
-  IncorrectChallengeError,
-  IncorrectConsentStatusError
+  ChallengeMismatchError,
+  IncorrectConsentStatusError,
+  InvalidSignatureError
 } from '~/domain/errors'
 import { NotFoundError } from '~/model/errors'
 import * as Signature from '~/lib/challenge'
@@ -152,13 +153,13 @@ describe('server/handler/consents/{ID}', (): void => {
         expect(mocked(logger.push)).not.toHaveBeenCalled()
       })
 
-    it('should propagate retrieveValidConsent IncorrectChallenge error',
+    it('should propagate retrieveValidConsent ChallengeMismatchError error',
       async (): Promise<void> => {
-        mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectChallengeError(consentId))
+        mockRetrieveValidConsent.mockRejectedValueOnce(new ChallengeMismatchError(consentId))
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectChallengeError(consentId) })
+        expect(mocked(logger.push)).toBeCalledWith({ error: new ChallengeMismatchError(consentId) })
         expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
@@ -209,7 +210,7 @@ describe('server/handler/consents/{ID}', (): void => {
 
         await expect(Handler.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
 
-        expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectChallengeError(consentId) })
+        expect(mocked(logger.push)).toBeCalledWith({ error: new InvalidSignatureError(consentId) })
         expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
 
         expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)

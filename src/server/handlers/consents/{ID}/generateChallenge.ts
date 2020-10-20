@@ -42,6 +42,16 @@ import { convertScopesToExternal } from '~/lib/scopes'
 import { Scope } from '~/model/scope'
 import { thirdPartyRequest } from '~/lib/requests'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import {
+  putConsentError,
+  DatabaseError,
+  RevokedConsentStatusError,
+  InvalidInitiatorSourceError,
+  ActiveConsentChallengeRequestError,
+  ChallengeGenerationError,
+  PutRequestCreationError, isMojaloopError
+} from '~/domain/errors'
+import SDKStandardComponents from '@mojaloop/sdk-standard-components'
 
 /** Retrieves consent, validates request,
  *  generates challenge, updates consent db
@@ -59,30 +69,30 @@ export async function generateChallengeAndPutConsent (
     } catch (error) {
       logger.push({ error }).error('Error in retrieving consent')
 
-      // If consent cannot be retrieved using given ID, send PUT ...error back
-      // TODO: Error Handling dealt with in future ticket #355
-      throw (new Error('NotImplementedYetError'))
+      // Convert error to Mojaloop understood error
+      throw new DatabaseError(id)
     }
 
     if (!validators.isConsentRequestInitiatedByValidSource(consent, request)) {
-      // TODO: Error Handling dealt with in future ticket #355
-      // send PUT ...error back
-      throw (new Error('NotImplementedYetError'))
+      throw new InvalidInitiatorSourceError(id)
     }
 
-    // Revoked consent should NOT be touched.
+    // Revoked consent should NOT be touched
     if (consent.status === 'REVOKED') {
-      // TODO: Confirm what to do here
-      // Error Handling dealt with in future ticket #355
-      // send PUT ...error back ?
-      throw (new Error('Revoked Consent'))
+      throw new RevokedConsentStatusError(id)
     }
 
     // If there is no pre-existing challenge for the consent id
     // Generate one and update database
     if (!consent.credentialChallenge) {
       // Challenge generation
-      const challengeValue = await challenge.generate()
+      let challengeValue: string
+      try {
+        challengeValue = await challenge.generate()
+      } catch (error) {
+        logger.push({ consent }).error('Error encountered while generating challenge')
+        throw new ChallengeGenerationError(id)
+      }
 
       // Updating credentials with generated challenge
       const credential: ConsentCredential = {
@@ -94,26 +104,40 @@ export async function generateChallengeAndPutConsent (
 
       consent = await updateConsentCredential(consent, credential)
     } else if (consent.credentialStatus === 'ACTIVE') {
-      // TODO: Error handling here - dealt with in #355
       logger.push({ consent }).error('ACTIVE credential consent has requested challenge')
-      throw (new Error('NotImplementedYetError'))
+      throw new ActiveConsentChallengeRequestError(id)
     }
 
     // Retrieve Scopes
-    const scopesRetrieved: Scope[] = await scopeDB.retrieveAll(id)
+    let scopesRetrieved: Scope[]
+    try {
+      scopesRetrieved = await scopeDB.retrieveAll(id)
+    } catch (error) {
+      logger.push({ consent }).error('Error: scopeDB failed to retrieve scopes')
+      // Convert error to Mojaloop understood error
+      throw new DatabaseError(id)
+    }
     const scopes = convertScopesToExternal(scopesRetrieved)
 
     // Outgoing call to PUT consents/{ID}
-
     // Build Request Body
-    const requestBody = await generatePutConsentsRequest(consent, scopes)
+    let requestBody: SDKStandardComponents.PutConsentsRequest
+    try {
+      requestBody = await generatePutConsentsRequest(consent, scopes)
+    } catch (error) {
+      logger.push({ consent }).error('Failed to create put consent request')
+      // Convert error to Mojaloop understood error
+      throw new PutRequestCreationError(id)
+    }
     // Use sdk-standard-components library to send request
     await thirdPartyRequest.putConsents(
       consent.id, requestBody, request.headers[Enum.Http.Headers.FSPIOP.SOURCE])
   } catch (error) {
     logger.push({ error }).error(`Outgoing call NOT made to PUT consent/${id}`)
-    // TODO: Decide on error handling HERE - dealt with in future ticket #355
-    throw error
+    if(isMojaloopError(error)) {
+      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      await putConsentError(id, error, participantId)
+    }
   }
 }
 

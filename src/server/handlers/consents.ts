@@ -31,9 +31,14 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Context } from '../plugins'
 import {
+  PostConsentPayload,
   createAndStoreConsent,
   isPostConsentRequestValid
 } from '~/domain/consents'
+import { 
+  isMojaloopError, 
+  putConsentError 
+} from '~/domain/errors'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and
@@ -52,8 +57,12 @@ export async function post (
     try {
       await createAndStoreConsent(request)
     } catch (error) {
-      logger.push({ error }).error('Error: Unable to create/store consent')
-      // TODO: Decide what to do with this error. (TICKET #355)
+      logger.push(error).error('Error: Unable to create/store consent')
+      if(isMojaloopError(error)) {
+        const consentId = (request.payload as PostConsentPayload).id
+        const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+        await putConsentError(consentId, error, participantId)
+      }
     }
   })
 

@@ -33,3 +33,10 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError'
   }
 }
+
+export class RevokedConsentModificationError extends Error {
+  public constructor (resource: string, id: string) {
+    super(`RevokedConsentModificationError: ${resource} for ConsentId ${id}`)
+    this.name = 'RevokedConsentModificationError'
+  }
+}

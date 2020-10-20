@@ -37,9 +37,12 @@ import Knex from 'knex'
 import { closeKnexConnection } from '~/lib/db'
 import Config from '~/shared/config'
 import * as Scopes from '~/lib/scopes'
-import { NotFoundError } from '~/model/errors'
+import { 
+  NotFoundError, 
+  RevokedConsentModificationError 
+} from '~/model/errors'
 import {
-  IncorrectChallengeError,
+  ChallengeMismatchError,
   IncorrectConsentStatusError
 } from '~/domain/errors'
 import SDKStandardComponents from '@mojaloop/sdk-standard-components'
@@ -81,11 +84,11 @@ describe('server/domain/consents/{ID}', (): void => {
           .toThrow(new IncorrectConsentStatusError(consents[3].id))
       })
 
-    it('should throw IncorrectChallengeError if mismatch between retrieved consent challenge and request credential challenge',
+    it('should throw ChallengeMismatchError if mismatch between retrieved consent challenge and request credential challenge',
       async (): Promise<void> => {
         await expect(retrieveValidConsent(consents[2].id, 'blah'))
           .rejects
-          .toThrow(new IncorrectChallengeError(consents[2].id))
+          .toThrow(new ChallengeMismatchError(consents[2].id))
       })
   })
 
@@ -157,7 +160,7 @@ describe('server/domain/consents/{ID}', (): void => {
           .toThrowError(new NotFoundError('Consent', nonexistentId))
       })
 
-    it('should propagate revoked consent error in consentDB update',
+    it('should propagate and convert revoked consent error in consentDB update',
       async (): Promise<void> => {
         const revokedConsent = consents[3];
         const toBeUpdated: Consent = {
@@ -182,7 +185,7 @@ describe('server/domain/consents/{ID}', (): void => {
 
         await expect(updateConsentCredential(toBeUpdated, credentialVerified))
           .rejects
-          .toThrowError('Cannot modify Revoked Consent')
+          .toThrowError(new RevokedConsentModificationError('Consent', revokedConsent.id))
       })
   })
 

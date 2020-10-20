@@ -38,7 +38,7 @@
 import Knex from 'knex'
 import Config from '~/shared/config'
 import ConsentDB, { Consent } from '~/model/consent'
-import { NotFoundError } from '~/model/errors'
+import { NotFoundError, RevokedConsentModificationError } from '~/model/errors'
 
 /*
  * Mock Consent Resources
@@ -322,7 +322,7 @@ describe('src/model/consent', (): void => {
           credentialStatus: 'ACTIVE',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w'
-        })).rejects.toThrowError('Cannot modify Revoked Consent')
+        })).rejects.toThrowError(new RevokedConsentModificationError('Consent', '1234'))
       })
   })
 

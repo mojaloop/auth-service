@@ -39,7 +39,7 @@ import { Consent, ConsentCredential } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
 import {
-  IncorrectChallengeError,
+  ChallengeMismatchError,
   IncorrectConsentStatusError,
   EmptyCredentialPayloadError
 } from '../errors'
@@ -56,7 +56,7 @@ export async function retrieveValidConsent (
     throw new IncorrectConsentStatusError(consentId)
   }
   if (consent.credentialChallenge !== requestChallenge) {
-    throw new IncorrectChallengeError(consentId)
+    throw new ChallengeMismatchError(consentId)
   }
   return consent
 }

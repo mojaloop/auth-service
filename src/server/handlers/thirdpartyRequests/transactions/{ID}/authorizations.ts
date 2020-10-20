@@ -20,9 +20,10 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
+ * Gates Foundation
+ - Name Surname <name.surname@gatesfoundation.com>
 
  - Raman Mangla <ramanmangla@google.com>
- - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
@@ -32,49 +33,25 @@ import { Context } from '~/server/plugins'
 import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
-import { NotFoundError } from '~/model/errors'
 import { verifySignature } from '~/lib/challenge'
 import { thirdPartyRequest } from '~/lib/requests'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import {
+  isMojaloopError,
+  putAuthorizationErrorRequest,
+  DatabaseError,
+  MissingScopeError,
+  InactiveOrMissingCredentialError,
+  PayloadNotPendingError,
+  InvalidSignatureError,
+  SignatureVerificationError
+} from '~/domain/errors'
+import {
   AuthPayload,
   isPayloadPending,
   hasActiveCredentialForPayload,
-  hasMatchingScopeForPayload,
-  putErrorRequest
+  hasMatchingScopeForPayload
 } from '~/domain/authorizations'
-
-/*
- * TODO: There is a need to document and add Auth-Service
- * specific errors to Mojaloop.
- * The handler and unit test error values need to be changed
- * accordingly. This will be addressed in Ticket #355.
- * The following errors are just placeholders for now.
- */
-const PAYLOAD_NOT_PENDING_ERROR = {
-  code: '3100',
-  description: 'Bad Request'
-}
-const CONSENT_NOT_FOUND_ERROR = {
-  code: '2000',
-  description: 'Not Found'
-}
-const SCOPE_NOT_FOUND_ERROR = {
-  code: '2000',
-  description: 'Forbidden'
-}
-const SERVER_ERROR = {
-  code: '2000',
-  description: 'Server Error'
-}
-const NO_ACTIVE_CREDS_ERROR = {
-  code: '3100',
-  description: 'No Active Credentials'
-}
-const INCORRECT_SIGNATURE_ERROR = {
-  code: '3100',
-  description: 'Incorrect Signature'
-}
 
 /*
  * Asynchronous POST handler helper function to
@@ -84,99 +61,74 @@ export async function validateAndVerifySignature (
   request: Request): Promise<void> {
   const payload: AuthPayload = request.payload as AuthPayload
 
-  // Validate incoming payload status
-  if (!isPayloadPending(payload)) {
-    return putErrorRequest(
-      request,
-      PAYLOAD_NOT_PENDING_ERROR.code,
-      PAYLOAD_NOT_PENDING_ERROR.description
-    )
-  }
-
-  let consent: Consent
-
-  // Check if consent exists and retrieve consent data
   try {
-    consent = await consentDB.retrieve(payload.consentId)
-  } catch (error) {
-    logger.push({ error }).error('Could not retrieve consent')
-
-    if (error instanceof NotFoundError) {
-      return putErrorRequest(
-        request,
-        CONSENT_NOT_FOUND_ERROR.code,
-        CONSENT_NOT_FOUND_ERROR.description
-      )
+    // Validate incoming payload status
+    if (!isPayloadPending(payload)) {
+      throw new PayloadNotPendingError(payload.consentId)
     }
 
-    return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
-  }
+    let consent: Consent
 
-  let consentScopes: Scope[]
-
-  // Retrieve scopes for the consent
-  try {
-    consentScopes = await scopeDB.retrieveAll(payload.consentId)
-  } catch (error) {
-    logger.push({ error }).error('Could not retrieve scope')
-
-    if (error instanceof NotFoundError) {
-      return putErrorRequest(
-        request,
-        SCOPE_NOT_FOUND_ERROR.code,
-        SCOPE_NOT_FOUND_ERROR.description
-      )
+    // Check if consent exists and retrieve consent data
+    try {
+      consent = await consentDB.retrieve(payload.consentId)
+    } catch (error) {
+      logger.push({ error }).error('Could not retrieve consent')
+      throw new DatabaseError(payload.consentId)
     }
 
-    return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
-  }
+    let consentScopes: Scope[]
 
-  if (!hasMatchingScopeForPayload(consentScopes, payload)) {
-    return putErrorRequest(
-      request,
-      SCOPE_NOT_FOUND_ERROR.code,
-      SCOPE_NOT_FOUND_ERROR.description
-    )
-  }
+    // Retrieve scopes for the consent
+    try {
+      consentScopes = await scopeDB.retrieveAll(payload.consentId)
+    } catch (error) {
+      logger.push({ error }).error('Could not retrieve scope')
+      throw new DatabaseError(payload.consentId)
+    }
 
-  if (!hasActiveCredentialForPayload(consent)) {
-    return putErrorRequest(
-      request,
-      NO_ACTIVE_CREDS_ERROR.code,
-      NO_ACTIVE_CREDS_ERROR.description
-    )
-  }
+    if (!hasMatchingScopeForPayload(consentScopes, payload)) {
+      throw new MissingScopeError(payload.consentId)
+    }
 
-  try {
-    // Challenge is a UTF-8 (Normalization Form C)
-    // JSON string of the QuoteResponse object
-    const isVerified = verifySignature(
-      payload.challenge,
-      payload.value,
-      consent.credentialPayload as string
-    )
+    if (!hasActiveCredentialForPayload(consent)) {
+      throw new InactiveOrMissingCredentialError(payload.consentId)
+    }
+
+    let isVerified: boolean
+    try {
+      // Challenge is a UTF-8 (Normalization Form C)
+      // JSON string of the QuoteResponse object
+      isVerified = verifySignature(
+        payload.challenge,
+        payload.value,
+        consent.credentialPayload as string
+      )
+    } catch (error) {
+      logger.push({error}).error('Could not verify signature')
+      throw new SignatureVerificationError(payload.consentId)
+    }
 
     if (!isVerified) {
-      return putErrorRequest(
-        request,
-        INCORRECT_SIGNATURE_ERROR.code,
-        INCORRECT_SIGNATURE_ERROR.description
-      )
+      throw new InvalidSignatureError(payload.consentId)
     }
 
     payload.status = 'VERIFIED'
+
+    // PUT request to switch to inform about verification
+    await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+      payload,
+      request.params.ID,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
   } catch (error) {
-    logger.push({ error }).error('Could not verify signature')
-
-    return putErrorRequest(request, SERVER_ERROR.code, SERVER_ERROR.description)
+    logger.push({error}).error('Outgoing PUT request not made for transaction authorizations')
+    if (isMojaloopError(error)) {
+      const id = request.params.ID
+      const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      putAuthorizationErrorRequest(id, error, destParticipantId)
+    }
   }
-
-  // PUT request to switch to inform about verification
-  await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
-    payload,
-    request.params.id,
-    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  )
 }
 
 /*

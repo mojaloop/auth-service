@@ -33,9 +33,10 @@ import * as ScopeFunction from '~/lib/scopes'
 import {
   requestWithPayloadScopes, externalScopes,
   partialConsentActive, scopes
-} from '../../data/data'
-
+} from '~/../test/data/data'
+import { DatabaseError } from '~/domain/errors'
 import { logger } from '~/shared/logger'
+import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
 
@@ -71,24 +72,28 @@ describe('server/domain/consents', (): void => {
   })
 
   it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
-    mockInsertConsent.mockRejectedValueOnce(new Error('Unable to Register Consent'))
+    const testError = new Error('Unable to Register Consent')
+    mockInsertConsent.mockRejectedValueOnce(testError)
     await expect(createAndStoreConsent(requestWithPayloadScopes))
       .rejects
-      .toThrowError('Unable to Register Consent')
+      .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).not.toHaveBeenCalled()
+    expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
   })
 
   it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
-    mockInsertScopes.mockRejectedValueOnce(new Error('Unable to Register Scopes'))
+    const testError = new Error('Unable to Register Scopes')
+    mockInsertScopes.mockRejectedValueOnce(testError)
     await expect(createAndStoreConsent(requestWithPayloadScopes))
       .rejects
-      .toThrowError('Unable to Register Scopes')
+      .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
+    expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
   })
 })

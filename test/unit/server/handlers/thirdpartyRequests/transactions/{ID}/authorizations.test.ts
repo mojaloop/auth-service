@@ -39,6 +39,7 @@ import {
 } from '~/lib/db'
 import * as Challenge from '~/lib/challenge'
 import * as Domain from '~/domain/authorizations'
+import * as DomainError from '~/domain/errors'
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 import { mocked } from 'ts-jest/utils'
 
@@ -49,7 +50,7 @@ jest.mock('~/shared/logger')
  */
 const mockIsPayloadPending = jest.spyOn(Domain, 'isPayloadPending')
 const mockHasMatchingScope = jest.spyOn(Domain, 'hasMatchingScopeForPayload')
-const mockPutErrorRequest = jest.spyOn(Domain, 'putErrorRequest')
+const mockPutErrorRequest = jest.spyOn(DomainError, 'putAuthorizationErrorRequest')
 const mockHasActiveCredential = jest.spyOn(
   Domain,
   'hasActiveCredentialForPayload'
@@ -87,7 +88,7 @@ const request: Request = {
     'fspiop-source': 'switch'
   },
   params: {
-    id: '1234'
+    ID: '1234'
   },
   payload: payload
 }
@@ -168,13 +169,13 @@ describe('validateAndVerifySignature', (): void => {
 
       expect(mockPutThirdpartyTransactionsAuth).toHaveBeenCalledWith(
         payload,
-        request.params.id,
+        request.params.ID,
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 3100 (Bad Request) error for non PENDING payload',
+  it('Should throw a PayloadNotPendingError for payload not PENDING',
     async (): Promise<void> => {
       // Active Payload
       mockIsPayloadPending.mockReturnValue(false)
@@ -185,14 +186,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockIsPayloadPending).toReturnWith(false)
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '3100',
-        'Bad Request'
+        request.params.ID,
+        new DomainError.PayloadNotPendingError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 3100 (Bad Request) error for no ACTIVE credentials',
+  it('Should throw a InactiveOrMissingCredentialError for inactive credential',
     async (): Promise<void> => {
     // Inactive credential
       mockHasActiveCredential.mockReturnValue(false)
@@ -207,14 +208,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockHasActiveCredential).toReturnWith(false)
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '3100',
-        'Bad Request'
+        request.params.ID,
+        new DomainError.InactiveOrMissingCredentialError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 2000 (Forbidden) error for no matching consent scope',
+  it('Should return a MissingScopeError for no matching consent scope',
     async (): Promise<void> => {
       // No matching scope for the consent in the DB
       mockHasMatchingScope.mockReturnValue(false)
@@ -228,14 +229,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mockHasMatchingScope).toReturnWith(false)
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '2000',
-        'Forbidden'
+        request.params.ID,
+        new DomainError.MissingScopeError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 2000 (Not Found) for non-existent payload consent',
+  it('Should return a DatabaseError for non-existent payload consent',
     async (): Promise<void> => {
       // Requested Consent not in the DB
       mockRetrieveConsent.mockRejectedValue(
@@ -250,14 +251,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '2000',
-        'Not Found'
+        request.params.ID,
+        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 2000 (Server Error) for error in retrieving consent',
+  it('Should return a DatabaseError for error in retrieving consent',
     async (): Promise<void> => {
       mockRetrieveConsent.mockRejectedValue(
         new Error()
@@ -271,14 +272,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '2000',
-        'Server Error'
+        request.params.ID,
+        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 2000 (Forbidden) for no associated consent scopes',
+  it('Should return a DatabaseError for no associated consent scopes',
     async (): Promise<void> => {
       // Consent does not have any scopes in DB
       mockRetrieveAllScopes.mockRejectedValue(
@@ -294,14 +295,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '2000',
-        'Forbidden'
+        request.params.ID,
+        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 2000 (Server Error) for error in retrieving scopes',
+  it('Should return a DatabaseError for error in retrieving scopes',
     async (): Promise<void> => {
       mockRetrieveAllScopes.mockRejectedValue(
         new Error()
@@ -316,14 +317,14 @@ describe('validateAndVerifySignature', (): void => {
       expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '2000',
-        'Server Error'
+        request.params.ID,
+        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 3100 (Bad Request) for wrong signature',
+  it('Should return a InvalidSignatureError for wrong signature',
     async (): Promise<void> => {
       // Invalid signature
       mockVerifySignature.mockReturnValue(false)
@@ -343,14 +344,14 @@ describe('validateAndVerifySignature', (): void => {
       )
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '3100',
-        'Bad Request'
+        request.params.ID,
+        new DomainError.InvalidSignatureError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )
 
-  it('Should return a 2000 (Server Error) for error in signature verification',
+  it('Should return a SignatureVerificationError for error in signature verification',
     async (): Promise<void> => {
       mockVerifySignature.mockImplementationOnce((): boolean => {
         throw new Error()
@@ -371,9 +372,9 @@ describe('validateAndVerifySignature', (): void => {
       )
       // Error
       expect(mockPutErrorRequest).toHaveBeenCalledWith(
-        request,
-        '3100',
-        'Bad Request'
+        request.params.ID,
+        new DomainError.SignatureVerificationError((request.payload as Domain.AuthPayload).consentId),
+        request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
   )

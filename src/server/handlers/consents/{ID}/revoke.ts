@@ -37,6 +37,11 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { consentDB } from '~/lib/db'
 import { Consent } from '~/model/consent'
 import { thirdPartyRequest } from '~/lib/requests'
+import {
+  putConsentError,
+  DatabaseError,
+  InvalidInitiatorSourceError, isMojaloopError
+} from '~/domain/errors'
 
 /**
  * Asynchronously deals with validating request, revoking consent object
@@ -54,15 +59,13 @@ export async function validateRequestAndRevokeConsent (
     } catch (error) {
       logger.push({ error }).error('Error in retrieving consent')
 
-      // If consent cannot be retrieved using given ID, send PUT ...error back
-      // TODO: Error Handling dealt with in future ticket #355
-      throw (new Error('NotImplementedYetError'))
+      // After logging, convert specific error to generic DatabaseError
+      throw new DatabaseError(consentId)
     }
 
     // If request is not intiated by valid source, send PUT ...error back
     if (!validators.isConsentRequestInitiatedByValidSource(consent, request)) {
-      // TODO: Error Handling dealt with in future ticket #355
-      throw (new Error('NotImplementedYetError'))
+      throw new InvalidInitiatorSourceError(consentId)
     }
 
     // If Consent is ACTIVE, revoke it and update database. If already revoked, leave it alone but don't throw an error.
@@ -77,8 +80,10 @@ export async function validateRequestAndRevokeConsent (
     )
   } catch (error) {
     logger.push({ error }).error(`Outgoing call NOT made to PUT consent/${consentId}/revoke`)
-    // TODO: Decide on error handling HERE - dealt with in future ticket #355
-    throw error
+    if(isMojaloopError(error)) {
+      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      await putConsentError(consentId, error, participantId)
+    }
   }
 }
 

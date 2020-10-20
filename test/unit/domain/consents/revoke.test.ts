@@ -37,7 +37,8 @@ import { Consent } from '~/model/consent'
 import {
   partialConsentActive, completeConsentActive, completeConsentRevoked,
   partialConsentRevoked, partialConsentActiveConflictingInitiatorId
-} from 'test/data/data'
+} from '~/../test/data/data'
+import { DatabaseError, InvalidConsentStatusError } from '~/domain/errors'
 
 import { mocked } from 'ts-jest/utils'
 
@@ -101,7 +102,7 @@ describe('server/domain/consents/revoke', (): void => {
 
         await expect(revokeConsentStatus(completeConsentActive))
           .rejects
-          .toThrowError('Invalid Consent Status')
+          .toThrowError(new InvalidConsentStatusError(completeConsentActive.id))
 
         expect(mocked(logger.push)).toHaveBeenCalledWith({ consent: completeConsentActive })
         expect(mocked(logger.error)).toHaveBeenCalledWith('Invalid Consent Status')
@@ -110,14 +111,16 @@ describe('server/domain/consents/revoke', (): void => {
 
     it('Should propagate error in updating consent',
       async (): Promise<void> => {
-        mockConsentUpdate.mockRejectedValue(new Error('Test Error'))
+        const testError = new Error('Test Error')
+        mockConsentUpdate.mockRejectedValue(testError)
 
         await expect(revokeConsentStatus(partialConsentActiveConflictingInitiatorId))
           .rejects
-          .toThrowError('Test Error')
+          .toThrowError(new DatabaseError(partialConsentActiveConflictingInitiatorId.id))
 
         expect(mockConsentUpdate).toHaveBeenCalled()
-        expect(mocked(logger.push)).not.toHaveBeenCalled()
+        expect(mocked(logger.error)).toHaveBeenCalledWith('consentDB failed to update consent')
+        expect(mocked(logger.push)).toHaveBeenCalledWith({ consent: expect.objectContaining(partialConsentActiveConflictingInitiatorId) })
       })
   })
 

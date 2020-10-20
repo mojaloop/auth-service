@@ -40,7 +40,12 @@ import {
 import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
 import { CredentialStatusEnum } from '~/model/consent/consent'
-import { IncorrectChallengeError } from '~/domain/errors'
+import { 
+  InvalidSignatureError, 
+  SignatureVerificationError, 
+  putConsentError, 
+  isMojaloopError 
+} from '~/domain/errors'
 
 export interface UpdateCredentialRequest {
   credential: {
@@ -72,9 +77,20 @@ export async function validateAndUpdateConsent (
 
   try {
     const consent: Consent = await retrieveValidConsent(consentId, challenge)
-    const verifyResult = verifySignature(challenge, signature, publicKey)
+    let verifyResult: boolean
+
+    // Use a nested try-catch to convert verifySignature errors to mojaloop
+    // accepted errors
+    try {
+      verifyResult = verifySignature(challenge, signature, publicKey)
+    } catch (error) {
+      logger.push({error}).error('Error: Signature validity was not determined.')
+      throw new SignatureVerificationError(consentId)
+    }
+
+    // If signature is invalid for given key and challenge
     if (!verifyResult) {
-      throw new IncorrectChallengeError(consentId)
+      throw new InvalidSignatureError(consentId)
     }
 
     const credential: ConsentCredential = {
@@ -96,19 +112,20 @@ export async function validateAndUpdateConsent (
       )
   } catch (error) {
     logger.push({ error }).error('Error: Outgoing PUT consents/{ID} call not made')
-    /* TODO, make outbound call to PUT consents/{ID}/error
-    to be addressed in ticket number 355 */
+    if(isMojaloopError(error)) {
+      await putConsentError(consentId, error, destinationParticipantId)
+    }
   }
 }
 
 export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const id = request.params.ID
+  const consentId = request.params.ID
   const updateConsentRequest = request.payload as UpdateCredentialRequest
   // The DFSP we need to reply to
   const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
   // Note: not awaiting promise here
-  validateAndUpdateConsent(id, updateConsentRequest, destinationParticipantId)
+  validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId)
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
