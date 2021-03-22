@@ -30,7 +30,7 @@ export async function up (knex: Knex): Promise<Knex.SchemaBuilder | void> {
       if (!exists) {
         return knex.schema.createTable('Scope', (t: Knex.CreateTableBuilder): void => {
           t.increments('id').primary().notNullable()
-          t.string('consentId', 32).notNullable()
+          t.string('consentId', 36).notNullable()
           t.string('action', 36).notNullable()
           t.string('accountId', 36).notNullable()
 

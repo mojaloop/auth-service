@@ -32,7 +32,7 @@ export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
         return knex.schema.createTable('Consent',
           (t: Knex.CreateTableBuilder): void => {
             // TODO: Confirm string length for status and revoked at
-            t.string('id', 32).primary().notNullable()
+            t.string('id', 36).primary().notNullable()
             t.string('status', 32).notNullable()
             t.string('initiatorId', 32).notNullable()
             t.string('participantId', 32).notNullable()

@@ -23,6 +23,9 @@
  --------------
  ******/
 
+// workaround for lack of typescript types for mojaloop dependencies
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../ambient.d.ts"/>
 import { validateRoutes } from '@mojaloop/central-services-error-handling'
 import { Server } from '@hapi/hapi'
 import { ServiceConfig } from '../shared/config'
