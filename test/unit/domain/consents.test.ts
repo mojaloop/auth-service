@@ -66,7 +66,7 @@ describe('server/domain/consents', (): void => {
       .resolves
       .toBe(undefined)
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
   })
@@ -78,7 +78,7 @@ describe('server/domain/consents', (): void => {
       .rejects
       .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).not.toHaveBeenCalled()
     expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
@@ -91,7 +91,7 @@ describe('server/domain/consents', (): void => {
       .rejects
       .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, '1234')
+    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
     expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })

@@ -40,7 +40,7 @@ describe('server/handlers/thirdpartyRequests/transactions/{ID}/authorizations',
         // `/thirdpartyRequests/transactions/{ID}/authorizations`
         // Test needs to be changed once OpenAPI spec is updated
         // in Ticket #412.
-        const scenariosURI = `http://localhost:4004/thirdPartyRequests/transactions/${transactionId}/authorizations`
+        const scenariosURI = `http://localhost:4004/thirdpartyRequests/transactions/${transactionId}/authorizations`
 
         const response = await axios.post(scenariosURI, mockThirdPartyAuthorizationReq.payload, {
           headers: headers

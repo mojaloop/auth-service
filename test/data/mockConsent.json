@@ -1,13 +1,14 @@
 {
   "payload": {
-    "id": "b51ec534-ee48-4575-b6a9-ead2955b8069",
-    "requestId": "a71ec534-ee48-4575-b6a9-ead2955b8069",
-    "initiatorId": "pisp-2342-2233",
-    "participantId": "pisp-2342-2233",
+    "consentId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+    "consentRequestId": "a71ec534-ee48-4575-b6a9-ead2955b8069",
     "scopes": [
       {
-        "accountId": "3423",
-        "scope": "accounts.transfer"
+        "accountId": "dfsp.username.5678",
+        "actions": [
+          "accounts.transfer",
+          "accounts.getBalance"
+        ]
       }
     ],
     "credential": {

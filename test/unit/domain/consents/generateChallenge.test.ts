@@ -48,7 +48,7 @@ jest.mock('~/shared/logger')
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
 
 const putConsentRequestBody: PutConsentsRequest = {
-  requestId: '1234',
+  requestId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   initiatorId: completeConsentActiveNoCredentialID.initiatorId as string,
   participantId: completeConsentActiveNoCredentialID.participantId as string,
   scopes: externalScopes,

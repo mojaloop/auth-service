@@ -45,25 +45,5 @@ defineFeature(feature, (test): void => {
       expect(healthResponse.uptime).toBeGreaterThan(1.0)
     })
   })
-
-  test('Hello', ({ given, when, then }): void => {
-    given('auth-service server', async (): Promise<Server> => {
-      server = await AuthService.run(Config)
-      return server
-    })
-
-    when('I get \'Hello\' response', async (): Promise<ServerInjectResponse> => {
-      const request = {
-        method: 'GET',
-        url: '/hello'
-      }
-      response = await server.inject(request)
-      return response
-    })
-
-    then('I see \'Hello world\'', (): void => {
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toEqual({ hello: 'world' })
-    })
-  })
+  
 })

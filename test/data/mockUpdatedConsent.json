@@ -16,8 +16,11 @@
         },
         "scopes": [
             {
-                "accountId": "3423",
-                "scope": "accounts.transfer"
+                "accountId": "dfsp.username.5678",
+                "actions": [
+                    "accounts.transfer",
+                    "accounts.getBalance"
+                ]
             }
         ]
     }

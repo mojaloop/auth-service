@@ -14,22 +14,22 @@ export const request: Request = {
     'fspiop-destination': 'dfsp-3333-2123'
   },
   params: {
-    ID: '1234'
+    ID: 'b51ec534-ee48-4575-b6a9-ead2955b8069'
   }
 }
 
 // @ts-ignore
 export const requestWithPayloadScopes: Request = {
   headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
+    'fspiop-source': 'pisp-2342-2233',
+    'fspiop-destination': 'dfsp-3333-2123'
   },
   params: {
-    ID: '1234'
+    ID: 'b51ec534-ee48-4575-b6a9-ead2955b8069'
   },
   payload: {
-    id: '1234',
-    participantId: 'dfsp-3333-2123',
+    consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+    consentRequestId: 'dfsp-3333-2123',
     initiatorId: 'pisp-2342-2233',
     scopes: [{
       accountId: 'as2342',
@@ -50,10 +50,10 @@ export const requestWithPayloadCredentialAndScope: Request = {
     fspiopdestination: 'dfsp-3333-2123'
   },
   params: {
-    ID: '1234'
+    ID: 'b51ec534-ee48-4575-b6a9-ead2955b8069'
   },
   payload: {
-    id: '1234',
+    id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     requestId: '475234',
     initiatorId: 'pispa',
     participantId: 'sfsfdf23',
@@ -83,7 +83,7 @@ export const requestWithPayloadCredentialAndScope: Request = {
 // @ts-ignore
 export const requestNoHeaders: Request = {
   params: {
-    ID: '1234'
+    ID: 'b51ec534-ee48-4575-b6a9-ead2955b8069'
   }
 }
 
@@ -104,21 +104,21 @@ export const h: ResponseToolkit = {
  * Mock Consent Resources
  */
 export const partialConsentActive: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   status: 'ACTIVE'
 }
 
 export const partialConsentActiveConflictingInitiatorId: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   initiatorId: 'pi2-2233',
   participantId: 'dfs333-2123',
   status: 'ACTIVE'
 }
 
 export const partialConsentRevoked: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   revokedAt: '2020-08-19T05:44:18.843Z',
@@ -126,7 +126,7 @@ export const partialConsentRevoked: Consent = {
 }
 
 export const completeConsentRevoked: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   status: 'REVOKED',
@@ -137,7 +137,7 @@ export const completeConsentRevoked: Consent = {
 }
 
 export const completeConsentActive: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
@@ -148,7 +148,7 @@ export const completeConsentActive: Consent = {
 }
 
 export const completeConsentActiveNoCredentialID: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
@@ -172,19 +172,19 @@ export const externalScopes: ExternalScope[] = [{
 
 export const scopes: Scope[] = [{
   id: 123234,
-  consentId: '1234',
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
   action: 'account.getAccess'
 },
 {
   id: 232234,
-  consentId: '1234',
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
   action: 'account.transferMoney'
 },
 {
   id: 234,
-  consentId: '1234',
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as22',
   action: 'account.getAccess'
 }
@@ -204,7 +204,7 @@ export const credentialPending: ConsentCredential = {
 export const challenge = 'xyhdushsoa82w92mzs='
 
 export const completeConsentActiveCredential: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',

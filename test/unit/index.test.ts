@@ -84,24 +84,6 @@ describe('api routes', (): void => {
     expect(result.uptime).toBeGreaterThan(1.0)
   })
 
-  it('/hello', async (): Promise<void> => {
-    interface HelloResponse {
-      hello: string;
-    }
-
-    const request = {
-      method: 'GET',
-      url: '/hello'
-    }
-
-    const response = await server.inject(request)
-    expect(response.statusCode).toBe(200)
-    expect(response.result).toBeDefined()
-
-    const result = response.result as HelloResponse
-    expect(result.hello).toEqual('world')
-  })
-
   it('/metrics', async (): Promise<void> => {
     const request = {
       method: 'GET',
@@ -115,8 +97,8 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /consents', (): void => {
     it('POST /consents/', async (): Promise<void> => {
-      const mockCreateConsent = jest.spyOn(Handlers, 'CreateConsent')
-      mockCreateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+      const mockPostConsents = jest.spyOn(Handlers, 'PostConsents')
+      mockPostConsents.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
       const request = {
         method: 'POST',
@@ -132,18 +114,18 @@ describe('api routes', (): void => {
       })
 
       const response = await server.inject(request)
-      expect(mockCreateConsent).toHaveBeenCalledTimes(1)
-      expect(mockCreateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(mockPostConsents).toHaveBeenCalledTimes(1)
+      expect(mockPostConsents).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeDefined()
     })
 
     it('schema validation - missing fields', async (): Promise<void> => {
-      const mockCreateConsent = jest.spyOn(Handlers, 'CreateConsent')
-      mockCreateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
+      const mockPostConsents = jest.spyOn(Handlers, 'PostConsents')
+      mockPostConsents.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
       const payloadMissingId = Object.assign({}, MockConsentData.payload)
-      delete payloadMissingId.id
+      delete payloadMissingId.consentId
 
       const request = {
         method: 'POST',
@@ -155,7 +137,7 @@ describe('api routes', (): void => {
       const expected = {
         errorInformation: {
           errorCode: '3102',
-          errorDescription: 'Missing mandatory element - .requestBody should have required property \'id\''
+          errorDescription: 'Missing mandatory element - .requestBody should have required property \'consentId\''
         }
       }
 
@@ -197,7 +179,7 @@ describe('api routes', (): void => {
       const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
       mockUpdateConsent.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202)))
 
-      const payloadMissingCredential = Object.assign({}, MockConsentData.payload)
+      const payloadMissingCredential = Object.assign({}, MockUpdateConsentReq.payload)
       delete payloadMissingCredential.credential
 
       const request = {
@@ -325,20 +307,20 @@ describe('api routes', (): void => {
     })
   })
 
-  describe('Endpoint: /thirdPartyRequests/transactions/{ID}/authorizations', (): void => {
-    it('POST /thirdPartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
+  describe('Endpoint: /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
+    it('POST /thirdpartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
       const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
       mockThirdPartyAuthorizations.mockImplementationOnce((_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202))
 
       const request = {
         method: 'POST',
-        url: '/thirdPartyRequests/transactions/123/authorizations',
+        url: '/thirdpartyRequests/transactions/123/authorizations',
         headers: Headers,
         payload: MockThirdPartyAuthorizationReq.payload
       }
 
       const expectedArgs = expect.objectContaining({
-        path: '/thirdPartyRequests/transactions/123/authorizations',
+        path: '/thirdpartyRequests/transactions/123/authorizations',
         method: 'post',
         payload: MockThirdPartyAuthorizationReq.payload,
         params: {
@@ -362,7 +344,7 @@ describe('api routes', (): void => {
 
       const request = {
         method: 'POST',
-        url: '/thirdPartyRequests/transactions/123/authorizations',
+        url: '/thirdpartyRequests/transactions/123/authorizations',
         headers: Headers,
         payload: payloadMissingChallenge
       }
@@ -388,7 +370,7 @@ describe('api routes', (): void => {
 
       const request = {
         method: 'POST',
-        url: '/thirdPartyRequests/transactions/123/authorizations',
+        url: '/thirdpartyRequests/transactions/123/authorizations',
         headers: Headers,
         payload: payloadWithActiveStatus
       }

@@ -42,6 +42,9 @@ import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { ExternalScope, convertExternalToScope } from '../lib/scopes'
 import { DatabaseError } from './errors'
+import {
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
 
 export interface PostConsentPayload {
   id: string;
@@ -68,11 +71,11 @@ export function isPostConsentRequestValid (request: Request): boolean {
  * @param request request received from switch
  */
 export async function createAndStoreConsent (request: Request): Promise<void> {
-  const payload = request.payload as PostConsentPayload
+  const payload = request.payload as tpAPI.Schemas.ConsentsPostRequest
   const consent: Consent = {
-    id: payload.id,
-    initiatorId: payload.initiatorId,
-    participantId: payload.participantId,
+    id: payload.consentId,
+    initiatorId: request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
+    participantId: request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
     status: 'ACTIVE'
   }
 
