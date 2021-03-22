@@ -26,6 +26,7 @@
  ******/
 
 // mock for server.run
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default jest.fn((): object => ({
   run: jest.fn()
 }))
