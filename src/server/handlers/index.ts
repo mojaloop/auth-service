@@ -24,8 +24,6 @@
 import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
-import GenerateChallenge from './consents/{ID}/generateChallenge'
-import RevokeConsent from './consents/{ID}/revoke'
 import PostConsents from './consents'
 import UpdateConsent from './consents/{ID}'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
@@ -36,9 +34,7 @@ export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
   PostConsents: PostConsents.post,
-  RevokeConsent: RevokeConsent.post,
   UpdateConsent: UpdateConsent.put,
-  GenerateChallengeRequest: GenerateChallenge.post,
   VerifyThirdPartyAuthorization: Authorizations.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,

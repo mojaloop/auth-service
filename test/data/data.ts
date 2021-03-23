@@ -7,6 +7,7 @@ import { CredentialStatusEnum } from '~/model/consent/consent'
 /*
  * Mock Request Resources
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const request: Request = {
   headers: {
@@ -18,6 +19,7 @@ export const request: Request = {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const requestWithPayloadScopes: Request = {
   headers: {
@@ -30,7 +32,6 @@ export const requestWithPayloadScopes: Request = {
   payload: {
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     consentRequestId: 'dfsp-3333-2123',
-    initiatorId: 'pisp-2342-2233',
     scopes: [{
       accountId: 'as2342',
       actions: ['account.getAccess', 'account.transferMoney']
@@ -43,11 +44,12 @@ export const requestWithPayloadScopes: Request = {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const requestWithPayloadCredentialAndScope: Request = {
   headers: {
-    fspiopsource: 'pisp-2342-2233',
-    fspiopdestination: 'dfsp-3333-2123'
+    'fspiop-source': 'pisp-2342-2233',
+    'fspiop-destination': 'dfsp-3333-2123'
   },
   params: {
     ID: 'b51ec534-ee48-4575-b6a9-ead2955b8069'
@@ -80,6 +82,7 @@ export const requestWithPayloadCredentialAndScope: Request = {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const requestNoHeaders: Request = {
   params: {
@@ -87,6 +90,7 @@ export const requestNoHeaders: Request = {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const h: ResponseToolkit = {
   response: (): ResponseObject => {

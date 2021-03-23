@@ -40,30 +40,11 @@ import { Scope } from '../model/scope'
 import { Consent } from '../model/consent'
 import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
-import { ExternalScope, convertExternalToScope } from '../lib/scopes'
+import { convertExternalToScope } from '../lib/scopes'
 import { DatabaseError } from './errors'
 import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
-
-export interface PostConsentPayload {
-  id: string;
-  initiatorId: string;
-  participantId: string;
-  scopes: ExternalScope[];
-  credential: null;
-}
-
-/**
- * Validates whether request is valid
- * by comparing if source header matches participant ID
- * @param request: request received from switch
- */
-export function isPostConsentRequestValid (request: Request): boolean {
-  const payload = request.payload as PostConsentPayload
-  const fspiopSource = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  return (payload.participantId === fspiopSource)
-}
 
 /**
  * Builds internal Consent and Scope objects from request payload

@@ -71,7 +71,7 @@
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-conventional": "^9.1.1",
     "@redocly/openapi-cli": "^1.0.0-beta.32",
-    "@mojaloop/api-snippets": "^12.1.0",
+    "@mojaloop/api-snippets": "^12.1.2",
     "@types/hapi": "^18.0.3",
     "@types/hapi__hapi": "^19.0.3",
     "@types/hapi__inert": "^5.2.0",

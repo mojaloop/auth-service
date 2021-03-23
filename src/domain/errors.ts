@@ -153,36 +153,6 @@ export class DatabaseError extends ConsentError {
   }
 }
 
-export class InvalidInitiatorSourceError extends ConsentError {
-  public constructor (consentId: string) {
-    super('6212', `Consent request initiated by an invalid source for ${consentId}`, consentId)
-  }
-}
-
-export class InvalidConsentStatusError extends ConsentError {
-  public constructor (consentId: string) {
-    super('6213', `Consent status is invalid for ${consentId}`, consentId)
-  }
-}
-
-export class RevokedConsentStatusError extends ConsentError {
-  public constructor (consentId: string) {
-    super('6214', `Consent ${consentId} has been revoked`, consentId)
-  }
-}
-
-export class ChallengeGenerationError extends ConsentError {
-  public constructor (consentId: string) {
-    super('6215', `Error generating challenge for ${consentId}`, consentId)
-  }
-}
-
-export class ActiveConsentChallengeRequestError extends ConsentError {
-  public constructor (consentId: string) {
-    super('6216', `Active consent ${consentId} has requested for a challenge`, consentId)
-  }
-}
-
 export class PutRequestCreationError extends ConsentError {
   public constructor (consentId: string) {
     super('6217', `Error creating outgoing put request for ${consentId}`, consentId)

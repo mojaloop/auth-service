@@ -152,79 +152,14 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/consents/{ID}/generateChallenge':
-    post:
-      tags:
-        - consents
-        - sampled
-      operationId: GenerateChallengeRequest
-      summary: GenerateChallengeRequest
-      description: |
-        PISP requests a challenge from the auth service.
-
-        PISP -> Switch
-      parameters:
-        - $ref: '#/components/parameters/ID'
-        - $ref: '#/components/parameters/Accept'
-        - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
-      requestBody:
-        description: GenerateChallengeRequest Body
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConsentsIDGenerateChallengePostRequest'
-            example:
-              type: FIDO
-      responses:
-        '202':
-          $ref: '#/components/responses/202'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '405':
-          $ref: '#/components/responses/405'
-        '406':
-          $ref: '#/components/responses/406'
-        '501':
-          $ref: '#/components/responses/501'
-        '503':
-          $ref: '#/components/responses/503'
-  '/consents/{ID}/revoke':
-    post:
+    delete:
       description: >
-        The HTTP request `POST /consents/{ID}/revoke` is used to revoke a
+        The HTTP request `DELETE /consents/{ID}` is used to mark as deleted a
         previously created consent.
 
 
-        - Called by a PISP when a user wants to unlink their account(s).
-      parameters:
-        - $ref: '#/components/parameters/ID'
-        - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
-      operationId: RevokeConsent
+        - Called by a PISP when a user wants to remove their consent.
+      operationId: DeleteConsentByID
       tags:
         - consents
       responses:
@@ -969,17 +904,6 @@ components:
         - initiatorId
         - scopes
         - credential
-    ConsentsIDGenerateChallengePostRequest:
-      title: ConsentsIDGenerateChallengePostRequest
-      type: object
-      description: |
-        A credential used to allow a user to prove their identity
-        and access to an account with a DFSP.
-      properties:
-        type:
-          $ref: '#/components/schemas/CredentialType'
-      required:
-        - type
     BinaryString:
       type: string
       pattern: '^[A-Za-z0-9-_]+[=]{0,2}$'

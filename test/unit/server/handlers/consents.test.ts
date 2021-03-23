@@ -32,13 +32,11 @@ import * as Domain from '~/domain/consents'
 import { requestWithPayloadScopes, h } from 'test/data/data'
 
 const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
-const mockIsPostRequestValid = jest.spyOn(Domain, 'isPostConsentRequestValid')
 
 jest.mock('~/shared/logger')
 
 describe('server/handlers/consents', (): void => {
   beforeAll((): void => {
-    mockIsPostRequestValid.mockReturnValue(true)
     mockStoreConsent.mockResolvedValue()
     jest.useFakeTimers()
   })
@@ -66,28 +64,6 @@ describe('server/handlers/consents', (): void => {
       jest.runAllImmediates()
       expect(mockStoreConsent).toHaveBeenCalledWith(requestWithPayloadScopes)
       expect(setImmediate).toHaveBeenCalled()
-    })
-
-  xit('Should return 400 code due to invalid request',
-    async (): Promise<void> => {
-      mockIsPostRequestValid.mockReturnValueOnce(false)
-      const req = requestWithPayloadScopes as Request
-      const response = await post(
-        {
-          method: req.method,
-          path: req.path,
-          body: req.payload,
-          query: req.query,
-          headers: req.headers
-        },
-        req,
-        h as ResponseToolkit
-      )
-      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-      expect(mockIsPostRequestValid).toHaveBeenCalledWith(requestWithPayloadScopes)
-
-      expect(setImmediate).not.toHaveBeenCalled()
-      expect(mockStoreConsent).not.toHaveBeenCalled()
     })
 
   it('Should throw an error due to error in creating/storing consent & scopes',

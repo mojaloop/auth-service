@@ -1,15 +1,5 @@
 Feature: Linking
 
-Scenario: Validate request
-  Given auth-service server
-  When A PISP requests a valid generateChallenge() request
-  Then I respond with a 202 Accepted
-
-Scenario: Validate request
-  Given auth-service server
-  When A PISP requests a generateChallenge() request with invalid formatting
-  Then I respond with a 400 Bad Request
-
 Scenario: Return Challenge
   Given auth-service server
   When A PISP requests a challenge

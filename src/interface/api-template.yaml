@@ -12,10 +12,6 @@ paths:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents.yaml'
   /consents/{ID}:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID.yaml'
-  /consents/{ID}/generateChallenge:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID_generateChallenge.yaml'
-  /consents/{ID}/revoke:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID_revoke.yaml'
   /health:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/health.yaml'
   /metrics:

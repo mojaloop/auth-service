@@ -49,11 +49,6 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  // TODO: is this validation required? participantId removed from payload
-  // Validate request
-  // if (!isPostConsentRequestValid(request)) {
-  //   return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-  // }
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
