@@ -37,7 +37,6 @@ import {
   createAndStoreConsent
 } from '~/domain/consents'
 import {
-  isMojaloopError,
   putConsentError
 } from '~/domain/errors'
 
@@ -55,11 +54,9 @@ export async function post (
       await createAndStoreConsent(request)
     } catch (error) {
       logger.push(error).error('Error: Unable to create/store consent')
-      if (isMojaloopError(error)) {
-        const consentId = (request.payload as tpAPI.Schemas.ConsentsPostRequest).consentId
-        const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-        await putConsentError(consentId, error, participantId)
-      }
+      const consentId = (request.payload as tpAPI.Schemas.ConsentsPostRequest).consentId
+      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      await putConsentError(consentId, error, participantId)
     }
   })
 
