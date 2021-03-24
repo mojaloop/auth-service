@@ -47,7 +47,7 @@ const randomBytesAsync = util.promisify(crypto.randomBytes)
  * a secure random challenge string (Base 64 encoding) of given size
  * @param size Integer value of how many bytes should generated, 32 by default
  */
-export async function generate (size: number = 32): Promise<string> {
+export async function generate (size = 32): Promise<string> {
   try {
     const buf = await randomBytesAsync(Math.round(Math.abs(size)))
     return buf.toString('base64')

@@ -33,6 +33,7 @@
 import Convict from 'convict'
 import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
 import PACKAGE from '../../package.json'
+import path from 'path'
 import fs, { PathLike } from 'fs'
 import { BaseRequestTLSConfig } from '@mojaloop/sdk-standard-components'
 
@@ -158,7 +159,7 @@ const ConvictConfig = Convict<ServiceConfig>({
 // Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
 
-ConvictConfig.loadFile(`${__dirname}/../../config/${env}.json`)
+ConvictConfig.loadFile(path.join(__dirname, `/../../config/${env}.json`))
 ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets

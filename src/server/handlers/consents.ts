@@ -31,13 +31,13 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Context } from '../plugins'
 import {
-  PostConsentPayload,
-  createAndStoreConsent,
-  isPostConsentRequestValid
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
+import {
+  createAndStoreConsent
 } from '~/domain/consents'
-import { 
-  isMojaloopError, 
-  putConsentError 
+import {
+  putConsentError
 } from '~/domain/errors'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
@@ -48,21 +48,15 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  // Validate request
-  if (!isPostConsentRequestValid(request)) {
-    return h.response().code(Enum.Http.ReturnCodes.BADREQUEST.CODE)
-  }
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
       await createAndStoreConsent(request)
     } catch (error) {
       logger.push(error).error('Error: Unable to create/store consent')
-      if(isMojaloopError(error)) {
-        const consentId = (request.payload as PostConsentPayload).id
-        const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-        await putConsentError(consentId, error, participantId)
-      }
+      const consentId = (request.payload as tpAPI.Schemas.ConsentsPostRequest).consentId
+      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      await putConsentError(consentId, error, participantId)
     }
   })
 

@@ -29,7 +29,7 @@
 
 import axios from 'axios'
 import headers from '~/../test/data/headers.json'
-import mockCreateConsent from '~/../test/data/mockConsent.json'
+import mockPostConsents from '~/../test/data/mockConsent.json'
 
 describe('server/handlers/consents', (): void => {
   it('Should return 202 (Accepted) status code',
@@ -41,7 +41,7 @@ describe('server/handlers/consents', (): void => {
       // Test needs to be changed once OpenAPI spec is updated
       // in Ticket #412.
 
-      const response = await axios.post(scenariosURI, mockCreateConsent.payload, {
+      const response = await axios.post(scenariosURI, mockPostConsents.payload, {
         headers: headers
       })
 

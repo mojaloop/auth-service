@@ -56,7 +56,7 @@ const mockVerifySignature = jest.spyOn(Signature, 'verifySignature')
 
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
-  id: '1234',
+  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'ACTIVE',
   initiatorId: 'pispa',
   participantId: 'sfsfdf23',

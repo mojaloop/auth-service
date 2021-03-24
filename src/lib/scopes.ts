@@ -60,12 +60,14 @@ export function convertScopesToExternal (
     const accountId: string = scope.accountId
 
     if (!(accountId in scopeDictionary)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       scopeDictionary[accountId] = {
         accountId,
         actions: []
       }
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     scopeDictionary[accountId].actions.push(scope.action)
   })

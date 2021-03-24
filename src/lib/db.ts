@@ -32,6 +32,7 @@ import Config from '../shared/config'
 import ConsentDB from '../model/consent'
 import ScopeDB from '../model/scope'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const Db: Knex = Knex(Config.DATABASE as object)
 const consentDB: ConsentDB = new ConsentDB(Db)
 const scopeDB: ScopeDB = new ScopeDB(Db)

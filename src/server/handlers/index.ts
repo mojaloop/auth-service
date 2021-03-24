@@ -24,10 +24,7 @@
 import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
-import Hello from './hello'
-import GenerateChallenge from './consents/{ID}/generateChallenge'
-import RevokeConsent from './consents/{ID}/revoke'
-import CreateConsent from './consents'
+import PostConsents from './consents'
 import UpdateConsent from './consents/{ID}'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
 // import { wrapWithHistogram } from '~/shared/histogram'
@@ -36,11 +33,8 @@ const OpenapiBackend = Util.OpenapiBackend
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
-  HelloGet: Hello.get,
-  CreateConsent: CreateConsent.post,
-  RevokeConsent: RevokeConsent.post,
+  PostConsents: PostConsents.post,
   UpdateConsent: UpdateConsent.put,
-  GenerateChallengeRequest: GenerateChallenge.post,
   VerifyThirdPartyAuthorization: Authorizations.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
