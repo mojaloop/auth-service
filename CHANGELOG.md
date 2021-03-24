@@ -1,4 +1,17 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.3.0](https://github.com/mojaloop/auth-service/compare/v11.2.8...v11.3.0) (2021-03-24)
+
+
+### Features
+
+* use api-snippets(thirdparty-api paths) in place of local defs ([#61](https://github.com/mojaloop/auth-service/issues/61)) ([3667b9a](https://github.com/mojaloop/auth-service/commit/3667b9a78503809641abf3071cb05986739b9a36))
+
+
+### Maintenance
+
+* update license file ([#57](https://github.com/mojaloop/auth-service/issues/57)) ([85dc2a3](https://github.com/mojaloop/auth-service/commit/85dc2a317838131d01ed20f6e1fd029c45306887))
+* **deps:** bump ini from 1.3.5 to 1.3.8 ([#58](https://github.com/mojaloop/auth-service/issues/58)) ([f056c02](https://github.com/mojaloop/auth-service/commit/f056c025fe648c988954ed4271baf3043c8a5adc))
+
 ### [11.2.8](https://github.com/mojaloop/auth-service/compare/v11.2.7...v11.2.8) (2020-10-20)
 
 ### [11.2.7](https://github.com/mojaloop/auth-service/compare/v11.2.6...v11.2.7) (2020-10-14)
