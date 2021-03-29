@@ -1,3 +1,4 @@
+// TODO: rename this file {ID} is not a good name, and leftover from older library
 /*****
  License
  --------------
@@ -32,6 +33,7 @@ import { logger } from '~/shared/logger'
 import { Context } from '~/server/plugins'
 import * as SDKStandardComponents from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from '~/lib/requests'
+// TODO: import as Domain to improve readability
 import {
   retrieveValidConsent,
   updateConsentCredential,
@@ -39,6 +41,7 @@ import {
 } from '~/domain/consents/{ID}'
 import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
+// TODO: Dependency on models is not good here
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { 
   InvalidSignatureError, 
@@ -47,6 +50,7 @@ import {
   isMojaloopError 
 } from '~/domain/errors'
 
+// TODO: grab interface from api-snippets
 export interface UpdateCredentialRequest {
   credential: {
     id: string;
@@ -60,6 +64,7 @@ export interface UpdateCredentialRequest {
   };
 }
 
+// TODO: need jsdoc for this function
 export async function validateAndUpdateConsent (
   consentId: string,
   request: UpdateCredentialRequest,
@@ -75,7 +80,10 @@ export async function validateAndUpdateConsent (
     }
   } = request
 
+  // TODO: can we do some complex validation in a different, easily testable function?
+  // TODO: refactor business logic to domain...
   try {
+    // TODO: this is not async. refactor to mojaloop async pattern
     const consent: Consent = await retrieveValidConsent(consentId, challenge)
     let verifyResult: boolean
 
@@ -100,6 +108,8 @@ export async function validateAndUpdateConsent (
       credentialStatus: CredentialStatusEnum.VERIFIED,
       credentialPayload: publicKey
     }
+    // TODO: there is no setImmediate() here
+    // TODO: add conventions: Domain.updateConsentCredential
     await updateConsentCredential(consent, credential)
 
     /* Outbound PUT consents/{ID} call */

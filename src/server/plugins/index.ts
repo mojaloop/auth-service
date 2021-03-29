@@ -52,6 +52,7 @@ async function register (server: Server): Promise<Server> {
 
   // use as a catch-all handler
   server.route({
+    // TODO: Do we need to handle a PATCH verb here?
     method: ['GET', 'POST', 'PUT', 'DELETE'],
     path: '/{path*}',
     handler: (req, h): ServerRoute =>
@@ -70,6 +71,7 @@ async function register (server: Server): Promise<Server> {
   return server
 }
 
+// TODO: why do we need this context? Can't it be implied
 // Context is required for OpenAPI
 export interface Context {
   method: HapiUtil.HTTP_METHODS_PARTIAL_LOWERCASE;

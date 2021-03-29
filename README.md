@@ -58,3 +58,11 @@ After making changes to the `.yaml` files in `./src/interface/`, update the `swa
 > Keep track of [#352 - Update to OpenAPI v3](https://app.zenhub.com/workspaces/pisp-5e8457b05580fb04a7fd4878/issues/mojaloop/mojaloop/352)
 
 
+
+
+## PI13- refactor
+
+- TODO: fix false positive unit tests
+- TODO: refactor existing code TODOs (keeping test coverage up)
+- TODO: introduce new code 
+- TODO: remove sqlite altogether (nice to have)

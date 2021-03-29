@@ -40,7 +40,8 @@ import {
   putConsentError
 } from '~/domain/errors'
 
-/** The HTTP request `POST /consents` is used to create a consent object.
+/** 
+ * The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and
  * validation of a consentRequest.
  */
@@ -51,6 +52,7 @@ export async function post (
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
+      // TODO: we shouldn't pass in the request... we need to transform it for the domain
       await createAndStoreConsent(request)
     } catch (error) {
       logger.push(error).error('Error: Unable to create/store consent')

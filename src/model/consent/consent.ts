@@ -82,6 +82,8 @@ export interface ConsentCredential {
 /*
  * Class to abstract Consent DB operations
  */
+
+// TODO: there is a lot of business logic here. This file should contain SQL and only SQL... (or knex...)
 export class ConsentDB {
   // Knex instance
   private Db: Knex
@@ -102,6 +104,7 @@ export class ConsentDB {
   }
 
   // Update Consent
+  // TODO: business logic in models - migrate to domain
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
     // Transaction to make the update atomic
@@ -117,6 +120,7 @@ export class ConsentDB {
         throw new NotFoundError('Consent', consent.id)
       }
 
+      // TODO: business logic in models - remove
       // Cannot overwrite REVOKED status Consent
       if (consents[0].status === 'REVOKED') {
         throw new RevokedConsentModificationError('Consent', consent.id)

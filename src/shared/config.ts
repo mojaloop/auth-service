@@ -31,6 +31,8 @@
  ******/
 
 import Convict from 'convict'
+// TODO: combine db config into a single config file
+// TODO: knexfile must be a .js file
 import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
 import PACKAGE from '../../package.json'
 import path from 'path'
@@ -159,8 +161,11 @@ const ConvictConfig = Convict<ServiceConfig>({
 // Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
 
+// TODO: remove environment related configuration here - use default
 ConvictConfig.loadFile(path.join(__dirname, `/../../config/${env}.json`))
 ConvictConfig.validate({ allowed: 'strict' })
+
+// TODO: this structure may break with sdk-standard-components update
 
 // Load file contents for keys and secrets
 ConvictConfig.set('SHARED.JWS_SIGNING_KEY', getFileContent(ConvictConfig.get('SHARED').JWS_SIGNING_KEY))

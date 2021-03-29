@@ -30,8 +30,11 @@
 import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Context } from '~/server/plugins'
+// TODO: no importing Models here
+// we should re-export from Domain if the interface is needed
 import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
+// TODO: remove lib, refactor to shared
 import { consentDB, scopeDB } from '~/lib/db'
 import { verifySignature } from '~/lib/challenge'
 import { thirdPartyRequest } from '~/lib/requests'
@@ -63,6 +66,7 @@ export async function validateAndVerifySignature (
 
   try {
     // Validate incoming payload status
+    // TODO: can we validate this properly in swagger? otherwise keep it here.
     if (!isPayloadPending(payload)) {
       throw new PayloadNotPendingError(payload.consentId)
     }
@@ -71,6 +75,7 @@ export async function validateAndVerifySignature (
 
     // Check if consent exists and retrieve consent data
     try {
+      // TODO: no access of models here- refactor to use domain
       consent = await consentDB.retrieve(payload.consentId)
     } catch (error) {
       logger.push({ error }).error('Could not retrieve consent')
@@ -81,6 +86,7 @@ export async function validateAndVerifySignature (
 
     // Retrieve scopes for the consent
     try {
+      // TODO: no access of models here- refactor to use domain
       consentScopes = await scopeDB.retrieveAll(payload.consentId)
     } catch (error) {
       logger.push({ error }).error('Could not retrieve scope')
@@ -95,10 +101,13 @@ export async function validateAndVerifySignature (
       throw new InactiveOrMissingCredentialError(payload.consentId)
     }
 
+    
     let isVerified: boolean
     try {
       // Challenge is a UTF-8 (Normalization Form C)
       // JSON string of the QuoteResponse object
+      
+      // TODO: refactor and clean up... spaghetti code a little bit 
       isVerified = verifySignature(
         payload.challenge,
         payload.value,
@@ -113,6 +122,7 @@ export async function validateAndVerifySignature (
       throw new InvalidSignatureError(payload.consentId)
     }
 
+    // TODO: use an enum
     payload.status = 'VERIFIED'
 
     // PUT request to switch to inform about verification
@@ -123,6 +133,8 @@ export async function validateAndVerifySignature (
     )
   } catch (error) {
     logger.push({error}).error('Outgoing PUT request not made for transaction authorizations')
+    // TODO: we need to return a PUT .../error for all types of errors
+    // drop isMojaloopError
     if (isMojaloopError(error)) {
       const id = request.params.ID
       const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -143,6 +155,7 @@ export function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): ResponseObject {
+  // TODO: use setImmediate here
   // Validate and process asynchronously
   validateAndVerifySignature(request)
 

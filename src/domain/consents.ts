@@ -51,10 +51,14 @@ import {
  * Stores the objects in the database
  * @param request request received from switch
  */
+// TODO: this should be a proper ConsentsPostRequest interface - not Request
+
 export async function createAndStoreConsent (request: Request): Promise<void> {
+  // TODO: domain should know NOTHING about Hapi or HTTP
   const payload = request.payload as tpAPI.Schemas.ConsentsPostRequest
   const consent: Consent = {
     id: payload.consentId,
+    // TODO: domain should know NOTHING about Hapi or HTTP
     initiatorId: request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
     participantId: request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
     status: 'ACTIVE'
@@ -63,6 +67,9 @@ export async function createAndStoreConsent (request: Request): Promise<void> {
   const scopes: Scope[] = convertExternalToScope(payload.scopes, consent.id)
 
   try {
+    // TODO: this should be in a SQL transaction
+    // TODO: should we have a Repository pattern here? So that Domain doesn't need to depend on
+    // (or know about) models.
     await consentDB.insert(consent)
     await scopeDB.insert(scopes)
   } catch (error) {

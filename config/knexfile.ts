@@ -27,6 +27,9 @@
  --------------
  ******/
 
+// TODO: combine this into one master config file
+// TODO: can we remove complexity with config here?
+
 import Convict from 'convict'
 import path from 'path'
 import { DbConnectionFormat, DbPoolFormat } from './custom-convict-formats'

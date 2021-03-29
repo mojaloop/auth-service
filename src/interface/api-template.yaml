@@ -18,3 +18,26 @@ paths:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/metrics.yaml'
   /thirdpartyRequests/transactions/{ID}/authorizations:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_transactions_ID_authz.yaml'
+
+  # TODO move into API-Snippets
+  /thirdpartyRequests/verifications:
+    post:
+      # e.g.
+      # POST /thirdpartyRequests/verifications 
+      #   FSPIOP-Source: dfspa 
+      #   FSPIOP-Destination: central-auth 
+      #   { 
+      #     "verificationRequestId": "44444444-0000-0000-0000-000000000000", 
+      #     "challenge": <base64 encoded binary - the encoded challenge> , 
+      #     "value": { 
+      #       "authenticationInfo": { 
+      #         "authentication": "U2F", 
+      #         "authenticationValue": { 
+      #           "pinValue": "<base64 encoded binary - the signed challenge>", 
+      #           "counter": "1" 
+      #         } 
+      #       } 
+      #     "responseType": "ENTERED" 
+      #     }, 
+      #     "consentId": "123" 
+      #   }
