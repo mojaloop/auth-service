@@ -27,14 +27,10 @@
 
 import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
-const mockLog = jest.fn()
-const mockError = jest.fn()
-const mockInfo = jest.fn()
-
 export const logger: SDKLogger.Logger = {
-  log: mockLog,
-  error: mockError,
-  info: mockInfo,
+  log: jest.fn((): SDKLogger.Logger => logger),
+  error: jest.fn((): SDKLogger.Logger => logger),
+  info: jest.fn((): SDKLogger.Logger => logger),
   push: jest.fn((): SDKLogger.Logger => logger)
 } as unknown as SDKLogger.Logger
 

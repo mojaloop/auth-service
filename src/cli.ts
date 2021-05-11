@@ -30,13 +30,18 @@ import { Command } from 'commander'
 
 // handle script parameters
 const program = new Command(PACKAGE.name)
-program
-  .version(PACKAGE.version)
-  .description('auth-service cli')
-  .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
-  .option('-H, --host <string>', 'listen on host', Config.HOST)
-  .parse(process.argv)
-
+// when unit tests are run commander runs process.exit on unknown option in jest's command line
+program.exitOverride()
+try {
+  program
+    .version(PACKAGE.version)
+    .description('auth-service cli')
+    .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
+    .option('-H, --host <string>', 'listen on host', Config.HOST)
+    .parse(process.argv)
+} catch (err) {
+  console.error(err)
+}
 // overload Config with script parameters
 Config.PORT = program.port
 Config.HOST = program.host
