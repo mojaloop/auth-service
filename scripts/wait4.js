@@ -111,15 +111,7 @@ async function wrapWithRetries (method, waitJob, retries, waitTimeMs) {
  * @param {object} waitJob
  */
 function getConvictConfig (waitJob) {
-  // Load config based on environment variable NODE_ENV
-  // defaults to integration environment
-  var environment = 'integration'
-  if(process.env.NODE_ENV) {
-    var environment = process.env.NODE_ENV
-  }
-
-  // acquire rc parameters
-  const configPath = `../config/${environment}_db.json`
+  const configPath = '../config/default_db.json'
   return require(configPath)
 }
 
