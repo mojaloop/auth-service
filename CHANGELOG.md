@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.3.1](https://github.com/mojaloop/auth-service/compare/v11.3.0...v11.3.1) (2021-05-12)
+
+
+### Maintenance
+
+* 2132 update deps & fix unit tests ([#64](https://github.com/mojaloop/auth-service/issues/64)) ([8efd754](https://github.com/mojaloop/auth-service/commit/8efd754417e09448bc86c6ab5af37c71a6a1e153))
+
 ## [11.3.0](https://github.com/mojaloop/auth-service/compare/v11.2.8...v11.3.0) (2021-03-24)
 
 
