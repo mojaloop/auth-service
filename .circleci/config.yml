@@ -205,7 +205,7 @@ jobs:
           name: Migrate DB
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            docker exec -it as_auth-service npm run migrate
+            docker exec -it as_auth-service npm run docker:migrate
       - run:
           name: Execute integration tests
           command: |
