@@ -148,8 +148,7 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
   }
 })
 
-const env = ConvictDatabaseConfig.get('ENV')
-const dbConfigFile = `${__dirname}/${env}_db.json`
+const dbConfigFile = path.resolve(__dirname, 'default_db.json')
 ConvictDatabaseConfig.loadFile(dbConfigFile)
 ConvictDatabaseConfig.validate({ allowed: 'strict' })
 
