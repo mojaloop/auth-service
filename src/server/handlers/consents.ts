@@ -33,12 +33,8 @@ import { Context } from '../plugins'
 import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
-import {
-  createAndStoreConsent
-} from '~/domain/consents'
-import {
-  putConsentError
-} from '~/domain/errors'
+import { createAndStoreConsent } from '~/domain/consents'
+import { putConsentError } from '~/domain/errors'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  * Called by `DFSP` after the successful creation and

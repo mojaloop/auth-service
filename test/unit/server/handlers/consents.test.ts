@@ -28,26 +28,23 @@
 import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { post } from '~/server/handlers/consents'
-import * as Domain from '~/domain/consents'
 import { requestWithPayloadScopes, h } from 'test/data/data'
+import { createAndStoreConsent as mockStoreConsent } from '~/domain/consents'
+import { mocked } from 'ts-jest/utils'
+import { putConsentError } from '~/domain/errors'
 
-const mockStoreConsent = jest.spyOn(Domain, 'createAndStoreConsent')
+jest.mock('~/domain/consents', () => ({
+  createAndStoreConsent: jest.fn(() => Promise.resolve())
+}))
 
-jest.mock('~/shared/logger')
+jest.mock('~/domain/errors')
+
+// mocking logger brings unresolved promise rejection
+// jest.mock('~/shared/logger')
 
 describe('server/handlers/consents', (): void => {
-  beforeAll((): void => {
-    mockStoreConsent.mockResolvedValue()
-    jest.useFakeTimers()
-  })
-
-  beforeEach((): void => {
-    jest.clearAllTimers()
-    jest.clearAllMocks()
-  })
-
   it('Should return 202 success code',
-    async (): Promise<void> => {
+    async (done): Promise<void> => {
       const req = requestWithPayloadScopes as Request
       const response = await post(
         {
@@ -61,14 +58,15 @@ describe('server/handlers/consents', (): void => {
         h as ResponseToolkit
       )
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-      jest.runAllImmediates()
-      expect(mockStoreConsent).toHaveBeenCalledWith(requestWithPayloadScopes)
-      expect(setImmediate).toHaveBeenCalled()
+      setImmediate(() => {
+        expect(mockStoreConsent).toHaveBeenCalledWith(requestWithPayloadScopes)
+        done()
+      })
     })
 
   it('Should throw an error due to error in creating/storing consent & scopes',
-    async (): Promise<void> => {
-      mockStoreConsent.mockRejectedValueOnce(
+    async (done): Promise<void> => {
+      mocked(mockStoreConsent).mockRejectedValueOnce(
         new Error('Error Registering Consent'))
       const req = requestWithPayloadScopes as Request
       const response = await post(
@@ -82,10 +80,10 @@ describe('server/handlers/consents', (): void => {
         req,
         h as ResponseToolkit)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-      jest.runAllImmediates()
-
-      expect(setImmediate).toHaveBeenCalled()
-      expect(mockStoreConsent).toHaveBeenLastCalledWith(requestWithPayloadScopes)
-      expect(mockStoreConsent).not.toHaveLastReturnedWith('')
+      setImmediate(() => {
+        expect(mocked(mockStoreConsent)).toHaveBeenLastCalledWith(requestWithPayloadScopes)
+        expect(mocked(putConsentError)).toHaveBeenCalled()
+        done()
+      })
     })
 })

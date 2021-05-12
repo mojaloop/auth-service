@@ -82,7 +82,6 @@ const payload: Domain.AuthPayload = {
   value: 'YjYyODNkOWUwZjUxNzOThmMjllYjE2Yg=='
 }
 
-// @ts-ignore
 const request: Request = {
   headers: {
     'fspiop-source': 'switch'
@@ -91,9 +90,8 @@ const request: Request = {
     ID: '1234'
   },
   payload: payload
-}
+} as unknown as Request
 
-// @ts-ignore
 const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
@@ -104,7 +102,7 @@ const h: ResponseToolkit = {
       }
     } as unknown as ResponseObject
   }
-}
+} as unknown as ResponseToolkit
 
 /*
  * Mock consent and scopes
