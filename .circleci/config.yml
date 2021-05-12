@@ -210,10 +210,11 @@ jobs:
           name: Execute integration tests
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            node --version
-            cd ~/project/
-            npm ci
-            npm -s run test:integration
+            docker exec -it as_auth-service npm run docker:integration
+      - run:
+          name: Copy test file from docker
+          command: |
+            docker cp as_auth-service:junit.xml ./
       - run:
           name: Prepare test results
           command: |
