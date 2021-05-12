@@ -156,10 +156,7 @@ const ConvictConfig = Convict<ServiceConfig>({
   }
 })
 
-// Load and validate general config based on environment variable
-const env = ConvictConfig.get('ENV')
-
-ConvictConfig.loadFile(path.join(__dirname, `/../../config/${env}.json`))
+ConvictConfig.loadFile(path.join(__dirname, '/../../config/default.json'))
 ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets
