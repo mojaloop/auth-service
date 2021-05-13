@@ -184,6 +184,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
             npm run wait-4-docker 
+            docker ps
             npm run migrate
             npm run test:integration
             mkdir -p test/results

@@ -1,9 +1,5 @@
 version: "3.7"
 
-networks:
-  mojaloop-net:
-    name: mojaloop-net
-
 services:
   auth-service:
     container_name: as_auth-service
@@ -12,8 +8,6 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "4004:4004"
-    networks:
-      - mojaloop-net
     depends_on:
       - mysql
     volumes:
@@ -40,8 +34,6 @@ services:
       - MYSQL_PASSWORD=${DBPASS:-password}
       - MYSQL_DATABASE=${DBUSER:-auth-service}
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    networks:
-      - mojaloop-net
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
       timeout: 20s
