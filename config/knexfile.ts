@@ -72,6 +72,8 @@ export interface DatabaseConfig {
     directory: string;
     loadExtensions: string[];
   };
+
+  configFile: string
 }
 
 Convict.addFormat(DbConnectionFormat)
@@ -145,10 +147,16 @@ const ConvictDatabaseConfig = Convict<DatabaseConfig>({
       format: 'Array',
       default: ['.ts']
     }
+  },
+  configFile: {
+    doc: 'Configuration file, relative to \'config\' directory',
+    format: String,
+    env: 'CONFIG_FILE',
+    default: 'default_db.json'
   }
 })
 
-const dbConfigFile = path.resolve(__dirname, 'default_db.json')
+const dbConfigFile = path.resolve(__dirname, ConvictDatabaseConfig.get('configFile'))
 ConvictDatabaseConfig.loadFile(dbConfigFile)
 ConvictDatabaseConfig.validate({ allowed: 'strict' })
 

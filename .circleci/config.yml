@@ -108,7 +108,6 @@ jobs:
             mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
-          prefix: test
       - store_test_results:
           path: ./test/results
 
@@ -132,7 +131,6 @@ jobs:
             mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
-          prefix: test
       - store_test_results:
           path: ./test/results
 
@@ -156,7 +154,6 @@ jobs:
             NODE_ENV: "test"
       - store_artifacts:
           path: coverage
-          prefix: test
       - store_test_results:
           path: coverage
       - run:
@@ -198,23 +195,29 @@ jobs:
           name: Build docker images
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            docker-compose pull
+            docker-compose build
             docker-compose up -d
-            chmod +x ./scripts/wait4.js
-            sh -c "./scripts/wait4.js cicd-integration-tests"
       - run:
           name: Migrate DB
+          environment:
+            CONFIG_FILE: "integration_db.json"
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            docker exec -it as_auth-service npm run docker:migrate
+            cd ~/project/
+            npm ci
+            npm run wait-4-docker
+            npm run migrate
       - run:
           name: Execute integration tests
+          environment:
+            CONFIG_FILE: "integration_db.json"
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            docker exec -it as_auth-service npm run docker:integration
-      - run:
-          name: Copy test file from docker
-          command: |
-            docker cp as_auth-service:junit.xml ./
+            cd ~/project/
+            npm ci
+            npm -s run test:integration
+
       - run:
           name: Prepare test results
           command: |
@@ -222,7 +225,6 @@ jobs:
             mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
-          prefix: test
       - store_test_results:
           path: ./test/results
 
@@ -257,7 +259,6 @@ jobs:
           command: npm run audit:check --silent -- --json > ./audit/results/auditResults.json
       - store_artifacts:
           path: ./audit/results
-          prefix: audit
 
   audit-licenses:
     executor: default-docker
@@ -278,7 +279,6 @@ jobs:
           command: cd /tmp/license-scanner && pathToRepo=$CIRCLE_WORKING_DIRECTORY make run
       - store_artifacts:
           path: /tmp/license-scanner/results
-          prefix: licenses
 
   build-local:
     executor: default-machine
@@ -412,7 +412,6 @@ jobs:
           command: cd /tmp/license-scanner && mode=docker dockerImages=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:local make run
       - store_artifacts:
           path: /tmp/license-scanner/results
-          prefix: licenses
 
   image-scan:
     executor: anchore/anchore_engine

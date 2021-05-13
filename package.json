@@ -18,8 +18,6 @@
     "validate:api": "swagger-cli validate ./src/interface/api.yaml",
     "docker:build": "docker build -t auth-service:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 4004:4004 auth-service:local",
-    "docker:migrate": "run-s wait-4-docker migrate",
-    "docker:integration": "npm ci; npm run test:integration",
     "lint": "eslint ./src/**/*.ts *.js",
     "pretest": "echo \"pretest - TODO...\"",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
