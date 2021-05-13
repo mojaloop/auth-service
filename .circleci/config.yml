@@ -192,10 +192,10 @@ jobs:
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
-      # - run:
-      #     name: Migrate DB
-      #     command: |
-      #       docker exec -it as_auth-service npm run docker:migrate
+      - run:
+          name: Migrate DB
+          command: |
+            docker exec -it as_auth-service npm run docker:migrate
       - run:
           name: Execute integration tests
           environment:
