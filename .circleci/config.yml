@@ -182,16 +182,16 @@ jobs:
             CONFIG_FILE: "integration_db.json"
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            docker-compose up -d
+            docker-compose up -d --build
             npm run wait-4-docker 
-            npm run migrate
-            npm run test:integration
-            mkdir -p test/results
-            mv junit.xml test/results
-      - store_artifacts:
-          path: ./test/results
-      - store_test_results:
-          path: ./test/results
+            docker exec -it as_auth-service npm run migrate
+            docker exec -it as_auth-service npm run test:integration
+      #       mkdir -p test/results
+      #       mv junit.xml test/results
+      # - store_artifacts:
+      #     path: ./test/results
+      # - store_test_results:
+      #     path: ./test/results
 
   linting-check:
     executor: default-docker
