@@ -25,7 +25,9 @@ services:
       timeout: 20s
       retries: 30
       interval: 15s
-
+    extra_hosts:
+      - "as_mysql:172.17.0.1"
+  
   mysql:
     image: mysql/mysql-server
     container_name: as_mysql

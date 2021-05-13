@@ -76,7 +76,7 @@ jobs:
           name: Access npm folder as root
           command: cd $(npm root -g)/npm
       - run:
-          name: Update NPM install
+          name: NPM install
           command: npm ci
       - run:
           name: Delete build dependencies
@@ -99,8 +99,6 @@ jobs:
       - run:
           name: Execute unit tests
           command: npm run test:unit
-          environment:
-            NODE_ENV: "test"
       - run:
           name: prepare test/results
           command: |
@@ -150,8 +148,6 @@ jobs:
       - run:
           name: Execute code coverage check
           command: npm run test:coverage-check
-          environment:
-            NODE_ENV: "test"
       - store_artifacts:
           path: coverage
       - store_test_results:
@@ -204,8 +200,6 @@ jobs:
             CONFIG_FILE: "integration_db.json"
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd ~/project/
-            npm ci
             npm run wait-4-docker
             npm run migrate
       - run:
@@ -214,8 +208,6 @@ jobs:
             CONFIG_FILE: "integration_db.json"
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd ~/project/
-            npm ci
             npm -s run test:integration
 
       - run:
