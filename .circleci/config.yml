@@ -177,36 +177,15 @@ jobs:
             nvm install v12.16.1
             nvm alias default v12.16.1
       - run:
-          name: install modules
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            node --version
-            npm install
-      - run:
-          name: Create dir for test results
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            mkdir -p ./test/results
-      - run:
-          name: Build docker images
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            docker-compose up -d
-      - run:
-          name: Migrate DB
-          command: |
-            docker exec -it as_auth-service npm run docker:migrate
-      - run:
-          name: Execute integration tests
+          name: Build docker images & run integration tests
           environment:
             CONFIG_FILE: "integration_db.json"
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            npm -s run test:integration
-
-      - run:
-          name: Prepare test results
-          command: |
+            docker-compose up -d
+            npm run wait-4-docker 
+            npm run migrate
+            npm run test:integration
             mkdir -p test/results
             mv junit.xml test/results
       - store_artifacts:
