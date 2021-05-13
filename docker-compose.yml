@@ -7,11 +7,9 @@ networks:
 services:
   auth-service:
     container_name: as_auth-service
-    image: mojaloop/auth-service:local
     build:
-      context: .
-      cache_from:
-        - mojaloop/auth-service:local
+      context: ./
+      dockerfile: ./Dockerfile
     ports:
       - "4004:4004"
     networks:
