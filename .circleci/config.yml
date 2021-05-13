@@ -191,17 +191,11 @@ jobs:
           name: Build docker images
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            docker-compose pull
-            docker-compose build
             docker-compose up -d
-      - run:
-          name: Migrate DB
-          environment:
-            CONFIG_FILE: "integration_db.json"
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            npm run wait-4-docker
-            npm run migrate
+      # - run:
+      #     name: Migrate DB
+      #     command: |
+      #       docker exec -it as_auth-service npm run docker:migrate
       - run:
           name: Execute integration tests
           environment:
