@@ -31,7 +31,7 @@
  ******/
 
 import Convict from 'convict'
-import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
+import { DatabaseConfigScheme, DatabaseConfig } from './config-db'
 import PACKAGE from '../../package.json'
 import path from 'path'
 import fs, { PathLike } from 'fs'
@@ -41,7 +41,7 @@ interface ServiceConfig {
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
-  DATABASE?: DatabaseConfig;
+  DATABASE: DatabaseConfig;
   ENV: string;
   INSPECT: {
     DEPTH: number;
@@ -69,7 +69,7 @@ interface ServiceConfig {
   };
 }
 
-function getFileContent (path: PathLike): Buffer {
+export function getFileContent (path: PathLike): Buffer {
   if (!fs.existsSync(path)) {
     throw new Error('File doesn\'t exist')
   }
@@ -153,13 +153,14 @@ const ConvictConfig = Convict<ServiceConfig>({
         key: ''
       }
     }
-  }
+  },
+  DATABASE: DatabaseConfigScheme
 })
 
 // Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
 
-ConvictConfig.loadFile(path.join(__dirname, `/../../config/${env}.json`))
+ConvictConfig.loadFile(path.resolve(__dirname, `../../config/${env}.json`))
 ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets
@@ -173,12 +174,8 @@ ConvictConfig.set('SHARED.TLS.creds.key', getFileListContent(ConvictConfig.get('
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()
 
-// Inject DBConfig into shared config
-config.DATABASE = DBConfig
-
 export default config
 export {
   PACKAGE,
-  ServiceConfig,
-  DatabaseConfig
+  ServiceConfig
 }

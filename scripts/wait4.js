@@ -119,7 +119,7 @@ function getConvictConfig (waitJob) {
   }
 
   // acquire rc parameters
-  const configPath = `../config/${environment}_db.json`
+  const configPath = `../config/${environment}.json`
   return require(configPath)
 }
 
@@ -151,7 +151,7 @@ async function methodMongoDB (waitJob, RC) {
  */
 async function methodMySQL (waitJob, CC) {
   // make connection to MySQL using `knex`
-  const knex = require('knex')(CC)
+  const knex = require('knex')(CC.DATABASE)
   await knex.select(1)
 
   return waitJob
