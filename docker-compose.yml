@@ -1,13 +1,18 @@
 version: "3.7"
 
+networks:
+  mojaloop-net:
+    name: mojaloop-net
+
 services:
   auth-service:
     container_name: as_auth-service
     build:
       context: ./
       dockerfile: ./Dockerfile
-    command: sh -c "/opt/auth-service/wait4/wait4.js cicd-integration-tests && npm run start"
-
+    command: sh -c "node /opt/auth-service/scripts/wait4.js auth-service && npm run start"
+    networks:
+      - mojaloop-net
     ports:
       - "4004:4004"
     depends_on:
@@ -21,14 +26,14 @@ services:
       timeout: 20s
       retries: 30
       interval: 15s
-    extra_hosts:
-      - "as_mysql:172.17.0.1"
   
   mysql:
     image: mysql/mysql-server
     container_name: as_mysql
     ports:
       - "3306:3306"
+    networks:
+      - mojaloop-net
     volumes:
       - ./docker/sql-init/:/docker-entrypoint-initdb.d/
     environment:
