@@ -80,7 +80,7 @@ const conflictingConsent: Consent = {
   credentialPayload: 'dwuduwd&e2idjoj0w'
 }
 
-const expectedPartialConsent: object = {
+const expectedPartialConsent = {
   id: '1234',
   status: 'ACTIVE',
   initiatorId: 'pisp-2342-2233',
@@ -102,7 +102,7 @@ describe('src/model/consent', (): void => {
   let consentDB: ConsentDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(Config.DATABASE as object)
+    Db = Knex(Config.DATABASE)
     consentDB = new ConsentDB(Db)
     await Db.seed.run()
   })
@@ -212,7 +212,7 @@ describe('src/model/consent', (): void => {
             id: completeConsent.id
           })
 
-        const expectedConsent: object = {
+        const expectedConsent = {
           // Conflicting fields (initiatorId, participantId) are still the same
           ...partialConsent,
           createdAt: expect.any(Date),
@@ -244,7 +244,7 @@ describe('src/model/consent', (): void => {
             id: completeConsent.id
           })
 
-        const expectedConsent: object = {
+        const expectedConsent = {
           // Conflicting fields (initiatorId, participantId) are still the same
           // Even other fields are the same
           ...completeConsent,
@@ -314,7 +314,7 @@ describe('src/model/consent', (): void => {
 
     it('deletes associated scopes on deleting a consent',
       async (): Promise<void> => {
-        const tempScopes: object[] = [
+        const tempScopes = [
           {
             consentId: '1234',
             action: 'accounts.transfer',

@@ -37,9 +37,9 @@ import Knex from 'knex'
 import { closeKnexConnection } from '~/lib/db'
 import Config from '~/shared/config'
 import * as Scopes from '~/lib/scopes'
-import { 
-  NotFoundError, 
-  RevokedConsentModificationError 
+import {
+  NotFoundError,
+  RevokedConsentModificationError
 } from '~/model/errors'
 import {
   ChallengeMismatchError,
@@ -52,12 +52,12 @@ describe('server/domain/consents/{ID}', (): void => {
   afterAll(async (): Promise<void> => {
     await closeKnexConnection()
   })
-  
+
   describe('retrieveValidConsent', (): void => {
     let db: Knex<unknown[]>
     beforeAll(async (): Promise<void> => {
       // Seed the database before we can test for retrieval functions
-      db = Knex(Config.DATABASE as object);
+      db = Knex(Config.DATABASE)
       await db.seed.run()
     })
 
@@ -66,7 +66,7 @@ describe('server/domain/consents/{ID}', (): void => {
     })
 
     it('should retrieve a valid consent without any errors', async (): Promise<void> => {
-      const consentChallenge = consents[2].credentialChallenge!! // Non-null guaranteed by contents of seed file
+      const consentChallenge = consents[2].credentialChallenge! // Non-null guaranteed by contents of seed file
       const returnedConsent: Consent = await retrieveValidConsent(consents[2].id, consentChallenge)
       expect(returnedConsent.id).toStrictEqual(consents[2].id)
     })
@@ -97,7 +97,7 @@ describe('server/domain/consents/{ID}', (): void => {
 
     beforeAll(async (): Promise<void> => {
       // Seed the database before we can test for retrieval functions
-      db = Knex(Config.DATABASE as object);
+      db = Knex(Config.DATABASE)
       await db.seed.run()
     })
 
@@ -107,24 +107,24 @@ describe('server/domain/consents/{ID}', (): void => {
 
     it('should update a consent with valid credentials without any errors',
       async (): Promise<void> => {
-        const consentWithPendingCred = consents[1];
+        const consentWithPendingCred = consents[1]
         const toBeUpdated: Consent = {
           id: consentWithPendingCred.id,
           initiatorId: consentWithPendingCred.initiatorId,
           participantId: consentWithPendingCred.participantId,
           status: consentWithPendingCred.status,
-          credentialId: consentWithPendingCred.credentialId!!,
-          credentialType: consentWithPendingCred.credentialType!!,
-          credentialStatus: consentWithPendingCred.credentialStatus!!,
-          credentialChallenge: consentWithPendingCred.credentialChallenge!!,
+          credentialId: consentWithPendingCred.credentialId!,
+          credentialType: consentWithPendingCred.credentialType!,
+          credentialStatus: consentWithPendingCred.credentialStatus!,
+          credentialChallenge: consentWithPendingCred.credentialChallenge!
         }
 
         const credentialVerified: ConsentCredential = {
           credentialType: 'FIDO',
-          credentialId: consentWithPendingCred.credentialId!!,
+          credentialId: consentWithPendingCred.credentialId!,
           credentialStatus: CredentialStatusEnum.VERIFIED,
           credentialPayload: 'string_representing_credential_payload',
-          credentialChallenge: consentWithPendingCred.credentialChallenge!!
+          credentialChallenge: consentWithPendingCred.credentialChallenge!
         }
 
         const numUpdatedRows = await updateConsentCredential(toBeUpdated, credentialVerified)
@@ -134,25 +134,25 @@ describe('server/domain/consents/{ID}', (): void => {
     it('should propagate NotFoundError in consentDB update',
       async (): Promise<void> => {
         const nonexistentId = '200'
-        const consentWithPendingCred = consents[1];
+        const consentWithPendingCred = consents[1]
         const toBeUpdated: Consent = {
           id: nonexistentId,
           initiatorId: consentWithPendingCred.initiatorId,
           participantId: consentWithPendingCred.participantId,
           status: consentWithPendingCred.status,
-          credentialId: consentWithPendingCred.credentialId!!,
-          credentialType: consentWithPendingCred.credentialType!!,
-          credentialStatus: consentWithPendingCred.credentialStatus!!,
-          credentialChallenge: consentWithPendingCred.credentialChallenge!!,
+          credentialId: consentWithPendingCred.credentialId!,
+          credentialType: consentWithPendingCred.credentialType!,
+          credentialStatus: consentWithPendingCred.credentialStatus!,
+          credentialChallenge: consentWithPendingCred.credentialChallenge!
         }
 
         // This credential doesn't matter since we're expecting an error
         const credentialVerified: ConsentCredential = {
           credentialType: 'FIDO',
-          credentialId: consentWithPendingCred.credentialId!!,
+          credentialId: consentWithPendingCred.credentialId!,
           credentialStatus: CredentialStatusEnum.VERIFIED,
           credentialPayload: 'string_representing_credential_payload',
-          credentialChallenge: consentWithPendingCred.credentialChallenge!!
+          credentialChallenge: consentWithPendingCred.credentialChallenge!
         }
 
         await expect(updateConsentCredential(toBeUpdated, credentialVerified))
@@ -162,25 +162,25 @@ describe('server/domain/consents/{ID}', (): void => {
 
     it('should propagate and convert revoked consent error in consentDB update',
       async (): Promise<void> => {
-        const revokedConsent = consents[3];
+        const revokedConsent = consents[3]
         const toBeUpdated: Consent = {
           id: revokedConsent.id,
           initiatorId: revokedConsent.initiatorId,
           participantId: revokedConsent.participantId,
           status: revokedConsent.status,
-          credentialId: revokedConsent.credentialId!!,
-          credentialType: revokedConsent.credentialType!!,
-          credentialStatus: revokedConsent.credentialStatus!!,
-          credentialChallenge: revokedConsent.credentialChallenge!!,
+          credentialId: revokedConsent.credentialId!,
+          credentialType: revokedConsent.credentialType!,
+          credentialStatus: revokedConsent.credentialStatus!,
+          credentialChallenge: revokedConsent.credentialChallenge!
         }
 
         // This credential doesn't matter since we're expecting an error
         const credentialVerified: ConsentCredential = {
           credentialType: 'FIDO',
-          credentialId: revokedConsent.credentialId!!,
+          credentialId: revokedConsent.credentialId!,
           credentialStatus: CredentialStatusEnum.VERIFIED,
           credentialPayload: 'string_representing_credential_payload',
-          credentialChallenge: revokedConsent.credentialChallenge!!
+          credentialChallenge: revokedConsent.credentialChallenge!
         }
 
         await expect(updateConsentCredential(toBeUpdated, credentialVerified))
@@ -197,10 +197,10 @@ describe('server/domain/consents/{ID}', (): void => {
           initiatorId: consents[1].initiatorId,
           participantId: consents[1].participantId,
           status: consents[1].status,
-          credentialId: consents[1].credentialId!!,
-          credentialType: consents[1].credentialType!!,
-          credentialStatus: consents[1].credentialStatus!!,
-          credentialChallenge: consents[1].credentialChallenge!!,
+          credentialId: consents[1].credentialId!,
+          credentialType: consents[1].credentialType!,
+          credentialStatus: consents[1].credentialStatus!,
+          credentialChallenge: consents[1].credentialChallenge!
         }
 
         const mockConvertScopesToExternal = jest.spyOn(Scopes, 'convertScopesToExternal')
@@ -237,22 +237,22 @@ describe('server/domain/consents/{ID}', (): void => {
           }
         }
 
-        const req = await buildConsentRequestBody(consent, signature, publicKey);
+        const req = await buildConsentRequestBody(consent, signature, publicKey)
         expect(req).toStrictEqual(requestBody)
       })
 
     it('should propagate scope retrieval error.',
       async (): Promise<void> => {
-        const nonexistentConsentId = '200';
+        const nonexistentConsentId = '200'
         const consent: Consent = {
           id: nonexistentConsentId,
           initiatorId: consents[2].initiatorId,
           participantId: consents[2].participantId,
           status: consents[2].status,
-          credentialId: consents[2].credentialId!!,
-          credentialType: consents[2].credentialType!!,
-          credentialStatus: consents[2].credentialStatus!!,
-          credentialChallenge: consents[2].credentialChallenge!!,
+          credentialId: consents[2].credentialId!,
+          credentialType: consents[2].credentialType!,
+          credentialStatus: consents[2].credentialStatus!,
+          credentialChallenge: consents[2].credentialChallenge!
         }
         await expect(buildConsentRequestBody(consent, 'string_representing_signature', 'string_representing_publicKey'))
           .rejects

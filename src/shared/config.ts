@@ -31,7 +31,7 @@
  ******/
 
 import Convict from 'convict'
-import DBConfig, { DatabaseConfig } from '~/../config/knexfile'
+import { DatabaseConfigScheme, DatabaseConfig } from './config-db'
 import PACKAGE from '../../package.json'
 import path from 'path'
 import fs, { PathLike } from 'fs'
@@ -41,7 +41,7 @@ interface ServiceConfig {
   PORT: number;
   HOST: string;
   PARTICIPANT_ID: string;
-  DATABASE?: DatabaseConfig;
+  DATABASE: DatabaseConfig;
   ENV: string;
   INSPECT: {
     DEPTH: number;
@@ -57,7 +57,7 @@ interface ServiceConfig {
     THIRDPARTY_REQUESTS_ENDPOINT?: string;
     TRANSACTION_REQUEST_ENDPOINT?: string;
     JWS_SIGN: boolean;
-    JWS_SIGNING_KEY: PathLike | Buffer;
+    JWS_SIGNING_KEY: Buffer | string;
     WSO2_AUTH: {
       staticToken: string;
       tokenEndpoint: string;
@@ -69,7 +69,7 @@ interface ServiceConfig {
   };
 }
 
-function getFileContent (path: PathLike): Buffer {
+export function getFileContent (path: PathLike): Buffer {
   if (!fs.existsSync(path)) {
     throw new Error('File doesn\'t exist')
   }
@@ -153,32 +153,39 @@ const ConvictConfig = Convict<ServiceConfig>({
         key: ''
       }
     }
-  }
+  },
+  DATABASE: DatabaseConfigScheme
 })
 
 // Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
-
-ConvictConfig.loadFile(path.join(__dirname, `/../../config/${env}.json`))
+console.log('NODE_ENV:', env)
+const configPath = path.resolve(__dirname, `../../config/${env}.json`)
+console.log('loading configuration from:', configPath)
+ConvictConfig.loadFile(configPath)
 ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets
-ConvictConfig.set('SHARED.JWS_SIGNING_KEY', getFileContent(ConvictConfig.get('SHARED').JWS_SIGNING_KEY))
+ConvictConfig.set('SHARED.JWS_SIGNING_KEY',
+  getFileContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').JWS_SIGNING_KEY as string))
+)
 
 // Note: Have not seen these be comma seperated value strings. mimicking sdk-scheme-adapter for now
-ConvictConfig.set('SHARED.TLS.creds.ca', getFileListContent(ConvictConfig.get('SHARED').TLS.creds.ca as string))
-ConvictConfig.set('SHARED.TLS.creds.cert', getFileListContent(ConvictConfig.get('SHARED').TLS.creds.cert as string))
-ConvictConfig.set('SHARED.TLS.creds.key', getFileListContent(ConvictConfig.get('SHARED').TLS.creds.key as string))
+ConvictConfig.set('SHARED.TLS.creds.ca',
+  getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.ca as string))
+)
+ConvictConfig.set('SHARED.TLS.creds.cert',
+  getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.cert as string))
+)
+ConvictConfig.set('SHARED.TLS.creds.key',
+  getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.key as string))
+)
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()
 
-// Inject DBConfig into shared config
-config.DATABASE = DBConfig
-
 export default config
 export {
   PACKAGE,
-  ServiceConfig,
-  DatabaseConfig
+  ServiceConfig
 }

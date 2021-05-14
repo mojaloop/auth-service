@@ -32,5 +32,21 @@
         "key": "./secrets/client.crt"
       }
     }
+  },
+  "DATABASE": {
+    "client": "sqlite3",
+    "connection": ":memory:",
+    "useNullAsDefault": true,
+    "migrations": {
+      "tableName": "auth-service",
+      "loadExtensions": [
+        ".ts"
+      ]
+    },
+    "seeds": {
+      "loadExtensions": [
+        ".ts"
+      ]
+    }
   }
 }

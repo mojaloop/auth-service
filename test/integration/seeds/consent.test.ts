@@ -31,7 +31,7 @@ describe('testing Consent table', (): void => {
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.DATABASE as object)
+    db = knex(Config.DATABASE)
     await db.seed.run()
   })
 
@@ -86,7 +86,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
   let db: knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
-    db = knex(Config.DATABASE as object)
+    db = knex(Config.DATABASE)
   })
 
   afterAll(async (): Promise<void> => {
