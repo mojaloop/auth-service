@@ -57,7 +57,7 @@ interface ServiceConfig {
     THIRDPARTY_REQUESTS_ENDPOINT?: string;
     TRANSACTION_REQUEST_ENDPOINT?: string;
     JWS_SIGN: boolean;
-    JWS_SIGNING_KEY: string;
+    JWS_SIGNING_KEY: Buffer | string;
     WSO2_AUTH: {
       staticToken: string;
       tokenEndpoint: string;
@@ -167,7 +167,7 @@ ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets
 ConvictConfig.set('SHARED.JWS_SIGNING_KEY',
-  getFileContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').JWS_SIGNING_KEY))
+  getFileContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').JWS_SIGNING_KEY as string))
 )
 
 // Note: Have not seen these be comma seperated value strings. mimicking sdk-scheme-adapter for now
