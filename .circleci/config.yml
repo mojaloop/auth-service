@@ -171,8 +171,6 @@ jobs:
     executor: default-machine
     steps:
       - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Set up NVM
           command: |
@@ -185,7 +183,7 @@ jobs:
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             node --version
-            npm install
+            npm ci
       - run:
           name: Create dir for test results
           command: |
