@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.3.2](https://github.com/mojaloop/auth-service/compare/v11.3.1...v11.3.2) (2021-05-14)
+
+
+### Code Refactor
+
+* **config:** merge db & service config into one ([#67](https://github.com/mojaloop/auth-service/issues/67)) ([a0ecf8a](https://github.com/mojaloop/auth-service/commit/a0ecf8ac1cfb71397c2e9e2341c528785e36de72))
+
 ### [11.3.1](https://github.com/mojaloop/auth-service/compare/v11.3.0...v11.3.1) (2021-05-12)
 
 
