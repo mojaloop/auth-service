@@ -50,7 +50,7 @@ const configRequest: BaseRequestConfigType = {
   transactionRequestsEndpoint: Config.SHARED.TRANSACTION_REQUEST_ENDPOINT,
   tls: Config.SHARED.TLS,
   jwsSign: Config.SHARED.JWS_SIGN,
-  jwsSigningKey: Config.SHARED.JWS_SIGNING_KEY
+  jwsSigningKey: Config.SHARED.JWS_SIGNING_KEY as Buffer
 }
 
 const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
