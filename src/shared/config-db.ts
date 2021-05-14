@@ -198,7 +198,7 @@ export const DatabaseConfigScheme = {
   connection: {
     doc: 'Connection object specifying properties like host, port, user etc.',
     format: DbConnectionFormat.name,
-    default: ':memory:'
+    default: null
   },
   pool: {
     doc: 'Pool object specifying tarn pool properties',
