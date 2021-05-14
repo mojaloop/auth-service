@@ -108,7 +108,6 @@ jobs:
             mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
-          prefix: test
       - store_test_results:
           path: ./test/results
 
@@ -132,7 +131,6 @@ jobs:
             mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
-          prefix: test
       - store_test_results:
           path: ./test/results
 
@@ -156,7 +154,6 @@ jobs:
             NODE_ENV: "test"
       - store_artifacts:
           path: coverage
-          prefix: test
       - store_test_results:
           path: coverage
       - run:
@@ -225,7 +222,6 @@ jobs:
             mv junit.xml test/results
       - store_artifacts:
           path: ./test/results
-          prefix: test
       - store_test_results:
           path: ./test/results
 
@@ -260,7 +256,6 @@ jobs:
           command: npm run audit:check --silent -- --json > ./audit/results/auditResults.json
       - store_artifacts:
           path: ./audit/results
-          prefix: audit
 
   audit-licenses:
     executor: default-docker
@@ -281,7 +276,6 @@ jobs:
           command: cd /tmp/license-scanner && pathToRepo=$CIRCLE_WORKING_DIRECTORY make run
       - store_artifacts:
           path: /tmp/license-scanner/results
-          prefix: licenses
 
   build-local:
     executor: default-machine
