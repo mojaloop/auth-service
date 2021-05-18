@@ -32,11 +32,13 @@ import ErrorHandling from '@mojaloop/central-services-error-handling'
 import { Util } from '@mojaloop/central-services-shared'
 import Good from './good'
 import OpenAPI from './openAPI'
+import { StatePlugin } from './state'
 
 async function register (server: Server): Promise<Server> {
   const openapiBackend = await OpenAPI.initialize()
 
   const plugins = [
+    StatePlugin,
     Util.Hapi.OpenapiBackendValidator,
     Good,
     openapiBackend,
@@ -74,6 +76,7 @@ async function register (server: Server): Promise<Server> {
 export interface Context {
   method: HapiUtil.HTTP_METHODS_PARTIAL_LOWERCASE;
   path: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   body: StreamReadable | Buffer | string | object;
   query: RequestQuery;
   headers: HapiUtil.Dictionary<string>;

@@ -56,6 +56,7 @@ interface ServiceConfig {
     BULK_TRANSFERS_ENDPOINT?: string;
     THIRDPARTY_REQUESTS_ENDPOINT?: string;
     TRANSACTION_REQUEST_ENDPOINT?: string;
+    DFSP_ID: string
     JWS_SIGN: boolean;
     JWS_SIGNING_KEY: Buffer | string;
     WSO2_AUTH: {
@@ -136,6 +137,11 @@ const ConvictConfig = Convict<ServiceConfig>({
     TRANSACTION_REQUEST_ENDPOINT: '',
     JWS_SIGN: false,
     JWS_SIGNING_KEY: '',
+    DFSP_ID: {
+      doc: 'Id of DFSP',
+      format: String,
+      default: 'auth-service'
+    },
     WSO2_AUTH: {
       staticToken: '',
       tokenEndpoint: '',
