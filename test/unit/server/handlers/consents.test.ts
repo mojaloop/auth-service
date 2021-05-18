@@ -25,22 +25,19 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { Request, ResponseToolkit } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { post } from '~/server/handlers/consents'
 import { requestWithPayloadScopes, h } from 'test/data/data'
 import { createAndStoreConsent as mockStoreConsent } from '~/domain/consents'
 import { mocked } from 'ts-jest/utils'
-import { putConsentError } from '~/domain/errors'
+import { ThirdpartyRequests } from '@mojaloop/sdk-standard-components'
 
 jest.mock('~/domain/consents', () => ({
   createAndStoreConsent: jest.fn(() => Promise.resolve())
 }))
 
 jest.mock('~/domain/errors')
-
-// mocking logger brings unresolved promise rejection
-// jest.mock('~/shared/logger')
 
 describe('server/handlers/consents', (): void => {
   it('Should return 202 success code',
@@ -55,7 +52,7 @@ describe('server/handlers/consents', (): void => {
           headers: req.headers
         },
         req,
-        h as ResponseToolkit
+        h
       )
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       setImmediate(() => {
@@ -66,8 +63,13 @@ describe('server/handlers/consents', (): void => {
 
   it('Should throw an error due to error in creating/storing consent & scopes',
     async (done): Promise<void> => {
+      const thirdpartyRequestsMock: ThirdpartyRequests = {
+        putConsent: jest.fn().mockResolvedValue(1),
+        putConsentsError: jest.fn().mockResolvedValue(1)
+      } as unknown as ThirdpartyRequests
       mocked(mockStoreConsent).mockRejectedValueOnce(
         new Error('Error Registering Consent'))
+      mocked(h.getThirdpartyRequests).mockImplementationOnce(() => thirdpartyRequestsMock)
       const req = requestWithPayloadScopes as Request
       const response = await post(
         {
@@ -78,11 +80,11 @@ describe('server/handlers/consents', (): void => {
           headers: req.headers
         },
         req,
-        h as ResponseToolkit)
+        h)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       setImmediate(() => {
         expect(mocked(mockStoreConsent)).toHaveBeenLastCalledWith(requestWithPayloadScopes)
-        expect(mocked(putConsentError)).toHaveBeenCalled()
+        expect(mocked(thirdpartyRequestsMock.putConsentsError)).toHaveBeenCalled()
         done()
       })
     })

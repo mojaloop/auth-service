@@ -1,8 +1,9 @@
 import { Consent, ConsentCredential } from '~/model/consent'
 import { ExternalScope } from '~/lib/scopes'
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseObject } from '@hapi/hapi'
 import { Scope } from '~/model/scope'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import { StateResponseToolkit } from '~/server/plugins/state'
 
 /*
  * Mock Request Resources
@@ -90,9 +91,7 @@ export const requestNoHeaders: Request = {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export const h: ResponseToolkit = {
+export const h: StateResponseToolkit = {
   response: (): ResponseObject => {
     return {
       code: (num: number): ResponseObject => {
@@ -101,8 +100,13 @@ export const h: ResponseToolkit = {
         } as unknown as ResponseObject
       }
     } as unknown as ResponseObject
-  }
-}
+  },
+  getLogger: jest.fn(),
+  getMojaloopRequests: jest.fn(),
+  getThirdpartyRequests: jest.fn(),
+  getWSO2Auth: jest.fn(),
+  getDFSPId: jest.fn()
+} as unknown as StateResponseToolkit
 
 /*
  * Mock Consent Resources

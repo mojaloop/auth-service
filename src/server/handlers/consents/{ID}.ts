@@ -26,12 +26,10 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseObject } from '@hapi/hapi'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { logger } from '~/shared/logger'
 import { Context } from '~/server/plugins'
-import * as SDKStandardComponents from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '~/lib/requests'
 import {
   retrieveValidConsent,
   updateConsentCredential,
@@ -39,13 +37,14 @@ import {
 } from '~/domain/consents/{ID}'
 import { verifySignature } from '~/lib/challenge'
 import { Enum } from '@mojaloop/central-services-shared'
+import { ThirdpartyRequests } from '@mojaloop/sdk-standard-components'
 import { CredentialStatusEnum } from '~/model/consent/consent'
-import { 
-  InvalidSignatureError, 
-  SignatureVerificationError, 
-  putConsentError, 
-  isMojaloopError 
+import {
+  InvalidSignatureError,
+  SignatureVerificationError,
+  isMojaloopError
 } from '~/domain/errors'
+import { StateResponseToolkit } from '~/server/plugins/state'
 
 export interface UpdateCredentialRequest {
   credential: {
@@ -63,7 +62,8 @@ export interface UpdateCredentialRequest {
 export async function validateAndUpdateConsent (
   consentId: string,
   request: UpdateCredentialRequest,
-  destinationParticipantId: string): Promise<void> {
+  destinationParticipantId: string,
+  thirdpartyRequests: ThirdpartyRequests): Promise<void> {
   const {
     credential: {
       challenge: {
@@ -84,7 +84,7 @@ export async function validateAndUpdateConsent (
     try {
       verifyResult = verifySignature(challenge, signature, publicKey)
     } catch (error) {
-      logger.push({error}).error('Error: Signature validity was not determined.')
+      logger.push({ error }).error('Error: Signature validity was not determined.')
       throw new SignatureVerificationError(consentId)
     }
 
@@ -103,8 +103,8 @@ export async function validateAndUpdateConsent (
     await updateConsentCredential(consent, credential)
 
     /* Outbound PUT consents/{ID} call */
-    const consentBody: SDKStandardComponents.PutConsentsRequest = await buildConsentRequestBody(consent, signature, publicKey)
-    await thirdPartyRequest
+    const consentBody = await buildConsentRequestBody(consent, signature, publicKey)
+    await thirdpartyRequests
       .putConsents(
         consent.id,
         consentBody,
@@ -112,20 +112,20 @@ export async function validateAndUpdateConsent (
       )
   } catch (error) {
     logger.push({ error }).error('Error: Outgoing PUT consents/{ID} call not made')
-    if(isMojaloopError(error)) {
-      await putConsentError(consentId, error, destinationParticipantId)
+    if (isMojaloopError(error)) {
+      await thirdpartyRequests.putConsentsError(consentId, { errorInformation: error }, destinationParticipantId)
     }
   }
 }
 
-export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+export async function put (_context: Context, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   const consentId = request.params.ID
   const updateConsentRequest = request.payload as UpdateCredentialRequest
   // The DFSP we need to reply to
   const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
   // Note: not awaiting promise here
-  validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId)
+  validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId, h.getThirdpartyRequests())
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }

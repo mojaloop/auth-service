@@ -62,28 +62,29 @@ export async function putAuthorizationErrorRequest (
 /*
  * Domain function make an error request using Mojaloop internal codes
  */
-export async function putConsentError (
-  consentId: string,
-  error: TErrorInformation,
-  destParticipantId: string): Promise<void> {
-  const errorInfoObj: TErrorInformationObject = {
-    errorInformation: {
-      errorCode: error.errorCode,
-      errorDescription: error.errorDescription
-    }
-  }
+// TODO: cleanup
+// export async function putConsentError(
+//   consentId: string,
+//   error: TErrorInformation,
+//   destParticipantId: string): Promise<void> {
+//   const errorInfoObj: TErrorInformationObject = {
+//     errorInformation: {
+//       errorCode: error.errorCode,
+//       errorDescription: error.errorDescription
+//     }
+//   }
 
-  try {
-    await
-    thirdPartyRequest.putConsentsError(
-      consentId,
-      errorInfoObj,
-      destParticipantId
-    )
-  } catch (error) {
-    logger.push({ error }).error('Could not make putConsentsError request')
-  }
-}
+//   try {
+//     await
+//     thirdPartyRequest.putConsentsError(
+//       consentId,
+//       errorInfoObj,
+//       destParticipantId
+//     )
+//   } catch (error) {
+//     logger.push({ error }).error('Could not make putConsentsError request')
+//   }
+// }
 
 // TODO: Replace all codes with agreed on codes
 export class ChallengeMismatchError extends Error implements TErrorInformation {
