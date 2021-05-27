@@ -26,13 +26,12 @@
  --------------
  ******/
 
-import { logger } from '~/shared/logger'
-import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Context } from '../plugins'
-import {
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+import { Enum } from '@mojaloop/central-services-shared'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+
+import { logger } from '~/shared/logger'
+import { Context } from '~/server/plugins'
 import { createAndStoreConsent } from '~/domain/consents'
 import { putConsentError } from '~/domain/errors'
 
@@ -44,14 +43,22 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
+  const payload: tpAPI.Schemas.ConsentsPostRequest = request.payload as tpAPI.Schemas.ConsentsPostRequest
+  const consentId = payload.consentId
+  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const participantId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
-      await createAndStoreConsent(request)
+      await createAndStoreConsent(
+        consentId,
+        initiatorId,
+        participantId,
+        payload.scopes
+      )
     } catch (error) {
       logger.push(error).error('Error: Unable to create/store consent')
-      const consentId = (request.payload as tpAPI.Schemas.ConsentsPostRequest).consentId
-      const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       await putConsentError(consentId, error, participantId)
     }
   })

@@ -47,6 +47,11 @@ const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
 
 describe('server/domain/consents', (): void => {
+  const consentId = requestWithPayloadScopes.params.ID
+  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
+  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
+  const scopesExternal: ScopeFunction.ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>).scopes as unknown as ScopeFunction.ExternalScope[]
+
   beforeAll((): void => {
     mockInsertConsent.mockResolvedValue(true)
     mockInsertScopes.mockResolvedValue(true)
@@ -62,7 +67,7 @@ describe('server/domain/consents', (): void => {
     expect(logger.push({})).toBeDefined()
   })
   it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .resolves
       .toBe(undefined)
 
@@ -74,9 +79,9 @@ describe('server/domain/consents', (): void => {
   it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
     const testError = new Error('Unable to Register Consent')
     mockInsertConsent.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .rejects
-      .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
+      .toThrowError(new DatabaseError(consentId))
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
@@ -87,9 +92,9 @@ describe('server/domain/consents', (): void => {
   it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
     const testError = new Error('Unable to Register Scopes')
     mockInsertScopes.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .rejects
-      .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
+      .toThrowError(new DatabaseError(consentId))
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)

@@ -34,33 +34,32 @@
  --------------
  ******/
 
-import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '../lib/db'
 import { Scope } from '../model/scope'
 import { Consent } from '../model/consent'
 import { logger } from '~/shared/logger'
-import { Enum } from '@mojaloop/central-services-shared'
-import { convertExternalToScope } from '../lib/scopes'
+import { convertExternalToScope, ExternalScope } from '../lib/scopes'
 import { DatabaseError } from './errors'
-import {
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
 
 /**
  * Builds internal Consent and Scope objects from request payload
  * Stores the objects in the database
  * @param request request received from switch
  */
-export async function createAndStoreConsent (request: Request): Promise<void> {
-  const payload = request.payload as tpAPI.Schemas.ConsentsPostRequest
+export async function createAndStoreConsent (
+  consentId: string,
+  initiatorId: string,
+  participantId: string,
+  externalScopes: ExternalScope[]
+): Promise<void> {
   const consent: Consent = {
-    id: payload.consentId,
-    initiatorId: request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
-    participantId: request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
+    id: consentId,
+    initiatorId,
+    participantId,
     status: 'ACTIVE'
   }
 
-  const scopes: Scope[] = convertExternalToScope(payload.scopes, consent.id)
+  const scopes: Scope[] = convertExternalToScope(externalScopes, consentId)
 
   try {
     await consentDB.insert(consent)

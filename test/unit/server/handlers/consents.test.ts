@@ -27,12 +27,13 @@
  ******/
 import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import { post } from '~/server/handlers/consents'
-import { requestWithPayloadScopes, h } from 'test/data/data'
-import { createAndStoreConsent as mockStoreConsent } from '~/domain/consents'
 import { mocked } from 'ts-jest/utils'
-import { putConsentError } from '~/domain/errors'
 
+import { post } from '~/server/handlers/consents'
+import { createAndStoreConsent as mockStoreConsent } from '~/domain/consents'
+import { putConsentError } from '~/domain/errors'
+import { requestWithPayloadScopes, h } from 'test/data/data'
+import { ExternalScope } from '~/lib/scopes'
 jest.mock('~/domain/consents', () => ({
   createAndStoreConsent: jest.fn(() => Promise.resolve())
 }))
@@ -43,6 +44,12 @@ jest.mock('~/domain/errors')
 // jest.mock('~/shared/logger')
 
 describe('server/handlers/consents', (): void => {
+  const consentId = requestWithPayloadScopes.params.ID
+  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
+  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
+  const scopesExternal: ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>)
+    .scopes as unknown as ExternalScope[]
+
   it('Should return 202 success code',
     async (done): Promise<void> => {
       const req = requestWithPayloadScopes as Request
@@ -59,7 +66,7 @@ describe('server/handlers/consents', (): void => {
       )
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       setImmediate(() => {
-        expect(mockStoreConsent).toHaveBeenCalledWith(requestWithPayloadScopes)
+        expect(mockStoreConsent).toHaveBeenCalledWith(consentId, initiatorId, participantId, scopesExternal)
         done()
       })
     })
@@ -81,7 +88,7 @@ describe('server/handlers/consents', (): void => {
         h as ResponseToolkit)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
       setImmediate(() => {
-        expect(mocked(mockStoreConsent)).toHaveBeenLastCalledWith(requestWithPayloadScopes)
+        expect(mocked(mockStoreConsent)).toHaveBeenLastCalledWith(consentId, initiatorId, participantId, scopesExternal)
         expect(mocked(putConsentError)).toHaveBeenCalled()
         done()
       })
