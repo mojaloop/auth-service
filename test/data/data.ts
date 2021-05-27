@@ -25,21 +25,23 @@ export const request: Request = {
 export const requestWithPayloadScopes: Request = {
   headers: {
     'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
+    'fspiop-destination': 'dfsp-3333-2123',
+    accept: 'application/json',
+    date: new Date().toISOString()
   },
   params: {
     ID: 'b51ec534-ee48-4575-b6a9-ead2955b8069'
   },
   payload: {
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-    consentRequestId: 'dfsp-3333-2123',
+    consentRequestId: 'b51ec534-ee48-4575-b6a9-ead2955b806a',
     scopes: [{
       accountId: 'as2342',
-      actions: ['account.getAccess', 'account.transferMoney']
+      actions: ['accounts.getBalance', 'accounts.transfer']
     },
     {
       accountId: 'as22',
-      actions: ['account.getAccess']
+      actions: ['accounts.getBalance']
     }
     ]
   }
@@ -170,11 +172,11 @@ export const completeConsentActiveNoCredentialID: Consent = {
 */
 export const externalScopes: ExternalScope[] = [{
   accountId: 'as2342',
-  actions: ['account.getAccess', 'account.transferMoney']
+  actions: ['accounts.getBalance', 'accounts.transfer']
 },
 {
   accountId: 'as22',
-  actions: ['account.getAccess']
+  actions: ['accounts.getBalance']
 }
 ]
 
@@ -182,19 +184,19 @@ export const scopes: Scope[] = [{
   id: 123234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 },
 {
   id: 232234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
-  action: 'account.transferMoney'
+  action: 'accounts.transfer'
 },
 {
   id: 234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as22',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 }
 ]
 

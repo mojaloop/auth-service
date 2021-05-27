@@ -26,7 +26,6 @@
  --------------
  ******/
 
-import { logger } from '~/shared/logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { Request, ResponseObject } from '@hapi/hapi'
 import { Context } from '../plugins'
@@ -44,17 +43,23 @@ export async function post (
   _context: Context,
   request: Request,
   h: StateResponseToolkit): Promise<ResponseObject> {
+  const logger = h.getLogger()
   // Asynchronously deals with creation and storing of consents and scope
+  console.log('HERE0')
   setImmediate(async (): Promise<void> => {
     try {
+      console.log('HERE1')
       await createAndStoreConsent(request)
+      console.log('HERE2')
     } catch (error) {
+      console.log('HERE3')
       logger.push(error).error('Error: Unable to create/store consent')
       const consentId = (request.payload as tpAPI.Schemas.ConsentsPostRequest).consentId
       const participantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       h.getThirdpartyRequests().putConsentsError(consentId, { errorInformation: error }, participantId)
     }
   })
+  console.log('HERE9')
 
   // Return Success code informing source: request received
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)

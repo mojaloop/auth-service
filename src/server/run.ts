@@ -35,5 +35,6 @@ export default async function run (config: ServiceConfig): Promise<Server> {
   const server = await create(config)
   await plugins.register(server)
   await extensions.register(server)
-  return start(server)
+  await start(server)
+  return server
 }
