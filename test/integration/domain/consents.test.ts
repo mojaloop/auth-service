@@ -24,19 +24,28 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Kenneth Zeng <kkzeng@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 import { createAndStoreConsent } from '~/domain/consents'
 import { closeKnexConnection } from '~/lib/db'
+import { ExternalScope } from '~/lib/scopes'
+
 import { requestWithPayloadScopes } from 'test/data/data'
 
 describe('server/domain/consents', (): void => {
+  const consentId = requestWithPayloadScopes.params.ID
+  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
+  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
+  const scopesExternal: ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>)
+    .scopes as unknown as ExternalScope[]
+
   afterAll(async (): Promise<void> => {
     await closeKnexConnection()
   })
 
   it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .resolves
       .toBe(undefined)
   })
