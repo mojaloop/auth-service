@@ -36,12 +36,23 @@
 
 import { consentDB, scopeDB } from '../lib/db'
 import { Scope } from '../model/scope'
-import { Consent } from '../model/consent'
+import { Consent, ConsentCredential } from '../model/consent'
 import { logger } from '~/shared/logger'
 import { convertExternalToScope, ExternalScope } from '../lib/scopes'
 import {
-  DatabaseError
+  DatabaseError,
+  InvalidSignatureError,
+  SignatureVerificationError,
+  putConsentError
 } from './errors'
+import { thirdPartyRequest } from '~/lib/requests'
+import {
+  retrieveValidConsent,
+  updateConsentCredential,
+  buildConsentRequestBody
+} from '~/domain/consents/{ID}'
+import { verifySignature } from '~/lib/challenge'
+import { CredentialStatusEnum } from '~/model/consent/consent'
 
 /**
  * Builds internal Consent and Scope objects from request payload
@@ -69,5 +80,73 @@ export async function createAndStoreConsent (
   } catch (error) {
     logger.push({ error }).error('Error: Unable to store consent and scopes')
     throw new DatabaseError(consent.id)
+  }
+}
+
+export interface UpdateCredentialRequest {
+  credential: {
+    id: string;
+    payload: string;
+    // When Updating the credential, only a status of `PENDING` is allowed
+    status: CredentialStatusEnum.PENDING;
+    challenge: {
+      signature: string;
+      payload: string;
+    };
+  };
+}
+
+export async function validateAndUpdateConsent (
+  consentId: string,
+  request: UpdateCredentialRequest,
+  destinationParticipantId: string): Promise<void> {
+  const {
+    credential: {
+      challenge: {
+        signature,
+        payload: challenge
+      },
+      payload: publicKey,
+      id: requestCredentialId
+    }
+  } = request
+
+  try {
+    const consent: Consent = await retrieveValidConsent(consentId, challenge)
+    let verifyResult: boolean
+
+    // Use a nested try-catch to convert verifySignature errors to mojaloop
+    // accepted errors
+    try {
+      verifyResult = verifySignature(challenge, signature, publicKey)
+    } catch (error) {
+      logger.push({ error }).error('Error: Signature validity was not determined.')
+      throw new SignatureVerificationError(consentId)
+    }
+
+    // If signature is invalid for given key and challenge
+    if (!verifyResult) {
+      throw new InvalidSignatureError(consentId)
+    }
+
+    const credential: ConsentCredential = {
+      credentialType: 'FIDO',
+      credentialChallenge: challenge,
+      credentialId: requestCredentialId,
+      credentialStatus: CredentialStatusEnum.VERIFIED,
+      credentialPayload: publicKey
+    }
+    await updateConsentCredential(consent, credential)
+
+    const consentBody = await buildConsentRequestBody(consent, signature, publicKey)
+    await thirdPartyRequest
+      .putConsents(
+        consent.id,
+        consentBody,
+        destinationParticipantId
+      )
+  } catch (error) {
+    logger.push({ error }).error('Error: Outgoing PUT consents/{ID} call not made')
+    await putConsentError(consentId, error, destinationParticipantId)
   }
 }

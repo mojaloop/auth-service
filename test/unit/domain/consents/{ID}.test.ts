@@ -43,7 +43,7 @@ import {
   EmptyCredentialPayloadError
 } from '~/domain/errors'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
-import { UpdateCredentialRequest } from '~/server/handlers/consents/{ID}'
+import { UpdateCredentialRequest } from '~/domain/consents'
 import { Scope } from '~/model/scope'
 
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
