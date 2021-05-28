@@ -121,9 +121,7 @@ export async function put (_context: Context, request: Request, h: ResponseToolk
   const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
   // Note: not awaiting promise here
-  setImmediate(async () => {
-    await validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId)
-  })
+  validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId)
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }

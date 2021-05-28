@@ -258,11 +258,6 @@ describe('server/handler/consents/{ID}', (): void => {
   })
 
   describe('PUT Handler', (): void => {
-    const mockvalidateAndUpdateConsent = jest.spyOn(Handler, 'validateAndUpdateConsent')
-    beforeAll((): void => {
-      mockvalidateAndUpdateConsent.mockResolvedValue()
-    })
-
     it('should return a 202 success code.', async (): Promise<void> => {
       const req = requestWithPayloadCredentialAndScope as Request
       const response = await Handler.put(
@@ -276,6 +271,7 @@ describe('server/handler/consents/{ID}', (): void => {
         req,
         h)
       expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      expect(mockRetrieveValidConsent).toHaveBeenCalledWith(consentId, challenge)
     })
   })
 })

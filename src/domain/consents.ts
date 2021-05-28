@@ -39,7 +39,9 @@ import { Scope } from '../model/scope'
 import { Consent } from '../model/consent'
 import { logger } from '~/shared/logger'
 import { convertExternalToScope, ExternalScope } from '../lib/scopes'
-import { DatabaseError } from './errors'
+import {
+  DatabaseError
+} from './errors'
 
 /**
  * Builds internal Consent and Scope objects from request payload
