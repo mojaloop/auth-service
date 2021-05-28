@@ -105,7 +105,7 @@ export async function validateAndVerifySignature (
         consent.credentialPayload as string
       )
     } catch (error) {
-      logger.push({error}).error('Could not verify signature')
+      logger.push({ error }).error('Could not verify signature')
       throw new SignatureVerificationError(payload.consentId)
     }
 
@@ -122,7 +122,7 @@ export async function validateAndVerifySignature (
       request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
     )
   } catch (error) {
-    logger.push({error}).error('Outgoing PUT request not made for transaction authorizations')
+    logger.push({ error }).error('Outgoing PUT request not made for transaction authorizations')
     if (isMojaloopError(error)) {
       const id = request.params.ID
       const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -151,5 +151,6 @@ export function post (
 }
 
 export default {
-  post
+  post,
+  validateAndVerifySignature
 }

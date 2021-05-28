@@ -36,9 +36,9 @@ import {
 } from '~/../test/data/data'
 import { DatabaseError } from '~/domain/errors'
 import { logger } from '~/shared/logger'
-import { mocked } from 'ts-jest/utils'
+// import { mocked } from 'ts-jest/utils'
 
-jest.mock('~/shared/logger')
+// jest.mock('~/shared/logger')
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
@@ -86,7 +86,7 @@ describe('server/domain/consents', (): void => {
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).not.toHaveBeenCalled()
-    expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
+    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
   })
 
   it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
@@ -99,6 +99,6 @@ describe('server/domain/consents', (): void => {
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
-    expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
+    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
   })
 })

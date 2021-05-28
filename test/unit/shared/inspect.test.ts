@@ -44,6 +44,6 @@ describe('shared/inspect', (): void => {
 
     expect(config).toBeDefined()
     expect(result).toEqual('{}')
-    expect(inspectSpy).toHaveBeenCalledWith({}, false, 4, true)
+    expect(inspectSpy).toHaveBeenCalledWith({}, false, 5, true)
   })
 })

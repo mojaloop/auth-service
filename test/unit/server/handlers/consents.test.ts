@@ -73,8 +73,10 @@ describe('server/handlers/consents', (): void => {
 
   it('Should throw an error due to error in creating/storing consent & scopes',
     async (done): Promise<void> => {
-      mocked(mockStoreConsent).mockRejectedValueOnce(
-        new Error('Error Registering Consent'))
+      mocked(mockStoreConsent).mockImplementationOnce(() => {
+        console.log('HERE1')
+        return Promise.reject(new Error('Error Registering Consent'))
+      })
       const req = requestWithPayloadScopes as Request
       const response = await post(
         {
