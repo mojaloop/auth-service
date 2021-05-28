@@ -33,44 +33,100 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-
+import { Enum } from '@mojaloop/central-services-shared'
+import { Request } from '@hapi/hapi'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
+import { consentDB, scopeDB } from '~/lib/db'
+import { verifySignature } from '~/lib/challenge'
+import { thirdPartyRequest } from '~/lib/requests'
+import {
+  putAuthorizationErrorRequest,
+  DatabaseError,
+  MissingScopeError,
+  InactiveOrMissingCredentialError,
+  PayloadNotPendingError,
+  InvalidSignatureError,
+  SignatureVerificationError
+} from '~/domain/errors'
+import { logger } from '~/shared/logger'
 
-/*
- * Interface for incoming payload
- */
-export interface AuthPayload {
-  consentId: string;
-  sourceAccountId: string;
-  status: 'PENDING' | 'VERIFIED';
-  challenge: string;
-  value: string;
-}
+import {
+  AuthPayload,
+  isPayloadPending,
+  hasActiveCredentialForPayload,
+  hasMatchingScopeForPayload
+} from './auth-payload'
 
-/*
- * Domain function to validate payload status
- */
-export function isPayloadPending (payload: AuthPayload): boolean {
-  return payload.status === 'PENDING'
-}
+export async function validateAndVerifySignature (
+  request: Request): Promise<void> {
+  const payload: AuthPayload = request.payload as AuthPayload
 
-/*
- * Domain function to check for existence of an active Consent key
- */
-export function hasActiveCredentialForPayload (consent: Consent): boolean {
-  return (consent.credentialStatus === 'ACTIVE' &&
-    consent.credentialPayload !== null)
-}
+  try {
+    // Validate incoming payload status
+    if (!isPayloadPending(payload)) {
+      throw new PayloadNotPendingError(payload.consentId)
+    }
 
-/*
- * Domain function to check for matching Consent scope
- */
-export function hasMatchingScopeForPayload (
-  consentScopes: Scope[],
-  payload: AuthPayload): boolean {
-  // Check if any scope matches
-  return consentScopes.some((scope: Scope): boolean =>
-    scope.accountId === payload.sourceAccountId
-  )
+    let consent: Consent
+
+    // Check if consent exists and retrieve consent data
+    try {
+      consent = await consentDB.retrieve(payload.consentId)
+      console.log('consent', consent)
+    } catch (error) {
+      logger.push({ error }).error('Could not retrieve consent')
+      throw new DatabaseError(payload.consentId)
+    }
+
+    let consentScopes: Scope[]
+
+    // Retrieve scopes for the consent
+    try {
+      consentScopes = await scopeDB.retrieveAll(payload.consentId)
+    } catch (error) {
+      logger.push({ error }).error('Could not retrieve scope')
+      throw new DatabaseError(payload.consentId)
+    }
+
+    if (!hasMatchingScopeForPayload(consentScopes, payload)) {
+      throw new MissingScopeError(payload.consentId)
+    }
+
+    if (!hasActiveCredentialForPayload(consent)) {
+      throw new InactiveOrMissingCredentialError(payload.consentId)
+    }
+
+    let isVerified: boolean
+    try {
+      // Challenge is a UTF-8 (Normalization Form C)
+      // JSON string of the QuoteResponse object
+      isVerified = verifySignature(
+        payload.challenge,
+        payload.value,
+        consent.credentialPayload as string
+      )
+    } catch (error) {
+      logger.push({ error }).error('Could not verify signature')
+      throw new SignatureVerificationError(payload.consentId)
+    }
+
+    if (!isVerified) {
+      throw new InvalidSignatureError(payload.consentId)
+    }
+
+    payload.status = 'VERIFIED'
+
+    // PUT request to switch to inform about verification
+    await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+      payload,
+      request.params.ID,
+      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    )
+  } catch (error) {
+    logger.push({ error }).error('Outgoing PUT request not made for transaction authorizations')
+    const id = request.params.ID
+    const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+    putAuthorizationErrorRequest(id, error, destParticipantId)
+  }
 }

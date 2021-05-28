@@ -37,7 +37,7 @@ import {
   isPayloadPending,
   hasActiveCredentialForPayload,
   hasMatchingScopeForPayload
-} from '~/domain/authorizations'
+} from '~/domain/auth-payload'
 import { putAuthorizationErrorRequest } from '~/domain/errors'
 import { TErrorInformation } from '@mojaloop/sdk-standard-components'
 // import { mocked } from 'ts-jest/utils'

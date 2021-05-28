@@ -38,41 +38,24 @@ import {
   scopeDB
 } from '~/lib/db'
 import * as Challenge from '~/lib/challenge'
-import * as Domain from '~/domain/authorizations'
+import * as AuthorizationsDomain from '~/domain/authorizations'
+import * as AuthPayloadDomain from '~/domain/auth-payload'
 import * as DomainError from '~/domain/errors'
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
-// import { mocked } from 'ts-jest/utils'
+import { mocked } from 'ts-jest/utils'
 
 // jest.mock('~/shared/logger')
+jest.mock('~/lib/challenge')
 
-/*
- * Mock Handler Functions
- */
-const mockIsPayloadPending = jest.spyOn(Domain, 'isPayloadPending')
-const mockHasMatchingScope = jest.spyOn(Domain, 'hasMatchingScopeForPayload')
-const mockPutErrorRequest = jest.spyOn(DomainError, 'putAuthorizationErrorRequest')
-const mockHasActiveCredential = jest.spyOn(
-  Domain,
-  'hasActiveCredentialForPayload'
-)
+jest.mock('~/domain/errors')
+jest.mock('~/domain/auth-payload')
+jest.mock('~/lib/db')
+jest.mock('~/lib/requests')
 
-const mockVerifySignature = jest.spyOn(Challenge, 'verifySignature')
-
-const mockRetrieveConsent = jest.spyOn(consentDB, 'retrieve')
-const mockRetrieveAllScopes = jest.spyOn(scopeDB, 'retrieveAll')
-
-const mockPutThirdpartyTransactionsAuth = jest.spyOn(
-  thirdPartyRequest,
-  'putThirdpartyRequestsTransactionsAuthorizations'
-)
-const mockValidateAndVerifySignature = jest.spyOn(
-  Handler,
-  'validateAndVerifySignature'
-)
 /*
  * Mock Request and Response Resources
  */
-const payload: Domain.AuthPayload = {
+const payload: AuthPayloadDomain.AuthPayload = {
   consentId: '1234',
   sourceAccountId: 'pisp-2343-f223',
   status: 'PENDING',
@@ -105,9 +88,9 @@ const h: ResponseToolkit = {
 /*
  * Mock consent and scopes
  */
-const mockConsent: Consent = {
+const mockConsentPending: Consent = {
   id: payload.consentId,
-  status: 'ACTIVE',
+  status: 'PENDING',
   credentialStatus: 'ACTIVE',
   credentialPayload: 'Mock public key payload'
 }
@@ -132,15 +115,14 @@ const mockScopes: Scope[] = [
 describe('validateAndVerifySignature', (): void => {
   beforeEach((): void => {
     // Positive flow values for a successful 202 return
-    mockIsPayloadPending.mockReturnValue(true)
-    mockHasActiveCredential.mockReturnValue(true)
-    mockHasMatchingScope.mockReturnValue(true)
-    mockVerifySignature.mockReturnValue(true)
-    mockPutErrorRequest.mockResolvedValue(undefined)
-    mockRetrieveConsent.mockResolvedValue(mockConsent)
-    mockRetrieveAllScopes.mockResolvedValue(mockScopes)
-
-    mockPutThirdpartyTransactionsAuth.mockResolvedValue({
+    mocked(AuthPayloadDomain.isPayloadPending).mockReturnValue(true)
+    mocked(AuthPayloadDomain.hasActiveCredentialForPayload).mockReturnValue(true)
+    mocked(AuthPayloadDomain.hasMatchingScopeForPayload).mockReturnValue(true)
+    mocked(Challenge.verifySignature).mockReturnValue(true)
+    mocked(DomainError.putAuthorizationErrorRequest).mockResolvedValue(undefined)
+    mocked(consentDB.retrieve).mockResolvedValue(mockConsentPending)
+    mocked(scopeDB.retrieveAll).mockResolvedValue(mockScopes)
+    mocked(thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations).mockResolvedValue({
       statusCode: 200,
       headers: null,
       data: Buffer.from('Response Data')
@@ -149,21 +131,21 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should make PUT outgoing request for successful verification',
     async (): Promise<void> => {
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.hasActiveCredentialForPayload)).toHaveBeenCalledWith(mockConsentPending)
+      // expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
 
-      expect(mockVerifySignature).toHaveBeenCalledWith(
+      expect(mocked(Challenge.verifySignature)).toHaveBeenCalledWith(
         payload.challenge,
         payload.value,
-        mockConsent.credentialPayload
+        mockConsentPending.credentialPayload
       )
 
-      expect(mockPutThirdpartyTransactionsAuth).toHaveBeenCalledWith(
+      expect(mocked(thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations)).toHaveBeenCalledWith(
         payload,
         request.params.ID,
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -174,16 +156,17 @@ describe('validateAndVerifySignature', (): void => {
   it('Should throw a PayloadNotPendingError for payload not PENDING',
     async (): Promise<void> => {
       // Active Payload
-      mockIsPayloadPending.mockReturnValue(false)
+      mocked(AuthPayloadDomain.isPayloadPending).mockReturnValue(false)
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockIsPayloadPending).toReturnWith(false)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toReturnWith(false)
+
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.PayloadNotPendingError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.PayloadNotPendingError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -191,21 +174,22 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should throw a InactiveOrMissingCredentialError for inactive credential',
     async (): Promise<void> => {
-    // Inactive credential
-      mockHasActiveCredential.mockReturnValue(false)
+      // Inactive credential
+      mocked(AuthPayloadDomain.hasActiveCredentialForPayload).mockReturnValue(false)
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-      expect(mockHasActiveCredential).toReturnWith(false)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.hasMatchingScopeForPayload)).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mocked(AuthPayloadDomain.hasActiveCredentialForPayload)).toHaveBeenCalledWith(mockConsentPending)
+      expect(mocked(AuthPayloadDomain.hasActiveCredentialForPayload)).toReturnWith(false)
+
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.InactiveOrMissingCredentialError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.InactiveOrMissingCredentialError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -214,19 +198,19 @@ describe('validateAndVerifySignature', (): void => {
   it('Should return a MissingScopeError for no matching consent scope',
     async (): Promise<void> => {
       // No matching scope for the consent in the DB
-      mockHasMatchingScope.mockReturnValue(false)
+      mocked(AuthPayloadDomain.hasMatchingScopeForPayload).mockReturnValue(false)
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-      expect(mockHasMatchingScope).toReturnWith(false)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.hasMatchingScopeForPayload)).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mocked(AuthPayloadDomain.hasMatchingScopeForPayload))
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.MissingScopeError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.MissingScopeError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -235,20 +219,20 @@ describe('validateAndVerifySignature', (): void => {
   it('Should return a DatabaseError for non-existent payload consent',
     async (): Promise<void> => {
       // Requested Consent not in the DB
-      mockRetrieveConsent.mockRejectedValue(
+      mocked(consentDB.retrieve).mockRejectedValue(
         new NotFoundError('Consent', payload.consentId)
       )
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
       // expect(mocked(logger.push)).toHaveBeenCalled()
       // expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.DatabaseError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -256,20 +240,20 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should return a DatabaseError for error in retrieving consent',
     async (): Promise<void> => {
-      mockRetrieveConsent.mockRejectedValue(
+      mocked(consentDB.retrieve).mockRejectedValue(
         new Error()
       )
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
       // expect(mocked(logger.push)).toHaveBeenCalled()
       // expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.DatabaseError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -278,21 +262,21 @@ describe('validateAndVerifySignature', (): void => {
   it('Should return a DatabaseError for no associated consent scopes',
     async (): Promise<void> => {
       // Consent does not have any scopes in DB
-      mockRetrieveAllScopes.mockRejectedValue(
+      mocked(scopeDB.retrieveAll).mockRejectedValue(
         new NotFoundError('Consent Scopes', payload.consentId)
       )
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
       // expect(mocked(logger.push)).toHaveBeenCalled()
       // expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.DatabaseError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -300,21 +284,21 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should return a DatabaseError for error in retrieving scopes',
     async (): Promise<void> => {
-      mockRetrieveAllScopes.mockRejectedValue(
+      mocked(scopeDB.retrieveAll).mockRejectedValue(
         new Error()
       )
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
       // expect(mocked(logger.push)).toHaveBeenCalled()
       // expect(mocked(logger.error)).toHaveBeenCalled()
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.DatabaseError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.DatabaseError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -323,25 +307,25 @@ describe('validateAndVerifySignature', (): void => {
   it('Should return a InvalidSignatureError for wrong signature',
     async (): Promise<void> => {
       // Invalid signature
-      mockVerifySignature.mockReturnValue(false)
+      mocked(Challenge.verifySignature).mockReturnValue(false)
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-      expect(mockVerifySignature).toReturnWith(false)
-      expect(mockVerifySignature).toHaveBeenCalledWith(
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
+      // expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
+      // expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
+      expect(mocked(Challenge.verifySignature)).toReturnWith(false)
+      expect(mocked(Challenge.verifySignature)).toHaveBeenCalledWith(
         payload.challenge,
         payload.value,
-        mockConsent.credentialPayload
+        mockConsentPending.credentialPayload
       )
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.InvalidSignatureError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.InvalidSignatureError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -349,26 +333,27 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should return a SignatureVerificationError for error in signature verification',
     async (): Promise<void> => {
-      mockVerifySignature.mockImplementationOnce((): boolean => {
+      mocked(Challenge.verifySignature).mockImplementationOnce(() => {
         throw new Error()
       })
 
-      await Handler.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(request)
 
-      expect(mockIsPayloadPending).toHaveBeenCalledWith(payload)
-      expect(mockRetrieveConsent).toHaveBeenCalledWith(payload.consentId)
-      expect(mockRetrieveAllScopes).toHaveBeenCalledWith(payload.consentId)
-      expect(mockHasActiveCredential).toHaveBeenCalledWith(mockConsent)
-      expect(mockHasMatchingScope).toHaveBeenCalledWith(mockScopes, payload)
-      expect(mockVerifySignature).toHaveBeenCalledWith(
+      expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
+      expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(scopeDB.retrieveAll)).toHaveBeenCalledWith(payload.consentId)
+      expect(mocked(AuthPayloadDomain.hasActiveCredentialForPayload)).toHaveBeenCalledWith(mockConsentPending)
+      expect(mocked(AuthPayloadDomain.hasMatchingScopeForPayload)).toHaveBeenCalledWith(mockScopes, payload)
+
+      expect(mocked(Challenge.verifySignature)).toHaveBeenCalledWith(
         payload.challenge,
         payload.value,
-        mockConsent.credentialPayload
+        mockConsentPending.credentialPayload
       )
       // Error
-      expect(mockPutErrorRequest).toHaveBeenCalledWith(
+      expect(mocked(DomainError.putAuthorizationErrorRequest)).toHaveBeenCalledWith(
         request.params.ID,
-        new DomainError.SignatureVerificationError((request.payload as Domain.AuthPayload).consentId),
+        new DomainError.SignatureVerificationError((request.payload as AuthPayloadDomain.AuthPayload).consentId),
         request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       )
     }
@@ -381,11 +366,9 @@ describe('validateAndVerifySignature', (): void => {
  */
 describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
   (): void => {
-    beforeEach((): void => {
-      // TODO: this mock is not working... why?
-      mockValidateAndVerifySignature.mockResolvedValue(undefined)
-    })
     it('Should return 202 (Accepted) and call async handler', (): void => {
+      const mockValidateAndVerifySignature = jest.spyOn(AuthorizationsDomain, 'validateAndVerifySignature')
+      mockValidateAndVerifySignature.mockResolvedValue(undefined)
       const response = Handler.post(
         {
           method: request.method,
@@ -398,7 +381,7 @@ describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
         h)
 
       // TODO: mock is not working!
-      // expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
+      expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
       expect(response.statusCode).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
   }
