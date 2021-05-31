@@ -23,24 +23,34 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import Knex from 'knex'
-import Config from '../shared/config'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import { Db, consentDB, scopeDB, closeKnexConnection } from '~/lib/db'
+import { mocked } from 'ts-jest/utils'
 
-const Db: Knex = Knex(Config.DATABASE)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
+jest.mock('knex', () => jest.fn(() => ({
+  destroy: jest.fn(() => Promise.resolve())
+})))
 
-const closeKnexConnection = async (): Promise<void> => Db.destroy()
+describe('db', () => {
+  describe('consentDB', () => {
+    it('should be defined', () => {
+      expect(consentDB).toBeDefined()
+    })
+  })
 
-export {
-  Db,
-  consentDB,
-  scopeDB,
-  closeKnexConnection
-}
+  describe('scopeDB', () => {
+    it('should be defined', () => {
+      expect(scopeDB).toBeDefined()
+    })
+  })
+
+  describe('closeKnexConnection', () => {
+    it('should properly call destroy', async () => {
+      await closeKnexConnection()
+      expect(mocked(Db.destroy)).toBeCalledTimes(1)
+    })
+  })
+})
