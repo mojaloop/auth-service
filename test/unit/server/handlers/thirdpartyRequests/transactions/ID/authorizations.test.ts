@@ -41,7 +41,7 @@ import * as Challenge from '~/domain/challenge'
 import * as AuthorizationsDomain from '~/domain/authorizations'
 import * as AuthPayloadDomain from '~/domain/auth-payload'
 import * as DomainError from '~/domain/errors'
-import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/ID/authorizations'
 import { mocked } from 'ts-jest/utils'
 import { AuthPayload } from '~/domain/auth-payload'
 
@@ -420,7 +420,6 @@ describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
         request,
         h)
 
-      // TODO: mock is not working!
       expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(
         request.payload as AuthPayload,
         request.params.ID,

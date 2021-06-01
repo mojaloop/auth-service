@@ -25,8 +25,8 @@ import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
 import PostConsents from './consents'
-import UpdateConsent from './consents/{ID}'
-import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
+import UpdateConsent from './consents/ID'
+import Authorizations from './thirdpartyRequests/transactions/ID/authorizations'
 // import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
