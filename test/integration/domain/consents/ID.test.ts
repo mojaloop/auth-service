@@ -30,7 +30,7 @@ import {
   retrieveValidConsent,
   updateConsentCredential,
   buildConsentRequestBody
-} from '~/domain/consents/{ID}'
+} from '~/domain/consents/ID'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import Knex from 'knex'

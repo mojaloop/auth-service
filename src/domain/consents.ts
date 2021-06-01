@@ -50,7 +50,7 @@ import {
   retrieveValidConsent,
   updateConsentCredential,
   buildConsentRequestBody
-} from '~/domain/consents/{ID}'
+} from '~/domain/consents/ID'
 import { verifySignature } from '~/domain/challenge'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 

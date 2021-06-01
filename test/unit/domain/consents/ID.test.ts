@@ -32,7 +32,7 @@ import {
   retrieveValidConsent,
   updateConsentCredential,
   buildConsentRequestBody
-} from '~/domain/consents/{ID}'
+} from '~/domain/consents/ID'
 import { Consent } from '~/model/consent'
 import { thirdPartyRequest } from '~/domain/requests'
 import * as Scopes from '~/domain/scopes'

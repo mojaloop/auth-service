@@ -29,7 +29,7 @@
 import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as Handler from '~/server/handlers/consents/ID'
-import * as ConsentIDDomain from '~/domain/consents/{ID}'
+import * as ConsentIDDomain from '~/domain/consents/ID'
 import * as ConsentDomain from '~/domain/consents'
 
 import {
