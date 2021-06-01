@@ -27,15 +27,15 @@
  --------------
  ******/
 import { Request } from '@hapi/hapi'
-import { consentDB, scopeDB } from '~/lib/db'
+import { consentDB, scopeDB } from '~/model/db'
 import {
   retrieveValidConsent,
   updateConsentCredential,
   buildConsentRequestBody
 } from '~/domain/consents/{ID}'
 import { Consent } from '~/model/consent'
-import { thirdPartyRequest } from '~/lib/requests'
-import * as Scopes from '~/lib/scopes'
+import { thirdPartyRequest } from '~/domain/requests'
+import * as Scopes from '~/domain/scopes'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import {
   ChallengeMismatchError,

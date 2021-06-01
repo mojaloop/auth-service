@@ -27,7 +27,7 @@
  --------------
  ******/
 
-import { Db, consentDB, scopeDB, closeKnexConnection } from '~/lib/db'
+import { Db, consentDB, scopeDB, closeKnexConnection } from '~/model/db'
 import { mocked } from 'ts-jest/utils'
 
 jest.mock('knex', () => jest.fn(() => ({

@@ -31,7 +31,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 // import { logger } from '~/shared/logger'
 import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
-import { thirdPartyRequest } from '~/lib/requests'
+import { thirdPartyRequest } from '~/domain/requests'
 import {
   AuthPayload,
   isPayloadPending,

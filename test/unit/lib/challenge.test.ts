@@ -31,7 +31,7 @@
 import crypto from 'crypto'
 // import { logger } from '~/shared/logger'
 import Credential from './credential'
-import { generate, verifySignature } from '~/lib/challenge'
+import { generate, verifySignature } from '~/domain/challenge'
 // import { mocked } from 'ts-jest/utils'
 
 // jest.mock('~/shared/logger')

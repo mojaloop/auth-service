@@ -34,24 +34,24 @@
  --------------
  ******/
 
-import { consentDB, scopeDB } from '../lib/db'
+import { consentDB, scopeDB } from '../model/db'
 import { Scope } from '../model/scope'
 import { Consent, ConsentCredential } from '../model/consent'
 import { logger } from '~/shared/logger'
-import { convertExternalToScope, ExternalScope } from '../lib/scopes'
+import { convertExternalToScope, ExternalScope } from './scopes'
 import {
   DatabaseError,
   InvalidSignatureError,
   SignatureVerificationError,
   putConsentError
 } from './errors'
-import { thirdPartyRequest } from '~/lib/requests'
+import { thirdPartyRequest } from '~/domain/requests'
 import {
   retrieveValidConsent,
   updateConsentCredential,
   buildConsentRequestBody
 } from '~/domain/consents/{ID}'
-import { verifySignature } from '~/lib/challenge'
+import { verifySignature } from '~/domain/challenge'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 
 /**

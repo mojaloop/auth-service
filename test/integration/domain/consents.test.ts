@@ -28,8 +28,8 @@
  --------------
  ******/
 import { createAndStoreConsent } from '~/domain/consents'
-import { closeKnexConnection } from '~/lib/db'
-import { ExternalScope } from '~/lib/scopes'
+import { closeKnexConnection } from '~/model/db'
+import { ExternalScope } from '~/domain/scopes'
 
 import { requestWithPayloadScopes } from 'test/data/data'
 

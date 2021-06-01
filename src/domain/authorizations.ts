@@ -35,9 +35,9 @@
  ******/
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
-import { consentDB, scopeDB } from '~/lib/db'
-import { verifySignature } from '~/lib/challenge'
-import { thirdPartyRequest } from '~/lib/requests'
+import { consentDB, scopeDB } from '~/model/db'
+import { verifySignature } from '~/domain/challenge'
+import { thirdPartyRequest } from '~/domain/requests'
 import {
   putAuthorizationErrorRequest,
   DatabaseError,

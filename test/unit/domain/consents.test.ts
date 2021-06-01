@@ -26,10 +26,10 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { consentDB, scopeDB } from '~/lib/db'
+import { consentDB, scopeDB } from '~/model/db'
 import { createAndStoreConsent } from '~/domain/consents'
 
-import * as ScopeFunction from '~/lib/scopes'
+import * as ScopeFunction from '~/domain/scopes'
 import {
   requestWithPayloadScopes, externalScopes,
   partialConsentActive, scopes

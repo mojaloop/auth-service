@@ -37,13 +37,13 @@ import {
   IncorrectConsentStatusError // , InvalidSignatureError
 } from '~/domain/errors'
 import { NotFoundError } from '~/model/errors'
-import * as Signature from '~/lib/challenge'
+import * as Signature from '~/domain/challenge'
 // import { logger } from '~/shared/logger'
 import { Consent } from '~/model/consent'
 import { GenericRequestResponse, PutConsentsRequest } from '@mojaloop/sdk-standard-components'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
-import { ExternalScope } from '~/lib/scopes'
-import { thirdPartyRequest } from '~/lib/requests'
+import { ExternalScope } from '~/domain/scopes'
+import { thirdPartyRequest } from '~/domain/requests'
 import { requestWithPayloadCredentialAndScope, h } from 'test/data/data'
 // import { mocked } from 'ts-jest/utils'
 

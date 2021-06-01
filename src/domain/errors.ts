@@ -25,7 +25,7 @@
 
 import { logger } from '~/shared/logger'
 import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '../lib/requests'
+import { thirdPartyRequest } from './requests'
 
 /*
  * Domain function make an error request using Mojaloop internal codes

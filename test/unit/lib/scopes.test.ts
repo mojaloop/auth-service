@@ -29,7 +29,7 @@
  ******/
 
 import { Scope } from '~/model/scope/scope'
-import * as ScopeFunctions from '~/lib/scopes'
+import * as ScopeFunctions from '~/domain/scopes'
 
 const consentId = '1234'
 

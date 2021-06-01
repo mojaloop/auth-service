@@ -32,12 +32,12 @@ import { Consent } from '~/model/consent'
 import { Scope } from '~/model/scope'
 import { Enum } from '@mojaloop/central-services-shared'
 import { NotFoundError } from '~/model/errors'
-import { thirdPartyRequest } from '~/lib/requests'
+import { thirdPartyRequest } from '~/domain/requests'
 import {
   consentDB,
   scopeDB
-} from '~/lib/db'
-import * as Challenge from '~/lib/challenge'
+} from '~/model/db'
+import * as Challenge from '~/domain/challenge'
 import * as AuthorizationsDomain from '~/domain/authorizations'
 import * as AuthPayloadDomain from '~/domain/auth-payload'
 import * as DomainError from '~/domain/errors'
@@ -46,12 +46,11 @@ import { mocked } from 'ts-jest/utils'
 import { AuthPayload } from '~/domain/auth-payload'
 
 // jest.mock('~/shared/logger')
-jest.mock('~/lib/challenge')
-
+jest.mock('~/domain/challenge')
 jest.mock('~/domain/errors')
 jest.mock('~/domain/auth-payload')
-jest.mock('~/lib/db')
-jest.mock('~/lib/requests')
+jest.mock('~/domain/requests')
+jest.mock('~/model/db')
 
 /*
  * Mock Request and Response Resources

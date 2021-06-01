@@ -33,7 +33,7 @@ import { post } from '~/server/handlers/consents'
 import { createAndStoreConsent as mockStoreConsent } from '~/domain/consents'
 import { putConsentError } from '~/domain/errors'
 import { requestWithPayloadScopes, h } from 'test/data/data'
-import { ExternalScope } from '~/lib/scopes'
+import { ExternalScope } from '~/domain/scopes'
 jest.mock('~/domain/consents', () => ({
   createAndStoreConsent: jest.fn(() => Promise.resolve())
 }))
