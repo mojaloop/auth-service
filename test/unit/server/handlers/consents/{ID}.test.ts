@@ -139,7 +139,9 @@ describe('server/handler/consents/{ID}', (): void => {
   describe('validateAndUpdateConsent', (): void => {
     it('should resolve successfully with no errors',
       async (): Promise<void> => {
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId))
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId
+        ))
           .resolves
           .toBeUndefined()
 
@@ -159,7 +161,9 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new ChallengeMismatchError(consentId))
 
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId)
+        ).resolves.toBeUndefined()
 
         // expect(mocked(logger.push)).toBeCalledWith({ error: new ChallengeMismatchError(consentId) })
         // expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
@@ -176,7 +180,9 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new IncorrectConsentStatusError(consentId))
 
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId)
+        ).resolves.toBeUndefined()
 
         // expect(mocked(logger.push)).toBeCalledWith({ error: new IncorrectConsentStatusError(consentId) })
         // expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
@@ -193,7 +199,9 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockRetrieveValidConsent.mockRejectedValueOnce(new NotFoundError('Consent', consentId))
 
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId)
+        ).resolves.toBeUndefined()
 
         // expect(mocked(logger.push)).toBeCalledWith({ error: new NotFoundError('Consent', consentId) })
         // expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
@@ -210,7 +218,9 @@ describe('server/handler/consents/{ID}', (): void => {
       async (): Promise<void> => {
         mockVerifySignature.mockReturnValueOnce(false)
 
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId)
+        ).resolves.toBeUndefined()
 
         // expect(mocked(logger.push)).toBeCalledWith({ error: new InvalidSignatureError(consentId) })
         // expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
@@ -227,7 +237,9 @@ describe('server/handler/consents/{ID}', (): void => {
         const err: NotFoundError = new NotFoundError('Consent', consentId)
         mockUpdateConsentCredential.mockRejectedValueOnce(err)
 
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId)
+        ).resolves.toBeUndefined()
 
         // expect(mocked(logger.push)).toBeCalledWith({ error: err })
         // expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
@@ -245,7 +257,9 @@ describe('server/handler/consents/{ID}', (): void => {
         const err: Error = new Error('error thrown')
         mockPutConsents.mockRejectedValueOnce(err)
 
-        await expect(ConsentDomain.validateAndUpdateConsent(consentId, credentialRequest, destinationParticipantId)).resolves.toBeUndefined()
+        await expect(ConsentDomain.validateAndUpdateConsent(
+          consentId, credentialRequest, destinationParticipantId)
+        ).resolves.toBeUndefined()
 
         // expect(mocked(logger.push)).toBeCalledWith({ error: err })
         // expect(mocked(logger.error)).toBeCalledWith('Error: Outgoing PUT consents/{ID} call not made')
