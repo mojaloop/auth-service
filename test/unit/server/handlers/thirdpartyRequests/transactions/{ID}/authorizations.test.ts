@@ -43,6 +43,7 @@ import * as AuthPayloadDomain from '~/domain/auth-payload'
 import * as DomainError from '~/domain/errors'
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 import { mocked } from 'ts-jest/utils'
+import { AuthPayload } from '~/domain/auth-payload'
 
 // jest.mock('~/shared/logger')
 jest.mock('~/lib/challenge')
@@ -131,7 +132,11 @@ describe('validateAndVerifySignature', (): void => {
 
   it('Should make PUT outgoing request for successful verification',
     async (): Promise<void> => {
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -158,7 +163,11 @@ describe('validateAndVerifySignature', (): void => {
       // Active Payload
       mocked(AuthPayloadDomain.isPayloadPending).mockReturnValue(false)
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toReturnWith(false)
@@ -177,7 +186,11 @@ describe('validateAndVerifySignature', (): void => {
       // Inactive credential
       mocked(AuthPayloadDomain.hasActiveCredentialForPayload).mockReturnValue(false)
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -200,7 +213,11 @@ describe('validateAndVerifySignature', (): void => {
       // No matching scope for the consent in the DB
       mocked(AuthPayloadDomain.hasMatchingScopeForPayload).mockReturnValue(false)
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -223,7 +240,11 @@ describe('validateAndVerifySignature', (): void => {
         new NotFoundError('Consent', payload.consentId)
       )
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -244,7 +265,11 @@ describe('validateAndVerifySignature', (): void => {
         new Error()
       )
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -266,7 +291,11 @@ describe('validateAndVerifySignature', (): void => {
         new NotFoundError('Consent Scopes', payload.consentId)
       )
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -288,7 +317,11 @@ describe('validateAndVerifySignature', (): void => {
         new Error()
       )
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -309,7 +342,11 @@ describe('validateAndVerifySignature', (): void => {
       // Invalid signature
       mocked(Challenge.verifySignature).mockReturnValue(false)
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -337,7 +374,11 @@ describe('validateAndVerifySignature', (): void => {
         throw new Error()
       })
 
-      await AuthorizationsDomain.validateAndVerifySignature(request)
+      await AuthorizationsDomain.validateAndVerifySignature(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
 
       expect(mocked(AuthPayloadDomain.isPayloadPending)).toHaveBeenCalledWith(payload)
       expect(mocked(consentDB.retrieve)).toHaveBeenCalledWith(payload.consentId)
@@ -381,7 +422,11 @@ describe('handlers/thirdpartyRequests/transactions/{ID}/authorizations.test.ts',
         h)
 
       // TODO: mock is not working!
-      expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(request)
+      expect(mockValidateAndVerifySignature).toHaveBeenCalledWith(
+        request.payload as AuthPayload,
+        request.params.ID,
+        request.headers['fspiop-source']
+      )
       expect(response.statusCode).toEqual(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     })
   }

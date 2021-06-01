@@ -33,8 +33,6 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { Enum } from '@mojaloop/central-services-shared'
-import { Request } from '@hapi/hapi'
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { consentDB, scopeDB } from '~/lib/db'
@@ -59,9 +57,10 @@ import {
 } from './auth-payload'
 
 export async function validateAndVerifySignature (
-  request: Request): Promise<void> {
-  const payload: AuthPayload = request.payload as AuthPayload
-
+  payload: AuthPayload,
+  transactionRequestId: string,
+  participantId: string
+): Promise<void> {
   try {
     // Validate incoming payload status
     if (!isPayloadPending(payload)) {
@@ -120,13 +119,11 @@ export async function validateAndVerifySignature (
     // PUT request to switch to inform about verification
     await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
       payload,
-      request.params.ID,
-      request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      transactionRequestId,
+      participantId
     )
   } catch (error) {
     logger.push({ error }).error('Outgoing PUT request not made for transaction authorizations')
-    const id = request.params.ID
-    const destParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-    putAuthorizationErrorRequest(id, error, destParticipantId)
+    putAuthorizationErrorRequest(transactionRequestId, error, participantId)
   }
 }

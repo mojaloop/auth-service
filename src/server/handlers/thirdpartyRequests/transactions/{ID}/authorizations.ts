@@ -32,6 +32,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 
 import { Context } from '~/server/plugins'
 import { validateAndVerifySignature } from '~/domain/authorizations'
+import { AuthPayload } from '~/domain/auth-payload'
 
 /*
  * The HTTP request `POST /thirdpartyRequests/transactions/{ID}/authorizations`
@@ -45,8 +46,12 @@ export function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): ResponseObject {
-  // Validate and process asynchronously
-  validateAndVerifySignature(request)
+  // Validate and process asynchronously - don't await on promise to resolve
+  validateAndVerifySignature(
+    request.payload as AuthPayload,
+    request.params.ID,
+    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  )
 
   // Return a 202 (Accepted) acknowledgement in the meantime
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
