@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.3.3](https://github.com/mojaloop/auth-service/compare/v11.3.2...v11.3.3) (2021-06-02)
+
+
+### Code Refactor
+
+* 2132 soc handlers ([#69](https://github.com/mojaloop/auth-service/issues/69)) ([846f269](https://github.com/mojaloop/auth-service/commit/846f26955f44c8250447c32f46275867471563a2))
+
 ### [11.3.2](https://github.com/mojaloop/auth-service/compare/v11.3.1...v11.3.2) (2021-05-14)
 
 
