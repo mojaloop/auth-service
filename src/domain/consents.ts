@@ -34,7 +34,7 @@
  --------------
  ******/
 
-import { consentDB, scopeDB } from '../model/db'
+import { insertConsentWithScopes } from '../model/db'
 import { Scope } from '../model/scope'
 import { Consent, ConsentCredential } from '../model/consent'
 import { logger } from '~/shared/logger'
@@ -75,8 +75,7 @@ export async function createAndStoreConsent (
   const scopes: Scope[] = convertExternalToScope(externalScopes, consentId)
 
   try {
-    await consentDB.insert(consent)
-    await scopeDB.insert(scopes)
+    await insertConsentWithScopes(consent, scopes)
   } catch (error) {
     logger.push({ error }).error('Error: Unable to store consent and scopes')
     throw new DatabaseError(consent.id)

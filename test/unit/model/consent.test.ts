@@ -37,7 +37,7 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import ConsentDB, { Consent } from '~/model/consent'
+import { ConsentDB, Consent } from '~/model/consent'
 import { NotFoundError, RevokedConsentModificationError } from '~/model/errors'
 
 /*
@@ -107,7 +107,7 @@ describe('src/model/consent', (): void => {
   let consentDB: ConsentDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(Config.DATABASE as object)
+    Db = Knex(Config.DATABASE)
     await Db.migrate.latest()
     await Db.raw('PRAGMA foreign_keys = ON')
 

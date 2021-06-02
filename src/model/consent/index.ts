@@ -30,5 +30,5 @@
 export {
   Consent,
   ConsentCredential,
-  ConsentDB as default
+  ConsentDB
 } from './consent'
