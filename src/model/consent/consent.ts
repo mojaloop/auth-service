@@ -106,6 +106,7 @@ export class ConsentDB {
   // Update Consent
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
+    // Here is only logic dedicated to keep data consistency & constraints
     // Transaction to make the update atomic
     return this.Db.transaction(async (trx): Promise<number> => {
       // Transaction is rolled back automatically if there is
