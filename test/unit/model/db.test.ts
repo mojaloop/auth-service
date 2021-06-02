@@ -20,18 +20,37 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
+ * Gates Foundation
+ - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
+import { Db, consentDB, scopeDB, closeKnexConnection } from '~/model/db'
+import { mocked } from 'ts-jest/utils'
 
-export const logger: SDKLogger.Logger = {
-  log: jest.fn((): SDKLogger.Logger => logger),
-  error: jest.fn((): SDKLogger.Logger => logger),
-  info: jest.fn((): SDKLogger.Logger => logger),
-  push: jest.fn((): SDKLogger.Logger => logger)
-} as unknown as SDKLogger.Logger
+jest.mock('knex', () => jest.fn(() => ({
+  destroy: jest.fn(() => Promise.resolve())
+})))
 
-export const logResponse = jest.fn()
+describe('db', () => {
+  describe('consentDB', () => {
+    it('should be defined', () => {
+      expect(consentDB).toBeDefined()
+    })
+  })
+
+  describe('scopeDB', () => {
+    it('should be defined', () => {
+      expect(scopeDB).toBeDefined()
+    })
+  })
+
+  describe('closeKnexConnection', () => {
+    it('should properly call destroy', async () => {
+      await closeKnexConnection()
+      expect(mocked(Db.destroy)).toBeCalledTimes(1)
+    })
+  })
+})

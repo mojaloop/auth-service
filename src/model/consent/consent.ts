@@ -92,18 +92,21 @@ export class ConsentDB {
 
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
-  public async insert (consent: Consent): Promise<boolean> {
-    // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
-    await this
-      .Db<Consent>('Consent')
-      .insert(consent)
-
+  public async insert (consent: Consent, trx?: Knex.Transaction): Promise<boolean> {
+    // optionally insert in transaction
+    const action = this.Db<Consent>('Consent').insert(consent)
+    if (trx) {
+      await action.transacting(trx)
+    } else {
+      await action
+    }
     return true
   }
 
   // Update Consent
   public async update (consent: Consent): Promise<number> {
     // Returns number of updated rows
+    // Here is only logic dedicated to keep data consistency & constraints
     // Transaction to make the update atomic
     return this.Db.transaction(async (trx): Promise<number> => {
       // Transaction is rolled back automatically if there is

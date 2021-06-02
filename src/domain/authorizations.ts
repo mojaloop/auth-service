@@ -33,44 +33,97 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-
 import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
+import { consentDB, scopeDB } from '~/model/db'
+import { verifySignature } from '~/domain/challenge'
+import { thirdPartyRequest } from '~/domain/requests'
+import {
+  putAuthorizationErrorRequest,
+  DatabaseError,
+  MissingScopeError,
+  InactiveOrMissingCredentialError,
+  PayloadNotPendingError,
+  InvalidSignatureError,
+  SignatureVerificationError
+} from '~/domain/errors'
+import { logger } from '~/shared/logger'
 
-/*
- * Interface for incoming payload
- */
-export interface AuthPayload {
-  consentId: string;
-  sourceAccountId: string;
-  status: 'PENDING' | 'VERIFIED';
-  challenge: string;
-  value: string;
-}
+import {
+  AuthPayload,
+  isPayloadPending,
+  hasActiveCredentialForPayload,
+  hasMatchingScopeForPayload
+} from './auth-payload'
 
-/*
- * Domain function to validate payload status
- */
-export function isPayloadPending (payload: AuthPayload): boolean {
-  return payload.status === 'PENDING'
-}
+export async function validateAndVerifySignature (
+  payload: AuthPayload,
+  transactionRequestId: string,
+  participantId: string
+): Promise<void> {
+  try {
+    // Validate incoming payload status
+    if (!isPayloadPending(payload)) {
+      throw new PayloadNotPendingError(payload.consentId)
+    }
 
-/*
- * Domain function to check for existence of an active Consent key
- */
-export function hasActiveCredentialForPayload (consent: Consent): boolean {
-  return (consent.credentialStatus === 'ACTIVE' &&
-    consent.credentialPayload !== null)
-}
+    let consent: Consent
 
-/*
- * Domain function to check for matching Consent scope
- */
-export function hasMatchingScopeForPayload (
-  consentScopes: Scope[],
-  payload: AuthPayload): boolean {
-  // Check if any scope matches
-  return consentScopes.some((scope: Scope): boolean =>
-    scope.accountId === payload.sourceAccountId
-  )
+    // Check if consent exists and retrieve consent data
+    try {
+      consent = await consentDB.retrieve(payload.consentId)
+      console.log('consent', consent)
+    } catch (error) {
+      logger.push({ error }).error('Could not retrieve consent')
+      throw new DatabaseError(payload.consentId)
+    }
+
+    let consentScopes: Scope[]
+
+    // Retrieve scopes for the consent
+    try {
+      consentScopes = await scopeDB.retrieveAll(payload.consentId)
+    } catch (error) {
+      logger.push({ error }).error('Could not retrieve scope')
+      throw new DatabaseError(payload.consentId)
+    }
+
+    if (!hasMatchingScopeForPayload(consentScopes, payload)) {
+      throw new MissingScopeError(payload.consentId)
+    }
+
+    if (!hasActiveCredentialForPayload(consent)) {
+      throw new InactiveOrMissingCredentialError(payload.consentId)
+    }
+
+    let isVerified: boolean
+    try {
+      // Challenge is a UTF-8 (Normalization Form C)
+      // JSON string of the QuoteResponse object
+      isVerified = verifySignature(
+        payload.challenge,
+        payload.value,
+        consent.credentialPayload as string
+      )
+    } catch (error) {
+      logger.push({ error }).error('Could not verify signature')
+      throw new SignatureVerificationError(payload.consentId)
+    }
+
+    if (!isVerified) {
+      throw new InvalidSignatureError(payload.consentId)
+    }
+
+    payload.status = 'VERIFIED'
+
+    // PUT request to switch to inform about verification
+    await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
+      payload,
+      transactionRequestId,
+      participantId
+    )
+  } catch (error) {
+    logger.push({ error }).error('Outgoing PUT request not made for transaction authorizations')
+    putAuthorizationErrorRequest(transactionRequestId, error, participantId)
+  }
 }

@@ -29,5 +29,5 @@
 
 export {
   Scope,
-  ScopeDB as default
+  ScopeDB
 } from './scope'

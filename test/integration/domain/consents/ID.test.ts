@@ -30,13 +30,13 @@ import {
   retrieveValidConsent,
   updateConsentCredential,
   buildConsentRequestBody
-} from '~/domain/consents/{ID}'
+} from '~/domain/consents/ID'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import Knex from 'knex'
-import { closeKnexConnection } from '~/lib/db'
+import { closeKnexConnection } from '~/model/db'
 import Config from '~/shared/config'
-import * as Scopes from '~/lib/scopes'
+import * as Scopes from '~/domain/scopes'
 import {
   NotFoundError,
   RevokedConsentModificationError

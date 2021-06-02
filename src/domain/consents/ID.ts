@@ -37,14 +37,14 @@
  ******/
 import { Consent, ConsentCredential } from '~/model/consent'
 import { Scope } from '~/model/scope'
-import { consentDB, scopeDB } from '~/lib/db'
+import { consentDB, scopeDB } from '~/model/db'
 import {
   ChallengeMismatchError,
   IncorrectConsentStatusError,
   EmptyCredentialPayloadError
 } from '../errors'
 import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { ExternalScope, convertScopesToExternal } from '~/lib/scopes'
+import { ExternalScope, convertScopesToExternal } from '~/domain/scopes'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 
 export async function retrieveValidConsent (

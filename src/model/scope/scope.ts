@@ -60,7 +60,7 @@ export class ScopeDB {
   }
 
   // Add a single Scope or an array of Scopes
-  public async insert (scopes: Scope | Scope[]): Promise<boolean> {
+  public async insert (scopes: Scope | Scope[], trx?: Knex.Transaction): Promise<boolean> {
     // To avoid inconsistencies between DBs, we define a standard
     // way to deal with empty arrays.
     // We just return true because an empty array was anyways
@@ -69,11 +69,12 @@ export class ScopeDB {
       return true
     }
 
-    // Returns [0] for MySQL-Knex and [Row Count] for SQLite-Knex
-    await this
-      .Db<Scope>('Scope')
-      .insert(scopes)
-
+    const action = this.Db<Scope>('Scope').insert(scopes)
+    if (trx) {
+      await action.transacting(trx)
+    } else {
+      await action
+    }
     return true
   }
 

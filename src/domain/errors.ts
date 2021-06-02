@@ -25,13 +25,7 @@
 
 import { logger } from '~/shared/logger'
 import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
-import { thirdPartyRequest } from '../lib/requests'
-
-// Type guard for Mojaloop errors
-export function isMojaloopError (error: unknown): error is TErrorInformation {
-  const mojaloopError = (error as TErrorInformation)
-  return !!(mojaloopError.errorCode && mojaloopError.errorDescription)
-}
+import { thirdPartyRequest } from './requests'
 
 /*
  * Domain function make an error request using Mojaloop internal codes

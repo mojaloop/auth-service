@@ -20,26 +20,18 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
 
-import Knex from 'knex'
-import Config from '../shared/config'
-import ConsentDB from '../model/consent'
-import ScopeDB from '../model/scope'
+import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const Db: Knex = Knex(Config.DATABASE as object)
-const consentDB: ConsentDB = new ConsentDB(Db)
-const scopeDB: ScopeDB = new ScopeDB(Db)
-const closeKnexConnection = async () => { await Db.destroy() }
+export const logger = {
+  log: jest.fn(() => logger),
+  error: jest.fn(() => logger),
+  info: jest.fn(() => logger),
+  push: jest.fn(() => logger)
+} as unknown as SDKLogger.Logger
 
-export {
-  consentDB,
-  scopeDB,
-  closeKnexConnection
-}
+export const logResponse = jest.fn()

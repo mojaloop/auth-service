@@ -29,12 +29,12 @@
  ******/
 
 import crypto from 'crypto'
-import { logger } from '~/shared/logger'
+// import { logger } from '~/shared/logger'
 import Credential from './credential'
-import { generate, verifySignature } from '~/lib/challenge'
-import { mocked } from 'ts-jest/utils'
+import { generate, verifySignature } from '~/domain/challenge'
+// import { mocked } from 'ts-jest/utils'
 
-jest.mock('~/shared/logger')
+// jest.mock('~/shared/logger')
 
 describe('Challenge Generation', (): void => {
   it('Should return a 32 byte string by default', async (): Promise<void> => {
@@ -291,13 +291,12 @@ describe('Signature Verification', (): void => {
       // Verify that crypto function is called correctly
       expect(createVerifySpy).toHaveBeenCalledWith('SHA256')
       expect(createVerifySpy).toHaveBeenCalledTimes(1)
-
       // Verify that logger functions are called correctly
-      expect(mocked(logger.push))
-        .toHaveBeenCalledWith({ error: new Error('Unable to create Verify in mock') })
-      expect(mocked(logger.push)).toHaveBeenCalledTimes(1)
+      // expect(mocked(logger.push))
+      //   .toHaveBeenCalledWith({ error: new Error('Unable to create Verify in mock') })
+      // expect(mocked(logger.push)).toHaveBeenCalledTimes(1)
 
-      expect(mocked(logger.error)).toHaveBeenCalledTimes(1)
-      expect(mocked(logger.error)).toHaveBeenCalledWith('Unable to verify signature')
+      // expect(mocked(logger.error)).toHaveBeenCalledTimes(1)
+      // expect(mocked(logger.error)).toHaveBeenCalledWith('Unable to verify signature')
     })
 })

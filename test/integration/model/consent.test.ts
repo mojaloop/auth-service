@@ -29,7 +29,7 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import ConsentDB, { Consent } from '../../../src/model/consent'
+import { ConsentDB, Consent } from '../../../src/model/consent'
 import { Scope } from '../../../src/model/scope'
 import { NotFoundError } from '../../../src/model/errors'
 

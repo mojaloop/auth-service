@@ -23,30 +23,38 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kenneth Zeng <kkzeng@google.com>
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Raman Mangla <ramanmangla@google.com>
  --------------
  ******/
-import { createAndStoreConsent } from '~/domain/consents'
-import { closeKnexConnection } from '~/model/db'
-import { ExternalScope } from '~/domain/scopes'
 
-import { requestWithPayloadScopes } from 'test/data/data'
+import Knex from 'knex'
+import Config from '../shared/config'
+import { Consent, ConsentDB } from './consent'
+import { Scope, ScopeDB } from './scope'
 
-describe('server/domain/consents', (): void => {
-  const consentId = requestWithPayloadScopes.params.ID
-  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
-  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
-  const scopesExternal: ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>)
-    .scopes as unknown as ExternalScope[]
+const Db: Knex = Knex(Config.DATABASE)
+const consentDB: ConsentDB = new ConsentDB(Db)
+const scopeDB: ScopeDB = new ScopeDB(Db)
 
-  afterAll(async (): Promise<void> => {
-    await closeKnexConnection()
-  })
+const closeKnexConnection = async (): Promise<void> => Db.destroy()
 
-  it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
-      .resolves
-      .toBe(undefined)
-  })
-})
+async function insertConsentWithScopes (consent: Consent, scopes: Scope[]): Promise<void> {
+  const trxProvider = Db.transactionProvider()
+  const trx = await trxProvider()
+  try {
+    await consentDB.insert(consent, trx)
+    await scopeDB.insert(scopes, trx)
+    await trx.commit()
+  } catch (err) {
+    await trx.rollback()
+    throw err
+  }
+}
+
+export {
+  Db,
+  consentDB,
+  scopeDB,
+  closeKnexConnection,
+  insertConsentWithScopes
+}

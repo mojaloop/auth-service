@@ -1,5 +1,5 @@
 import { Consent, ConsentCredential } from '~/model/consent'
-import { ExternalScope } from '~/lib/scopes'
+import { ExternalScope } from '~/domain/scopes'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Scope } from '~/model/scope'
 import { CredentialStatusEnum } from '~/model/consent/consent'

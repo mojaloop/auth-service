@@ -26,19 +26,19 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { consentDB, scopeDB } from '~/lib/db'
+import { Db, consentDB, scopeDB } from '~/model/db'
 import { createAndStoreConsent } from '~/domain/consents'
 
-import * as ScopeFunction from '~/lib/scopes'
+import * as ScopeFunction from '~/domain/scopes'
 import {
   requestWithPayloadScopes, externalScopes,
   partialConsentActive, scopes
 } from '~/../test/data/data'
 import { DatabaseError } from '~/domain/errors'
 import { logger } from '~/shared/logger'
-import { mocked } from 'ts-jest/utils'
+// import { mocked } from 'ts-jest/utils'
 
-jest.mock('~/shared/logger')
+// jest.mock('~/shared/logger')
 
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
@@ -47,14 +47,26 @@ const mockConvertExternalToScope = jest.spyOn(
   ScopeFunction, 'convertExternalToScope')
 
 describe('server/domain/consents', (): void => {
-  beforeAll((): void => {
-    mockInsertConsent.mockResolvedValue(true)
-    mockInsertScopes.mockResolvedValue(true)
+  const consentId = requestWithPayloadScopes.params.ID
+  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
+  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
+  const scopesExternal: ScopeFunction.ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>).scopes as unknown as ScopeFunction.ExternalScope[]
+  beforeAll(async (): Promise<void> => {
+    await Db.migrate.latest()
+    await Db.raw('PRAGMA foreign_keys = ON')
     mockConvertExternalToScope.mockReturnValue(scopes)
   })
 
-  beforeEach((): void => {
+  afterAll(async (): Promise<void> => {
+    Db.destroy()
+  })
+
+  beforeEach(async (): Promise<void> => {
     jest.clearAllMocks()
+    mockInsertConsent.mockResolvedValue(true)
+    mockInsertScopes.mockResolvedValue(true)
+    await Db('Consent').del()
+    await Db('Scope').del()
   })
 
   it('test logger', (): void => {
@@ -62,38 +74,38 @@ describe('server/domain/consents', (): void => {
     expect(logger.push({})).toBeDefined()
   })
   it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .resolves
       .toBe(undefined)
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
-    expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
+    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive, expect.anything())
+    expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
   })
 
   it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
     const testError = new Error('Unable to Register Consent')
     mockInsertConsent.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .rejects
-      .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
-
+      .toThrowError(new DatabaseError(consentId))
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
+    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive, expect.anything())
     expect(mockInsertScopes).not.toHaveBeenCalled()
-    expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
+    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
+    mockInsertConsent.mockClear()
   })
 
   it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
     const testError = new Error('Unable to Register Scopes')
     mockInsertScopes.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(requestWithPayloadScopes))
+    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal))
       .rejects
-      .toThrowError(new DatabaseError(requestWithPayloadScopes.params.ID))
-
+      .toThrowError(new DatabaseError(consentId))
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive)
-    expect(mockInsertScopes).toHaveBeenCalledWith(scopes)
-    expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
+    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive, expect.anything())
+    expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
+    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
+    mockInsertScopes.mockClear()
   })
 })
