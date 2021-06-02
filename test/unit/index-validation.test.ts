@@ -88,9 +88,9 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /consents/{ID}', (): void => {
     it('schema validation - missing fields', async (): Promise<void> => {
-      const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
+      const mockUpdateConsent = jest.spyOn(Handlers, 'PutConsentByID')
       mockUpdateConsent.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
+        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
       )
 
       const payloadMissingCredential = Object.assign({}, MockUpdateConsentReq.payload)

@@ -34,7 +34,7 @@ export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
   PostConsents: PostConsents.post,
-  UpdateConsent: UpdateConsent.put,
+  PutConsentByID: UpdateConsent.put,
   VerifyThirdPartyAuthorization: Authorizations.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,

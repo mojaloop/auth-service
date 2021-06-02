@@ -40,7 +40,7 @@ export async function put (_context: Context, request: Request, h: ResponseToolk
   // Note: not awaiting promise here
   validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId)
 
-  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
 }
 
 export default {

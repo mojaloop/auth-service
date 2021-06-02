@@ -288,7 +288,7 @@ describe('server/handler/consents/{ID}', (): void => {
         },
         req,
         h)
-      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
       expect(mockValidateAndUpdateConsent).toHaveBeenCalled()
     })
   })
