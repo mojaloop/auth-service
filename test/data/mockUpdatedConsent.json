@@ -1,5 +1,6 @@
 {
     "payload": {
+        "id": "b51ec534-ee48-4575-b6a9-ead2955b8069",
         "credential": {
             "id": "9876",
             "type": "FIDO",

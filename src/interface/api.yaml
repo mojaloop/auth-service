@@ -39,7 +39,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsentsPostRequest'
+              oneOf:
+                - $ref: '#/components/schemas/ConsentsPostRequestAUTH'
+                - $ref: '#/components/schemas/ConsentsPostRequestPISP'
       responses:
         '202':
           $ref: '#/components/responses/202'
@@ -533,66 +535,6 @@ components:
         regular expression for interoperability reasons. A UUID is always 36
         characters long, 32 hexadecimal symbols and 4 dashes (‘-‘).
       example: b51ec534-ee48-4575-b6a9-ead2955b8069
-    CredentialType:
-      title: CredentialType
-      type: string
-      enum:
-        - FIDO
-      description: |
-        The type of the Credential.
-        - "FIDO" - A FIDO public/private keypair.
-    PublicKeyCredential:
-      title: PublicKeyCredential
-      type: object
-      description: |
-        An object sent in a `PUT /consents/{ID}` request.
-        Based on https://w3c.github.io/webauthn/#iface-pkcredential
-      properties:
-        id:
-          type: string
-          description: TBD
-        response:
-          type: object
-          properties:
-            clientDataJSON:
-              type: string
-              description: TBD
-          required:
-            - clientDataJSON
-      required:
-        - id
-        - response
-    SignedCredential:
-      title: SignedCredential
-      type: object
-      description: >
-        A credential used to allow a user to prove their identity and access
-
-        to an account with a DFSP.
-
-
-        SignedCredential is a special formatting of the credential to allow us
-        to be
-
-        more explicit about the `status` field - it should only ever be PENDING
-        when
-
-        updating a credential.
-      properties:
-        credentialType:
-          $ref: '#/components/schemas/CredentialType'
-        status:
-          type: string
-          enum:
-            - PENDING
-          description: The challenge has signed but not yet verified.
-        payload:
-          $ref: '#/components/schemas/PublicKeyCredential'
-      required:
-        - credentialType
-        - status
-        - payload
-      additionalProperties: false
     AccountId:
       title: AccountId
       type: string
@@ -635,10 +577,139 @@ components:
       required:
         - accountId
         - actions
-    ConsentsPostRequest:
-      title: ConsentPostRequest
+    CredentialType:
+      title: CredentialType
+      type: string
+      enum:
+        - FIDO
+      description: |
+        The type of the Credential.
+        - "FIDO" - A FIDO public/private keypair
+    FIDOPublicKeyCredential:
+      title: FIDOPublicKeyCredential
       type: object
-      description: The object sent in a `POST /consents` request.
+      description: >
+        An object sent in a `PUT /consents/{ID}` request.
+
+        Based on https://w3c.github.io/webauthn/#iface-pkcredential
+
+        and mostly on: https://webauthn.guide/#registration
+
+        AuthenticatorAttestationResponse
+
+        https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject
+      properties:
+        id:
+          type: string
+          description: |
+            credential id: identifier of pair of keys, base64 encoded
+            https://w3c.github.io/webauthn/#ref-for-dom-credential-id
+          minLength: 59
+          maxLength: 118
+        rawId:
+          type: string
+          description: |
+            raw credential id: identifier of pair of keys, base64 encoded
+          minLength: 59
+          maxLength: 118
+        response:
+          type: object
+          description: |
+            AuthenticatorAttestationResponse
+          properties:
+            clientDataJSON:
+              type: string
+              description: |
+                JSON string with client data
+              minLength: 121
+              maxLength: 242
+            attestationObject:
+              type: string
+              description: |
+                CBOR.encoded attestation object
+              minLength: 306
+              maxLength: 712
+          required:
+            - clientDataJSON
+            - attestationObject
+          additionalProperties: false
+        type:
+          type: string
+          description: 'response type, we need only the type of public-key'
+          enum:
+            - public-key
+      required:
+        - id
+        - rawId
+        - response
+        - type
+      additionalProperties: false
+    SignedCredential:
+      title: SignedCredential
+      type: object
+      description: >
+        A credential used to allow a user to prove their identity and access
+
+        to an account with a DFSP.
+
+
+        SignedCredential is a special formatting of the credential to allow us
+        to be
+
+        more explicit about the `status` field - it should only ever be PENDING
+        when
+
+        updating a credential.
+      properties:
+        credentialType:
+          $ref: '#/components/schemas/CredentialType'
+        status:
+          type: string
+          enum:
+            - PENDING
+          description: The challenge has signed but not yet verified.
+        payload:
+          $ref: '#/components/schemas/FIDOPublicKeyCredential'
+      required:
+        - credentialType
+        - status
+        - payload
+      additionalProperties: false
+    ConsentsPostRequestAUTH:
+      title: ConsentPostRequestAUTH
+      type: object
+      description: >
+        The object sent in a `POST /consents` request to AUTH-SERVICE by DFSP to
+        store registered consent with PublicKey
+
+        and whatever needed to perform authorization validation later
+      properties:
+        consentId:
+          allOf:
+            - $ref: '#/components/schemas/CorrelationId'
+          description: |
+            Common ID between the PISP and FSP for the Consent object
+            decided by the DFSP who creates the Consent
+            This field is REQUIRED for POST /consent.
+            creation of this Consent.
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scope'
+        credential:
+          allOf:
+            - $ref: '#/components/schemas/SignedCredential'
+      required:
+        - consentId
+        - scopes
+        - credential
+      additionalProperties: false
+    ConsentsPostRequestPISP:
+      title: ConsentPostRequestPISP
+      type: object
+      description: >-
+        The object sent in a `POST /consents` request to PISP by DFSP to ask for
+        delivering the credential object.
       properties:
         consentId:
           allOf:
@@ -653,8 +724,6 @@ components:
           description: |
             The id of the ConsentRequest that was used to initiate the
             creation of this Consent.
-        credential:
-          $ref: '#/components/schemas/SignedCredential'
         scopes:
           type: array
           items:
@@ -662,6 +731,7 @@ components:
       required:
         - consentId
         - scopes
+        - consentRequestId
     ErrorCode:
       title: ErrorCode
       type: string
@@ -763,6 +833,7 @@ components:
       required:
         - scopes
         - credential
+      additionalProperties: false
     VerifiedCredential:
       title: VerifiedCredential
       type: object
@@ -788,7 +859,7 @@ components:
             - VERIFIED
           description: 'The Credential is valid, and ready to be used by the PISP.'
         payload:
-          $ref: '#/components/schemas/PublicKeyCredential'
+          $ref: '#/components/schemas/FIDOPublicKeyCredential'
       required:
         - credentialType
         - status
@@ -813,6 +884,7 @@ components:
       required:
         - scopes
         - credential
+      additionalProperties: false
     ConsentStatusTypeVerified:
       title: ConsentStatusType
       type: string
