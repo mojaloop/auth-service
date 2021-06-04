@@ -61,6 +61,16 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
       }
+    }, 
+    { // properly handle generated DTO and autofix it
+      files: [
+        'src/interface/**/*.ts'
+      ],
+      rules: {
+        'no-use-before-define': 'off',
+        'max-len': ['warn', { code: 500 }],
+        '@typescript-eslint/ban-types': 'off'
+      }
     }
   ],
 };
