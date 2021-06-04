@@ -72,7 +72,6 @@
   "devDependencies": {
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-conventional": "^9.1.2",
-    "@mojaloop/api-snippets": "^12.3.18",
     "@redocly/openapi-cli": "^1.0.0-beta.49",
     "@types/hapi": "^18.0.5",
     "@types/hapi__hapi": "^19.0.3",
@@ -117,6 +116,7 @@
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.3",
     "@hapi/vision": "^6.1.0",
+    "@mojaloop/api-snippets": "^12.4.1",
     "@mojaloop/central-services-error-handling": "^10.6.0",
     "@mojaloop/central-services-health": "^10.6.0",
     "@mojaloop/central-services-shared": "^11.7.2",
