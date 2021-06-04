@@ -116,7 +116,7 @@
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.3",
     "@hapi/vision": "^6.1.0",
-    "@mojaloop/api-snippets": "^12.4.1",
+    "@mojaloop/api-snippets": "^12.4.2",
     "@mojaloop/central-services-error-handling": "^10.6.0",
     "@mojaloop/central-services-health": "^10.6.0",
     "@mojaloop/central-services-shared": "^11.7.2",
