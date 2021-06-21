@@ -72,6 +72,7 @@ export async function createAndStoreConsent (
     throw new SignatureVerificationError(consentId)
   }
 
+  // TODO: store properly whole credential or only credential.payload.id ?
   const consent: Consent = {
     id: consentId,
     initiatorId,
@@ -102,6 +103,7 @@ export interface UpdateCredentialRequest {
   };
 }
 
+// TODO: check with diagrams do we need this code - PISP vs AUTH interfaces and flows for `/consents` resource
 export async function validateAndUpdateConsent (
   consentId: string,
   request: UpdateCredentialRequest,
