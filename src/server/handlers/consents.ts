@@ -43,9 +43,8 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  // TOOD: validate which case we have here: PISP or AUTH - maybe change api definitions...
   const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
-  const { consentId /*, credential */ } = payload
+  const { consentId, credential } = payload
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const participantId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   // Asynchronously deals with creation and storing of consents and scope
@@ -55,8 +54,8 @@ export async function post (
         consentId,
         initiatorId,
         participantId,
-        payload.scopes
-        // TODO: payload.credential validation
+        payload.scopes,
+        credential
       )
     } catch (error) {
       logger.push(error).error('Error: Unable to create/store consent')

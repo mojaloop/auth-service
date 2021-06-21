@@ -23,7 +23,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Paweł Marzec <rorkit@gmail.com>
  --------------
  ******/
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
@@ -285,8 +285,6 @@ export async function validate (
   if (!(typeof clientData.challenge === 'string' && clientData.challenge.length > 0)) {
     throw new Error('clientData.challenge must be nonempty string')
   }
-
-  // TODO: validate origin and so on....
 
   return validateAttestation(attestationObject, clientDataJSON)
 }
