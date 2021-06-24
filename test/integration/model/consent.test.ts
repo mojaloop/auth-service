@@ -52,7 +52,32 @@ const completeConsent: Consent = {
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs',
-  credentialPayload: 'dwuduwd&e2idjoj0w'
+  credentialPayload: 'dwuduwd&e2idjoj0w',
+  attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIgHq9' +
+  'JKpi/bFnnu0uVV+k6JjHfBcFwWRRCXJWlejgzJLUCIQD2iOONGXebOCxq37UqvumxC/d' +
+  'Jz1a3U9F1DaxVMFnzf2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0' +
+  'BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDY' +
+  'zMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0U' +
+  'xEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3R' +
+  'hdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwY' +
+  'HKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZd' +
+  'RvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAo' +
+  'CBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwY' +
+  'BBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb' +
+  '3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TO' +
+  'iPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5' +
+  'T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7' +
+  'E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+E' +
+  'IJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9' +
+  'bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO' +
+  '6gx2XY0EAAAAEFJogIY72QTOWuIH41bfx9QBAX8aQc8WgIOiYzoRIKbTYJdlzMZ/8zo3' +
+  'ZiIL3Rvh/ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3aUBAgMmIAEhWCB' +
+  '0Zo9xAj7V50Tu7Hj8F5Wo0A3AloIpsVDSY2icW9eSwiJYIH79t0O2hnPDguuloYn2eSd' +
+'R7caaZd/Ffnmk4vyOATab',
+  clientDataJSON: '{"type":"webauthn.create","challenge":"MgA3ADgANQBjADIAZ' +
+  'AA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiA' +
+  'DUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZ' +
+  'gA2ADcAOAAzADQAMAA","origin":"http://localhost:5000","crossOrigin":false}'
 }
 
 // Intentional lack of initiatorId and participantId
@@ -91,7 +116,9 @@ const expectedPartialConsent = {
   credentialStatus: null,
   credentialPayload: null,
   credentialChallenge: null,
-  revokedAt: null
+  revokedAt: null,
+  clientDataJSON: null,
+  attestationObject: null
 }
 
 /*
@@ -222,7 +249,9 @@ describe('src/model/consent', (): void => {
           credentialType: conflictingConsent.credentialType,
           credentialPayload: conflictingConsent.credentialPayload,
           credentialChallenge: conflictingConsent.credentialChallenge,
-          revokedAt: null
+          revokedAt: null,
+          clientDataJSON: null,
+          attestationObject: null
         }
 
         expect(consents[0]).toEqual(expectedConsent)
@@ -251,7 +280,9 @@ describe('src/model/consent', (): void => {
           createdAt: expect.any(Date),
           // credentialStatus is updated to 'ACTIVE'
           credentialStatus: 'ACTIVE',
-          revokedAt: null
+          revokedAt: null,
+          clientDataJSON: expect.any(String),
+          attestationObject: expect.any(String)
         }
 
         expect(consents[0]).toEqual(expectedConsent)
