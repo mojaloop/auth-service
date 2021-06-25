@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.4.0](https://github.com/mojaloop/auth-service/compare/v11.3.3...v11.4.0) (2021-06-25)
+
+
+### Features
+
+* update db schema for clientDataJSON and attestationObject ([#73](https://github.com/mojaloop/auth-service/issues/73)) ([160b684](https://github.com/mojaloop/auth-service/commit/160b684607d86c19ae81c3188725aa73d17a1f4c))
+
 ### [11.3.3](https://github.com/mojaloop/auth-service/compare/v11.3.2...v11.3.3) (2021-06-02)
 
 
