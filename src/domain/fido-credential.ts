@@ -258,6 +258,7 @@ export async function validateAttestation (
     // prepare data to verify
     let signatureBase: Buffer
     if (attestation.fmt === 'fido-u2f') {
+      // TODO: get test data from Windows Hello device to cover with tests this part
       const reservedByte = Buffer.from([0x00])
       signatureBase = Buffer.concat([reservedByte, auth.rpIdHash, clientDataHash, auth.credID, pkcsPublicKey])
     } else if (attestation.fmt === 'packed') {
