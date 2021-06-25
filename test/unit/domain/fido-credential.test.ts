@@ -160,6 +160,8 @@ describe('fido-credential', () => {
         expect(e.message).toEqual(`attestation format '${attestation.fmt}' not supported`)
         done()
       }
+
+      it.todo('should verify fido-u2f')
     })
   })
 })
