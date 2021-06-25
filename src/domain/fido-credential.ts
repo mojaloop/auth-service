@@ -27,7 +27,7 @@
  --------------
  ******/
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import { decode, decodeAllSync } from 'cbor'
+import { decode, decodeAllSync, encode } from 'cbor'
 import { createHash, createVerify } from 'crypto'
 
 /**
@@ -136,6 +136,11 @@ export function extractPublicKey (authData: Uint8Array): FIDOPublicKey {
 export async function unpackAttestationObject (attestationObject: string): Promise<FIDOAttestation> {
   const attestation = decode(Buffer.from(attestationObject, 'base64'))
   return attestation as FIDOAttestation
+}
+
+export async function packAttestationObject (attestation: FIDOAttestation): Promise<string> {
+  const encoded = encode(attestation)
+  return encoded.toString('base64')
 }
 
 export function ASN1toPEM (pkBuffer: Buffer): string {

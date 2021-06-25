@@ -27,7 +27,7 @@
  --------------
  ******/
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import { validate } from '~/domain/fido-credential'
+import { validate, unpackAttestationObject, packAttestationObject, FIDOAttestation } from '~/domain/fido-credential'
 
 describe('fido-credential', () => {
   describe('validate', () => {
@@ -136,6 +136,28 @@ describe('fido-credential', () => {
       } catch (e) {
         expect(e).toBeDefined()
         expect(e.message).toEqual('clientData.challenge must be nonempty string')
+        done()
+      }
+    })
+
+    it('should rejects not supported signing algorithm', async (done) => {
+      const attestation: FIDOAttestation = {
+        ...await unpackAttestationObject(credential.response.attestationObject),
+        fmt: 'unknown-signing-format' // this format is invalid
+      } as unknown as FIDOAttestation
+
+      const invalidCredentialAttestationFMT = {
+        ...credential,
+        response: {
+          ...credential.response,
+          attestationObject: await packAttestationObject(attestation)
+        }
+      }
+      try {
+        await validate(invalidCredentialAttestationFMT as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+      } catch (e) {
+        expect(e).toBeDefined()
+        expect(e.message).toEqual(`attestation format '${attestation.fmt}' not supported`)
         done()
       }
     })
