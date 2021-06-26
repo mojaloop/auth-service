@@ -105,7 +105,7 @@ describe('fido-credential', () => {
       type: 'public-key'
     }
 
-    it('should accept valid credential', async () => {
+    it('should accept valid credential for packed format', async () => {
       expect(await validate(credential)).toBe(true)
     })
     it('should accept only public-key type', async (done) => {
@@ -161,7 +161,7 @@ describe('fido-credential', () => {
         done()
       }
 
-      it.todo('should verify fido-u2f')
+      it.todo('should accept valid credential for fido-u2f format')
     })
   })
 })
