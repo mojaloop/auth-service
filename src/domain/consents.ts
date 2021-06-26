@@ -71,13 +71,16 @@ export async function createAndStoreConsent (
   if (!fido.validate(credential.payload)) {
     throw new SignatureVerificationError(consentId)
   }
-
   // TODO: store properly whole credential or only credential.payload.id ?
   const consent: Consent = {
     id: consentId,
     initiatorId,
     participantId,
-    status: 'ACTIVE'
+    status: 'ACTIVE',
+    credentialType: 'FIDO',
+    credentialId: credential.payload.id,
+    attestationObject: credential.payload.response.attestationObject,
+    clientDataJSON: credential.payload.response.clientDataJSON
   }
 
   const scopes: Scope[] = convertExternalToScope(externalScopes, consentId)

@@ -130,6 +130,13 @@ describe('server/domain/consents', (): void => {
       type: 'public-key'
     }
   }
+  const consentActiveFIDO = {
+    ...partialConsentActive,
+    credentialType: 'FIDO',
+    credentialId: credential.payload.id,
+    attestationObject: credential.payload.response.attestationObject,
+    clientDataJSON: credential.payload.response.clientDataJSON
+  }
   beforeAll(async (): Promise<void> => {
     await Db.migrate.latest()
     await Db.raw('PRAGMA foreign_keys = ON')
@@ -158,7 +165,7 @@ describe('server/domain/consents', (): void => {
       .toBe(undefined)
 
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive, expect.anything())
+    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
   })
 
@@ -169,7 +176,7 @@ describe('server/domain/consents', (): void => {
       .rejects
       .toThrowError(new DatabaseError(consentId))
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive, expect.anything())
+    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
     expect(mockInsertScopes).not.toHaveBeenCalled()
     // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
     mockInsertConsent.mockClear()
@@ -182,7 +189,7 @@ describe('server/domain/consents', (): void => {
       .rejects
       .toThrowError(new DatabaseError(consentId))
     expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(partialConsentActive, expect.anything())
+    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
     // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
     mockInsertScopes.mockClear()
