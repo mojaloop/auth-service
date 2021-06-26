@@ -60,6 +60,8 @@ export interface Consent {
   credentialChallenge?: string;
   createdAt?: Date;
   revokedAt?: string;
+  attestationObject?: string;
+  clientDataJSON?: string;
 }
 
 /*
