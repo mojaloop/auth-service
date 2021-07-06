@@ -23,33 +23,23 @@
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
 import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import { mocked } from 'ts-jest/utils'
-
-import { post } from '~/server/handlers/consents'
-import { createAndStoreConsent as mockStoreConsent } from '~/domain/consents'
-import { putConsentError } from '~/domain/errors'
-import { requestWithPayloadScopes, h } from 'test/data/data'
-import { ExternalScope } from '~/domain/scopes'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-
-jest.mock('~/domain/consents', () => ({
-  createAndStoreConsent: jest.fn(() => Promise.resolve())
-}))
+import { h } from 'test/data/data'
+import ConsentsHandler from '~/server/handlers/consents'
 
 jest.mock('~/domain/errors')
 
-// mocking logger brings unresolved promise rejection
-// jest.mock('~/shared/logger')
-
-describe('server/handlers/consents', (): void => {
-  const consentId = requestWithPayloadScopes.params.ID
-  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
-  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
-  const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
+const consentsPostRequestAUTH = {
+  headers: {
+    'fspiop-source': 'dfspA',
+    'fspiop-destination': 'centralAuth'
+  },
+  params: {},
+  payload: {
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     scopes: [
       {
@@ -138,61 +128,18 @@ describe('server/handlers/consents', (): void => {
       }
     }
   }
+}
 
-  const scopesExternal: ExternalScope[] = payload.scopes as ExternalScope[]
 
-  it('Should return 202 success code',
-    async (done): Promise<void> => {
-      const req = requestWithPayloadScopes as Request
-      const response = await post(
-        {
-          method: req.method,
-          path: req.path,
-          body: payload,
-          query: req.query,
-          headers: req.headers
-        },
-        {
-          ...req,
-          payload
-        } as Request,
-        h as ResponseToolkit
-      )
-      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-      setImmediate(() => {
-        expect(mockStoreConsent).toHaveBeenCalledWith(
-          consentId, initiatorId, participantId, scopesExternal, payload.credential
-        )
-        done()
-      })
-    })
+describe('server/handlers/consents', (): void => {
+  it('Should return 202 success code', async (): Promise<void> => {
+    const request = consentsPostRequestAUTH
+    const response = await ConsentsHandler.post(
+      null,
+      request as unknown as Request,
+      h as ResponseToolkit
+    )
 
-  it('Should throw an error due to error in creating/storing consent & scopes',
-    async (done): Promise<void> => {
-      mocked(mockStoreConsent).mockImplementationOnce(() => {
-        return Promise.reject(new Error('Error Registering Consent'))
-      })
-      const req = requestWithPayloadScopes as Request
-      const response = await post(
-        {
-          method: req.method,
-          path: req.path,
-          body: payload,
-          query: req.query,
-          headers: req.headers
-        },
-        {
-          ...req,
-          payload
-        } as Request,
-        h as ResponseToolkit)
-      expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-      setImmediate(() => {
-        expect(mocked(mockStoreConsent)).toHaveBeenLastCalledWith(
-          consentId, initiatorId, participantId, scopesExternal, payload.credential
-        )
-        expect(mocked(putConsentError)).toHaveBeenCalled()
-        done()
-      })
-    })
+    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  })
 })

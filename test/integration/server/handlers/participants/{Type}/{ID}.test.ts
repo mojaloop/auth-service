@@ -23,41 +23,28 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Enum } from '@mojaloop/central-services-shared'
+import axios from 'axios'
+import headers from '~/../test/data/putParticipantsHeaders.json'
+import mockParticipantsTypeIDResponse from '~/../test/data/mockParticipantsTypeIDResponse.json'
 
-import { Context } from '~/server/plugins'
-import { validateAndVerifySignature } from '~/domain/authorizations'
-import { AuthPayload } from '~/domain/auth-payload'
+// TODO: once model is implemented set up TTK so we can test assertions on
+//       on outgoing responses
+describe('server/handlers/participants/{Type}/{ID}', (): void => {
+  it('Should return 202 (Accepted) status code',
+    async (): Promise<void> => {
+      // Endpoint
+      const scenariosURI = 'http://localhost:4004/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe'
 
-/*
- * The HTTP request `POST /thirdpartyRequests/transactions/{ID}/authorizations`
- * is used to authorize the PISP transaction identified by {ID}.
- * The `switch` uses it to verify the user's signature on
- * the quote using the associated Consent's public key.
- * The response is sent using outgoing request
- * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
- */
-export function post (
-  _context: Context,
-  request: Request,
-  h: ResponseToolkit): ResponseObject {
-  // Validate and process asynchronously - don't await on promise to resolve
-  validateAndVerifySignature(
-    request.payload as AuthPayload,
-    request.params.ID,
-    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      const response = await axios.put(
+        scenariosURI,
+        mockParticipantsTypeIDResponse.payload,
+        { headers: headers }
+      )
+      expect(response.status).toEqual(200)
+    }
   )
-
-  // Return a 202 (Accepted) acknowledgement in the meantime
-  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-}
-
-export default {
-  post,
-  validateAndVerifySignature
-}
+})

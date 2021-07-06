@@ -85,7 +85,7 @@ export class ScopeDB {
       .select('*')
       .where({ consentId })
 
-    // Not dinguishing between a Consent that exists
+    // Not distinguishing between a Consent that exists
     // with 0 scopes and a Consent that does not exist
     if (scopes.length === 0) {
       throw new NotFoundError('Consent Scopes', consentId)

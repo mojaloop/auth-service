@@ -18,22 +18,23 @@
 
  * Lewis Daly <lewis@vesselstech.com>
  * Paweł Marzec <pawel.marzec@modusbox.com>
+ * Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
 
 import index from '~/index'
 import Config from '~/shared/config'
 import { Server, Request, ResponseToolkit } from '@hapi/hapi'
-import { Context } from '~/server/plugins'
 
 // Import handlers for mocking
 import Handlers from '~/server/handlers'
 
 // Mock data
 import MockConsentData from '../data/mockConsent.json'
-import MockUpdateConsentReq from '../data/mockUpdatedConsent.json'
-import MockThirdPartyAuthorizationReq from '../data/mockThirdPartyReqAuth.json'
+import MockParticipantsTypeIDResponse from '../data/mockParticipantsTypeIDResponse.json'
+import MockParticipantsTypeIDErrorResponse from '../data/mockParticipantsTypeIDErrorResponse.json'
 import Headers from '../data/headers.json'
+import PutParticipantsHeaders from '../data/putParticipantsHeaders.json'
 
 jest.mock('~/shared/logger')
 
@@ -60,7 +61,7 @@ describe('api routes', (): void => {
     it('schema validation - missing fields', async (): Promise<void> => {
       const mockPostConsents = jest.spyOn(Handlers, 'PostConsents')
       mockPostConsents.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
+        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
       )
 
       const payloadMissingId = Object.assign({}, MockConsentData.payload)
@@ -86,27 +87,27 @@ describe('api routes', (): void => {
     })
   })
 
-  describe('Endpoint: /consents/{ID}', (): void => {
+  describe.skip('Endpoint: /participants/{Type}/{ID}', (): void => {
+    // TODO: /participants/{Type}/{ID} payload doesn't seem to have any required fields
+    // double check api definition
     it('schema validation - missing fields', async (): Promise<void> => {
-      const mockUpdateConsent = jest.spyOn(Handlers, 'PutConsentByID')
-      mockUpdateConsent.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
+      jest.spyOn(Handlers, 'ParticipantsByTypeAndID3').mockImplementationOnce(
+        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
       )
 
-      const payloadMissingCredential = Object.assign({}, MockUpdateConsentReq.payload)
-      delete (payloadMissingCredential as Record<string, unknown>).credential
-
+      const payloadMissingId = Object.assign({}, MockParticipantsTypeIDResponse.payload)
+      delete (payloadMissingId as Record<string, unknown>).fspId
       const request = {
         method: 'PUT',
-        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
-        headers: Headers,
-        payload: payloadMissingCredential
+        url: '/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+        headers: PutParticipantsHeaders,
+        payload: payloadMissingId
       }
 
       const expected = {
         errorInformation: {
           errorCode: '3102',
-          errorDescription: 'Missing mandatory element - /requestBody must have required property \'credential\''
+          errorDescription: 'Missing mandatory element - /requestBody must have required property \'fspId\''
         }
       }
 
@@ -116,61 +117,32 @@ describe('api routes', (): void => {
     })
   })
 
-  describe('Endpoint: /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
+  describe('Endpoint: /participants/{Type}/{ID}/error', (): void => {
     it('schema validation - missing fields', async (): Promise<void> => {
-      const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
-      mockThirdPartyAuthorizations.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202)
+      jest.spyOn(Handlers, 'ParticipantsErrorByTypeAndID').mockImplementationOnce(
+        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
       )
 
-      const payloadMissingChallenge = Object.assign({}, MockThirdPartyAuthorizationReq.payload)
-      delete (payloadMissingChallenge as Record<string, unknown>).challenge
+      const payloadMissingInfo = Object.assign({}, MockParticipantsTypeIDErrorResponse.payload)
+      delete (payloadMissingInfo as Record<string, unknown>).errorInformation
 
       const request = {
-        method: 'POST',
-        url: '/thirdpartyRequests/transactions/123/authorizations',
-        headers: Headers,
-        payload: payloadMissingChallenge
+        method: 'PUT',
+        url: '/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',
+        headers: PutParticipantsHeaders,
+        payload: payloadMissingInfo
       }
 
       const expected = {
         errorInformation: {
           errorCode: '3102',
-          errorDescription: 'Missing mandatory element - /requestBody must have required property \'challenge\''
+          errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
         }
       }
 
       const response = await server.inject(request)
-      expect(response.result).toStrictEqual(expected)
       expect(response.statusCode).toBe(400)
-    })
-
-    it('schema validation - status !== PENDING results in 400', async (): Promise<void> => {
-      const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
-      mockThirdPartyAuthorizations.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202)
-      )
-
-      const payloadWithActiveStatus = Object.assign({}, MockThirdPartyAuthorizationReq.payload)
-      payloadWithActiveStatus.status = 'ACTIVE'
-
-      const request = {
-        method: 'POST',
-        url: '/thirdpartyRequests/transactions/123/authorizations',
-        headers: Headers,
-        payload: payloadWithActiveStatus
-      }
-
-      const expected = {
-        errorInformation: {
-          errorCode: '3100',
-          errorDescription: 'Generic validation error - /requestBody/status must be equal to one of the allowed values'
-        }
-      }
-
-      const response = await server.inject(request)
       expect(response.result).toStrictEqual(expected)
-      expect(response.statusCode).toBe(400)
     })
   })
 })

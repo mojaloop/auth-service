@@ -31,6 +31,8 @@ import axios from 'axios'
 import headers from '~/../test/data/headers.json'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
+// TODO: once model is implemented set up TTK so we can test assertions on
+//       on outgoing responses
 describe('POST /consents - AUTH case', (): void => {
   it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {

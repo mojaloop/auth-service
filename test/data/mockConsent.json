@@ -1,10 +1,9 @@
 {
   "payload": {
-    "consentId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
-    "consentRequestId": "a71ec534-ee48-4575-b6a9-ead2955b8069",
+    "consentId": "7b24ea42-6fdd-45f5-999e-0a6981c4198b",
     "scopes": [
       {
-        "accountId": "dfsp.username.5678",
+        "accountId": "dfspa.username.1234",
         "actions": [
           "accounts.transfer",
           "accounts.getBalance"
@@ -12,14 +11,16 @@
       }
     ],
     "credential": {
-      "id": "9876",
       "credentialType": "FIDO",
       "status": "PENDING",
       "payload": {
-        "id": "payload-id",
+        "id": "credential id: identifier of pair of keys, base64 encoded, min length 59",
+        "rawId": "raw credential id: identifier of pair of keys, base64 encoded, min length 59",
         "response": {
-          "clientDataJSON": "{}"
-        }
+          "clientDataJSON": "clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          "attestationObject": "attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+        },
+        "type": "public-key"
       }
     }
   }

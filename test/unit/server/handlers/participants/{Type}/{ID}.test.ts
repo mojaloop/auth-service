@@ -21,28 +21,39 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
- - Ahan Gupta <ahangupta@google.com>
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import { Context } from '~/server/plugins'
-import { validateAndUpdateConsent, UpdateCredentialRequest } from '~/domain/consents'
+import { h } from 'test/data/data'
+import ParticipantsTypeIDHandler from '~/server/handlers/participants/{Type}/{ID}'
 
-export async function put (_context: Context, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const consentId = request.params.ID
-  const updateConsentRequest = request.payload as UpdateCredentialRequest
-  // The DFSP we need to reply to
-  const destinationParticipantId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+jest.mock('~/domain/errors')
 
-  // Note: not awaiting promise here
-  validateAndUpdateConsent(consentId, updateConsentRequest, destinationParticipantId)
-
-  return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
+const participantsTypeIDPutResponse = {
+  headers: {
+    'fspiop-source': 'als',
+    'fspiop-destination': 'centralAuth'
+  },
+  params: {
+    Type: 'CONSENT',
+    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  },
+  payload: {
+    fspId: 'centralAuth'
+  }
 }
 
-export default {
-  put
-}
+describe('server/handlers/consents', (): void => {
+  it('Should return 200 success code', async (): Promise<void> => {
+    const request = participantsTypeIDPutResponse
+    const response = await ParticipantsTypeIDHandler.put(
+      null,
+      request as unknown as Request,
+      h as ResponseToolkit
+    )
+
+    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
+  })
+})
