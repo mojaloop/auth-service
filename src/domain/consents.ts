@@ -53,7 +53,8 @@ import {
 } from '~/domain/consents/ID'
 import { verifySignature } from '~/domain/challenge'
 import { CredentialStatusEnum } from '~/model/consent/consent'
-
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import * as fido from '~/domain/fido-credential'
 /**
  * Builds internal Consent and Scope objects from request payload
  * Stores the objects in the database
@@ -63,13 +64,23 @@ export async function createAndStoreConsent (
   consentId: string,
   initiatorId: string,
   participantId: string,
-  externalScopes: ExternalScope[]
+  externalScopes: ExternalScope[],
+  credential: tpAPI.Schemas.SignedCredential
 ): Promise<void> {
+  // validate FIDO credential attestation
+  if (!fido.validate(credential.payload)) {
+    throw new SignatureVerificationError(consentId)
+  }
+  // TODO: store properly whole credential or only credential.payload.id ?
   const consent: Consent = {
     id: consentId,
     initiatorId,
     participantId,
-    status: 'ACTIVE'
+    status: 'ACTIVE',
+    credentialType: 'FIDO',
+    credentialId: credential.payload.id,
+    attestationObject: credential.payload.response.attestationObject,
+    clientDataJSON: credential.payload.response.clientDataJSON
   }
 
   const scopes: Scope[] = convertExternalToScope(externalScopes, consentId)
@@ -95,6 +106,7 @@ export interface UpdateCredentialRequest {
   };
 }
 
+// TODO: check with diagrams do we need this code - PISP vs AUTH interfaces and flows for `/consents` resource
 export async function validateAndUpdateConsent (
   consentId: string,
   request: UpdateCredentialRequest,

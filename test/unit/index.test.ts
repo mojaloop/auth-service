@@ -34,14 +34,35 @@ import MockConsentData from '../data/mockConsent.json'
 import MockUpdateConsentReq from '../data/mockUpdatedConsent.json'
 import MockThirdPartyAuthorizationReq from '../data/mockThirdPartyReqAuth.json'
 import Headers from '../data/headers.json'
+import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
 jest.mock('~/server/handlers', () => ({
-  HealthGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response({ status: 'OK', uptime: 1.23 }).code(200))),
-  MetricsGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
-  PostConsents: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))),
-  UpdateConsent: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
-  VerifyThirdPartyAuthorization: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200)))
+  HealthGet: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response({ status: 'OK', uptime: 1.23 }).code(200)
+    )
+  ),
+  MetricsGet: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(200)
+    )
+  ),
+  PostConsents: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(202)
+    )
+  ),
+  PutConsentByID: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(200)
+    )
+  ),
+  VerifyThirdPartyAuthorization: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(200)
+    )
+  )
 }))
 
 describe('index', (): void => {
@@ -92,11 +113,6 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /consents/{ID}', (): void => {
     it('PUT /consents/{ID}', async (): Promise<void> => {
-      const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
-      mockUpdateConsent.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
-      )
-
       const request = {
         method: 'PUT',
         url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
@@ -114,9 +130,9 @@ describe('api routes', (): void => {
       })
 
       const response = await server.inject(request)
-      expect(mockUpdateConsent).toHaveBeenCalledTimes(1)
-      expect(mockUpdateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-      expect(response.statusCode).toBe(202)
+      expect(mocked(Handlers.PutConsentByID)).toHaveBeenCalledTimes(1)
+      expect(mocked(Handlers.PutConsentByID)).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(200)
       expect(response.result).toBeDefined()
     })
   })

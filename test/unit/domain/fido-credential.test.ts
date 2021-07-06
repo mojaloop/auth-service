@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /*****
  License
  --------------
@@ -21,42 +20,18 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
+ * Gates Foundation
+ - Name Surname <name.surname@gatesfoundation.com>
 
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { Db, consentDB, scopeDB } from '~/model/db'
-import { createAndStoreConsent } from '~/domain/consents'
-
-import * as ScopeFunction from '~/domain/scopes'
-import {
-  requestWithPayloadScopes, externalScopes,
-  partialConsentActive, scopes
-} from '~/../test/data/data'
-import { DatabaseError } from '~/domain/errors'
-import { logger } from '~/shared/logger'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { validate, unpackAttestationObject, packAttestationObject, FIDOAttestation } from '~/domain/fido-credential'
 
-// import { mocked } from 'ts-jest/utils'
-
-// jest.mock('~/shared/logger')
-
-// Declare Mocks
-const mockInsertConsent = jest.spyOn(consentDB, 'insert')
-const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
-const mockConvertExternalToScope = jest.spyOn(
-  ScopeFunction, 'convertExternalToScope')
-
-describe('server/domain/consents', (): void => {
-  const consentId = requestWithPayloadScopes.params.ID
-  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
-  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
-  const scopesExternal: ScopeFunction.ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>).scopes as unknown as ScopeFunction.ExternalScope[]
-  const credential: tpAPI.Schemas.SignedCredential = {
-    credentialType: 'FIDO',
-    status: 'PENDING',
-    payload: {
+describe('fido-credential', () => {
+  describe('validate', () => {
+    const credential: tpAPI.Schemas.FIDOPublicKeyCredential = {
       id: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ_8zo3ZiIL3Rvh_ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q',
       rawId: Buffer.from([
         95, 198, 144, 115, 197, 160, 32, 232, 152, 206, 132, 72, 41, 180, 216, 37, 217, 115, 49, 159, 252, 206,
@@ -129,69 +104,64 @@ describe('server/domain/consents', (): void => {
       },
       type: 'public-key'
     }
-  }
-  const consentActiveFIDO = {
-    ...partialConsentActive,
-    credentialType: 'FIDO',
-    credentialId: credential.payload.id,
-    attestationObject: credential.payload.response.attestationObject,
-    clientDataJSON: credential.payload.response.clientDataJSON
-  }
-  beforeAll(async (): Promise<void> => {
-    await Db.migrate.latest()
-    await Db.raw('PRAGMA foreign_keys = ON')
-    mockConvertExternalToScope.mockReturnValue(scopes)
-  })
 
-  afterAll(async (): Promise<void> => {
-    Db.destroy()
-  })
+    it('should accept valid credential for packed format', async () => {
+      expect(await validate(credential)).toBe(true)
+    })
+    it('should accept only public-key type', async (done) => {
+      const invalidCredentialType = { ...credential, type: 'private-key' }
+      try {
+        await validate(invalidCredentialType as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+      } catch (e) {
+        expect(e).toBeDefined()
+        expect(e.message).toEqual('type must be public-key')
+        done()
+      }
+    })
 
-  beforeEach(async (): Promise<void> => {
-    jest.clearAllMocks()
-    mockInsertConsent.mockResolvedValue(true)
-    mockInsertScopes.mockResolvedValue(true)
-    await Db('Consent').del()
-    await Db('Scope').del()
-  })
+    it('should rejects clientDataJSON without challenge', async (done) => {
+      const clientDataJSON = JSON.stringify({
+        ...JSON.parse(credential.response.clientDataJSON),
+        challenge: '' // empty challenge shouldn't be accepted
+      })
+      const invalidCredentialLackOfChallenge = {
+        ...credential,
+        response: {
+          ...credential.response,
+          clientDataJSON
+        }
+      }
+      try {
+        await validate(invalidCredentialLackOfChallenge as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+      } catch (e) {
+        expect(e).toBeDefined()
+        expect(e.message).toEqual('clientData.challenge must be nonempty string')
+        done()
+      }
+    })
 
-  it('test logger', (): void => {
-    expect(logger).toBeDefined()
-    expect(logger.push({})).toBeDefined()
-  })
-  it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
-      .resolves
-      .toBe(undefined)
+    it('should rejects not supported signing algorithm', async (done) => {
+      const attestation: FIDOAttestation = {
+        ...await unpackAttestationObject(credential.response.attestationObject),
+        fmt: 'unknown-signing-format' // this format is invalid
+      } as unknown as FIDOAttestation
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
-    expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
-  })
+      const invalidCredentialAttestationFMT = {
+        ...credential,
+        response: {
+          ...credential.response,
+          attestationObject: await packAttestationObject(attestation)
+        }
+      }
+      try {
+        await validate(invalidCredentialAttestationFMT as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+      } catch (e) {
+        expect(e).toBeDefined()
+        expect(e.message).toEqual(`attestation format '${attestation.fmt}' not supported`)
+        done()
+      }
 
-  it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
-    const testError = new Error('Unable to Register Consent')
-    mockInsertConsent.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
-      .rejects
-      .toThrowError(new DatabaseError(consentId))
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
-    expect(mockInsertScopes).not.toHaveBeenCalled()
-    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
-    mockInsertConsent.mockClear()
-  })
-
-  it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
-    const testError = new Error('Unable to Register Scopes')
-    mockInsertScopes.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
-      .rejects
-      .toThrowError(new DatabaseError(consentId))
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
-    expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
-    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
-    mockInsertScopes.mockClear()
+      it.todo('should accept valid credential for fido-u2f format')
+    })
   })
 })

@@ -13,8 +13,14 @@
     ],
     "credential": {
       "id": "9876",
-      "type": "FIDO",
-      "status": "PENDING"
+      "credentialType": "FIDO",
+      "status": "PENDING",
+      "payload": {
+        "id": "payload-id",
+        "response": {
+          "clientDataJSON": "{}"
+        }
+      }
     }
   }
 }

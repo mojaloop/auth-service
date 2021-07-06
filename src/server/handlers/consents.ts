@@ -43,11 +43,10 @@ export async function post (
   _context: Context,
   request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  const payload: tpAPI.Schemas.ConsentsPostRequest = request.payload as tpAPI.Schemas.ConsentsPostRequest
-  const consentId = payload.consentId
+  const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
+  const { consentId, credential } = payload
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const participantId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-
   // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
@@ -55,7 +54,8 @@ export async function post (
         consentId,
         initiatorId,
         participantId,
-        payload.scopes
+        payload.scopes,
+        credential
       )
     } catch (error) {
       logger.push(error).error('Error: Unable to create/store consent')
