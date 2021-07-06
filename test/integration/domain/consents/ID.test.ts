@@ -200,7 +200,9 @@ describe('server/domain/consents/{ID}', (): void => {
           credentialId: consents[1].credentialId!,
           credentialType: consents[1].credentialType!,
           credentialStatus: consents[1].credentialStatus!,
-          credentialChallenge: consents[1].credentialChallenge!
+          credentialChallenge: consents[1].credentialChallenge!,
+          clientDataJSON: consents[1].clientDataJSON!,
+          attestationObject: consents[1].attestationObject!
         }
 
         const mockconvertDatabaseScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertDatabaseScopesToThirdpartyScopes')
