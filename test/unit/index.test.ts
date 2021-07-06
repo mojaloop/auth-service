@@ -35,7 +35,6 @@ import MockParticipantsTypeIDResponse from '../data/mockParticipantsTypeIDRespon
 import MockParticipantsTypeIDErrorResponse from '../data/mockParticipantsTypeIDErrorResponse.json'
 import Headers from '../data/headers.json'
 import PutParticipantsHeaders from '../data/putParticipantsHeaders.json'
-import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
 jest.mock('~/server/handlers', () => ({
