@@ -71,7 +71,7 @@
   "devDependencies": {
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-conventional": "^9.1.2",
-    "@mojaloop/api-snippets": "^12.3.5",
+    "@mojaloop/api-snippets": "^12.4.5",
     "@redocly/openapi-cli": "^1.0.0-beta.45",
     "@types/hapi": "^18.0.5",
     "@types/hapi__hapi": "^19.0.3",

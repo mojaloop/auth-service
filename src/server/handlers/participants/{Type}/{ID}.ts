@@ -18,24 +18,33 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kenneth Zeng <kkzeng@google.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-import { Util } from '@mojaloop/central-services-shared'
-import Health from './health'
-import Metrics from './metrics'
-import Consents from './consents'
-import ParticipantsTypeID from './participants/{Type}/{ID}'
-import ParticipantsTypeIDError from './participants/{Type}/{ID}/error'
-const OpenapiBackend = Util.OpenapiBackend
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { Enum } from '@mojaloop/central-services-shared'
+
+/**
+ * Handles a inbound PUT /participants/{Type}/{ID} request
+ */
+async function put (_context: unknown, _request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  // PUT /participants/{Type}/{ID} is a response to POST /participants/{Type}/{ID}
+  // when the ALS is able to register the auth-service as the authoritative
+  // owner of a Consent object
+
+  // const consentRequestId = request.params.ID
+  // const payload = request.payload as tpAPI.Schemas.ParticipantsTypeIDPutResponse
+  /*
+   RegisterConsentModel.triggerWorkflow(
+     RegisterConsentPhase.registerAuthServiceConsentWithALS,
+     consentRequestId,
+     h.getPublisher(),
+     payload as unknown as Message
+   )
+   */
+  return h.response({}).code(Enum.Http.ReturnCodes.OK.CODE)
+}
 
 export default {
-  HealthGet: Health.get,
-  MetricsGet: Metrics.get,
-  PostConsents: Consents.post,
-  ParticipantsByTypeAndID3: ParticipantsTypeID.put,
-  ParticipantsErrorByTypeAndID: ParticipantsTypeIDError.put,
-  validationFail: OpenapiBackend.validationFail,
-  notFound: OpenapiBackend.notFound,
-  methodNotAllowed: OpenapiBackend.methodNotAllowed
+  put
 }

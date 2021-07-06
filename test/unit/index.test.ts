@@ -31,17 +31,18 @@ import Handlers from '~/server/handlers'
 
 // Mock data
 import MockConsentData from '../data/mockConsent.json'
-import MockUpdateConsentReq from '../data/mockUpdatedConsent.json'
-import MockThirdPartyAuthorizationReq from '../data/mockThirdPartyReqAuth.json'
+import MockParticipantsTypeIDResponse from '../data/mockParticipantsTypeIDResponse.json'
+import MockParticipantsTypeIDErrorResponse from '../data/mockParticipantsTypeIDErrorResponse.json'
 import Headers from '../data/headers.json'
+import PutParticipantsHeaders from '../data/putParticipantsHeaders.json'
 
 jest.mock('~/shared/logger')
 jest.mock('~/server/handlers', () => ({
   HealthGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response({ status: 'OK', uptime: 1.23 }).code(200))),
   MetricsGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
   PostConsents: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))),
-  UpdateConsent: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
-  VerifyThirdPartyAuthorization: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200)))
+  ParticipantsByTypeAndID3: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
+  ParticipantsErrorByTypeAndID: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200)))
 }))
 
 describe('index', (): void => {
@@ -66,7 +67,7 @@ describe('api routes', (): void => {
   describe('Endpoint: /consents', (): void => {
     it('POST /consents/', async (): Promise<void> => {
       const mockPostConsents = jest.spyOn(Handlers, 'PostConsents').mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
+        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
       )
 
       const request = {
@@ -90,64 +91,56 @@ describe('api routes', (): void => {
     })
   })
 
-  describe('Endpoint: /consents/{ID}', (): void => {
-    it('PUT /consents/{ID}', async (): Promise<void> => {
-      const mockUpdateConsent = jest.spyOn(Handlers, 'UpdateConsent')
-      mockUpdateConsent.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
+  describe('Endpoint: /participants/{Type}/{ID}', (): void => {
+    it('PUT /participants/{Type}/{ID}', async (): Promise<void> => {
+      const mockParticipantsByTypeAndID = jest.spyOn(Handlers, 'ParticipantsByTypeAndID3').mockImplementationOnce(
+        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
       )
 
       const request = {
         method: 'PUT',
-        url: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
-        headers: Headers,
-        payload: MockUpdateConsentReq.payload
+        url: '/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+        headers: PutParticipantsHeaders,
+        payload: MockParticipantsTypeIDResponse.payload
       }
 
       const expectedArgs = expect.objectContaining({
-        path: '/consents/b51ec534-ee48-4575-b6a9-ead2955b8069',
+        path: '/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe',
         method: 'put',
-        payload: MockUpdateConsentReq.payload,
-        params: {
-          ID: expect.any(String)
-        }
+        payload: MockParticipantsTypeIDResponse.payload
       })
 
       const response = await server.inject(request)
-      expect(mockUpdateConsent).toHaveBeenCalledTimes(1)
-      expect(mockUpdateConsent).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-      expect(response.statusCode).toBe(202)
+      expect(mockParticipantsByTypeAndID).toHaveBeenCalledTimes(1)
+      expect(mockParticipantsByTypeAndID).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(200)
       expect(response.result).toBeDefined()
     })
   })
 
-  describe('Endpoint: /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
-    it('POST /thirdpartyRequests/transactions/{ID}/authorizations', async (): Promise<void> => {
-      const mockThirdPartyAuthorizations = jest.spyOn(Handlers, 'VerifyThirdPartyAuthorization')
-      mockThirdPartyAuthorizations.mockImplementationOnce(
-        (_context: Context, _req: Request, h: ResponseToolkit) => h.response().code(202)
+  describe('Endpoint: /participants/{Type}/{ID}/error', (): void => {
+    it('PUT /participants/{Type}/{ID}/error', async (): Promise<void> => {
+      const mockParticipantsErrorByTypeAndID = jest.spyOn(Handlers, 'ParticipantsErrorByTypeAndID').mockImplementationOnce(
+        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
       )
 
       const request = {
-        method: 'POST',
-        url: '/thirdpartyRequests/transactions/123/authorizations',
-        headers: Headers,
-        payload: MockThirdPartyAuthorizationReq.payload
+        method: 'PUT',
+        url: '/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',
+        headers: PutParticipantsHeaders,
+        payload: MockParticipantsTypeIDErrorResponse.payload
       }
 
       const expectedArgs = expect.objectContaining({
-        path: '/thirdpartyRequests/transactions/123/authorizations',
-        method: 'post',
-        payload: MockThirdPartyAuthorizationReq.payload,
-        params: {
-          ID: expect.any(String)
-        }
+        path: '/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',
+        method: 'put',
+        payload: MockParticipantsTypeIDErrorResponse.payload
       })
 
       const response = await server.inject(request)
-      expect(mockThirdPartyAuthorizations).toHaveBeenCalledTimes(1)
-      expect(mockThirdPartyAuthorizations).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
-      expect(response.statusCode).toBe(202)
+      expect(mockParticipantsErrorByTypeAndID).toHaveBeenCalledTimes(1)
+      expect(mockParticipantsErrorByTypeAndID).toHaveBeenCalledWith(expect.anything(), expectedArgs, expect.anything())
+      expect(response.statusCode).toBe(200)
       expect(response.result).toBeDefined()
     })
   })

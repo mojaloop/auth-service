@@ -1,0 +1,8 @@
+{
+  "payload": {
+    "errorInformation": {
+      "errorCode": "3000",
+      "errorDescription": "Some error code"
+    }
+  }
+}

@@ -21,60 +21,42 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- - Abhimanyu Kapur <abhi.kapur09@gmail.com>
- - Paweł Marzec <pawel.marzec@modusbox.com>
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
 import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { h } from 'test/data/data'
-import ConsentsHandler from '~/server/handlers/consents'
+import ParticipantsTypeIDErrorHandler from '~/server/handlers/participants/{Type}/{ID}/error'
 
 jest.mock('~/domain/errors')
 
-const consentsPostRequestAUTH = {
+const errorInformationResponse = {
   headers: {
-    'fspiop-source': 'dfspA',
+    'fspiop-source': 'als',
     'fspiop-destination': 'centralAuth'
   },
-  params: {},
+  params: {
+    Type: 'CONSENT',
+    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  },
   payload: {
-    consentId: '7b24ea42-6fdd-45f5-999e-0a6981c4198b',
-    scopes: [
-      {
-        accountId: 'dfspa.username.1234',
-        actions: [
-          'accounts.transfer',
-          'accounts.getBalance'
-        ]
-      }
-    ],
-    credential: {
-      credentialType: 'FIDO',
-      status: 'PENDING',
-      payload: {
-        id: 'credential id: identifier of pair of keys, base64 encoded, min length 59',
-        rawId: 'raw credential id: identifier of pair of keys, base64 encoded, min length 59',
-        response: {
-          clientDataJSON: 'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-          attestationObject: 'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
-        },
-        type: 'public-key'
-      }
+    errorInformation: {
+      errorCode: '3000',
+      errorDescription: 'Some error code'
     }
   }
 }
 
 describe('server/handlers/consents', (): void => {
-  it('Should return 202 success code', async (): Promise<void> => {
-    const request = consentsPostRequestAUTH
-    const response = await ConsentsHandler.post(
+  it('Should return 200 success code', async (): Promise<void> => {
+    const request = errorInformationResponse
+    const response = await ParticipantsTypeIDErrorHandler.put(
       null,
       request as unknown as Request,
       h as ResponseToolkit
     )
 
-    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
   })
 })

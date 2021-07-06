@@ -2,19 +2,29 @@ openapi: 3.0.1
 info:
   title: Mojaloop Auth-Service API
   version: '0.1.0'
-  description: An API a central auth service in Mojaloop, concerned with creating \nand managing Consents and validating thirdparty transactions
+  description: |
+    An API a central auth service in Mojaloop, concerned with creating and
+    managing Consents and validating thirdparty transactions
   license:
     name: Open API for FSP Interoperability (FSPIOP) (Implementation Friendly Version)
 servers:
   - url: /
 paths:
-  /consents:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents.yaml'
-  /consents/{ID}:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID.yaml'
   /health:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/health.yaml'
   /metrics:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/metrics.yaml'
-  /thirdpartyRequests/transactions/{ID}/authorizations:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_transactions_ID_authz.yaml'
+  # for registering Consent objects
+  /consents:
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents.yaml'
+  # for receiving callbacks from the ALS about registering the auth-service as
+  # the authoritative source for a Consent object
+  /participants/{Type}/{ID}:
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/participants_Type_ID.yaml'
+  /participants/{Type}/{ID}/error:
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/participants_Type_ID_error.yaml'
+  # to be implemented
+  # /thirdpartyRequests/verifications:
+  #   $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications.yaml'
+  # /thirdpartyRequests/verifications/{ID}:
+  #   $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications_ID.yaml'

@@ -20,44 +20,40 @@
  Gates Foundation organization for an example). Those individuals should have
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
 
- - Raman Mangla <ramanmangla@google.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseToolkit } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
+import { h } from 'test/data/data'
+import ParticipantsTypeIDHandler from '~/server/handlers/participants/{Type}/{ID}'
 
-import { Context } from '~/server/plugins'
-import { validateAndVerifySignature } from '~/domain/authorizations'
-import { AuthPayload } from '~/domain/auth-payload'
+jest.mock('~/domain/errors')
 
-/*
- * The HTTP request `POST /thirdpartyRequests/transactions/{ID}/authorizations`
- * is used to authorize the PISP transaction identified by {ID}.
- * The `switch` uses it to verify the user's signature on
- * the quote using the associated Consent's public key.
- * The response is sent using outgoing request
- * `PUT /thirdpartyRequests/transactions/{ID}/authorizations`.
- */
-export function post (
-  _context: Context,
-  request: Request,
-  h: ResponseToolkit): ResponseObject {
-  // Validate and process asynchronously - don't await on promise to resolve
-  validateAndVerifySignature(
-    request.payload as AuthPayload,
-    request.params.ID,
-    request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  )
-
-  // Return a 202 (Accepted) acknowledgement in the meantime
-  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+const participantsTypeIDPutResponse = {
+  headers: {
+    'fspiop-source': 'als',
+    'fspiop-destination': 'centralAuth'
+  },
+  params: {
+    Type: 'CONSENT',
+    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  },
+  payload: {
+    fspId: 'centralAuth'
+  }
 }
 
-export default {
-  post,
-  validateAndVerifySignature
-}
+describe('server/handlers/consents', (): void => {
+  it('Should return 200 success code', async (): Promise<void> => {
+    const request = participantsTypeIDPutResponse
+    const response = await ParticipantsTypeIDHandler.put(
+      null,
+      request as unknown as Request,
+      h as ResponseToolkit
+    )
+
+    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
+  })
+})

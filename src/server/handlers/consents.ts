@@ -23,47 +23,45 @@
 
  - Abhimanyu Kapur <abhi.kapur09@gmail.com>
  - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
 
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 import { logger } from '~/shared/logger'
-import { Context } from '~/server/plugins'
-import { createAndStoreConsent } from '~/domain/consents'
-import { putConsentError } from '~/domain/errors'
+import inspect from '~/shared/inspect'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
- * Called by `DFSP` after the successful creation and
- * validation of a consentRequest.
+ *  Called by `DFSP` to register a Consent object.
  */
 export async function post (
-  _context: Context,
-  request: Request,
+  _context: unknown,
+  _request: Request,
   h: ResponseToolkit): Promise<ResponseObject> {
-  const payload: tpAPI.Schemas.ConsentsPostRequest = request.payload as tpAPI.Schemas.ConsentsPostRequest
-  const consentId = payload.consentId
-  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const participantId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  // const payload: tpAPI.Schemas.ConsentsPostRequest = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
+  // const consentId = payload.consentId
+  // const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  // The auth-service is now the authoritative source for the Consent object.
+  // The auth-service's fspId is retrieved from the destination header.
+  // const participantId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
 
-  // Asynchronously deals with creation and storing of consents and scope
   setImmediate(async (): Promise<void> => {
     try {
-      await createAndStoreConsent(
-        consentId,
-        initiatorId,
-        participantId,
-        payload.scopes
-      )
+      // TODO: 1) auth-service needs to check signature against challenge.
+      //       2) send a POST /participants/CONSENT/{ID} to the ALS and receive
+      //          a PUT /participants/CONSENT/{ID}
+      //       3) store the consent object and finally send back a
+      //          PUT /consents/{ID} request. Wooo...state machine
     } catch (error) {
-      logger.push(error).error('Error: Unable to create/store consent')
-      await putConsentError(consentId, error, participantId)
+      // the model catches all planned, catches unplanned errors,
+      // handles callbacks and also rethrows the error to stop the state machine
+      logger.info(`Error running RegisterConsentModel : ${inspect(error)}`)
     }
   })
 
-  // Return Success code informing source: request received
+  // safe to return a 202 response
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
 
