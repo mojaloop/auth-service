@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.4.1](https://github.com/mojaloop/auth-service/compare/v11.4.0...v11.4.1) (2021-07-06)
+
+
+### Code Refactor
+
+* edit handlers in prep for funtionality and cleanup old endpoints ([#75](https://github.com/mojaloop/auth-service/issues/75)) ([1d5abee](https://github.com/mojaloop/auth-service/commit/1d5abee09e5390811d2c75deacbde18ff0c876f1))
+
 ## [11.4.0](https://github.com/mojaloop/auth-service/compare/v11.3.3...v11.4.0) (2021-06-25)
 
 
