@@ -23,27 +23,28 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kenneth Zeng <kkzeng@google.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-
 import axios from 'axios'
-import headers from '~/../test/data/headers.json'
-import mockUpdateConsent from '~/../test/data/mockUpdatedConsent.json'
+import headers from '~/../test/data/putParticipantsHeaders.json'
+import mockParticipantsTypeIDErrorResponse from '~/../test/data/mockParticipantsTypeIDErrorResponse.json'
 
-describe('server/handlers/consents/{ID}', (): void => {
-  it('Should return 202 (Accepted) status code',
+// TODO: once model is implemented set up TTK so we can test assertions on
+//       on outgoing responses
+describe('server/handlers/participants/{Type}/{ID}/error', (): void => {
+  it('Should return 200 (OK) status code',
     async (): Promise<void> => {
-      const consentId = mockUpdateConsent.payload.id
-
       // Endpoint
-      const scenariosURI = `http://localhost:4004/consents/${consentId}`
+      const scenariosURI = 'http://localhost:4004/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe/error'
 
-      const response = await axios.put(scenariosURI, mockUpdateConsent.payload, {
-        headers: headers
-      })
+      const response = await axios.put(
+        scenariosURI,
+        mockParticipantsTypeIDErrorResponse.payload,
+        { headers: headers }
+      )
 
-      expect(response.status).toEqual(202)
+      expect(response.status).toEqual(200)
     }
   )
 })

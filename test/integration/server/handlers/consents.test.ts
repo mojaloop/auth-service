@@ -31,15 +31,13 @@ import axios from 'axios'
 import headers from '~/../test/data/headers.json'
 import mockPostConsents from '~/../test/data/mockConsent.json'
 
+// TODO: once model is implemented set up TTK so we can test assertions on
+//       on outgoing responses
 describe('server/handlers/consents', (): void => {
   it('Should return 202 (Accepted) status code',
     async (): Promise<void> => {
       // Endpoint
       const scenariosURI = 'http://localhost:4004/consents'
-
-      // TODO: Credential should be `null`.
-      // Test needs to be changed once OpenAPI spec is updated
-      // in Ticket #412.
 
       const response = await axios.post(scenariosURI, mockPostConsents.payload, {
         headers: headers
