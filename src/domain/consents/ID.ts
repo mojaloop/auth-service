@@ -43,7 +43,7 @@ import {
   IncorrectConsentStatusError,
   EmptyCredentialPayloadError
 } from '../errors'
-import { ExternalScope, convertDatabaseScopesToThirdpartyScopes } from '~/domain/scopes'
+import { convertDatabaseScopesToThirdpartyScopes } from '~/domain/scopes'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
