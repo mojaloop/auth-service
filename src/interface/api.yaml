@@ -2,8 +2,8 @@ openapi: 3.0.1
 info:
   title: Mojaloop Auth-Service API
   version: 0.1.0
-  description: >-
-    An API a central auth service in Mojaloop, concerned with creating \nand
+  description: |
+    An API a central auth service in Mojaloop, concerned with creating and
     managing Consents and validating thirdparty transactions
   license:
     name: >-
@@ -12,223 +12,6 @@ info:
 servers:
   - url: /
 paths:
-  /consents:
-    post:
-      tags:
-        - consents
-        - sampled
-      operationId: PostConsents
-      summary: PostConsents
-      description: >
-        DFSP sends this request to the PISP after granting consent. DFSP sends
-        this request to an Auth service to validate a signed consent.
-      parameters:
-        - $ref: '#/components/parameters/Accept'
-        - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/ConsentsPostRequestAUTH'
-                - $ref: '#/components/schemas/ConsentsPostRequestPISP'
-      responses:
-        '202':
-          $ref: '#/components/responses/202'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '405':
-          $ref: '#/components/responses/405'
-        '406':
-          $ref: '#/components/responses/406'
-        '501':
-          $ref: '#/components/responses/501'
-        '503':
-          $ref: '#/components/responses/503'
-  '/consents/{ID}':
-    parameters:
-      - $ref: '#/components/parameters/ID'
-      - $ref: '#/components/parameters/Content-Type'
-      - $ref: '#/components/parameters/Date'
-      - $ref: '#/components/parameters/X-Forwarded-For'
-      - $ref: '#/components/parameters/FSPIOP-Source'
-      - $ref: '#/components/parameters/FSPIOP-Destination'
-      - $ref: '#/components/parameters/FSPIOP-Encryption'
-      - $ref: '#/components/parameters/FSPIOP-Signature'
-      - $ref: '#/components/parameters/FSPIOP-URI'
-      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
-    get:
-      description: >
-        The HTTP request `GET /consents/{ID}` is used to get information
-        regarding a consent object created or requested earlier. The `{ID}` in
-        the URI should contain the `{ID}` that was used in the `POST /consents`.
-        summary: GetConsent
-      tags:
-        - consents
-      operationId: GetConsent
-      summary: GetConsent
-      parameters:
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '202':
-          $ref: '#/components/responses/202'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '405':
-          $ref: '#/components/responses/405'
-        '406':
-          $ref: '#/components/responses/406'
-        '501':
-          $ref: '#/components/responses/501'
-        '503':
-          $ref: '#/components/responses/503'
-    patch:
-      description: >
-        The HTTP request `PATCH /consents/{ID}` is used
-
-
-        - In account linking in the Credential Registration phase. Used by a
-        DFSP
-          to notify a PISP a credential has been verified and registered with an
-          Auth service.
-
-        - In account unlinking by a hub hosted auth service and by DFSPs
-          in non-hub hosted scenarios to notify participants of a consent being revoked.
-
-          Called by a `auth-service` to notify a PISP and DFSP of consent status in hub hosted scenario.
-          Called by a `DFSP` to notify a PISP of consent status in non-hub hosted scenario.
-      tags:
-        - consents
-        - sampled
-      operationId: PatchConsentByID
-      summary: PatchConsentByID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/ConsentsIDPatchResponseVerified'
-                - $ref: '#/components/schemas/ConsentsIDPatchResponseRevoked'
-      parameters:
-        - $ref: '#/components/parameters/Content-Length'
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '405':
-          $ref: '#/components/responses/405'
-        '406':
-          $ref: '#/components/responses/406'
-        '501':
-          $ref: '#/components/responses/501'
-        '503':
-          $ref: '#/components/responses/503'
-    put:
-      description: >
-        The HTTP request `PUT /consents/{ID}` is used by the PISP and Auth
-        Service.
-
-
-        - Called by a `PISP` to after signing a challenge. Sent to an DFSP for
-        verification.
-
-        - Called by a `auth-service` to notify a DFSP that a credential has been
-        verified and registered.
-      tags:
-        - consents
-        - sampled
-      operationId: PutConsentByID
-      summary: PutConsentByID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/ConsentsIDPutResponseSigned'
-                - $ref: '#/components/schemas/ConsentsIDPutResponseVerified'
-      parameters:
-        - $ref: '#/components/parameters/Content-Length'
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '202':
-          $ref: '#/components/responses/202'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '405':
-          $ref: '#/components/responses/405'
-        '406':
-          $ref: '#/components/responses/406'
-        '501':
-          $ref: '#/components/responses/501'
-        '503':
-          $ref: '#/components/responses/503'
-    delete:
-      description: >
-        The HTTP request `DELETE /consents/{ID}` is used to mark as deleted a
-        previously created consent.
-
-
-        - Called by a PISP when a user wants to remove their consent.
-      operationId: DeleteConsentByID
-      tags:
-        - consents
-      responses:
-        '202':
-          $ref: '#/components/responses/202'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '405':
-          $ref: '#/components/responses/405'
-        '406':
-          $ref: '#/components/responses/406'
-        '501':
-          $ref: '#/components/responses/501'
-        '503':
-          $ref: '#/components/responses/503'
   /health:
     get:
       tags:
@@ -283,10 +66,8 @@ paths:
       operationId: MetricsGet
       summary: Prometheus metrics endpoint
       description: The HTTP request GET /metrics is used to return metrics for the API.
-  '/thirdpartyRequests/transactions/{ID}/authorizations':
+  /consents:
     parameters:
-      - $ref: '#/components/parameters/ID'
-      - $ref: '#/components/parameters/Content-Length'
       - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
@@ -298,30 +79,113 @@ paths:
       - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     post:
       tags:
-        - thirdpartyRequests
+        - consents
         - sampled
-      operationId: VerifyThirdPartyAuthorization
-      summary: VerifyThirdPartyAuthorization
+      operationId: PostConsents
+      summary: PostConsents
       description: >
-        The HTTP request `POST
-        /thirdpartyRequests/transactions/{id}/authorizations` is used by the
-        DFSP to verify a third party authorization.
+        DFSP sends this request to the PISP after granting consent. DFSP sends
+        this request to an Auth service to validate a signed consent.
       parameters:
         - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
-        description: The thirdparty authorization details to verify
         required: true
         content:
           application/json:
             schema:
-              $ref: >-
-                #/components/schemas/ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest
-            example:
-              challenge: <QuoteResponse object>
-              value: <base64 encoded binary - the signed quote response object>
-              consentId: 8d34f91d-d078-4077-8263-2c0498dhbjr
-              sourceAccountId: dfspa.alice.1234
-              status: PENDING
+              oneOf:
+                - $ref: '#/components/schemas/ConsentsPostRequestAUTH'
+                - $ref: '#/components/schemas/ConsentsPostRequestPISP'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '406':
+          $ref: '#/components/responses/406'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+  '/participants/{Type}/{ID}':
+    parameters:
+      - $ref: '#/components/parameters/Type'
+      - $ref: '#/components/parameters/ID'
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
+    post:
+      description: >-
+        The HTTP request `POST /participants/{Type}/{ID}` (or `POST
+        /participants/{Type}/{ID}/{SubId}`) is used to create information in the
+        server regarding the provided identity, defined by `{Type}`, `{ID}`, and
+        optionally `{SubId}` (for example, `POST /participants/MSISDN/123456789`
+        or `POST /participants/BUSINESS/shoecompany/employee1`). An
+        ExtensionList element has been added to this reqeust in version v1.1
+      summary: Create participant information
+      tags:
+        - participants
+      operationId: ParticipantsByIDAndType
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Length'
+      requestBody:
+        description: Participant information to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantsTypeIDSubIDPostRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '406':
+          $ref: '#/components/responses/406'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+    get:
+      description: >-
+        The HTTP request `GET /participants/{Type}/{ID}` (or `GET
+        /participants/{Type}/{ID}/{SubId}`) is used to find out in which FSP the
+        requested Party, defined by `{Type}`, `{ID}` and optionally `{SubId}`,
+        is located (for example, `GET /participants/MSISDN/123456789`, or `GET
+        /participants/BUSINESS/shoecompany/employee1`). This HTTP request should
+        support a query string for filtering of currency. To use filtering of
+        currency, the HTTP request `GET /participants/{Type}/{ID}?currency=XYZ`
+        should be used, where `XYZ` is the requested currency.
+      summary: Look up participant information
+      tags:
+        - participants
+      operationId: ParticipantsByTypeAndID
+      parameters:
+        - $ref: '#/components/parameters/Accept'
       responses:
         '202':
           $ref: '#/components/responses/202'
@@ -342,34 +206,117 @@ paths:
         '503':
           $ref: '#/components/responses/503'
     put:
-      operationId: UpdateThirdpartyAuthorization
-      summary: UpdateThirdpartyAuthorization
-      description: >
-        The HTTP request `PUT
-        /thirdpartyRequests/transactions/{id}/authorizations` is used by the
-        auth-service to update a thirdparty authorization after successful
-        validation.
-
-        For an unsuccessful authorization result, the `PUT
-        /thirdpartyRequests/transactions/{id}/authorizations/error` will be
-        called by the auth-service, instead of this endpoint.
+      description: >-
+        The callback `PUT /participants/{Type}/{ID}` (or `PUT
+        /participants/{Type}/{ID}/{SubId}`) is used to inform the client of a
+        successful result of the lookup, creation, or deletion of the FSP
+        information related to the Party. If the FSP information is deleted, the
+        fspId element should be empty; otherwise the element should include the
+        FSP information for the Party.
+      summary: Return participant information
       tags:
-        - thirdpartyRequests
-        - sampled
+        - participants
+      operationId: ParticipantsByTypeAndID3
+      parameters:
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
-        description: The thirdparty authorization details to update
+        description: Participant information returned.
         required: true
         content:
           application/json:
             schema:
-              $ref: >-
-                #/components/schemas/ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse
-            example:
-              challenge: <QuoteResponse object>
-              value: <base64 encoded binary - the signed quote response object>
-              consentId: 8d34f91d-d078-4077-8263-2c0498dhbjr
-              sourceAccountId: dfspa.alice.1234
-              status: VERIFIED
+              $ref: '#/components/schemas/ParticipantsTypeIDPutResponse'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '406':
+          $ref: '#/components/responses/406'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+    delete:
+      description: >-
+        The HTTP request `DELETE /participants/{Type}/{ID}` (or `DELETE
+        /participants/{Type}/{ID}/{SubId}`) is used to delete information in the
+        server regarding the provided identity, defined by `{Type}` and `{ID}`)
+        (for example, `DELETE /participants/MSISDN/123456789`), and optionally
+        `{SubId}`. This HTTP request should support a query string to delete FSP
+        information regarding a specific currency only. To delete a specific
+        currency only, the HTTP request `DELETE
+        /participants/{Type}/{ID}?currency=XYZ` should be used, where `XYZ` is
+        the requested currency.
+
+
+        **Note:** The Account Lookup System should verify that it is the Party’s
+        current FSP that is deleting the FSP information.
+      summary: Delete participant information
+      tags:
+        - participants
+      operationId: ParticipantsByTypeAndID2
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '406':
+          $ref: '#/components/responses/406'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+  '/participants/{Type}/{ID}/error':
+    parameters:
+      - $ref: '#/components/parameters/Type'
+      - $ref: '#/components/parameters/ID'
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
+    put:
+      description: >-
+        If the server is unable to find, create or delete the associated FSP of
+        the provided identity, or another processing error occurred, the error
+        callback `PUT /participants/{Type}/{ID}/error` (or `PUT
+        /participants/{Type}/{ID}/{SubId}/error`) is used.
+      summary: Return participant information error
+      tags:
+        - participants
+      operationId: ParticipantsErrorByTypeAndID
+      parameters:
+        - $ref: '#/components/parameters/Content-Length'
+      requestBody:
+        description: Details of the error returned.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorInformationObject'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -390,19 +337,101 @@ paths:
         '503':
           $ref: '#/components/responses/503'
 components:
-  parameters:
-    Accept:
-      name: Accept
-      in: header
-      required: true
-      schema:
-        type: string
-      description: >-
-        The `Accept` header field indicates the version of the API the client
-        would like the server to use.
+  responses:
+    '200':
+      description: OK
+    '202':
+      description: Accepted
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '405':
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '406':
+      description: Not Acceptable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '501':
+      description: Not Implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+    '503':
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInformationResponse'
+      headers:
+        Content-Length:
+          $ref: '#/components/headers/Content-Length'
+        Content-Type:
+          $ref: '#/components/headers/Content-Type'
+  headers:
     Content-Length:
-      name: Content-Length
-      in: header
       required: false
       schema:
         type: integer
@@ -414,114 +443,95 @@ components:
         **Note:** The API supports a maximum size of 5242880 bytes (5
         Megabytes).
     Content-Type:
-      name: Content-Type
-      in: header
       schema:
         type: string
       required: true
       description: >-
         The `Content-Type` header indicates the specific version of the API used
         to send the payload body.
-    Date:
-      name: Date
-      in: header
-      schema:
-        type: string
-      required: true
-      description: The `Date` header field indicates the date when the request was sent.
-    X-Forwarded-For:
-      name: X-Forwarded-For
-      in: header
-      schema:
-        type: string
-      required: false
-      description: >-
-        The `X-Forwarded-For` header field is an unofficially accepted standard
-        used for informational purposes of the originating client IP address, as
-        a request might pass multiple proxies, firewalls, and so on. Multiple
-        `X-Forwarded-For` values should be expected and supported by
-        implementers of the API.
-
-
-        **Note:** An alternative to `X-Forwarded-For` is defined in [RFC
-        7239](https://tools.ietf.org/html/rfc7239). However, to this point RFC
-        7239 is less-used and supported than `X-Forwarded-For`.
-    FSPIOP-Source:
-      name: FSPIOP-Source
-      in: header
-      schema:
-        type: string
-      required: true
-      description: >-
-        The `FSPIOP-Source` header field is a non-HTTP standard field used by
-        the API for identifying the sender of the HTTP request. The field should
-        be set by the original sender of the request. Required for routing and
-        signature verification (see header field `FSPIOP-Signature`).
-    FSPIOP-Destination:
-      name: FSPIOP-Destination
-      in: header
-      schema:
-        type: string
-      required: false
-      description: >-
-        The `FSPIOP-Destination` header field is a non-HTTP standard field used
-        by the API for HTTP header based routing of requests and responses to
-        the destination. The field must be set by the original sender of the
-        request if the destination is known (valid for all services except GET
-        /parties) so that any entities between the client and the server do not
-        need to parse the payload for routing purposes. If the destination is
-        not known (valid for service GET /parties), the field should be left
-        empty.
-    FSPIOP-Encryption:
-      name: FSPIOP-Encryption
-      in: header
-      schema:
-        type: string
-      required: false
-      description: >-
-        The `FSPIOP-Encryption` header field is a non-HTTP standard field used
-        by the API for applying end-to-end encryption of the request.
-    FSPIOP-Signature:
-      name: FSPIOP-Signature
-      in: header
-      schema:
-        type: string
-      required: false
-      description: >-
-        The `FSPIOP-Signature` header field is a non-HTTP standard field used by
-        the API for applying an end-to-end request signature.
-    FSPIOP-URI:
-      name: FSPIOP-URI
-      in: header
-      schema:
-        type: string
-      required: false
-      description: >-
-        The `FSPIOP-URI` header field is a non-HTTP standard field used by the
-        API for signature verification, should contain the service URI. Required
-        if signature verification is used, for more information, see [the API
-        Signature
-        document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
-    FSPIOP-HTTP-Method:
-      name: FSPIOP-HTTP-Method
-      in: header
-      schema:
-        type: string
-      required: false
-      description: >-
-        The `FSPIOP-HTTP-Method` header field is a non-HTTP standard field used
-        by the API for signature verification, should contain the service HTTP
-        method. Required if signature verification is used, for more
-        information, see [the API Signature
-        document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
-    ID:
-      name: ID
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The identifier value.
   schemas:
+    ErrorCode:
+      title: ErrorCode
+      type: string
+      pattern: '^[1-9]\d{3}$'
+      description: >-
+        The API data type ErrorCode is a JSON String of four characters,
+        consisting of digits only. Negative numbers are not allowed. A leading
+        zero is not allowed. Each error code in the API is a four-digit number,
+        for example, 1234, where the first number (1 in the example) represents
+        the high-level error category, the second number (2 in the example)
+        represents the low-level error category, and the last two numbers (34 in
+        the example) represent the specific error.
+      example: '5100'
+    ErrorDescription:
+      title: ErrorDescription
+      type: string
+      minLength: 1
+      maxLength: 128
+      description: Error description string.
+    ExtensionKey:
+      title: ExtensionKey
+      type: string
+      minLength: 1
+      maxLength: 32
+      description: Extension key.
+    ExtensionValue:
+      title: ExtensionValue
+      type: string
+      minLength: 1
+      maxLength: 128
+      description: Extension value.
+    Extension:
+      title: Extension
+      type: object
+      description: Data model for the complex type Extension.
+      properties:
+        key:
+          $ref: '#/components/schemas/ExtensionKey'
+        value:
+          $ref: '#/components/schemas/ExtensionValue'
+      required:
+        - key
+        - value
+    ExtensionList:
+      title: ExtensionList
+      type: object
+      description: >-
+        Data model for the complex type ExtensionList. An optional list of
+        extensions, specific to deployment.
+      properties:
+        extension:
+          type: array
+          items:
+            $ref: '#/components/schemas/Extension'
+          minItems: 1
+          maxItems: 16
+          description: Number of Extension elements.
+      required:
+        - extension
+    ErrorInformation:
+      title: ErrorInformation
+      type: object
+      description: Data model for the complex type ErrorInformation.
+      properties:
+        errorCode:
+          $ref: '#/components/schemas/ErrorCode'
+        errorDescription:
+          $ref: '#/components/schemas/ErrorDescription'
+        extensionList:
+          $ref: '#/components/schemas/ExtensionList'
+      required:
+        - errorCode
+        - errorDescription
+    ErrorInformationResponse:
+      title: ErrorInformationResponse
+      type: object
+      description: >-
+        Data model for the complex type object that contains an optional element
+        ErrorInformation used along with 4xx and 5xx responses.
+      properties:
+        errorInformation:
+          $ref: '#/components/schemas/ErrorInformation'
     CorrelationId:
       title: CorrelationId
       type: string
@@ -732,404 +742,333 @@ components:
         - consentId
         - scopes
         - consentRequestId
-    ErrorCode:
-      title: ErrorCode
-      type: string
-      pattern: '^[1-9]\d{3}$'
-      description: >-
-        The API data type ErrorCode is a JSON String of four characters,
-        consisting of digits only. Negative numbers are not allowed. A leading
-        zero is not allowed. Each error code in the API is a four-digit number,
-        for example, 1234, where the first number (1 in the example) represents
-        the high-level error category, the second number (2 in the example)
-        represents the low-level error category, and the last two numbers (34 in
-        the example) represent the specific error.
-      example: '5100'
-    ErrorDescription:
-      title: ErrorDescription
-      type: string
-      minLength: 1
-      maxLength: 128
-      description: Error description string.
-    ExtensionKey:
-      title: ExtensionKey
+    FspId:
+      title: FspId
       type: string
       minLength: 1
       maxLength: 32
-      description: Extension key.
-    ExtensionValue:
-      title: ExtensionValue
-      type: string
-      minLength: 1
-      maxLength: 128
-      description: Extension value.
-    Extension:
-      title: Extension
-      type: object
-      description: Data model for the complex type Extension.
-      properties:
-        key:
-          $ref: '#/components/schemas/ExtensionKey'
-        value:
-          $ref: '#/components/schemas/ExtensionValue'
-      required:
-        - key
-        - value
-    ExtensionList:
-      title: ExtensionList
+      description: FSP identifier.
+    ParticipantsTypeIDPutResponse:
+      title: ParticipantsTypeIDPutResponse
       type: object
       description: >-
-        Data model for the complex type ExtensionList. An optional list of
-        extensions, specific to deployment.
+        The object sent in the PUT /participants/{Type}/{ID}/{SubId} and
+        /participants/{Type}/{ID} callbacks.
       properties:
-        extension:
-          type: array
-          items:
-            $ref: '#/components/schemas/Extension'
-          minItems: 1
-          maxItems: 16
-          description: Number of Extension elements.
-      required:
-        - extension
-    ErrorInformation:
-      title: ErrorInformation
+        fspId:
+          $ref: '#/components/schemas/FspId'
+    Currency:
+      title: Currency
+      description: >-
+        The currency codes defined in [ISO
+        4217](https://www.iso.org/iso-4217-currency-codes.html) as three-letter
+        alphabetic codes are used as the standard naming representation for
+        currencies.
+      type: string
+      minLength: 3
+      maxLength: 3
+      enum:
+        - AED
+        - AFN
+        - ALL
+        - AMD
+        - ANG
+        - AOA
+        - ARS
+        - AUD
+        - AWG
+        - AZN
+        - BAM
+        - BBD
+        - BDT
+        - BGN
+        - BHD
+        - BIF
+        - BMD
+        - BND
+        - BOB
+        - BRL
+        - BSD
+        - BTN
+        - BWP
+        - BYN
+        - BZD
+        - CAD
+        - CDF
+        - CHF
+        - CLP
+        - CNY
+        - COP
+        - CRC
+        - CUC
+        - CUP
+        - CVE
+        - CZK
+        - DJF
+        - DKK
+        - DOP
+        - DZD
+        - EGP
+        - ERN
+        - ETB
+        - EUR
+        - FJD
+        - FKP
+        - GBP
+        - GEL
+        - GGP
+        - GHS
+        - GIP
+        - GMD
+        - GNF
+        - GTQ
+        - GYD
+        - HKD
+        - HNL
+        - HRK
+        - HTG
+        - HUF
+        - IDR
+        - ILS
+        - IMP
+        - INR
+        - IQD
+        - IRR
+        - ISK
+        - JEP
+        - JMD
+        - JOD
+        - JPY
+        - KES
+        - KGS
+        - KHR
+        - KMF
+        - KPW
+        - KRW
+        - KWD
+        - KYD
+        - KZT
+        - LAK
+        - LBP
+        - LKR
+        - LRD
+        - LSL
+        - LYD
+        - MAD
+        - MDL
+        - MGA
+        - MKD
+        - MMK
+        - MNT
+        - MOP
+        - MRO
+        - MUR
+        - MVR
+        - MWK
+        - MXN
+        - MYR
+        - MZN
+        - NAD
+        - NGN
+        - NIO
+        - NOK
+        - NPR
+        - NZD
+        - OMR
+        - PAB
+        - PEN
+        - PGK
+        - PHP
+        - PKR
+        - PLN
+        - PYG
+        - QAR
+        - RON
+        - RSD
+        - RUB
+        - RWF
+        - SAR
+        - SBD
+        - SCR
+        - SDG
+        - SEK
+        - SGD
+        - SHP
+        - SLL
+        - SOS
+        - SPL
+        - SRD
+        - STD
+        - SVC
+        - SYP
+        - SZL
+        - THB
+        - TJS
+        - TMT
+        - TND
+        - TOP
+        - TRY
+        - TTD
+        - TVD
+        - TWD
+        - TZS
+        - UAH
+        - UGX
+        - USD
+        - UYU
+        - UZS
+        - VEF
+        - VND
+        - VUV
+        - WST
+        - XAF
+        - XCD
+        - XDR
+        - XOF
+        - XPF
+        - YER
+        - ZAR
+        - ZMW
+        - ZWD
+    ParticipantsTypeIDSubIDPostRequest:
+      title: ParticipantsTypeIDSubIDPostRequest
       type: object
-      description: Data model for the complex type ErrorInformation.
+      description: >-
+        The object sent in the POST /participants/{Type}/{ID}/{SubId} and
+        /participants/{Type}/{ID} requests. An additional optional ExtensionList
+        element has been added as part of v1.1 changes.
       properties:
-        errorCode:
-          $ref: '#/components/schemas/ErrorCode'
-        errorDescription:
-          $ref: '#/components/schemas/ErrorDescription'
+        fspId:
+          $ref: '#/components/schemas/FspId'
+        currency:
+          $ref: '#/components/schemas/Currency'
         extensionList:
           $ref: '#/components/schemas/ExtensionList'
       required:
-        - errorCode
-        - errorDescription
-    ErrorInformationResponse:
-      title: ErrorInformationResponse
+        - fspId
+    ErrorInformationObject:
+      title: ErrorInformationObject
       type: object
-      description: >-
-        Data model for the complex type object that contains an optional element
-        ErrorInformation used along with 4xx and 5xx responses.
+      description: Data model for the complex type object that contains ErrorInformation.
       properties:
         errorInformation:
           $ref: '#/components/schemas/ErrorInformation'
-    ConsentsIDPutResponseSigned:
-      title: ConsentsIDPutResponseSigned
-      type: object
-      description: >
-        The HTTP request `PUT /consents/{ID}` is used by the PISP to update a
-        Consent with a signed challenge and register a credential.
-
-        Called by a `PISP` to after signing a challenge. Sent to a DFSP for
-        verification.
-      properties:
-        scopes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Scope'
-        credential:
-          $ref: '#/components/schemas/SignedCredential'
       required:
-        - scopes
-        - credential
-      additionalProperties: false
-    VerifiedCredential:
-      title: VerifiedCredential
-      type: object
-      description: >
-        A credential used to allow a user to prove their identity and access
-
-        to an account with a DFSP.
-
-
-        VerifiedCredential is a special formatting of the credential to allow us
-        to be
-
-        more explicit about the `status` field - it should only ever be VERIFIED
-        when
-
-        updating a credential.
-      properties:
-        credentialType:
-          $ref: '#/components/schemas/CredentialType'
-        status:
-          type: string
-          enum:
-            - VERIFIED
-          description: 'The Credential is valid, and ready to be used by the PISP.'
-        payload:
-          $ref: '#/components/schemas/FIDOPublicKeyCredential'
-      required:
-        - credentialType
-        - status
-        - payload
-      additionalProperties: false
-    ConsentsIDPutResponseVerified:
-      title: ConsentsIDPutResponseVerified
-      type: object
-      description: >
-        The HTTP request `PUT /consents/{ID}` is used by the DFSP or
-        Auth-Service to update a Consent object once it has been Verified.
-
-        Called by a `auth-service` to notify a DFSP that a credential has been
-        verified and registered.
-      properties:
-        scopes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Scope'
-        credential:
-          $ref: '#/components/schemas/VerifiedCredential'
-      required:
-        - scopes
-        - credential
-      additionalProperties: false
-    ConsentStatusTypeVerified:
-      title: ConsentStatusType
-      type: string
-      enum:
-        - VERIFIED
-      description: |
-        The status of the Consent.
-        - "VERIFIED" - The Consent is valid and verified.
-    ConsentsIDPatchResponseVerified:
-      title: ConsentsIDPatchResponseVerified
-      description: |
-        PATCH /consents/{ID} request object.
-
-        Sent by the DFSP to the PISP when a consent is verified.
-        Used in the "Register Credential" part of the Account linking flow.
-      type: object
-      properties:
-        credential:
-          type: object
-          properties:
-            status:
-              $ref: '#/components/schemas/ConsentStatusTypeVerified'
-          required:
-            - status
-      required:
-        - credential
-    ConsentStatusTypeRevoked:
-      title: ConsentStatusType
-      type: string
-      enum:
-        - REVOKED
-      description: |
-        The status of the Consent.
-        - "REVOKED" - The Consent is no longer valid and has been revoked.
-    DateTime:
-      title: DateTime
-      type: string
-      pattern: >-
-        ^(?:[1-9]\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:(\.\d{3}))(?:Z|[+-][01]\d:[0-5]\d)$
+        - errorInformation
+  parameters:
+    Content-Type:
+      name: Content-Type
+      in: header
+      schema:
+        type: string
+      required: true
       description: >-
-        The API data type DateTime is a JSON String in a lexical format that is
-        restricted by a regular expression for interoperability reasons. The
-        format is according to [ISO
-        8601](https://www.iso.org/iso-8601-date-and-time-format.html), expressed
-        in a combined date, time and time zone format. A more readable version
-        of the format is yyyy-MM-ddTHH:mm:ss.SSS[-HH:MM]. Examples are
-        "2016-05-24T08:38:08.699-04:00", "2016-05-24T08:38:08.699Z" (where Z
-        indicates Zulu time zone, same as UTC).
-      example: '2016-05-24T08:38:08.699-04:00'
-    ConsentsIDPatchResponseRevoked:
-      title: ConsentsIDPatchResponseRevoked
-      description: |
-        PATCH /consents/{ID} request object.
+        The `Content-Type` header indicates the specific version of the API used
+        to send the payload body.
+    Date:
+      name: Date
+      in: header
+      schema:
+        type: string
+      required: true
+      description: The `Date` header field indicates the date when the request was sent.
+    X-Forwarded-For:
+      name: X-Forwarded-For
+      in: header
+      schema:
+        type: string
+      required: false
+      description: >-
+        The `X-Forwarded-For` header field is an unofficially accepted standard
+        used for informational purposes of the originating client IP address, as
+        a request might pass multiple proxies, firewalls, and so on. Multiple
+        `X-Forwarded-For` values should be expected and supported by
+        implementers of the API.
 
-        Sent to both the PISP and DFSP when a consent is revoked.
-        Used in the "Unlinking" part of the Account Unlinking flow.
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ConsentStatusTypeRevoked'
-        revokedAt:
-          $ref: '#/components/schemas/DateTime'
-      required:
-        - status
-        - revokedAt
-    BinaryString:
-      type: string
-      pattern: '^[A-Za-z0-9-_]+[=]{0,2}$'
+
+        **Note:** An alternative to `X-Forwarded-For` is defined in [RFC
+        7239](https://tools.ietf.org/html/rfc7239). However, to this point RFC
+        7239 is less-used and supported than `X-Forwarded-For`.
+    FSPIOP-Source:
+      name: FSPIOP-Source
+      in: header
+      schema:
+        type: string
+      required: true
       description: >-
-        The API data type BinaryString is a JSON String. The string is a
-        base64url  encoding of a string of raw bytes, where padding (character
-        ‘=’) is added at the end of the data if needed to ensure that the string
-        is a multiple of 4 characters. The length restriction indicates the
-        allowed number of characters.
-    ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse:
-      title: ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse
-      type: object
+        The `FSPIOP-Source` header field is a non-HTTP standard field used by
+        the API for identifying the sender of the HTTP request. The field should
+        be set by the original sender of the request. Required for routing and
+        signature verification (see header field `FSPIOP-Signature`).
+    FSPIOP-Destination:
+      name: FSPIOP-Destination
+      in: header
+      schema:
+        type: string
+      required: false
       description: >-
-        The object sent in the PUT
-        /thirdpartyRequests/transactions/{id}/authorizations request.
-      properties:
-        challenge:
-          type: string
-          description: Base64 encoded binary string - the original challenge.
-        value:
-          allOf:
-            - $ref: '#/components/schemas/BinaryString'
-          description: Base64 encoded binary string - the signed challenge.
-        consentId:
-          allOf:
-            - $ref: '#/components/schemas/CorrelationId'
-          description: >
-            Common ID between the PISP and FSP for the Consent object This tells
-            DFSP and auth-service which consent allows the PISP to initiate
-            transaction.
-        sourceAccountId:
-          allOf:
-            - $ref: '#/components/schemas/AccountId'
-          description: 'DFSP specific account identifiers, e.g. `dfspa.alice.1234`'
-        status:
-          type: string
-          enum:
-            - VERIFIED
-          description: >-
-            The status of the authorization. This value must be `VERIFIED` for a
-            PUT request.
-      required:
-        - challenge
-        - value
-        - consentId
-        - sourceAccountId
-        - status
-    ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest:
-      title: ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest
-      type: object
+        The `FSPIOP-Destination` header field is a non-HTTP standard field used
+        by the API for HTTP header based routing of requests and responses to
+        the destination. The field must be set by the original sender of the
+        request if the destination is known (valid for all services except GET
+        /parties) so that any entities between the client and the server do not
+        need to parse the payload for routing purposes. If the destination is
+        not known (valid for service GET /parties), the field should be left
+        empty.
+    FSPIOP-Encryption:
+      name: FSPIOP-Encryption
+      in: header
+      schema:
+        type: string
+      required: false
       description: >-
-        The object sent in the POST
-        /thirdpartyRequests/transactions/{id}/authorizations request.
-      properties:
-        challenge:
-          type: string
-          description: Base64 encoded binary string - the original challenge.
-        value:
-          allOf:
-            - $ref: '#/components/schemas/BinaryString'
-          description: Base64 encoded binary string - the signed challenge
-        consentId:
-          allOf:
-            - $ref: '#/components/schemas/CorrelationId'
-          description: >
-            Common ID between the PISP and FSP for the Consent object This tells
-            DFSP and auth-service which constent allows the PISP to initiate
-            transaction.
-        sourceAccountId:
-          allOf:
-            - $ref: '#/components/schemas/AccountId'
-          description: 'DFSP specific account identifiers, e.g. `dfspa.alice.1234`'
-        status:
-          type: string
-          enum:
-            - PENDING
-          description: >-
-            The status of the authorization. This MUST be PENDING for a POST
-            request
-      required:
-        - challenge
-        - value
-        - consentId
-        - sourceAccountId
-        - status
-  responses:
-    '200':
-      description: OK
-    '202':
-      description: Accepted
-    '400':
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '401':
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '403':
-      description: Forbidden
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '404':
-      description: Not Found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '405':
-      description: Method Not Allowed
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '406':
-      description: Not Acceptable
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '501':
-      description: Not Implemented
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-    '503':
-      description: Service Unavailable
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorInformationResponse'
-      headers:
-        Content-Length:
-          $ref: '#/components/headers/Content-Length'
-        Content-Type:
-          $ref: '#/components/headers/Content-Type'
-  headers:
+        The `FSPIOP-Encryption` header field is a non-HTTP standard field used
+        by the API for applying end-to-end encryption of the request.
+    FSPIOP-Signature:
+      name: FSPIOP-Signature
+      in: header
+      schema:
+        type: string
+      required: false
+      description: >-
+        The `FSPIOP-Signature` header field is a non-HTTP standard field used by
+        the API for applying an end-to-end request signature.
+    FSPIOP-URI:
+      name: FSPIOP-URI
+      in: header
+      schema:
+        type: string
+      required: false
+      description: >-
+        The `FSPIOP-URI` header field is a non-HTTP standard field used by the
+        API for signature verification, should contain the service URI. Required
+        if signature verification is used, for more information, see [the API
+        Signature
+        document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
+    FSPIOP-HTTP-Method:
+      name: FSPIOP-HTTP-Method
+      in: header
+      schema:
+        type: string
+      required: false
+      description: >-
+        The `FSPIOP-HTTP-Method` header field is a non-HTTP standard field used
+        by the API for signature verification, should contain the service HTTP
+        method. Required if signature verification is used, for more
+        information, see [the API Signature
+        document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
+    Accept:
+      name: Accept
+      in: header
+      required: true
+      schema:
+        type: string
+      description: >-
+        The `Accept` header field indicates the version of the API the client
+        would like the server to use.
     Content-Length:
+      name: Content-Length
+      in: header
       required: false
       schema:
         type: integer
@@ -1140,10 +1079,17 @@ components:
 
         **Note:** The API supports a maximum size of 5242880 bytes (5
         Megabytes).
-    Content-Type:
+    Type:
+      name: Type
+      in: path
+      required: true
       schema:
         type: string
+      description: 'The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`.'
+    ID:
+      name: ID
+      in: path
       required: true
-      description: >-
-        The `Content-Type` header indicates the specific version of the API used
-        to send the payload body.
+      schema:
+        type: string
+      description: The identifier value.
