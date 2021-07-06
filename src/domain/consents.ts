@@ -38,7 +38,7 @@ import { insertConsentWithScopes } from '../model/db'
 import { Scope } from '../model/scope'
 import { Consent, ConsentCredential } from '../model/consent'
 import { logger } from '~/shared/logger'
-import { convertExternalToScope, ExternalScope } from './scopes'
+import { convertThirdpartyScopesToDatabaseScope } from './scopes'
 import {
   DatabaseError,
   InvalidSignatureError,
@@ -49,7 +49,7 @@ import { thirdPartyRequest } from '~/domain/requests'
 import {
   retrieveValidConsent,
   updateConsentCredential,
-  buildConsentRequestBody
+  buildConsentsIDPutResponseVerifiedBody
 } from '~/domain/consents/ID'
 import { verifySignature } from '~/domain/challenge'
 import { CredentialStatusEnum } from '~/model/consent/consent'
@@ -64,7 +64,7 @@ export async function createAndStoreConsent (
   consentId: string,
   initiatorId: string,
   participantId: string,
-  externalScopes: ExternalScope[],
+  thirdpartyScopes: tpAPI.Schemas.Scope[],
   credential: tpAPI.Schemas.SignedCredential
 ): Promise<void> {
   // validate FIDO credential attestation
@@ -83,7 +83,7 @@ export async function createAndStoreConsent (
     clientDataJSON: credential.payload.response.clientDataJSON
   }
 
-  const scopes: Scope[] = convertExternalToScope(externalScopes, consentId)
+  const scopes: Scope[] = convertThirdpartyScopesToDatabaseScope(thirdpartyScopes, consentId)
 
   try {
     await insertConsentWithScopes(consent, scopes)
@@ -149,7 +149,7 @@ export async function validateAndUpdateConsent (
     }
     await updateConsentCredential(consent, credential)
 
-    const consentBody = await buildConsentRequestBody(consent, signature, publicKey)
+    const consentBody = await buildConsentsIDPutResponseVerifiedBody(consent)
     await thirdPartyRequest
       .putConsents(
         consent.id,

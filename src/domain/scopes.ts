@@ -36,24 +36,16 @@
  ******/
 
 import { Scope } from '../model/scope'
-
-/**
- * Interface for scope objects received from external source by handler
- * or to be sent in an outgoing call
- */
-export interface ExternalScope {
-  accountId: string;
-  actions: string[];
-}
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 /**
  * Reformats object structure, removing
  * scope & consent ids, and returns array of formatted scopes
  * @param scopes Scopes retrieved from database
  */
-export function convertScopesToExternal (
-  scopes: Scope[]): ExternalScope[] {
-  // Dictionary of accountId to ExternalScope object
+export function convertDatabaseScopesToThirdpartyScopes (
+  scopes: Scope[]): tpAPI.Schemas.Scope[] {
+  // Dictionary of accountId to Thirdparty Scope object
   const scopeDictionary = {}
 
   scopes.forEach((scope: Scope): void => {
@@ -75,15 +67,15 @@ export function convertScopesToExternal (
   return Object.values(scopeDictionary)
 }
 
-/** Takes input of array of ExternalScope objects
+/** Takes input of array of Thirdparty Scope objects
  * Reformats and returns array of Scope objects
- * @param externalScopes Array of ExternalScope objects received
+ * @param thirdpartyScopes Array of Thirdparty Scope objects received
  * @param consentId Id of Consent to which scopes belong
  */
-export function convertExternalToScope (
-  externalScopes: ExternalScope[], consentId: string): Scope[] {
-  const scopes: Scope[] = externalScopes.map(
-    (element: ExternalScope): Scope[] =>
+export function convertThirdpartyScopesToDatabaseScope (
+  thirdpartyScopes: tpAPI.Schemas.Scope[], consentId: string): Scope[] {
+  const scopes: Scope[] = thirdpartyScopes.map(
+    (element: tpAPI.Schemas.Scope): Scope[] =>
       element.actions.map((action: string): Scope => ({
         consentId,
         accountId: element.accountId,

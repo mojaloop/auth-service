@@ -29,7 +29,7 @@
 import {
   retrieveValidConsent,
   updateConsentCredential,
-  buildConsentRequestBody
+  buildConsentsIDPutResponseVerifiedBody
 } from '~/domain/consents/ID'
 import { Consent, ConsentCredential } from '~/model/consent'
 import { CredentialStatusEnum } from '~/model/consent/consent'
@@ -189,7 +189,7 @@ describe('server/domain/consents/{ID}', (): void => {
       })
   })
 
-  describe('buildConsentRequestBody', (): void => {
+  describe('buildConsentsIDPutResponseVerifiedBody', (): void => {
     it('should build and return request body successfuly.',
       async (): Promise<void> => {
         const consent: Consent = {
@@ -203,18 +203,18 @@ describe('server/domain/consents/{ID}', (): void => {
           credentialChallenge: consents[1].credentialChallenge!
         }
 
-        const mockConvertScopesToExternal = jest.spyOn(Scopes, 'convertScopesToExternal')
+        const mockconvertDatabaseScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertDatabaseScopesToThirdpartyScopes')
         const externalScopes: Scopes.ExternalScope[] = [
           {
             accountId: 'as2342',
-            actions: ['account.getAccess', 'account.transferMoney']
+            actions: ['accounts.getBalance', 'accounts.transfer']
           },
           {
             accountId: 'as22',
-            actions: ['account.getAccess']
+            actions: ['accounts.getBalance']
           }
         ]
-        mockConvertScopesToExternal.mockReturnValueOnce(externalScopes)
+        mockconvertDatabaseScopesToThirdpartyScopes.mockReturnValueOnce(externalScopes)
 
         const signature = 'string_representing_signature'
         const publicKey = 'string_representing_publicKey'
@@ -237,7 +237,7 @@ describe('server/domain/consents/{ID}', (): void => {
           }
         }
 
-        const req = await buildConsentRequestBody(consent, signature, publicKey)
+        const req = await buildConsentsIDPutResponseVerifiedBody(consent, signature, publicKey)
         expect(req).toStrictEqual(requestBody)
       })
 
@@ -254,7 +254,7 @@ describe('server/domain/consents/{ID}', (): void => {
           credentialStatus: consents[2].credentialStatus!,
           credentialChallenge: consents[2].credentialChallenge!
         }
-        await expect(buildConsentRequestBody(consent, 'string_representing_signature', 'string_representing_publicKey'))
+        await expect(buildConsentsIDPutResponseVerifiedBody(consent, 'string_representing_signature', 'string_representing_publicKey'))
           .rejects
           .toThrowError(new NotFoundError('Consent Scopes', nonexistentConsentId))
       })
