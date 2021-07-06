@@ -36,7 +36,7 @@
  ******/
 
 import { Scope } from '../model/scope'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /**
  * Reformats object structure, removing
