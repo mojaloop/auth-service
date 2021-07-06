@@ -39,7 +39,9 @@ import {
   hasMatchingScopeForPayload
 } from '~/domain/auth-payload'
 import { putAuthorizationErrorRequest } from '~/domain/errors'
-import { TErrorInformation } from '@mojaloop/sdk-standard-components'
+import {
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
 // import { mocked } from 'ts-jest/utils'
 
 // jest.mock('~/shared/logger')
@@ -271,7 +273,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
         // GenericRequestResponse
         mockSdkErrorMethod.mockResolvedValue({})
 
-        const error: TErrorInformation = {
+        const error: tpAPI.Schemas.ErrorInformation = {
           errorCode: '3001',
           errorDescription: 'Bad Request'
         }
@@ -296,7 +298,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
     it('logs error in case there is an internal sdk-standard-components error',
       async (): Promise<void> => {
         mockSdkErrorMethod.mockRejectedValue('Internal Error')
-        const error: TErrorInformation = {
+        const error: tpAPI.Schemas.ErrorInformation = {
           errorCode: '3001',
           errorDescription: 'Bad Request'
         }

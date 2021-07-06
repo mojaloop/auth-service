@@ -24,17 +24,20 @@
  ******/
 
 import { logger } from '~/shared/logger'
-import { TErrorInformation, TErrorInformationObject } from '@mojaloop/sdk-standard-components'
 import { thirdPartyRequest } from './requests'
+import {
+  v1_1 as fspiopAPI,
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
 
 /*
  * Domain function make an error request using Mojaloop internal codes
  */
 export async function putAuthorizationErrorRequest (
   consentId: string,
-  error: TErrorInformation,
+  error: tpAPI.Schemas.ErrorInformation,
   destParticipantId: string): Promise<void> {
-  const errorInfoObj: TErrorInformationObject = {
+  const errorInfoObj: fspiopAPI.Schemas.ErrorInformationObject = {
     errorInformation: {
       errorCode: error.errorCode,
       errorDescription: error.errorDescription
@@ -58,9 +61,9 @@ export async function putAuthorizationErrorRequest (
  */
 export async function putConsentError (
   consentId: string,
-  error: TErrorInformation,
+  error: tpAPI.Schemas.ErrorInformation,
   destParticipantId: string): Promise<void> {
-  const errorInfoObj: TErrorInformationObject = {
+  const errorInfoObj: fspiopAPI.Schemas.ErrorInformationObject = {
     errorInformation: {
       errorCode: error.errorCode,
       errorDescription: error.errorDescription
@@ -80,7 +83,7 @@ export async function putConsentError (
 }
 
 // TODO: Replace all codes with agreed on codes
-export class ChallengeMismatchError extends Error implements TErrorInformation {
+export class ChallengeMismatchError extends Error implements tpAPI.Schemas.ErrorInformation {
   public consentId: string
   public readonly errorCode: string = '6205'
   public readonly errorDescription: string
@@ -92,7 +95,7 @@ export class ChallengeMismatchError extends Error implements TErrorInformation {
   }
 }
 
-export class MojaloopError extends Error implements TErrorInformation {
+export class MojaloopError extends Error implements tpAPI.Schemas.ErrorInformation {
   public readonly errorCode: string = '6206'
   public readonly errorDescription: string
 
