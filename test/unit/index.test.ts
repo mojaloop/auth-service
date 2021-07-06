@@ -35,14 +35,35 @@ import MockParticipantsTypeIDResponse from '../data/mockParticipantsTypeIDRespon
 import MockParticipantsTypeIDErrorResponse from '../data/mockParticipantsTypeIDErrorResponse.json'
 import Headers from '../data/headers.json'
 import PutParticipantsHeaders from '../data/putParticipantsHeaders.json'
+import { mocked } from 'ts-jest/utils'
 
 jest.mock('~/shared/logger')
 jest.mock('~/server/handlers', () => ({
-  HealthGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response({ status: 'OK', uptime: 1.23 }).code(200))),
-  MetricsGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
-  PostConsents: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))),
-  ParticipantsByTypeAndID3: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))),
-  ParticipantsErrorByTypeAndID: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200)))
+  HealthGet: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response({ status: 'OK', uptime: 1.23 }).code(200)
+    )
+  ),
+  MetricsGet: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(200)
+    )
+  ),
+  PostConsents: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(202)
+    )
+  ),
+  ParticipantsByTypeAndID3: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(200)
+    )
+  ),
+  ParticipantsErrorByTypeAndID: jest.fn(
+    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
+      h.response().code(200)
+    )
+  )
 }))
 
 describe('index', (): void => {
