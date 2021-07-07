@@ -36,14 +36,14 @@
  --------------
  ******/
 import { Consent, ConsentCredential } from '~/model/consent'
-import { Scope } from '~/model/scope'
+import { ModelScope } from '~/model/scope'
 import { consentDB, scopeDB } from '~/model/db'
 import {
   ChallengeMismatchError,
   IncorrectConsentStatusError,
   EmptyCredentialPayloadError
 } from '../errors'
-import { convertDatabaseScopesToThirdpartyScopes } from '~/domain/scopes'
+import { convertModelScopesToThirdpartyScopes } from '~/domain/scopes'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
@@ -85,8 +85,8 @@ export async function buildConsentsIDPutResponseVerifiedBody (
   ): Promise<tpAPI.Schemas.ConsentsIDPutResponseVerified> {
   /* Retrieve the scopes pertinent to this consentId
    and populate the scopes accordingly. */
-  const scopes: Scope[] = await scopeDB.retrieveAll(consent.id)
-  const TPScopes: tpAPI.Schemas.Scope[] = convertDatabaseScopesToThirdpartyScopes(scopes)
+  const scopes: ModelScope[] = await scopeDB.retrieveAll(consent.id)
+  const TPScopes: tpAPI.Schemas.Scope[] = convertModelScopesToThirdpartyScopes(scopes)
 
   const consentBody: tpAPI.Schemas.ConsentsIDPutResponseVerified = {
     scopes: TPScopes,
@@ -95,7 +95,7 @@ export async function buildConsentsIDPutResponseVerifiedBody (
       status: CredentialStatusEnum.VERIFIED,
       payload: {
         id: consent.credentialId!,
-        rawId: 'TODO: figure out what goes here',
+        rawId: consent.credentialId!,
         response: {
           clientDataJSON: consent.clientDataJSON!,
           attestationObject: consent.attestationObject!

@@ -1,5 +1,5 @@
 import { Consent } from '../model/consent'
-import { Scope } from '../model/scope'
+import { ModelScope } from '../model/scope'
 
 /*
  * Interface for incoming payload
@@ -33,10 +33,10 @@ export function hasActiveCredentialForPayload (consent: Consent): boolean {
  * Domain function to check for matching Consent scope
  */
 export function hasMatchingScopeForPayload (
-  consentScopes: Scope[],
+  consentScopes: ModelScope[],
   payload: AuthPayload): boolean {
   // Check if any scope matches
-  return consentScopes.some((scope: Scope): boolean =>
+  return consentScopes.some((scope: ModelScope): boolean =>
     scope.accountId === payload.sourceAccountId
   )
 }

@@ -43,14 +43,14 @@ import {
 } from '~/domain/errors'
 import { CredentialStatusEnum, ConsentCredential } from '~/model/consent/consent'
 import { UpdateCredentialRequest } from '~/domain/consents'
-import { Scope } from '~/model/scope'
+import { ModelScope } from '~/model/scope'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockConsentDbUpdate = jest.spyOn(consentDB, 'update')
 const mockScopeDbRetrieveAll = jest.spyOn(scopeDB, 'retrieveAll')
 const mockPutConsentsOutbound = jest.spyOn(thirdPartyRequest, 'putConsents')
-const mockconvertDatabaseScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertDatabaseScopesToThirdpartyScopes')
+const mockconvertModelScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertModelScopesToThirdpartyScopes')
 
 
 const requestClientDataJSON: string = Buffer.from(
@@ -290,7 +290,7 @@ describe('server/domain/consents/{ID}', (): void => {
     mockConsentDbRetrieve.mockResolvedValue(retrievedConsent)
     mockScopeDbRetrieveAll.mockResolvedValue(retrievedScopes)
     mockPutConsentsOutbound.mockResolvedValue(undefined)
-    mockconvertDatabaseScopesToThirdpartyScopes.mockReturnValue(externalScopes)
+    mockconvertModelScopesToThirdpartyScopes.mockReturnValue(externalScopes)
     mockConsentDbUpdate.mockResolvedValue(2)
   })
 
@@ -398,7 +398,7 @@ describe('server/domain/consents/{ID}', (): void => {
         expect(returnedBody).toStrictEqual(requestBody)
 
         expect(mockScopeDbRetrieveAll).toBeCalledWith(consentId)
-        expect(mockconvertDatabaseScopesToThirdpartyScopes).toBeCalledWith(retrievedScopes)
+        expect(mockconvertModelScopesToThirdpartyScopes).toBeCalledWith(retrievedScopes)
       })
 
     it('should promulgate scope retrieval error.',
@@ -409,13 +409,13 @@ describe('server/domain/consents/{ID}', (): void => {
           .toThrowError('Test')
 
         expect(mockScopeDbRetrieveAll).toBeCalledWith(consentId)
-        expect(mockconvertDatabaseScopesToThirdpartyScopes).not.toBeCalled()
+        expect(mockconvertModelScopesToThirdpartyScopes).not.toBeCalled()
       })
 
     it('should promulgate scope conversion error.',
       async (): Promise<void> => {
-        mockconvertDatabaseScopesToThirdpartyScopes.mockImplementationOnce(
-          (_scopes: Scope[]): tpAPI.Schemas.Scope[] => {
+        mockconvertModelScopesToThirdpartyScopes.mockImplementationOnce(
+          (_scopes: ModelScope[]): tpAPI.Schemas.Scope[] => {
             throw new Error('Test')
           })
         await expect(buildConsentsIDPutResponseVerifiedBody(retrievedConsent))
@@ -423,7 +423,7 @@ describe('server/domain/consents/{ID}', (): void => {
           .toThrowError('Test')
 
         expect(mockScopeDbRetrieveAll).toBeCalledWith(consentId)
-        expect(mockconvertDatabaseScopesToThirdpartyScopes).toBeCalledWith(retrievedScopes)
+        expect(mockconvertModelScopesToThirdpartyScopes).toBeCalledWith(retrievedScopes)
       })
   })
 })

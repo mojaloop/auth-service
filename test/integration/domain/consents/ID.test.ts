@@ -205,7 +205,7 @@ describe('server/domain/consents/{ID}', (): void => {
           attestationObject: consents[1].attestationObject!
         }
 
-        const mockconvertDatabaseScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertDatabaseScopesToThirdpartyScopes')
+        const mockconvertModelScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertModelScopesToThirdpartyScopes')
         const externalScopes: tpAPI.Schemas.Scope[] = [
           {
             accountId: 'as2342',
@@ -216,7 +216,7 @@ describe('server/domain/consents/{ID}', (): void => {
             actions: ['accounts.getBalance']
           }
         ]
-        mockconvertDatabaseScopesToThirdpartyScopes.mockReturnValueOnce(externalScopes)
+        mockconvertModelScopesToThirdpartyScopes.mockReturnValueOnce(externalScopes)
 
 
         // Outgoing consent request body used for validation
