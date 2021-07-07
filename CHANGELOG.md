@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.4.3](https://github.com/mojaloop/auth-service/compare/v11.4.2...v11.4.3) (2021-07-07)
+
+
+### Maintenance
+
+* **deps:** bump y18n from 4.0.0 to 4.0.3 ([#76](https://github.com/mojaloop/auth-service/issues/76)) ([aeb71af](https://github.com/mojaloop/auth-service/commit/aeb71af6a0bfc5cb82e7f13af421f66fd2768d6c))
+
 ### [11.4.2](https://github.com/mojaloop/auth-service/compare/v11.4.1...v11.4.2) (2021-07-07)
 
 
