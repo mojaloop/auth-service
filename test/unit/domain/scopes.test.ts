@@ -30,6 +30,7 @@
 
 import { Scope } from '~/model/scope/scope'
 import * as ScopeFunctions from '~/domain/scopes'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 const consentId = '1234'
 
@@ -37,52 +38,52 @@ const scopes: Scope[] = [{
   id: 123234,
   consentId: '1234',
   accountId: 'as2342',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 },
 {
   id: 232234,
   consentId: '1234',
   accountId: 'as2342',
-  action: 'account.transferMoney'
+  action: 'accounts.transfer'
 },
 {
   id: 234,
   consentId: '1234',
   accountId: 'as22',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 }
 ]
 
 const scopesNoId: Scope[] = [{
   consentId: '1234',
   accountId: 'as2342',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 },
 {
   consentId: '1234',
   accountId: 'as2342',
-  action: 'account.transferMoney'
+  action: 'accounts.transfer'
 },
 {
   consentId: '1234',
   accountId: 'as22',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 }
 ]
 
-const externalScope: ScopeFunctions.ExternalScope[] = [{
+const externalScope: tpAPI.Schemas.Scope[] = [{
   accountId: 'as2342',
-  actions: ['account.getAccess', 'account.transferMoney']
+  actions: ['accounts.getBalance', 'accounts.transfer']
 },
 {
   accountId: 'as22',
-  actions: ['account.getAccess']
+  actions: ['accounts.getBalance']
 }
 ]
 
 describe('Scope Convert Scopes to ExternalScopes', (): void => {
   it('Should return Scope array when input ExternalScope array', (): void => {
-    expect(ScopeFunctions.convertScopesToExternal(scopes))
+    expect(ScopeFunctions.convertDatabaseScopesToThirdpartyScopes(scopes))
       .toStrictEqual(externalScope)
   })
 })
@@ -90,7 +91,7 @@ describe('Scope Convert Scopes to ExternalScopes', (): void => {
 describe('Scope Convert ExternalScope to Scope', (): void => {
   it('Should return Scope array when input ExternalScope array',
     (): void => {
-      expect(ScopeFunctions.convertExternalToScope(externalScope, consentId))
+      expect(ScopeFunctions.convertThirdpartyScopesToDatabaseScope(externalScope, consentId))
         .toStrictEqual(scopesNoId)
     }
   )

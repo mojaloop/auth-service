@@ -43,9 +43,9 @@ import {
   IncorrectConsentStatusError,
   EmptyCredentialPayloadError
 } from '../errors'
-import { PutConsentsRequest } from '@mojaloop/sdk-standard-components'
-import { ExternalScope, convertScopesToExternal } from '~/domain/scopes'
+import { convertDatabaseScopesToThirdpartyScopes } from '~/domain/scopes'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 export async function retrieveValidConsent (
   consentId: string,
@@ -77,29 +77,31 @@ export async function updateConsentCredential (
   return consentDB.update(consent)
 }
 
-export async function buildConsentRequestBody (
-  consent: Consent,
-  signature: string,
-  publicKey: string): Promise<PutConsentsRequest> {
+/* TODO: complete this function. only updated it to conform to the
+         API interface for now and not for actual use!
+*/
+export async function buildConsentsIDPutResponseVerifiedBody (
+  consent: Consent
+  ): Promise<tpAPI.Schemas.ConsentsIDPutResponseVerified> {
   /* Retrieve the scopes pertinent to this consentId
    and populate the scopes accordingly. */
   const scopes: Scope[] = await scopeDB.retrieveAll(consent.id)
-  const externalScopes: ExternalScope[] = convertScopesToExternal(scopes)
+  const TPScopes: tpAPI.Schemas.Scope[] = convertDatabaseScopesToThirdpartyScopes(scopes)
 
-  const consentBody: PutConsentsRequest = {
-    requestId: consent.id,
-    scopes: externalScopes,
-    initiatorId: consent.initiatorId as string,
-    participantId: consent.participantId as string,
+  const consentBody: tpAPI.Schemas.ConsentsIDPutResponseVerified = {
+    scopes: TPScopes,
     credential: {
-      id: consent.credentialId as string,
       credentialType: 'FIDO',
       status: CredentialStatusEnum.VERIFIED,
-      challenge: {
-        payload: consent.credentialChallenge as string,
-        signature: signature
-      },
-      payload: publicKey
+      payload: {
+        id: consent.credentialId!,
+        rawId: 'TODO: figure out what goes here',
+        response: {
+          clientDataJSON: consent.clientDataJSON!,
+          attestationObject: consent.attestationObject!
+        },
+        type: 'public-key'
+      }
     }
   }
   return consentBody

@@ -1,8 +1,8 @@
 import { Consent, ConsentCredential } from '~/model/consent'
-import { ExternalScope } from '~/domain/scopes'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Scope } from '~/model/scope'
 import { CredentialStatusEnum } from '~/model/consent/consent'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 /*
  * Mock Request Resources
@@ -34,11 +34,11 @@ export const requestWithPayloadScopes: Request = {
     consentRequestId: 'dfsp-3333-2123',
     scopes: [{
       accountId: 'as2342',
-      actions: ['account.getAccess', 'account.transferMoney']
+      actions: ['accounts.getBalance', 'accounts.transfer']
     },
     {
       accountId: 'as22',
-      actions: ['account.getAccess']
+      actions: ['accounts.getBalance']
     }
     ]
   }
@@ -164,13 +164,13 @@ export const completeConsentActiveNoCredentialID: Consent = {
 /*
  * Mock Scope Resources
 */
-export const externalScopes: ExternalScope[] = [{
+export const externalScopes: tpAPI.Schemas.Scope[] = [{
   accountId: 'as2342',
-  actions: ['account.getAccess', 'account.transferMoney']
+  actions: ['accounts.getBalance', 'accounts.transfer']
 },
 {
   accountId: 'as22',
-  actions: ['account.getAccess']
+  actions: ['accounts.getBalance']
 }
 ]
 
@@ -178,19 +178,19 @@ export const scopes: Scope[] = [{
   id: 123234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 },
 {
   id: 232234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
-  action: 'account.transferMoney'
+  action: 'accounts.transfer'
 },
 {
   id: 234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as22',
-  action: 'account.getAccess'
+  action: 'accounts.getBalance'
 }
 ]
 

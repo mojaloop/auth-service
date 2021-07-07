@@ -3,6 +3,8 @@ import { Scope } from '../model/scope'
 
 /*
  * Interface for incoming payload
+ * This interface is outdated
+ * TODO: Switch over to `api-snippet` interfaces
  */
 export interface AuthPayload {
   consentId: string;

@@ -29,7 +29,6 @@
  ******/
 import { createAndStoreConsent } from '~/domain/consents'
 import { closeKnexConnection } from '~/model/db'
-import { ExternalScope } from '~/domain/scopes'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { requestWithPayloadScopes } from 'test/data/data'
 
@@ -127,7 +126,7 @@ describe('server/domain/consents', (): void => {
     }
   }
 
-  const scopesExternal: ExternalScope[] = payload.scopes as ExternalScope[]
+  const scopesExternal: tpAPI.Schemas.Scope[] = payload.scopes as tpAPI.Schemas.Scope[]
 
   afterAll(async (): Promise<void> => {
     await closeKnexConnection()

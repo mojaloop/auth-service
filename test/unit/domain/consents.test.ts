@@ -45,14 +45,14 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 // Declare Mocks
 const mockInsertConsent = jest.spyOn(consentDB, 'insert')
 const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
-const mockConvertExternalToScope = jest.spyOn(
-  ScopeFunction, 'convertExternalToScope')
+const mockConvertThirdpartyScopesToDatabaseScope = jest.spyOn(
+  ScopeFunction, 'convertThirdpartyScopesToDatabaseScope')
 
 describe('server/domain/consents', (): void => {
   const consentId = requestWithPayloadScopes.params.ID
   const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
   const participantId = requestWithPayloadScopes.headers['fspiop-destination']
-  const scopesExternal: ScopeFunction.ExternalScope[] = (requestWithPayloadScopes.payload as Record<string, unknown>).scopes as unknown as ScopeFunction.ExternalScope[]
+  const scopesExternal: tpAPI.Schemas.Scope[] = (requestWithPayloadScopes.payload as Record<string, unknown>).scopes as unknown as tpAPI.Schemas.Scope[]
   const credential: tpAPI.Schemas.SignedCredential = {
     credentialType: 'FIDO',
     status: 'PENDING',
@@ -140,7 +140,7 @@ describe('server/domain/consents', (): void => {
   beforeAll(async (): Promise<void> => {
     await Db.migrate.latest()
     await Db.raw('PRAGMA foreign_keys = ON')
-    mockConvertExternalToScope.mockReturnValue(scopes)
+    mockConvertThirdpartyScopesToDatabaseScope.mockReturnValue(scopes)
   })
 
   afterAll(async (): Promise<void> => {
@@ -164,7 +164,7 @@ describe('server/domain/consents', (): void => {
       .resolves
       .toBe(undefined)
 
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
+    expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
   })
@@ -175,7 +175,7 @@ describe('server/domain/consents', (): void => {
     await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
       .rejects
       .toThrowError(new DatabaseError(consentId))
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
+    expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
     expect(mockInsertScopes).not.toHaveBeenCalled()
     // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
@@ -188,7 +188,7 @@ describe('server/domain/consents', (): void => {
     await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
       .rejects
       .toThrowError(new DatabaseError(consentId))
-    expect(mockConvertExternalToScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
+    expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
     expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
     // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })

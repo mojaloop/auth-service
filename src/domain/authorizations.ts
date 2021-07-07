@@ -37,7 +37,6 @@ import { Consent } from '../model/consent'
 import { Scope } from '../model/scope'
 import { consentDB, scopeDB } from '~/model/db'
 import { verifySignature } from '~/domain/challenge'
-import { thirdPartyRequest } from '~/domain/requests'
 import {
   putAuthorizationErrorRequest,
   DatabaseError,
@@ -56,6 +55,10 @@ import {
   hasMatchingScopeForPayload
 } from './auth-payload'
 
+// this function is outdated.
+// TODO: this function needs to handle a POST /thirdpartyRequests/verifications
+//       payload and send a PUT /thirdpartyRequests/verifications/{ID} callback
+//       to the source DFSP
 export async function validateAndVerifySignature (
   payload: AuthPayload,
   transactionRequestId: string,
@@ -116,12 +119,13 @@ export async function validateAndVerifySignature (
 
     payload.status = 'VERIFIED'
 
-    // PUT request to switch to inform about verification
+    /*
     await thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizations(
       payload,
       transactionRequestId,
       participantId
     )
+    */
   } catch (error) {
     logger.push({ error }).error('Outgoing PUT request not made for transaction authorizations')
     putAuthorizationErrorRequest(transactionRequestId, error, participantId)

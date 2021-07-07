@@ -40,6 +40,8 @@ import { NotFoundError } from '../errors'
 
 /*
 * Interface for Scope resource type
+* TODO: rename this so it doesn't conflict with the Thirdparty API's
+*       Scope interface. Maybe something like AuthDBScope or ScopeDBRowObject
 */
 export interface Scope {
   id?: number;
