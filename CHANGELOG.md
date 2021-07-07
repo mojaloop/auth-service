@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.4.2](https://github.com/mojaloop/auth-service/compare/v11.4.1...v11.4.2) (2021-07-07)
+
+
+### Maintenance
+
+* update packages and regen audit resolve ([#77](https://github.com/mojaloop/auth-service/issues/77)) ([8f1c3db](https://github.com/mojaloop/auth-service/commit/8f1c3db46833218e4d50ac98b2eaa2d388fd5e62))
+
 ### [11.4.1](https://github.com/mojaloop/auth-service/compare/v11.4.0...v11.4.1) (2021-07-06)
 
 
