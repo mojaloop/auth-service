@@ -275,7 +275,7 @@ const requestBody: tpAPI.Schemas.ConsentsIDPutResponseVerified = {
     status: CredentialStatusEnum.VERIFIED,
     payload: {
       id: requestCredentialId,
-      rawId: 'TODO: figure out what goes here',
+      rawId: requestCredentialId,
       response: {
         clientDataJSON: requestClientDataJSON,
         attestationObject: requestAttestationObject

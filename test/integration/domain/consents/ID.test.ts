@@ -227,7 +227,7 @@ describe('server/domain/consents/{ID}', (): void => {
             status: 'VERIFIED',
             payload: {
               id: consents[1].credentialId!,
-              rawId: 'TODO: figure out what goes here',
+              rawId: consents[1].credentialId!,
               response: {
                 // clientDataJSON needs to be utf-8 not base64
                 clientDataJSON: Buffer.from(
