@@ -19,13 +19,11 @@ services:
     depends_on:
       - mysql
       - redis
-    extra_hosts:
-      - "redis:172.17.0.1"
     volumes:
       - ./scripts/wait4.js:/opt/auth-service/scripts/wait4.js
       - ./scripts/wait4.config.js:/opt/auth-service/scripts/wait4.config.js
     healthcheck:
-      test: wget -q http://172.17.0.1:4004/health -O /dev/null || exit 1
+      test: wget -q http://localhost:4004/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -74,11 +72,6 @@ services:
       - mojaloop-net
     depends_on:
       - mongo
-    extra_hosts:
-      - "inbound-thirdparty-scheme-adapter:172.17.0.1"
-      - "outbound-thirdparty-scheme-adapter:172.17.0.1"
-      - "inbound-sdk-scheme-adapter:172.17.0.1"
-      - "ml-testing-toolkit:172.17.0.1"
 
   ml-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:v12.0.0
