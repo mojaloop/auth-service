@@ -43,6 +43,11 @@ interface ServiceConfig {
   PARTICIPANT_ID: string;
   DATABASE: DatabaseConfig;
   ENV: string;
+  REDIS: {
+    HOST: string;
+    PORT: number;
+    TIMEOUT: number;
+  };
   INSPECT: {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
@@ -107,6 +112,26 @@ const ConvictConfig = Convict<ServiceConfig>({
     default: 'auth-service',
     env: 'PARTICIPANT_ID',
     arg: 'participantId'
+  },
+  REDIS: {
+    HOST: {
+      doc: 'The Redis Hostname/IP address to connect.',
+      format: '*',
+      default: 'localhost',
+      env: 'REDIS_HOST'
+    },
+    PORT: {
+      doc: 'The Redis port to connect.',
+      format: 'port',
+      default: 6379,
+      env: 'REDIS_PORT'
+    },
+    TIMEOUT: {
+      doc: 'The Redis connection timeout',
+      format: 'nat',
+      default: 100,
+      env: 'REDIS_TIMEOUT'
+    }
   },
   INSPECT: {
     DEPTH: {

@@ -2,6 +2,11 @@
   "PORT": 4004,
   "HOST": "0.0.0.0",
   "PARTICIPANT_ID": "auth_service",
+  "REDIS": {
+    "PORT": 6379,
+    "HOST": "localhost",
+    "TIMEOUT": 100
+  },
   "INSPECT": {
     "DEPTH": 4,
     "SHOW_HIDDEN": false,

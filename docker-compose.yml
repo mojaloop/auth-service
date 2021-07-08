@@ -18,6 +18,9 @@ services:
       - mojaloop-net
     depends_on:
       - mysql
+      - redis
+    extra_hosts:
+      - "redis:172.17.0.1"
     volumes:
       - ./scripts/wait4.js:/opt/auth-service/scripts/wait4.js
       - ./scripts/wait4.config.js:/opt/auth-service/scripts/wait4.config.js
@@ -47,3 +50,12 @@ services:
       retries: 10
       start_period: 40s
       interval: 30s
+
+  redis:
+    container_name: redis
+    image: "redis:6.2.4-alpine"
+    networks:
+      - mojaloop-net
+    ports:
+      - "6379:6379"
+    restart: always
