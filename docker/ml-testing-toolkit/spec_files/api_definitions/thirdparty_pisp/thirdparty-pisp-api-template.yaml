@@ -1,0 +1,27 @@
+openapi: 3.0.2
+info:
+  title: Mojaloop PISP/Switch API
+  version: '1.0'
+  description: A Mojaloop API for thirdparty interactions between `PISPs` (Payment Initiation Service Providers) and a Mojaloop Switch.
+  license:
+    name: TBD
+    url: TBD
+servers:
+  - url: /
+paths:
+  # Account Linking Flow
+  # TTK acting as DFSP receiving a callback for a POST /consents request
+  /consents/{ID}:
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID.yaml'
+  /consents/{ID}/error:
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID_error.yaml'
+  # TTK acting as the ALS
+  /participants/{Type}/{ID}:
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/participants_Type_ID.yaml'
+
+  # Transfer Verification Flow
+  # to be implemented
+  # /thirdpartyRequests/verifications/{ID}:
+  #   $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications_ID.yaml'
+  # /thirdpartyRequests/verifications/{ID}/error:
+  #   $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications_ID_error.yaml'

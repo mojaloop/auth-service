@@ -59,3 +59,35 @@ services:
     ports:
       - "6379:6379"
     restart: always
+
+  ml-testing-toolkit:
+    image: mojaloop/ml-testing-toolkit:v12.4.0
+    container_name: ml-testing-toolkit
+    volumes:
+      - "./docker/ml-testing-toolkit/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
+      - "./docker/ml-testing-toolkit/secrets:/opt/mojaloop-testing-toolkit/secrets"
+    ports:
+      - "15000:5000"
+      - "5050:5050"
+    command: npm start
+    networks:
+      - mojaloop-net
+    depends_on:
+      - mongo
+    extra_hosts:
+      - "inbound-thirdparty-scheme-adapter:172.17.0.1"
+      - "outbound-thirdparty-scheme-adapter:172.17.0.1"
+      - "inbound-sdk-scheme-adapter:172.17.0.1"
+      - "ml-testing-toolkit:172.17.0.1"
+
+  ml-testing-toolkit-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v12.0.0
+    container_name: ml-testing-toolkit-ui
+    ports:
+      - "6060:6060"
+    command: nginx -g "daemon off;"
+    depends_on:
+      - ml-testing-toolkit
+      - mongo
+    networks:
+      - mojaloop-net
