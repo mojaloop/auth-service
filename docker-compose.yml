@@ -91,3 +91,9 @@ services:
       - mongo
     networks:
       - mojaloop-net
+
+  mongo:
+    image: mongo
+    container_name: 3p_mongo
+    ports:
+      - "27017:27017"
