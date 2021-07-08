@@ -21,6 +21,7 @@
     "docker:build": "docker build -t auth-service:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 4004:4004 auth-service:local",
     "lint": "eslint ./src/**/*.ts *.js",
+    "lint:fix": "eslint --fix ./src/**/*.ts *.js",
     "pretest": "echo \"pretest - TODO...\"",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",

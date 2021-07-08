@@ -69,11 +69,11 @@ export class KVS extends RedisConnection {
   async del (key: string): Promise<boolean> {
     InvalidKeyError.throwIfInvalid(key)
     return new Promise((resolve, reject) => {
-      return this.client.del(key, function(err, response) {
+      return this.client.del(key, function (err, response) {
         if (err) {
-          return reject(err);
+          return reject(err)
         }
-        return resolve(response > 0);
+        return resolve(response > 0)
       })
     })
   }
