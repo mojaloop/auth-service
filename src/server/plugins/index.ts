@@ -32,11 +32,13 @@ import ErrorHandling from '@mojaloop/central-services-error-handling'
 import { Util } from '@mojaloop/central-services-shared'
 import Good from './good'
 import OpenAPI from './openAPI'
+import { StatePlugin } from './state'
 
 async function register (server: Server): Promise<Server> {
   const openapiBackend = await OpenAPI.initialize()
 
   const plugins = [
+    StatePlugin,
     Util.Hapi.OpenapiBackendValidator,
     Good,
     openapiBackend,

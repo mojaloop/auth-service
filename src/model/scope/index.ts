@@ -28,6 +28,6 @@
  ******/
 
 export {
-  Scope,
+  ModelScope,
   ScopeDB
 } from './scope'

@@ -1,0 +1,20 @@
+# This is an extension docker-compose file that contains `extra_hosts` entries to work arouind networking
+# on linux, start docker-local with the following command
+#
+# docker-compose -f docker-compose.yml -f docker-compose.linux.yml up -d
+#
+# I suspect that with some of the recent changes to the way containers refer to one another inside the
+# docker-local environment, this will no longer be needed. Please delete this file if you are reading this message
+# past July and we haven't run into issues...
+
+version: "3.7"
+
+services:
+  auth-service:
+    extra_hosts:
+      - "redis:172.17.0.1"
+      - "ml-testing-toolkit:172.17.0.1"
+
+  ml-testing-toolkit:
+    extra_hosts:
+      - "auth-service:172.17.0.1"

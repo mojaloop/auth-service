@@ -1,6 +1,6 @@
 import { Consent, ConsentCredential } from '~/model/consent'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Scope } from '~/model/scope'
+import { ModelScope } from '~/model/scope'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
@@ -174,7 +174,7 @@ export const externalScopes: tpAPI.Schemas.Scope[] = [{
 }
 ]
 
-export const scopes: Scope[] = [{
+export const scopes: ModelScope[] = [{
   id: 123234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',

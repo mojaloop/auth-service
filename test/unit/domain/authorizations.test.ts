@@ -30,7 +30,7 @@ import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 // import { logger } from '~/shared/logger'
 import { Consent } from '~/model/consent'
-import { Scope } from '~/model/scope'
+import { ModelScope } from '~/model/scope'
 import { thirdPartyRequest } from '~/domain/requests'
 import {
   AuthPayload,
@@ -158,7 +158,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           value: 'dwuduwd&e2idjoj0w'
         }
 
-        const consentScopes: Scope[] = [
+        const consentScopes: ModelScope[] = [
           {
             id: 1,
             consentId: payload.consentId,
@@ -195,7 +195,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           value: 'dwuduwd&e2idjoj0w'
         }
 
-        const consentScopes: Scope[] = [
+        const consentScopes: ModelScope[] = [
           {
             id: 1,
             consentId: payload.consentId,
@@ -232,7 +232,7 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           value: 'dwuduwd&e2idjoj0w'
         }
 
-        const consentScopes: Scope[] = []
+        const consentScopes: ModelScope[] = []
 
         const scopeMatch = hasMatchingScopeForPayload(consentScopes, payload)
 

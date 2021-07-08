@@ -43,6 +43,11 @@ interface ServiceConfig {
   PARTICIPANT_ID: string;
   DATABASE: DatabaseConfig;
   ENV: string;
+  REDIS: {
+    HOST: string;
+    PORT: number;
+    TIMEOUT: number;
+  };
   INSPECT: {
     DEPTH: number;
     SHOW_HIDDEN: boolean;
@@ -53,6 +58,7 @@ interface ServiceConfig {
     ALS_ENDPOINT?: string;
     QUOTES_ENDPOINT?: string;
     TRANSFERS_ENDPOINT?: string;
+    SERVICES_ENDPOINT?: string;
     BULK_TRANSFERS_ENDPOINT?: string;
     THIRDPARTY_REQUESTS_ENDPOINT?: string;
     TRANSACTION_REQUEST_ENDPOINT?: string;
@@ -108,6 +114,26 @@ const ConvictConfig = Convict<ServiceConfig>({
     env: 'PARTICIPANT_ID',
     arg: 'participantId'
   },
+  REDIS: {
+    HOST: {
+      doc: 'The Redis Hostname/IP address to connect.',
+      format: '*',
+      default: 'localhost',
+      env: 'REDIS_HOST'
+    },
+    PORT: {
+      doc: 'The Redis port to connect.',
+      format: 'port',
+      default: 6379,
+      env: 'REDIS_PORT'
+    },
+    TIMEOUT: {
+      doc: 'The Redis connection timeout',
+      format: 'nat',
+      default: 100,
+      env: 'REDIS_TIMEOUT'
+    }
+  },
   INSPECT: {
     DEPTH: {
       doc: 'Inspection depth',
@@ -131,6 +157,7 @@ const ConvictConfig = Convict<ServiceConfig>({
     ALS_ENDPOINT: '0.0.0.0:4002',
     QUOTES_ENDPOINT: '0.0.0.0:3002',
     TRANSFERS_ENDPOINT: '0.0.0.0:3000',
+    SERVICES_ENDPOINT: '',
     BULK_TRANSFERS_ENDPOINT: '',
     THIRDPARTY_REQUESTS_ENDPOINT: '',
     TRANSACTION_REQUEST_ENDPOINT: '',

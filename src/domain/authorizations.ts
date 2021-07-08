@@ -34,7 +34,7 @@
  --------------
  ******/
 import { Consent } from '../model/consent'
-import { Scope } from '../model/scope'
+import { ModelScope } from '../model/scope'
 import { consentDB, scopeDB } from '~/model/db'
 import { verifySignature } from '~/domain/challenge'
 import {
@@ -81,7 +81,7 @@ export async function validateAndVerifySignature (
       throw new DatabaseError(payload.consentId)
     }
 
-    let consentScopes: Scope[]
+    let consentScopes: ModelScope[]
 
     // Retrieve scopes for the consent
     try {

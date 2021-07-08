@@ -40,10 +40,8 @@ import { NotFoundError } from '../errors'
 
 /*
 * Interface for Scope resource type
-* TODO: rename this so it doesn't conflict with the Thirdparty API's
-*       Scope interface. Maybe something like AuthDBScope or ScopeDBRowObject
 */
-export interface Scope {
+export interface ModelScope {
   id?: number;
   consentId: string;
   action: string;
@@ -62,7 +60,7 @@ export class ScopeDB {
   }
 
   // Add a single Scope or an array of Scopes
-  public async insert (scopes: Scope | Scope[], trx?: Knex.Transaction): Promise<boolean> {
+  public async insert (scopes: ModelScope | ModelScope[], trx?: Knex.Transaction): Promise<boolean> {
     // To avoid inconsistencies between DBs, we define a standard
     // way to deal with empty arrays.
     // We just return true because an empty array was anyways
@@ -71,7 +69,7 @@ export class ScopeDB {
       return true
     }
 
-    const action = this.Db<Scope>('Scope').insert(scopes)
+    const action = this.Db<ModelScope>('Scope').insert(scopes)
     if (trx) {
       await action.transacting(trx)
     } else {
@@ -81,9 +79,9 @@ export class ScopeDB {
   }
 
   // Retrieve Scopes by Consent ID
-  public async retrieveAll (consentId: string): Promise<Scope[]> {
-    const scopes: Scope[] = await this
-      .Db<Scope>('Scope')
+  public async retrieveAll (consentId: string): Promise<ModelScope[]> {
+    const scopes: ModelScope[] = await this
+      .Db<ModelScope>('Scope')
       .select('*')
       .where({ consentId })
 

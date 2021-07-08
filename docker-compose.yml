@@ -18,11 +18,12 @@ services:
       - mojaloop-net
     depends_on:
       - mysql
+      - redis
     volumes:
       - ./scripts/wait4.js:/opt/auth-service/scripts/wait4.js
       - ./scripts/wait4.config.js:/opt/auth-service/scripts/wait4.config.js
     healthcheck:
-      test: wget -q http://172.17.0.1:4004/health -O /dev/null || exit 1
+      test: wget -q http://localhost:4004/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -47,3 +48,45 @@ services:
       retries: 10
       start_period: 40s
       interval: 30s
+
+  redis:
+    container_name: redis
+    image: "redis:6.2.4-alpine"
+    networks:
+      - mojaloop-net
+    ports:
+      - "6379:6379"
+    restart: always
+
+  ml-testing-toolkit:
+    image: mojaloop/ml-testing-toolkit:v12.4.0
+    container_name: ml-testing-toolkit
+    volumes:
+      - "./docker/ml-testing-toolkit/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
+      - "./docker/ml-testing-toolkit/secrets:/opt/mojaloop-testing-toolkit/secrets"
+    ports:
+      - "15000:5000"
+      - "5050:5050"
+    command: npm start
+    networks:
+      - mojaloop-net
+    depends_on:
+      - mongo
+
+  ml-testing-toolkit-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v12.0.0
+    container_name: ml-testing-toolkit-ui
+    ports:
+      - "6060:6060"
+    command: nginx -g "daemon off;"
+    depends_on:
+      - ml-testing-toolkit
+      - mongo
+    networks:
+      - mojaloop-net
+
+  mongo:
+    image: mongo
+    container_name: 3p_mongo
+    ports:
+      - "27017:27017"
