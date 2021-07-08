@@ -97,6 +97,7 @@
     "jest": "26.0.1",
     "jest-cucumber": "^2.0.11",
     "jest-junit": "10.0.0",
+    "jest-mock-process": "^1.4.1",
     "lint-staged": "^11.0.0",
     "multi-file-swagger": "^2.3.0",
     "nodemon": "^2.0.9",

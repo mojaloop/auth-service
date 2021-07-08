@@ -58,6 +58,7 @@ interface ServiceConfig {
     ALS_ENDPOINT?: string;
     QUOTES_ENDPOINT?: string;
     TRANSFERS_ENDPOINT?: string;
+    SERVICES_ENDPOINT?: string;
     BULK_TRANSFERS_ENDPOINT?: string;
     THIRDPARTY_REQUESTS_ENDPOINT?: string;
     TRANSACTION_REQUEST_ENDPOINT?: string;
@@ -156,6 +157,7 @@ const ConvictConfig = Convict<ServiceConfig>({
     ALS_ENDPOINT: '0.0.0.0:4002',
     QUOTES_ENDPOINT: '0.0.0.0:3002',
     TRANSFERS_ENDPOINT: '0.0.0.0:3000',
+    SERVICES_ENDPOINT: '',
     BULK_TRANSFERS_ENDPOINT: '',
     THIRDPARTY_REQUESTS_ENDPOINT: '',
     TRANSACTION_REQUEST_ENDPOINT: '',
