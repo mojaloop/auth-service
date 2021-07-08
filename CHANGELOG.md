@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.4.4](https://github.com/mojaloop/auth-service/compare/v11.4.3...v11.4.4) (2021-07-08)
+
+
+### Maintenance
+
+* pull in redis/pub-sub/kvs/ttk/state plugin/state machine code for upcoming flows ([#78](https://github.com/mojaloop/auth-service/issues/78)) ([3309b3c](https://github.com/mojaloop/auth-service/commit/3309b3c923f7f07c1b427f7adbe5a332127002be))
+
 ### [11.4.3](https://github.com/mojaloop/auth-service/compare/v11.4.2...v11.4.3) (2021-07-07)
 
 
