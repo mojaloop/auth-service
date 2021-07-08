@@ -154,15 +154,15 @@ describe('KVS: Key Value Storage', () => {
     const delSpy = jest.spyOn(kvs.client, 'del').mockImplementationOnce((
       ...args: (string | Callback<number>)[]
     ): boolean => {
-      const argKey: string = args[0] as unknown as string
-      expect(argKey).toEqual(key)
-      return true
+      const cb = args[1] as Callback<number>
+      cb(null, 1)
+      return false
     })
 
     const result = await kvs.del(key)
     expect(result).toBeTruthy()
     expect(delSpy).toBeCalledTimes(1)
-    expect(delSpy).toBeCalledWith(key)
+    expect(delSpy).toBeCalledWith(key, expect.anything())
   })
 
   it('should validate invalid key for DEL', async (): Promise<void> => {
