@@ -32,3 +32,80 @@ declare module '@mojaloop/central-services-metrics'
 declare module '@hapi/good'
 declare module 'hapi-openapi'
 declare module 'blipp'
+
+// version 2.4 -> https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/javascript-state-machine/index.d.ts
+// we are using ^3.1.0
+declare module 'javascript-state-machine' {
+  type Method = (...args: unknown[]) => void | Promise<void>
+  type Data = Record<string, string | number | boolean | unknown>
+
+
+    interface Transition {
+      name: string;
+      from: string;
+      to: string;
+    }
+  interface TransitionEvent<JSM> {
+    transition: string;
+    from: string;
+    to: string;
+    fsm: JSM;
+    event: string;
+  }
+  interface StateMachineConfig {
+    init?: string;
+    transitions: Transition[];
+    data?: Data;
+    methods?: Record<string, Method>;
+  }
+
+  interface StateMachineInterface {
+    // current state
+    state: string;
+
+    // return true if state s is the current state
+    is(s: string): boolean
+
+    // return true if transition t can occur from the current state
+    can(t: string): boolean
+
+    // return true if transition t cannot occur from the current state
+    cannot(t: string): boolean
+
+    // return list of transitions that are allowed from the current state
+    transitions(): string[]
+
+    // return list of all possible transitions
+    allTransitions(): string[]
+
+    // return list of all possible states
+    allStates(): string []
+  }
+  export default class StateMachine {
+    constructor(config: StateMachineConfig)
+
+    // current state
+    state: string;
+
+    // return true if state s is the current state
+    is(s: string): boolean
+
+    // return true if transition t can occur from the current state
+    can(t: string): boolean
+
+    // return true if transition t cannot occur from the current state
+    cannot(t: string): boolean
+
+    // return list of transitions that are allowed from the current state
+    transitions(): string[]
+
+    // return list of all possible transitions
+    allTransitions(): string[]
+
+    // return list of all possible states
+    allStates(): string []
+
+    static factory(spec: StateMachineConfig): StateMachine
+  }
+
+}
