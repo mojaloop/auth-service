@@ -64,9 +64,18 @@ export class KVS extends RedisConnection {
   }
 
   // removes the value for given key
+  // TODO: investigate why this was working without a callback in
+  //       `thirdparty-scheme-adapter`
   async del (key: string): Promise<boolean> {
     InvalidKeyError.throwIfInvalid(key)
-    return this.client.del(key)
+    return new Promise((resolve, reject) => {
+      return this.client.del(key, function(err, response) {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(response > 0);
+      })
+    })
   }
 
   // check is any data for given key

@@ -62,7 +62,7 @@ describe('KVS', () => {
       'the-string'
     ]
 
-    for (const value in values) {
+    for (const value of values) {
       await kvs.set('key', value)
       expect(await kvs.exists('key')).toBeTruthy()
       const retrieved = await kvs.get('key')
@@ -83,7 +83,7 @@ describe('KVS', () => {
       'the-string'
     ]
 
-    for (const value in values) {
+    for (const value of values) {
       await kvs.set('key-del', value)
       const retrieved = await kvs.get('key-del')
       expect(retrieved).toEqual(value)
@@ -94,7 +94,7 @@ describe('KVS', () => {
       const deleted = await kvs.get('key-del')
       expect(deleted).toBeUndefined()
       const resultDeleted = await kvs.del('key-del')
-      expect(resultDeleted).toBeTruthy()
+      expect(resultDeleted).toBeFalsy()
     }
   })
 })
