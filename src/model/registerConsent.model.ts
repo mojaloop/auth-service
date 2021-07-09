@@ -112,7 +112,7 @@ export class RegisterConsentModel
 
 
   async onVerifyConsent (): Promise<void> {
-    const { consentPostRequestAUTH, participantDFSPId } = this.data
+    const { consentsPostRequestAUTH, participantDFSPId } = this.data
 
     try {
       // not sure what functions to use or if they are ready
@@ -137,7 +137,7 @@ export class RegisterConsentModel
       }
 
       await this.thirdpartyRequests.putConsentsError(
-        consentPostRequestAUTH.consentId,
+        consentsPostRequestAUTH.consentId,
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
         participantDFSPId
       )
@@ -148,20 +148,20 @@ export class RegisterConsentModel
   }
 
   async onRegisterAuthoritativeSourceWithALS (): Promise<void> {
-    const { consentPostRequestAUTH, participantDFSPId } = this.data
+    const { consentsPostRequestAUTH, participantDFSPId } = this.data
 
     // catch any unplanned errors and notify DFSP
     try {
       const waitOnParticipantResponseFromALSResponse = RegisterConsentModel.notificationChannel(
         RegisterConsentPhase.waitOnParticipantResponseFromALS,
-        consentPostRequestAUTH.consentId
+        consentsPostRequestAUTH.consentId
       )
 
       await deferredJob(this.subscriber, waitOnParticipantResponseFromALSResponse)
         .init(async (channel) => {
           // todo: sdk-standard-components needs a postParticipantsTypeId function
           //       building the request from scratch for now
-          const alsParticipantURI = `${this.config.alsEndpoint}/participants/CONSENT/${consentPostRequestAUTH.consentId}`
+          const alsParticipantURI = `${this.config.alsEndpoint}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`
           const axiosConfig = {
             headers: {
               'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',
@@ -197,14 +197,12 @@ export class RegisterConsentModel
               )
 
               await this.thirdpartyRequests.putConsentsError(
-                consentPostRequestAUTH.consentId,
+                consentsPostRequestAUTH.consentId,
                 mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
                 participantDFSPId
               )
               // store the error so we can transition to an errored state
               this.data.errorInformation = mojaloopError.errorInformation as unknown as fspiopAPI.Schemas.ErrorInformation
-            } else {
-              this.data.participantsTypeIDPutResponse = { ...message as unknown as PutResponse }
             }
           } catch (error) {
             return Promise.reject(error)
@@ -221,7 +219,7 @@ export class RegisterConsentModel
       // if the flow fails to run for any reason notify the DFSP that the account
       // linking process has failed
       await this.thirdpartyRequests.putConsentsError(
-        consentPostRequestAUTH.consentId,
+        consentsPostRequestAUTH.consentId,
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
         participantDFSPId
       )
@@ -232,22 +230,22 @@ export class RegisterConsentModel
   }
 
   async onSendConsentCallbackToDFSP (): Promise<void> {
-    const { consentPostRequestAUTH, participantDFSPId } = this.data
+    const { consentsPostRequestAUTH, participantDFSPId } = this.data
 
     try {
       // copy credential and update status
       const verifiedCredential: tpAPI.Schemas.VerifiedCredential = {
-        ...consentPostRequestAUTH.credential,
+        ...consentsPostRequestAUTH.credential,
         status: 'VERIFIED'
       }
 
       const consentsIDPutResponseVerified: tpAPI.Schemas.ConsentsIDPutResponseVerified = {
-        scopes: consentPostRequestAUTH.scopes,
+        scopes: consentsPostRequestAUTH.scopes,
         credential: verifiedCredential
       }
 
       await this.thirdpartyRequests.putConsents(
-        consentPostRequestAUTH.consentId,
+        consentsPostRequestAUTH.consentId,
         consentsIDPutResponseVerified,
         participantDFSPId
       )
@@ -267,7 +265,7 @@ export class RegisterConsentModel
       }
 
       await this.thirdpartyRequests.putConsentsError(
-        consentPostRequestAUTH.consentId,
+        consentsPostRequestAUTH.consentId,
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
         participantDFSPId
       )

@@ -34,7 +34,6 @@ import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
 import { PubSub } from '~/shared/pub-sub'
-import { ParticipantsTypeIDPutResponse } from '../../../api-snippets/src/thirdparty/index';
 
 export enum RegisterConsentPhase {
   waitOnParticipantResponseFromALS = 'waitOnParticipantResponseFromALS',
@@ -63,14 +62,7 @@ export interface RegisterConsentData extends StateData {
   participantDFSPId: string
 
   // initial /POST consents request
-  consentPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH
-
-  // request sent to ALS
-  participantsTypeIDPostRequest: tpAPI.Schemas.ParticipantsTypeIDSubIDPostRequest
-  participantsTypeIDPutResponse: tpAPI.Schemas.ParticipantsTypeIDPutResponse
-
-  // response to DFSP letting them know Consent is verified and stored
-  consentsIDPutResponseVerified: tpAPI.Schemas.ConsentsIDPutResponseVerified
+  consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH
 
   errorInformation?: tpAPI.Schemas.ErrorInformation
 }
