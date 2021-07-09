@@ -25,21 +25,22 @@
  --------------
  ******/
 
-import { PubSub } from '~/shared/pub-sub'
+import { PubSub, Message } from '~/shared/pub-sub'
 import { PersistentModel } from '~/model/persistent.model'
 import { StateMachineConfig } from 'javascript-state-machine'
-import { ThirdpartyRequests, MojaloopRequests, Errors } from '@mojaloop/sdk-standard-components';
+import { ThirdpartyRequests, MojaloopRequests, Errors } from '@mojaloop/sdk-standard-components'
 import inspect from '~/shared/inspect'
 import {
   RegisterConsentData,
   RegisterConsentStateMachine,
   RegisterConsentModelConfig
+  , RegisterConsentPhase
 } from './registerConsent.interface'
-import { Message } from '~/shared/pub-sub'
+
 import deferredJob from '~/shared/deferred-job'
-import { RegisterConsentPhase } from './registerConsent.interface'
+
 import { reformatError } from '~/shared/api-error'
-import axios from 'axios';
+import axios from 'axios'
 import {
   v1_1 as fspiopAPI,
   thirdparty as tpAPI
@@ -58,13 +59,13 @@ export class RegisterConsentModel
       transitions: [
         { name: 'verifyConsent', from: 'start', to: 'consentVerified' },
         { name: 'registerAuthoritativeSourceWithALS', from: 'consentVerified', to: 'registeredAsAuthoritativeSource' },
-        { name: 'sendConsentCallbackToDFSP', from: 'registeredAsAuthoritativeSource', to: 'callbackSent' },
+        { name: 'sendConsentCallbackToDFSP', from: 'registeredAsAuthoritativeSource', to: 'callbackSent' }
       ],
       methods: {
         // specific transitions handlers methods
         onVerifyConsent: () => this.onVerifyConsent(),
         onRegisterAuthoritativeSourceWithALS: () => this.onRegisterAuthoritativeSourceWithALS(),
-        onSendConsentCallbackToDFSP: () => this.onSendConsentCallbackToDFSP(),
+        onSendConsentCallbackToDFSP: () => this.onSendConsentCallbackToDFSP()
       }
     }
     super(data, config, spec)
@@ -86,7 +87,7 @@ export class RegisterConsentModel
 
   // utility function to check if an error after a transition which
   // pub/subs for a response that can return a mojaloop error
-  async checkModelDataForErrorInformation(): Promise<void> {
+  async checkModelDataForErrorInformation (): Promise<void> {
     if (this.data.errorInformation) {
       await this.fsm.error(this.data.errorInformation)
     }
@@ -109,7 +110,6 @@ export class RegisterConsentModel
     const channel = RegisterConsentModel.notificationChannel(phase, id)
     return deferredJob(pubSub, channel).trigger(message)
   }
-
 
   async onVerifyConsent (): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
@@ -165,13 +165,13 @@ export class RegisterConsentModel
           const axiosConfig = {
             headers: {
               'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',
-              'Accept': 'application/vnd.interoperability.participants+json;version=1.0',
+              Accept: 'application/vnd.interoperability.participants+json;version=1.0',
               'FSPIOP-Source': this.config.authServiceParticipantFSPId,
               Date: (new Date()).toUTCString()
             }
           }
           const payload: fspiopAPI.Schemas.ParticipantsTypeIDSubIDPostRequest = {
-            'fspId': this.config.authServiceParticipantFSPId
+            fspId: this.config.authServiceParticipantFSPId
           }
 
           const res = await axios.post(alsParticipantURI, payload, axiosConfig)
@@ -330,8 +330,7 @@ export async function create (
   return model
 }
 
-
 export default {
   RegisterConsentModel,
-  create,
+  create
 }

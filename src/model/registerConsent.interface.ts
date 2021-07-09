@@ -24,12 +24,12 @@
  - Kevin Leyow - kevin.leyow@modusbox.com
  --------------
  ******/
- import {
+import {
   ControlledStateMachine,
   PersistentModelConfig, StateData
 } from '~/model/persistent.model'
 import { Method } from 'javascript-state-machine'
-import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components';
+import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
