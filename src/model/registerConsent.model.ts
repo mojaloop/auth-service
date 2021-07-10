@@ -173,9 +173,9 @@ export class RegisterConsentModel
           const payload: fspiopAPI.Schemas.ParticipantsTypeIDSubIDPostRequest = {
             fspId: this.config.authServiceParticipantFSPId
           }
-          //console.log({ alsParticipantURI, payload, axiosConfig })
-          //this.logger.push({ alsParticipantURI, payload, axiosConfig })
-          //  .log('Testing')
+          console.log({ alsParticipantURI, payload, axiosConfig })
+          this.logger.push({ alsParticipantURI, payload, axiosConfig })
+            .log('Testing')
           const res = await axios.post(alsParticipantURI, payload, axiosConfig)
           this.logger.push({ res, channel })
             .log('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
@@ -211,6 +211,7 @@ export class RegisterConsentModel
         })
         .wait(this.config.requestProcessingTimeoutSeconds * 1000)
     } catch (error) {
+      this.logger.push({ error }).error('consentVerified -> registeredAsAuthoritativeSource')
       // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
@@ -251,8 +252,7 @@ export class RegisterConsentModel
         participantDFSPId
       )
     } catch (error) {
-      this.logger.push({ error }).error('start -> requestIsValid')
-
+      this.logger.push({ error }).error('registeredAsAuthoritativeSource -> callbackSent')
       let mojaloopError
       // if error is planned and is a MojaloopApiErrorCode we send back that code
       if ((error as Errors.MojaloopApiErrorCode).code) {

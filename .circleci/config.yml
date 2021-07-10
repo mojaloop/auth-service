@@ -207,7 +207,7 @@ jobs:
           name: Execute integration tests
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            npm -s run test:integration
+            npm run test:integration
           environment:
             NODE_ENV: "integration"
       - run:
