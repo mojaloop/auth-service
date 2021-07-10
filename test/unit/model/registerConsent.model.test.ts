@@ -48,6 +48,7 @@ import sortedArray from 'test/unit/sortedArray'
 import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/model/registerConsent.interface'
 import config from '~/shared/config';
 import axios from 'axios';
+import shouldNotBeExecuted from '../shouldNotBeExecuted';
 
 // mock KVS default exported class
 jest.mock('~/shared/kvs')
@@ -209,6 +210,7 @@ describe('RegisterConsentModel', () => {
     // check new getters
     expect(RegisterConsentModel.subscriber).toEqual(modelConfig.subscriber)
     expect(RegisterConsentModel.thirdpartyRequests).toEqual(modelConfig.thirdpartyRequests)
+    expect(RegisterConsentModel.mojaloopRequests).toEqual(modelConfig.mojaloopRequests)
 
     // check is fsm correctly constructed
     expect(typeof RegisterConsentModel.fsm.init).toEqual('function')
@@ -243,6 +245,23 @@ describe('RegisterConsentModel', () => {
     expect(typeof create).toEqual('function')
   })
 
+  describe('notificationChannel', () => {
+    it('should generate proper channel name', () => {
+      const id = '123'
+      expect(RegisterConsentModel.notificationChannel(
+        RegisterConsentPhase.waitOnParticipantResponseFromALS,
+        id)).toEqual('RegisterConsent_waitOnParticipantResponseFromALS_123')
+    })
+
+    it('input validation', () => {
+      expect(
+        () => RegisterConsentModel.notificationChannel(
+          RegisterConsentPhase.waitOnParticipantResponseFromALS,
+          null as unknown as string
+        )
+      ).toThrow()
+    })
+  })
 
   describe('verifyConsent', () => {
     const registerConsentData: RegisterConsentData = {
@@ -326,6 +345,11 @@ describe('RegisterConsentModel', () => {
       const model = await create(registerConsentData, modelConfig)
       await model.fsm.registerAuthoritativeSourceWithALS()
 
+      // check for errors
+      await model.checkModelDataForErrorInformation()
+      // check that the fsm was able to transition properly
+      expect(model.data.currentState).toEqual('errored')
+
       // check it sends an error back to DFSP
       expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
         "b51ec534-ee48-4575-b6a9-ead2955b8069",
@@ -366,6 +390,103 @@ describe('RegisterConsentModel', () => {
         },
         'dfspA'
       )
+    })
+
+    it('sendConsentCallbackToDFSP() should transition registeredAsAuthoritativeSource to errored state when unsuccessful', async () => {
+      const error = new Error('the-exception')
+      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
+        () => {
+          throw error
+        }
+      )
+
+      const model = await create(registerConsentData, modelConfig)
+
+      try {
+        await model.fsm.sendConsentCallbackToDFSP()
+        shouldNotBeExecuted()
+      } catch (error) {
+        expect(error.message).toEqual('the-exception')
+      }
+
+      // check we send an error callback to DFSP
+      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+        'b51ec534-ee48-4575-b6a9-ead2955b8069',
+        {
+          errorInformation: {
+            errorCode: '7200',
+            errorDescription: 'Generic Thirdparty account linking error'
+          }
+        },
+        'dfspA'
+      )
+    })
+  })
+
+  // run this test last since it can interfere with other tests because of the
+  // timed pubsub publishing
+  describe('run workflow', () => {
+    const registerConsentData: RegisterConsentData = {
+      currentState: 'registeredAsAuthoritativeSource',
+      participantDFSPId: 'dfspA',
+      consentsPostRequestAUTH
+    }
+
+    it('start', async () => {
+      const model = await create(registerConsentData, modelConfig)
+      const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
+        RegisterConsentPhase.waitOnParticipantResponseFromALS,
+        registerConsentData.consentsPostRequestAUTH.consentId
+      )
+
+      setImmediate(() => {
+        publisher.publish(
+          waitOnParticipantResponseFromALSChannel,
+          participantsTypeIDPutResponse as unknown as Message
+        )
+      })
+
+      await model.run()
+
+      // check that the fsm was able complete the workflow
+      expect(model.data.currentState).toEqual('callbackSent')
+
+      mocked(modelConfig.logger.info).mockReset()
+
+    })
+
+    it('errored', async () => {
+      const model = await create({ ...registerConsentData, currentState: 'error' }, modelConfig)
+
+      const result = await model.run()
+
+      expect(mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+
+      expect(result).toBeUndefined()
+    })
+
+    it('exceptions', async () => {
+      const error = { message: 'error from requests.putConsentRequests', consentReqState: 'broken' }
+      mocked(axios.post).mockImplementationOnce(
+        () => {
+          throw error
+        }
+      )
+      const model = await create(registerConsentData, modelConfig)
+
+      expect(async () => await model.run()).rejects.toEqual(error)
+    })
+
+    it('exceptions - Error', async () => {
+      const error = new Error('the-exception')
+      mocked(axios.post).mockImplementationOnce(
+        () => {
+          throw error
+        }
+      )
+      const model = await create({ ...registerConsentData, currentState: 'start' }, modelConfig)
+
+      expect(model.run()).rejects.toEqual(error)
     })
   })
 })
