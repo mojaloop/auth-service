@@ -152,6 +152,13 @@ const participantsTypeIDPutResponse: fspiopAPI.Schemas.ParticipantsTypeIDPutResp
   'fspId': config.PARTICIPANT_ID
 }
 
+const genericErrorResponse: fspiopAPI.Schemas.ErrorInformationObject = {
+  errorInformation: {
+    errorCode: '7200',
+    errorDescription: 'Generic Thirdparty account linking error'
+  }
+}
+
 describe('RegisterConsentModel', () => {
   const connectionConfig: RedisConnectionConfig = {
     port: 6789,
@@ -264,7 +271,7 @@ describe('RegisterConsentModel', () => {
   })
 
   describe('checkModelDataForErrorInformation', () => {
-    it('should transistion fsm to errored state if errorInformation is truthy', async () => {
+    it('should transition fsm to errored state if errorInformation is truthy', async () => {
       const registerConsentData: RegisterConsentData = {
         currentState: 'start',
         participantDFSPId: 'dfspA',
@@ -314,13 +321,6 @@ describe('RegisterConsentModel', () => {
       errorInformation: {
         errorCode: '3000',
         errorDescription: 'Generic error'
-      }
-    }
-
-    const genericErrorResponse: fspiopAPI.Schemas.ErrorInformationObject = {
-      errorInformation: {
-        errorCode: '7200',
-        errorDescription: 'Generic Thirdparty account linking error'
       }
     }
 
@@ -483,8 +483,8 @@ describe('RegisterConsentModel', () => {
     })
 
     it('exceptions', async () => {
-      const error = { message: 'error from axios.post', consentReqState: 'broken' }
-      mocked(axios.post).mockImplementationOnce(
+      const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
+      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
         () => {
           throw error
         }
@@ -492,18 +492,6 @@ describe('RegisterConsentModel', () => {
       const model = await create(registerConsentData, modelConfig)
 
       expect(async () => await model.run()).rejects.toEqual(error)
-    })
-
-    it('exceptions - Error', async () => {
-      const error = new Error('the-exception')
-      mocked(axios.post).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
-      const model = await create({ ...registerConsentData, currentState: 'start' }, modelConfig)
-
-      expect(model.run()).rejects.toEqual(error)
     })
   })
 })
