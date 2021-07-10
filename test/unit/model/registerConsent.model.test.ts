@@ -493,5 +493,16 @@ describe('RegisterConsentModel', () => {
 
       expect(async () => await model.run()).rejects.toEqual(error)
     })
+
+    it('exceptions - Error', async () => {
+      const error = new Error('the-exception')
+      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
+        () => {
+          throw error
+        }
+      )
+      const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
+      expect(model.run()).rejects.toEqual(error)
+    })
   })
 })
