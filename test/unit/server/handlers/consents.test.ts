@@ -26,10 +26,10 @@
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-import { Request, ResponseToolkit } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import { h } from 'test/data/data'
 import ConsentsHandler from '~/server/handlers/consents'
+import { StateResponseToolkit } from '~/server/plugins/state'
 
 jest.mock('~/domain/errors')
 
@@ -134,10 +134,31 @@ const consentsPostRequestAUTH = {
 describe('server/handlers/consents', (): void => {
   it('Should return 202 success code', async (): Promise<void> => {
     const request = consentsPostRequestAUTH
+    const pubSubMock = {
+      subscribe: jest.fn()
+    }
+    const toolkit = {
+      getSubscriber: jest.fn(() => pubSubMock),
+      response: jest.fn(() => ({
+        code: jest.fn((code: number) => ({
+          statusCode: code
+        }))
+      })),
+      getDFSPId: jest.fn(() => 'centralAuth'),
+      getThirdpartyRequests: jest.fn(() => ({
+        putConsents: jest.fn(),
+        putConsentsError: jest.fn()
+      })),
+      getMojaloopRequests: jest.fn(),
+      getKVS: jest.fn(() => ({
+        set: jest.fn()
+      }))
+    }
+
     const response = await ConsentsHandler.post(
       null,
       request as unknown as Request,
-      h as ResponseToolkit
+      toolkit as unknown as StateResponseToolkit
     )
 
     expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)

@@ -308,7 +308,7 @@ describe('RegisterConsentModel', () => {
 
       // check we made a call to the als
       expect(axios.post).toBeCalledWith(
-        `${config.SHARED.ALS_ENDPOINT}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`,
+        `http://${config.SHARED.ALS_ENDPOINT}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`,
         { fspId: "centralAuth"},
         expect.any(Object)
       )

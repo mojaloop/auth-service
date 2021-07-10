@@ -24,10 +24,10 @@
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-import { Request, ResponseToolkit } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import { h } from 'test/data/data'
 import ParticipantsTypeIDHandler from '~/server/handlers/participants/{Type}/{ID}'
+import { StateResponseToolkit } from '../../../../../../src/server/plugins/state';
 
 jest.mock('~/domain/errors')
 
@@ -48,10 +48,22 @@ const participantsTypeIDPutResponse = {
 describe('server/handlers/consents', (): void => {
   it('Should return 200 success code', async (): Promise<void> => {
     const request = participantsTypeIDPutResponse
+    const pubSubMock = {
+      publish: jest.fn()
+    }
+    const toolkit = {
+      getPublisher: jest.fn(() => pubSubMock),
+      response: jest.fn(() => ({
+        code: jest.fn((code: number) => ({
+          statusCode: code
+        }))
+      }))
+    }
+
     const response = await ParticipantsTypeIDHandler.put(
       null,
       request as unknown as Request,
-      h as ResponseToolkit
+      toolkit as unknown as StateResponseToolkit
     )
 
     expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
