@@ -120,7 +120,7 @@ export class RegisterConsentModel
       // todo: update transition to
       // - verify consent
       // - store consent
-      // - throw errors if there are error in verifying the Consent
+      // - throw errors if there are errors in verifying the consent
     } catch (error) {
       this.logger.push({ error }).error('start -> requestIsValid')
 
@@ -161,21 +161,18 @@ export class RegisterConsentModel
         .init(async (channel) => {
           // todo: sdk-standard-components needs a postParticipantsTypeId function
           //       building the request from scratch for now
-          const alsParticipantURI = `${this.config.alsEndpoint}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`
+          const alsParticipantURI = `http://${this.config.alsEndpoint}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`
           const axiosConfig = {
             headers: {
-              'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',
-              Accept: 'application/vnd.interoperability.participants+json;version=1.0',
+              'Accept': 'application/vnd.interoperability.participants+json;version=1.1',
               'FSPIOP-Source': this.config.authServiceParticipantFSPId,
-              Date: (new Date()).toUTCString()
+              'Date': (new Date()).toUTCString()
             }
           }
           const payload: fspiopAPI.Schemas.ParticipantsTypeIDSubIDPostRequest = {
             fspId: this.config.authServiceParticipantFSPId
           }
-
           const res = await axios.post(alsParticipantURI, payload, axiosConfig)
-
           this.logger.push({ res, channel })
             .log('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
         })
