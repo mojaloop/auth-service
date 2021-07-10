@@ -466,7 +466,7 @@ describe('RegisterConsentModel', () => {
     })
 
     it('exceptions', async () => {
-      const error = { message: 'error from requests.putConsentRequests', consentReqState: 'broken' }
+      const error = { message: 'error from axios.post', consentReqState: 'broken' }
       mocked(axios.post).mockImplementationOnce(
         () => {
           throw error

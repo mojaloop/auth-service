@@ -130,7 +130,6 @@ const consentsPostRequestAUTH = {
   }
 }
 
-
 describe('server/handlers/consents', (): void => {
   it('Should return 202 success code', async (): Promise<void> => {
     const request = consentsPostRequestAUTH
