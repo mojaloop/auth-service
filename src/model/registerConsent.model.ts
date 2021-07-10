@@ -173,6 +173,9 @@ export class RegisterConsentModel
           const payload: fspiopAPI.Schemas.ParticipantsTypeIDSubIDPostRequest = {
             fspId: this.config.authServiceParticipantFSPId
           }
+          console.log({ alsParticipantURI, payload, axiosConfig })
+          this.logger.push({ alsParticipantURI, payload, axiosConfig })
+            .log('Testing')
           const res = await axios.post(alsParticipantURI, payload, axiosConfig)
           this.logger.push({ res, channel })
             .log('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
