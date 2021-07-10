@@ -263,6 +263,26 @@ describe('RegisterConsentModel', () => {
     })
   })
 
+  describe('checkModelDataForErrorInformation', () => {
+    it('should transistion fsm to errored state if errorInformation is truthy', async () => {
+      const registerConsentData: RegisterConsentData = {
+        currentState: 'start',
+        participantDFSPId: 'dfspA',
+        consentsPostRequestAUTH,
+        errorInformation: {
+          errorCode: '3000',
+          errorDescription: 'Generic error'
+        }
+      }
+      const model = await create(registerConsentData, modelConfig)
+      await model.checkModelDataForErrorInformation()
+
+      // check that the fsm was able to transition properly
+      expect(model.data.currentState).toEqual('errored')
+    })
+  })
+
+
   describe('verifyConsent', () => {
     const registerConsentData: RegisterConsentData = {
       currentState: 'start',
@@ -278,7 +298,6 @@ describe('RegisterConsentModel', () => {
     it('registerAuthoritativeSourceWithALS() should transition start to consentVerified state when successful', async () => {
       const model = await create(registerConsentData, modelConfig)
       await model.fsm.verifyConsent()
-
       // check that the fsm was able to transition properly
       expect(model.data.currentState).toEqual('consentVerified')
     })
@@ -321,6 +340,7 @@ describe('RegisterConsentModel', () => {
         participantsTypeIDPutResponse as unknown as Message
       ))
       await model.fsm.registerAuthoritativeSourceWithALS()
+      await model.checkModelDataForErrorInformation()
 
       // check that the fsm was able to transition properly
       expect(model.data.currentState).toEqual('registeredAsAuthoritativeSource')
@@ -447,12 +467,9 @@ describe('RegisterConsentModel', () => {
       })
 
       await model.run()
-
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')
-
       mocked(modelConfig.logger.info).mockReset()
-
     })
 
     it('errored', async () => {
