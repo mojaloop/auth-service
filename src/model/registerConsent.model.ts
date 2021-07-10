@@ -112,15 +112,15 @@ export class RegisterConsentModel
   }
 
   async onVerifyConsent (): Promise<void> {
+    // not sure what functions to use or if they are ready
+    // for now we are just going do nothing here.
+    // todo: update transition to
+    // - verify consent
+    // - store consent
+    // - throw errors if there are errors in verifying the consent
+    /*
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
-
     try {
-      // not sure what functions to use or if they are ready
-      // for now we are just going do nothing here.
-      // todo: update transition to
-      // - verify consent
-      // - store consent
-      // - throw errors if there are errors in verifying the consent
     } catch (error) {
       this.logger.push({ error }).error('start -> requestIsValid')
 
@@ -145,6 +145,7 @@ export class RegisterConsentModel
       // throw error to stop state machine
       throw error
     }
+    */
   }
 
   async onRegisterAuthoritativeSourceWithALS (): Promise<void> {
@@ -164,9 +165,9 @@ export class RegisterConsentModel
           const alsParticipantURI = `http://${this.config.alsEndpoint}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`
           const axiosConfig = {
             headers: {
-              'Accept': 'application/vnd.interoperability.participants+json;version=1.1',
+              Accept: 'application/vnd.interoperability.participants+json;version=1.1',
               'FSPIOP-Source': this.config.authServiceParticipantFSPId,
-              'Date': (new Date()).toUTCString()
+              Date: (new Date()).toUTCString()
             }
           }
           const payload: fspiopAPI.Schemas.ParticipantsTypeIDSubIDPostRequest = {
