@@ -447,7 +447,7 @@ describe('RegisterConsentModel', () => {
   // timed pubsub publishing
   describe('run workflow', () => {
     const registerConsentData: RegisterConsentData = {
-      currentState: 'registeredAsAuthoritativeSource',
+      currentState: 'start',
       participantDFSPId: 'dfspA',
       consentsPostRequestAUTH
     }
@@ -473,7 +473,7 @@ describe('RegisterConsentModel', () => {
     })
 
     it('errored', async () => {
-      const model = await create({ ...registerConsentData, currentState: 'error' }, modelConfig)
+      const model = await create({ ...registerConsentData, currentState: 'errored' }, modelConfig)
 
       const result = await model.run()
 
@@ -482,19 +482,29 @@ describe('RegisterConsentModel', () => {
       expect(result).toBeUndefined()
     })
 
-    it('exceptions', async () => {
+    it('wrong state', async () => {
+      const model = await create({ ...registerConsentData, currentState: 'adga' }, modelConfig)
+
+      const result = await model.run()
+
+      expect(mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+
+      expect(result).toBeUndefined()
+    })
+
+    it('exceptions - sendConsentCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
       mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
         () => {
           throw error
         }
       )
-      const model = await create(registerConsentData, modelConfig)
+      const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
 
       expect(async () => await model.run()).rejects.toEqual(error)
     })
 
-    it('exceptions - Error', async () => {
+    it('exceptions - Error - sendConsentCallbackToDFSP stage', async () => {
       const error = new Error('the-exception')
       mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
         () => {
@@ -502,6 +512,29 @@ describe('RegisterConsentModel', () => {
         }
       )
       const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
+      expect(model.run()).rejects.toEqual(error)
+    })
+
+    it('exceptions - registerAuthoritativeSourceWithALS stage', async () => {
+      const error = { message: 'error from axios.post', consentReqState: 'broken' }
+      mocked(axios.post).mockImplementationOnce(
+        () => {
+          throw error
+        }
+      )
+      const model = await create({ ...registerConsentData, currentState: 'consentVerified' }, modelConfig)
+
+      expect(async () => await model.run()).rejects.toEqual(error)
+    })
+
+    it('exceptions - Error - registerAuthoritativeSourceWithALS stage', async () => {
+      const error = new Error('the-exception')
+      mocked(axios.post).mockImplementationOnce(
+        () => {
+          throw error
+        }
+      )
+      const model = await create({ ...registerConsentData, currentState: 'consentVerified' }, modelConfig)
       expect(model.run()).rejects.toEqual(error)
     })
   })
