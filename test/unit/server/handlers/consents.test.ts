@@ -32,6 +32,16 @@ import ConsentsHandler from '~/server/handlers/consents'
 import { StateResponseToolkit } from '~/server/plugins/state'
 
 jest.mock('~/domain/errors')
+jest.mock('~/model/registerConsent.model', () => ({
+  RegisterConsentModel: {
+    notificationChannel: jest.fn(() => 'the-mocked-channel')
+  },
+  create: jest.fn(async () => ({
+    // this result will be tested
+    run: jest.fn()
+  }))
+}))
+
 
 const consentsPostRequestAUTH = {
   headers: {
