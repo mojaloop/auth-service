@@ -28,6 +28,8 @@ import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import ParticipantsTypeIDHandler from '~/server/handlers/participants/{Type}/{ID}'
 import { StateResponseToolkit } from '../../../../../../src/server/plugins/state';
+import { RegisterConsentModel } from '../../../../../../src/model/registerConsent.model';
+import { RegisterConsentPhase } from '../../../../../../src/model/registerConsent.interface';
 
 jest.mock('~/domain/errors')
 
@@ -47,6 +49,7 @@ const participantsTypeIDPutResponse = {
 
 describe('server/handlers/consents', (): void => {
   it('Should return 200 success code', async (): Promise<void> => {
+    jest.useFakeTimers()
     const request = participantsTypeIDPutResponse
     const pubSubMock = {
       publish: jest.fn()
@@ -67,5 +70,13 @@ describe('server/handlers/consents', (): void => {
     )
 
     expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
+    jest.runAllImmediates()
+    expect(toolkit.getPublisher).toBeCalledTimes(1)
+
+    const channel = RegisterConsentModel.notificationChannel(
+      RegisterConsentPhase.waitOnParticipantResponseFromALS,
+      request.params.ID
+    )
+    expect(pubSubMock.publish).toBeCalledWith(channel, request.payload)
   })
 })
