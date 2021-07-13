@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.5.0](https://github.com/mojaloop/auth-service/compare/v11.4.4...v11.5.0) (2021-07-13)
+
+
+### Features
+
+* implement register consent flow ([#79](https://github.com/mojaloop/auth-service/issues/79)) ([0c99035](https://github.com/mojaloop/auth-service/commit/0c99035db3d94f9e9deafc267dcd3903703853e4))
+
 ### [11.4.4](https://github.com/mojaloop/auth-service/compare/v11.4.3...v11.4.4) (2021-07-08)
 
 
