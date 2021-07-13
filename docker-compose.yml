@@ -22,6 +22,8 @@ services:
     volumes:
       - ./scripts/wait4.js:/opt/auth-service/scripts/wait4.js
       - ./scripts/wait4.config.js:/opt/auth-service/scripts/wait4.config.js
+    environment:
+      - NODE_ENV=integration
     healthcheck:
       test: wget -q http://localhost:4004/health -O /dev/null || exit 1
       timeout: 20s
@@ -65,7 +67,7 @@ services:
       - "./docker/ml-testing-toolkit/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
       - "./docker/ml-testing-toolkit/secrets:/opt/mojaloop-testing-toolkit/secrets"
     ports:
-      - "15000:5000"
+      - "5000:5000"
       - "5050:5050"
     command: npm start
     networks:

@@ -1,7 +1,7 @@
 {
   "PORT": 4004,
   "HOST": "0.0.0.0",
-  "PARTICIPANT_ID": "auth_service",
+  "PARTICIPANT_ID": "centralAuth",
   "REDIS": {
     "PORT": 6379,
     "HOST": "redis",
@@ -13,8 +13,8 @@
     "COLOR": true
   },
   "SHARED": {
-    "PEER_ENDPOINT": "0.0.0.0:4003",
-    "ALS_ENDPOINT": "0.0.0.0:4002",
+    "PEER_ENDPOINT": "ml-testing-toolkit:5000",
+    "ALS_ENDPOINT": "ml-testing-toolkit:5000",
     "QUOTES_ENDPOINT": "0.0.0.0:3002",
     "TRANSFERS_ENDPOINT": "0.0.0.0:3000",
     "BULK_TRANSFERS_ENDPOINT": "",

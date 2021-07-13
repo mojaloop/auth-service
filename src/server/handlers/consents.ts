@@ -27,33 +27,53 @@
  --------------
  ******/
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 
 import { logger } from '~/shared/logger'
 import inspect from '~/shared/inspect'
+import { RegisterConsentModel } from '~/model/registerConsent.model'
+import { create } from '~/model/registerConsent.model'
+import { RegisterConsentModelConfig, RegisterConsentData } from '~/model/registerConsent.interface'
+import { StateResponseToolkit } from '../plugins/state'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import config from '~/shared/config'
 
 /** The HTTP request `POST /consents` is used to create a consent object.
  *  Called by `DFSP` to register a Consent object.
  */
 export async function post (
   _context: unknown,
-  _request: Request,
-  h: ResponseToolkit): Promise<ResponseObject> {
-  // const payload: tpAPI.Schemas.ConsentsPostRequest = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
-  // const consentId = payload.consentId
-  // const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  // The auth-service is now the authoritative source for the Consent object.
-  // The auth-service's fspId is retrieved from the destination header.
-  // const participantId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  request: Request,
+  h: StateResponseToolkit): Promise<ResponseObject> {
+  const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
+  const consentId = payload.consentId
+  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+
+  const data: RegisterConsentData = {
+    dfspId: h.getDFSPId(),
+    currentState: 'start',
+    consentsPostRequestAUTH: payload,
+    participantDFSPId: initiatorId
+  }
+
+  // if the request is valid then DFSP returns response via PUT /consentRequests/{ID} call.
+  const modelConfig: RegisterConsentModelConfig = {
+    kvs: h.getKVS(),
+    subscriber: h.getSubscriber(),
+    key: consentId,
+    logger: logger,
+    thirdpartyRequests: h.getThirdpartyRequests(),
+    mojaloopRequests: h.getMojaloopRequests(),
+    authServiceParticipantFSPId: config.PARTICIPANT_ID,
+    alsEndpoint: config.SHARED.ALS_ENDPOINT,
+    requestProcessingTimeoutSeconds: config.REQUEST_PROCESSING_TIMEOUT_SECONDS
+  }
 
   setImmediate(async (): Promise<void> => {
     try {
-      // TODO: 1) auth-service needs to check signature against challenge.
-      //       2) send a POST /participants/CONSENT/{ID} to the ALS and receive
-      //          a PUT /participants/CONSENT/{ID}
-      //       3) store the consent object and finally send back a
-      //          PUT /consents/{ID} request. Wooo...state machine
+      const model: RegisterConsentModel = await create(data, modelConfig)
+      await model.run()
     } catch (error) {
       // the model catches all planned, catches unplanned errors,
       // handles callbacks and also rethrows the error to stop the state machine

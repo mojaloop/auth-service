@@ -21,27 +21,31 @@
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
-import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { Request, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
+import { RegisterConsentPhase } from '~/model/registerConsent.interface'
+import { RegisterConsentModel } from '~/model/registerConsent.model'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { StateResponseToolkit } from '~/server/plugins/state'
+import { Message } from '~/shared/pub-sub'
 
 /**
  * Handles a inbound PUT /participants/{Type}/{ID} request
  */
-async function put (_context: unknown, _request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put (_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   // PUT /participants/{Type}/{ID} is a response to POST /participants/{Type}/{ID}
   // when the ALS is able to register the auth-service as the authoritative
   // owner of a Consent object
 
-  // const consentRequestId = request.params.ID
-  // const payload = request.payload as tpAPI.Schemas.ParticipantsTypeIDPutResponse
-  /*
-   RegisterConsentModel.triggerWorkflow(
-     RegisterConsentPhase.registerAuthServiceConsentWithALS,
-     consentRequestId,
-     h.getPublisher(),
-     payload as unknown as Message
-   )
-   */
+  const consentId = request.params.ID
+  const payload = request.payload as tpAPI.Schemas.ParticipantsTypeIDPutResponse
+
+  RegisterConsentModel.triggerWorkflow(
+    RegisterConsentPhase.waitOnParticipantResponseFromALS,
+    consentId,
+    h.getPublisher(),
+    payload as unknown as Message
+  )
   return h.response({}).code(Enum.Http.ReturnCodes.OK.CODE)
 }
 

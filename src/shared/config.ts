@@ -43,6 +43,7 @@ interface ServiceConfig {
   PARTICIPANT_ID: string;
   DATABASE: DatabaseConfig;
   ENV: string;
+  REQUEST_PROCESSING_TIMEOUT_SECONDS: number;
   REDIS: {
     HOST: string;
     PORT: number;
@@ -55,7 +56,7 @@ interface ServiceConfig {
   };
   SHARED: {
     PEER_ENDPOINT: string;
-    ALS_ENDPOINT?: string;
+    ALS_ENDPOINT: string;
     QUOTES_ENDPOINT?: string;
     TRANSFERS_ENDPOINT?: string;
     SERVICES_ENDPOINT?: string;
@@ -113,6 +114,11 @@ const ConvictConfig = Convict<ServiceConfig>({
     default: 'auth-service',
     env: 'PARTICIPANT_ID',
     arg: 'participantId'
+  },
+  REQUEST_PROCESSING_TIMEOUT_SECONDS: {
+    doc: 'The timeout for waiting for a response to a request',
+    env: 'REQUEST_PROCESSING_TIMEOUT_SECONDS',
+    default: 30
   },
   REDIS: {
     HOST: {
