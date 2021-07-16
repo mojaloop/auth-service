@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.5.1](https://github.com/mojaloop/auth-service/compare/v11.5.0...v11.5.1) (2021-07-16)
+
+
+### Bug Fixes
+
+* add missing content-type header ([#81](https://github.com/mojaloop/auth-service/issues/81)) ([a7f9758](https://github.com/mojaloop/auth-service/commit/a7f9758ab331724a46673e4b7fe033c3bdc92ab8))
+
 ## [11.5.0](https://github.com/mojaloop/auth-service/compare/v11.4.4...v11.5.0) (2021-07-13)
 
 
