@@ -166,6 +166,7 @@ export class RegisterConsentModel
           const axiosConfig = {
             headers: {
               Accept: 'application/vnd.interoperability.participants+json;version=1.1',
+              'Content-Type': 'application/vnd.interoperability.participants+json;version=1.1',
               'FSPIOP-Source': this.config.authServiceParticipantFSPId,
               Date: (new Date()).toUTCString()
             }
