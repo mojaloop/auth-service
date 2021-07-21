@@ -30,6 +30,33 @@ import sha256 from 'crypto-js/sha256'
 import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-lib'
 // @ts-ignore
 import str2ab from 'string-to-arraybuffer'
+import { createHash } from 'crypto';
+// import { TextDecoder } from 'util';
+
+
+// function decodeBase64String(str: string): string {
+//   const base64Buffer = Buffer.from(str, 'base64')
+//   return base64Buffer.toString('utf-8')
+// }
+
+// function encodeBase64String(str: string, encoding: BufferEncoding = 'utf-8'): string {
+//   let buff = Buffer.from(str, encoding)
+//   return buff.toString('base64');
+// }
+
+/**
+ * @function str2ab
+ * @description Converts an string to an ArrayBuffer with UTF-16
+ * @param {String} str
+ */
+function str2ab2(str: string): ArrayBuffer {
+  var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (var i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
 
 const consentsPostRequestAUTH = {
   headers: {
@@ -38,15 +65,24 @@ const consentsPostRequestAUTH = {
   },
   params: {},
   payload: {
-    consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+    consentId: 'ecd2f34c-ef5a-436c-a85f-9f483ad95447',
     scopes: [
       {
-        accountId: 'dfsp.username.5678',
-        actions: [
-          'accounts.transfer',
-          'accounts.getBalance'
-        ]
-      }
+        accountId: '7c2c14e6-723f-4aa3-bb04-51c94ed43618',
+        // TODO: missing in payload for some reason...
+        // actions: [
+        //   'accounts.transfer',
+        //   'accounts.getBalance'
+        // ]
+      },
+      {
+        accountId: 'bad3a96f-a663-4b22-893f-b5422fe7a530',
+        // TODO: missing in payload for some reason...
+        // actions: [
+        //   'accounts.transfer',
+        //   'accounts.getBalance'
+        // ]
+      },
     ],
     credential: {
       credentialType: 'FIDO',
@@ -145,12 +181,82 @@ function deriveChallenge(consentsPostRequest: tpAPI.Schemas.ConsentsPostRequestA
 
 // test the fido2-lib for peace of mind
 describe('fido-lib', (): void => {
-  it('Should return 202 success code', async (): Promise<void> => {
+  it('should derive the challenge correctly', () => {
+    // Arrange
+    const expected = '70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6'
+    
+    // Act
+    const challenge = deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH)
+    
+    // Assert
+    expect(challenge).toStrictEqual(expected)
+  })
+
+  it('should decode the clientDataJSON', () => {
+    // Arrange
+    const expected = { 
+      "type": "webauthn.create", 
+      "challenge": "MgA3ADgANQBjADIAZAA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiADUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZgA2ADcAOAAzADQAMAA", 
+      "origin": "http://localhost:5000", 
+      "crossOrigin": false 
+    }
+
+    // Act
+  
+    // We have to do a bit of fussing around here - convert from a base64 encoded string back to a buffer, back to a JSON string...
+    const base64Buffer = Buffer.from(
+      consentsPostRequestAUTH.payload.credential.payload.response.clientDataJSON, 
+      'base64'
+    )
+    const decodedJsonString = base64Buffer.toString('utf-8')    
+    const parsedClientData = JSON.parse(decodedJsonString);
+    
+    // Assert
+    expect(parsedClientData).toStrictEqual(expected)
+  })
+
+
+  it('attestation should succeed', async (): Promise<void> => {
+
+    // Figure out collectedClientData:
+    const collectedClientData = {
+      type: 'webauthn.create',
+      challenge: "MgA3ADgANQBjADIAZAA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiADUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZgA2ADcAOAAzADQAMAA",
+      origin: "http://localhost:5000",
+      crossOrigin: false
+    }
+    const collectedClientDataHash = createHash('sha256')
+      .update(JSON.stringify(collectedClientData))
+      .digest('base64')
+    console.log('collectedClientData hash', collectedClientDataHash)
+
+
     const attestationExpectations: ExpectedAttestationResult = {
-      challenge: deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH),
+      // challenge: deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH),
+      challenge: '70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6',
       origin: "http://localhost:5000",
       factor: "either"
     }
+
+    // question: how do we get from 
+    // challenge A:  70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6
+    // to challenge B: MgA3ADgANQBjADIAZAA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiADUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZgA2ADcAOAAzADQAMAA
+    // ?                          2785c2d99a4c19d1a87d34fd0c10ad0b52721cf3c80288c29da5b0ebef678340
+    const challengeAAB = str2ab2('70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6')
+    console.log('strToAB challengeA:', str2ab('70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6'))
+    console.log('strToAB2 challengeA:', challengeAAB)
+    console.log('strToAB3 challengeA:', str2ab3('70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6'))
+    const challengeAUtf = Buffer.from(challengeAAB)
+    console.log('challengeAUtf8 challengeA:', challengeAUtf.toString('base64')) 
+
+    // Hmm, this isn't right, but it is the correct length.
+    // That's promising
+
+    // console.log('encoded challengeA:', encodeBase64String('70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6', 'utf16le'))
+    // console.log('decoded final challenge: ', decodeBase64String('MgA3ADgANQBjADIAZAA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiADUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZgA2ADcAOAAzADQAMAA'))
+
+    // console.log('strToAB challengeA:', str2ab('70099874da2bb3251147bd8f18a405de855bb9fc25325a07f61ecbf48846e5d6'))
+
 
     const f2l = new Fido2Lib();
     const clientAttestationResponse: AttestationResult = {
@@ -169,6 +275,7 @@ describe('fido-lib', (): void => {
       console.log(regResult)
     } catch (error){
       console.log(error)
+      throw error
     }
   })
 })
