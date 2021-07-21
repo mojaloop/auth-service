@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.5.2](https://github.com/mojaloop/auth-service/compare/v11.5.1...v11.5.2) (2021-07-21)
+
+
+### Maintenance
+
+* add fido2-lib ([#80](https://github.com/mojaloop/auth-service/issues/80)) ([a6a9704](https://github.com/mojaloop/auth-service/commit/a6a9704d0650f938aed7301e1bfe37b3d7934fff))
+
 ### [11.5.1](https://github.com/mojaloop/auth-service/compare/v11.5.0...v11.5.1) (2021-07-16)
 
 
