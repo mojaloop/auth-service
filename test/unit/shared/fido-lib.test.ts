@@ -51,7 +51,7 @@ function encodeBase64String(str: string, encoding: BufferEncoding = 'utf-8'): st
  */
 function str2ab2(str: string): ArrayBuffer {
   var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-  var bufView = new Uint8Array(buf);
+  var bufView = new Uint16Array(buf);
   for (var i = 0, strLen = str.length; i < strLen; i++) {
     bufView[i] = str.charCodeAt(i);
   }
@@ -286,8 +286,8 @@ describe('fido-lib', (): void => {
 
     const attestationExpectations: ExpectedAttestationResult = {
       // challenge: deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH),
-      challenge: inputChallenge,
-      // challenge: encodeBase64String(inputChallenge),
+      // challenge: inputChallenge,
+      challenge: encodeBase64String(inputChallenge),
       origin: "http://localhost:42181",
       factor: "either"
     }
@@ -298,10 +298,9 @@ describe('fido-lib', (): void => {
     // ?                          2785c2d99a4c19d1a87d34fd0c10ad0b52721cf3c80288c29da5b0ebef678340
     // console.log('strToAB challengeA:', str2ab(inputChallenge))
     // console.log('strToAB2 challengeA:', challengeAAB)
-    // const challengeAAB = str2ab(inputChallenge)
-    const challengeAAB = Uint8Array.from(inputChallenge, c => c.charCodeAt(0))
+    const challengeAAB = str2ab2(inputChallenge)
     const challengeAUtf = Buffer.from(challengeAAB)
-    console.log('inputChallenge something encoding:', challengeAUtf.toString('base64')) 
+    console.log('challengeAUtf8 challengeA:', challengeAUtf.toString('base64')) 
     console.log('base64 encode input challenge', encodeBase64String(inputChallenge))
     console.log('base64 decode input challenge', decodeBase64String(inputChallenge))
 
