@@ -44,20 +44,6 @@ function encodeBase64String(str: string, encoding: BufferEncoding = 'utf-8'): st
   return buff.toString('base64');
 }
 
-/**
- * @function str2ab
- * @description Converts an string to an ArrayBuffer with UTF-16
- * @param {String} str
- */
-function str2ab2(str: string): ArrayBuffer {
-  var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-  var bufView = new Uint16Array(buf);
-  for (var i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
-}
-
 const consentsPostRequestAUTH = {
   headers: {
     'fspiop-source': 'dfspA',
@@ -77,7 +63,7 @@ const consentsPostRequestAUTH = {
         // ]
       },
     ],
-  
+
     credential: {
       credentialType: 'FIDO',
       status: 'PENDING',
@@ -178,30 +164,30 @@ describe('fido-lib', (): void => {
   it('should derive the challenge correctly', () => {
     // Arrange
     const expected = '1b229142d14d742c66997b8fa8e9cf8dc7ac5bea1b59913291cbe5cc53d6a301'
-    
+
     // Act
     const challenge = deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH)
-    
+
     // Assert
     expect(challenge).toStrictEqual(expected)
   })
 
   it('should decode the clientDataJSON', () => {
     // Arrange
-    const expected = { 
-      "type": "webauthn.create", 
+    const expected = {
+      "type": "webauthn.create",
       "challenge": "MWIyMjkxNDJkMTRkNzQyYzY2OTk3YjhmYThlOWNmOGRjN2FjNWJlYTFiNTk5MTMyOTFjYmU1Y2M1M2Q2YTMwMQ",
-      "origin": "http://localhost:42181", 
-      "crossOrigin": false 
+      "origin": "http://localhost:42181",
+      "crossOrigin": false
     }
 
     // Act
-  
+
     // We have to do a bit of fussing around here - convert from a base64 encoded string to a JSON string...
     const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.payload.credential.payload.response.clientDataJSON)
     const parsedClientData = JSON.parse(decodedJsonString);
     console.log('parsed client data', expected)
-    
+
     // Assert
     expect(parsedClientData).toStrictEqual(expected)
   })
@@ -217,7 +203,7 @@ describe('fido-lib', (): void => {
       factor: "either"
     }
 
-    
+
     const f2l = new Fido2Lib();
     const clientAttestationResponse: AttestationResult = {
       id: str2ab(consentsPostRequestAUTH.payload.credential.payload.id),
