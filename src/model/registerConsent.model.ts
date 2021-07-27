@@ -41,10 +41,15 @@ import deferredJob from '~/shared/deferred-job'
 
 import { reformatError } from '~/shared/api-error'
 import axios from 'axios'
+import { deriveChallenge } from '~/domain/challenge'
+import { encodeBase64String, decodeBase64String } from '../domain/buffer'
 import {
   v1_1 as fspiopAPI,
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
+import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-lib'
+import str2ab from 'string-to-arraybuffer';
+import { createAndStoreConsent } from '~/domain/consents'
 
 export class RegisterConsentModel
   extends PersistentModel<RegisterConsentStateMachine, RegisterConsentData> {
@@ -58,12 +63,14 @@ export class RegisterConsentModel
       init: 'start',
       transitions: [
         { name: 'verifyConsent', from: 'start', to: 'consentVerified' },
-        { name: 'registerAuthoritativeSourceWithALS', from: 'consentVerified', to: 'registeredAsAuthoritativeSource' },
+        { name: 'storeConsent', from: 'consentVerified', to: 'consentStoredAndVerified' },
+        { name: 'registerAuthoritativeSourceWithALS', from: 'consentStoredAndVerified', to: 'registeredAsAuthoritativeSource' },
         { name: 'sendConsentCallbackToDFSP', from: 'registeredAsAuthoritativeSource', to: 'callbackSent' }
       ],
       methods: {
         // specific transitions handlers methods
         onVerifyConsent: () => this.onVerifyConsent(),
+        onStoreConsent: () => this.onStoreConsent(),
         onRegisterAuthoritativeSourceWithALS: () => this.onRegisterAuthoritativeSourceWithALS(),
         onSendConsentCallbackToDFSP: () => this.onSendConsentCallbackToDFSP()
       }
@@ -112,17 +119,38 @@ export class RegisterConsentModel
   }
 
   async onVerifyConsent (): Promise<void> {
-    // not sure what functions to use or if they are ready
-    // for now we are just going do nothing here.
-    // todo: update transition to
-    // - verify consent
-    // - store consent
-    // - throw errors if there are errors in verifying the consent
-    /*
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
     try {
+      const derivedChallenge = deriveChallenge(consentsPostRequestAUTH)
+      const encodedDerivedChallenge = encodeBase64String(derivedChallenge)
+
+      const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.credential.payload.response.clientDataJSON)
+      const parsedClientData = JSON.parse(decodedJsonString)
+
+      const attestationExpectations: ExpectedAttestationResult = {
+        challenge: encodedDerivedChallenge,
+        // not sure what origin should be here
+        // decoding and copying the origin for now
+        origin: parsedClientData.origin,
+        factor: "either"
+      }
+
+      const f2l = new Fido2Lib()
+      const clientAttestationResponse: AttestationResult = {
+        id: str2ab(consentsPostRequestAUTH.credential.payload.id),
+        rawId: str2ab(consentsPostRequestAUTH.credential.payload.rawId),
+        response: {
+          clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
+          attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject,
+        }
+      }
+
+      await f2l.attestationResult(
+        clientAttestationResponse,
+        attestationExpectations
+      )
     } catch (error) {
-      this.logger.push({ error }).error('start -> requestIsValid')
+      this.logger.push({ error }).error('start -> consentVerified')
 
       let mojaloopError
       // if error is planned and is a MojaloopApiErrorCode we send back that code
@@ -145,7 +173,44 @@ export class RegisterConsentModel
       // throw error to stop state machine
       throw error
     }
-    */
+  }
+
+  async onStoreConsent (): Promise<void> {
+    const { consentsPostRequestAUTH, participantDFSPId } = this.data
+    try {
+      await createAndStoreConsent(
+        consentsPostRequestAUTH.consentId,
+        // initiatorId is deprecated so just using empty string for now
+        '',
+        // todo: double check if this is supposed to be the DFSP's id
+        participantDFSPId,
+        consentsPostRequestAUTH.scopes,
+        consentsPostRequestAUTH.credential
+      )
+    } catch (error) {
+      this.logger.push({ error }).error('consentVerified -> consentStoredAndVerified')
+
+      let mojaloopError
+      // if error is planned and is a MojaloopApiErrorCode we send back that code
+      if ((error as Errors.MojaloopApiErrorCode).code) {
+        mojaloopError = reformatError(error, this.logger)
+      } else {
+        // if error is not planned send back a generalized error
+        mojaloopError = reformatError(
+          Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
+          this.logger
+        )
+      }
+
+      await this.thirdpartyRequests.putConsentsError(
+        consentsPostRequestAUTH.consentId,
+        mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
+        participantDFSPId
+      )
+
+      // throw error to stop state machine
+      throw error
+    }
   }
 
   async onRegisterAuthoritativeSourceWithALS (): Promise<void> {
@@ -209,7 +274,7 @@ export class RegisterConsentModel
         })
         .wait(this.config.requestProcessingTimeoutSeconds * 1000)
     } catch (error) {
-      this.logger.push({ error }).error('consentVerified -> registeredAsAuthoritativeSource')
+      this.logger.push({ error }).error('consentStoredAndVerified -> registeredAsAuthoritativeSource')
       // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
@@ -278,6 +343,10 @@ export class RegisterConsentModel
           return this.run()
 
         case 'consentVerified':
+          await this.fsm.storeConsent()
+          return this.run()
+
+        case 'consentStoredAndVerified':
           await this.fsm.registerAuthoritativeSourceWithALS()
           // check if the ALS sent back an error
           await this.checkModelDataForErrorInformation()

@@ -38,6 +38,9 @@
 import util from 'util'
 import crypto from 'crypto'
 import { logger } from '~/shared/logger'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
+import { canonicalize } from 'json-canonicalize';
+import sha256 from 'crypto-js/sha256';
 
 // Async promisified randomBytes function
 const randomBytesAsync = util.promisify(crypto.randomBytes)
@@ -81,4 +84,14 @@ export function verifySignature (
     logger.push({ error }).error('Unable to verify signature')
     throw error
   }
+}
+
+export function deriveChallenge(consentsPostRequest: tpAPI.Schemas.ConsentsPostRequestAUTH): string {
+  const rawChallenge = {
+    consentId: consentsPostRequest.consentId,
+    scopes: consentsPostRequest.scopes
+  }
+
+  const RFC8785String = canonicalize(rawChallenge)
+  return sha256(RFC8785String).toString()
 }
