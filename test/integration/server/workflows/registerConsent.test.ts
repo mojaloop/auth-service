@@ -171,7 +171,8 @@ describe('Inbound POST /consents', (): void => {
         expect(response.status).toEqual(202)
 
         // wait a bit for the auth-service to process the request
-        await new Promise(resolve => setTimeout(resolve, 500))
+        // takes a bit since attestation takes a bit of time
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
         // check that the auth-service has sent a POST /participants/{Type}/{ID} to the ALS (TTK)
         const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
@@ -208,8 +209,9 @@ describe('Inbound POST /consents', (): void => {
         const responseToPutParticipantsTypeId = await axios.put(putScenarioUri, putParticipantsTypeIdFromALS, axiosConfig)
         expect(responseToPutParticipantsTypeId.status).toEqual(200)
 
-        // wait a bit for the DFSP adapter to process the request
-        await new Promise(resolve => setTimeout(resolve, 500))
+        // wait a bit for the auth-service to process the request
+        // takes a bit since attestation takes a bit of time
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
         // check that the auth-service has sent a PUT /consents/{ID} to the DFSP (TTK)
         const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
