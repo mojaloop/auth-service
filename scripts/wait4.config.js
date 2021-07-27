@@ -19,7 +19,7 @@ module.exports = {
         {
           description: 'MySQL Database',
           /* Change host:port accordingly based on knexfile.ts attributbes. */
-          uri: 'mysql:3306',
+          uri: 'localhost:3306',
           method: 'mysql',
           retries: 30
         },

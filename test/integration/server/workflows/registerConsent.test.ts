@@ -30,6 +30,7 @@
 import axios from 'axios'
 import headers from '~/../test/data/headers.json'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { closeKnexConnection } from '~/model/db';
 
 interface MLTestingToolkitRequest {
   timestamp: string
@@ -141,6 +142,10 @@ describe('Inbound POST /consents', (): void => {
   beforeEach(async(): Promise<void> => {
     // clear the request history in TTK between tests.
     await axios.delete(ttkRequestsHistoryUri, {})
+  })
+
+  afterAll(async (): Promise<void> => {
+    await closeKnexConnection()
   })
 
   describe('Happy Path', (): void => {
