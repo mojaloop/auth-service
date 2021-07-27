@@ -48,7 +48,7 @@ import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
 import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-lib'
-import str2ab from 'string-to-arraybuffer';
+import str2ab from 'string-to-arraybuffer'
 import { createAndStoreConsent } from '~/domain/consents'
 
 export class RegisterConsentModel
@@ -132,7 +132,7 @@ export class RegisterConsentModel
         // not sure what origin should be here
         // decoding and copying the origin for now
         origin: parsedClientData.origin,
-        factor: "either"
+        factor: 'either'
       }
 
       const f2l = new Fido2Lib()
@@ -141,7 +141,7 @@ export class RegisterConsentModel
         rawId: str2ab(consentsPostRequestAUTH.credential.payload.rawId),
         response: {
           clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
-          attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject,
+          attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject
         }
       }
 

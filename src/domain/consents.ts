@@ -67,7 +67,6 @@ export async function createAndStoreConsent (
   thirdpartyScopes: tpAPI.Schemas.Scope[],
   credential: tpAPI.Schemas.SignedCredential
 ): Promise<void> {
-
   // TODO: store properly whole credential or only credential.payload.id ?
   const consent: Consent = {
     id: consentId,

@@ -25,12 +25,12 @@
  --------------
  ******/
 
-export function decodeBase64String(str: string): string {
+export function decodeBase64String (str: string): string {
   const base64Buffer = Buffer.from(str, 'base64')
   return base64Buffer.toString('utf-8')
 }
 
-export function encodeBase64String(str: string, encoding: BufferEncoding = 'utf-8'): string {
-  let buff = Buffer.from(str, encoding)
-  return buff.toString('base64');
+export function encodeBase64String (str: string, encoding: BufferEncoding = 'utf-8'): string {
+  const buff = Buffer.from(str, encoding)
+  return buff.toString('base64')
 }

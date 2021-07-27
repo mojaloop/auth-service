@@ -38,9 +38,9 @@
 import util from 'util'
 import crypto from 'crypto'
 import { logger } from '~/shared/logger'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
-import { canonicalize } from 'json-canonicalize';
-import sha256 from 'crypto-js/sha256';
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { canonicalize } from 'json-canonicalize'
+import sha256 from 'crypto-js/sha256'
 
 // Async promisified randomBytes function
 const randomBytesAsync = util.promisify(crypto.randomBytes)
@@ -86,7 +86,7 @@ export function verifySignature (
   }
 }
 
-export function deriveChallenge(consentsPostRequest: tpAPI.Schemas.ConsentsPostRequestAUTH): string {
+export function deriveChallenge (consentsPostRequest: tpAPI.Schemas.ConsentsPostRequestAUTH): string {
   const rawChallenge = {
     consentId: consentsPostRequest.consentId,
     scopes: consentsPostRequest.scopes
