@@ -182,7 +182,6 @@ export class RegisterConsentModel
         consentsPostRequestAUTH.consentId,
         // initiatorId is deprecated so just using empty string for now
         '',
-        // todo: double check if this is supposed to be the DFSP's id
         participantDFSPId,
         consentsPostRequestAUTH.scopes,
         consentsPostRequestAUTH.credential
