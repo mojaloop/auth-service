@@ -42,6 +42,8 @@ export enum RegisterConsentPhase {
 export interface RegisterConsentStateMachine extends ControlledStateMachine {
   verifyConsent: Method
   onVerifyConsent: Method
+  storeConsent: Method
+  onStoreConsent: Method
   registerAuthoritativeSourceWithALS: Method
   onRegisterAuthoritativeSourceWithALS: Method
   sendConsentCallbackToDFSP: Method

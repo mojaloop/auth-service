@@ -54,7 +54,6 @@ import {
 import { verifySignature } from '~/domain/challenge'
 import { CredentialStatusEnum } from '~/model/consent/consent'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import * as fido from '~/domain/fido-credential'
 /**
  * Builds internal Consent and Scope objects from request payload
  * Stores the objects in the database
@@ -62,15 +61,12 @@ import * as fido from '~/domain/fido-credential'
  */
 export async function createAndStoreConsent (
   consentId: string,
+  // initiatorId is deprecated
   initiatorId: string,
   participantId: string,
   thirdpartyScopes: tpAPI.Schemas.Scope[],
   credential: tpAPI.Schemas.SignedCredential
 ): Promise<void> {
-  // validate FIDO credential attestation
-  if (!fido.validate(credential.payload)) {
-    throw new SignatureVerificationError(consentId)
-  }
   // TODO: store properly whole credential or only credential.payload.id ?
   const consent: Consent = {
     id: consentId,

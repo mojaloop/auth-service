@@ -42,7 +42,7 @@
     "client": "mysql",
     "version": "5.5",
     "connection": {
-      "host": "localhost",
+      "host": "172.17.0.1",
       "port": 3306,
       "user": "auth-service",
       "password": "password",
