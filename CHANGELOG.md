@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.6.0](https://github.com/mojaloop/auth-service/compare/v11.5.2...v11.6.0) (2021-08-02)
+
+
+### Features
+
+* complete account linking workflow ([#82](https://github.com/mojaloop/auth-service/issues/82)) ([da22b5e](https://github.com/mojaloop/auth-service/commit/da22b5e5b6a4017a19d88a97d40d4ba536de7531))
+
 ### [11.5.2](https://github.com/mojaloop/auth-service/compare/v11.5.1...v11.5.2) (2021-07-21)
 
 
