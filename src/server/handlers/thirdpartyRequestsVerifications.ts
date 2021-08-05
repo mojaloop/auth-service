@@ -83,7 +83,7 @@ export async function post(
     } catch (error) {
       // the model catches all planned, catches unplanned errors,
       // handles callbacks and also rethrows the error to stop the state machine
-      logger.info(`Error running RegisterConsentModel : ${inspect(error)}`)
+      logger.info(`Error running VerifyTransactionModel : ${inspect(error)}`)
     }
   })
 

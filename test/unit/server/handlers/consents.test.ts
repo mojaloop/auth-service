@@ -32,7 +32,7 @@ import ConsentsHandler from '~/server/handlers/consents'
 import { StateResponseToolkit } from '~/server/plugins/state'
 
 jest.mock('~/domain/errors')
-jest.mock('~/model/registerConsent.model', () => ({
+jest.mock('~/domain/stateMachine/registerConsent.model', () => ({
   RegisterConsentModel: {
     notificationChannel: jest.fn(() => 'the-mocked-channel')
   },

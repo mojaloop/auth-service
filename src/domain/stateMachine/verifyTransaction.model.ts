@@ -183,6 +183,7 @@ export async function create(
   data: VerifyTransactionData,
   config: VerifyTransactionModelConfig
 ): Promise<VerifyTransactionModel> {
+  console.log("creating verifyTransactionModel")
   // create a new model
   const model = new VerifyTransactionModel(data, config)
 
