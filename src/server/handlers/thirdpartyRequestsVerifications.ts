@@ -30,12 +30,12 @@ import { Enum } from '@mojaloop/central-services-shared'
 
 import { logger } from '~/shared/logger'
 import inspect from '~/shared/inspect'
-import { RegisterConsentModel } from '~/model/registerConsent.model'
-import { create } from '~/model/registerConsent.model'
-import { RegisterConsentModelConfig, RegisterConsentData } from '~/model/registerConsent.interface'
+import { RegisterConsentModel } from '~/domain/stateMachine/registerConsent.model'
+import { create } from '~/domain/stateMachine/registerConsent.model'
+import { RegisterConsentModelConfig, RegisterConsentData } from '~/domain/stateMachine/registerConsent.interface'
 import { StateResponseToolkit } from '../plugins/state'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import config from '~/shared/config'
+// import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 
 // TODO: grab these from api-snippets once https://github.com/mojaloop/api-snippets/pull/101 is merged in
@@ -53,7 +53,7 @@ export async function post(
   _context: unknown,
   request: Request,
   h: StateResponseToolkit): Promise<ResponseObject> {
-  const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsVerifications
+  const payload: ThirdpartyRequestsVerificationsPostRequest = request.payload as ThirdpartyRequestsVerificationsPostRequest
   const consentId = payload.consentId
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
