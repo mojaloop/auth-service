@@ -28,8 +28,8 @@ import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import ParticipantsTypeIDErrorHandler from '~/server/handlers/participants/{Type}/{ID}/error'
 import { StateResponseToolkit } from '~/server/plugins/state'
-import { RegisterConsentModel } from '~/model/registerConsent.model'
-import { RegisterConsentPhase } from '~/model/registerConsent.interface'
+import { RegisterConsentModel } from '~/domain/stateMachine/registerConsent.model'
+import { RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
 
 jest.mock('~/domain/errors')
 

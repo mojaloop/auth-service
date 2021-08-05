@@ -21,13 +21,14 @@
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
- import { Request, ResponseObject } from '@hapi/hapi'
- import { Enum } from '@mojaloop/central-services-shared'
- import { RegisterConsentPhase } from '~/model/registerConsent.interface'
- import { RegisterConsentModel } from '~/model/registerConsent.model'
- import { v1_1 as fspiopAPI } from '@mojaloop/api-snippets'
- import { StateResponseToolkit } from '~/server/plugins/state'
- import { Message } from '~/shared/pub-sub'
+ 
+import { Request, ResponseObject } from '@hapi/hapi'
+import { Enum } from '@mojaloop/central-services-shared'
+import { RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
+import { RegisterConsentModel } from '~/domain/stateMachine/registerConsent.model'
+import { v1_1 as fspiopAPI } from '@mojaloop/api-snippets'
+import { StateResponseToolkit } from '~/server/plugins/state'
+import { Message } from '~/shared/pub-sub'
 
 /**
 * Handles a inbound PUT /participants/{Type}/{ID}/error request
