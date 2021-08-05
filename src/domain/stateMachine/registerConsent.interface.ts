@@ -27,7 +27,7 @@
 import {
   ControlledStateMachine,
   PersistentModelConfig, StateData
-} from '~/model/persistent.model'
+} from './persistent.model'
 import { Method } from 'javascript-state-machine'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 import {

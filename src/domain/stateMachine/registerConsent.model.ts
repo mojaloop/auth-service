@@ -26,7 +26,7 @@
  ******/
 
 import { PubSub, Message } from '~/shared/pub-sub'
-import { PersistentModel } from '~/model/persistent.model'
+import { PersistentModel } from '~/domain/stateMachine/persistent.model'
 import { StateMachineConfig } from 'javascript-state-machine'
 import { ThirdpartyRequests, MojaloopRequests, Errors } from '@mojaloop/sdk-standard-components'
 import inspect from '~/shared/inspect'
@@ -42,7 +42,7 @@ import deferredJob from '~/shared/deferred-job'
 import { reformatError } from '~/shared/api-error'
 import axios from 'axios'
 import { deriveChallenge } from '~/domain/challenge'
-import { encodeBase64String, decodeBase64String } from '../domain/buffer'
+import { encodeBase64String, decodeBase64String } from '../buffer'
 import {
   v1_1 as fspiopAPI,
   thirdparty as tpAPI
