@@ -30,9 +30,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 
 import { logger } from '~/shared/logger'
 import inspect from '~/shared/inspect'
-import { RegisterConsentModel } from '~/domain/stateMachine/registerConsent.model'
-import { create } from '~/domain/stateMachine/registerConsent.model'
-import { RegisterConsentModelConfig, RegisterConsentData } from '~/domain/stateMachine/registerConsent.interface'
+import { create } from '~/domain/stateMachine/verifyTransaction.model'
 import { StateResponseToolkit } from '../plugins/state'
 import config from '~/shared/config'
 // import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
@@ -40,6 +38,8 @@ import config from '~/shared/config'
 
 // TODO: grab these from api-snippets once https://github.com/mojaloop/api-snippets/pull/101 is merged in
 import { components } from '@mojaloop/api-snippets/lib/thirdparty/openapi'
+import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface'
+import { VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model'
 export type ThirdpartyRequestsVerificationsIDPutResponse = components['schemas']['ThirdpartyRequestsVerificationsIDPutResponse']
 export type ThirdpartyRequestsVerificationsPostRequest = components['schemas']['ThirdpartyRequestsVerificationsPostRequest']
 
@@ -57,15 +57,15 @@ export async function post(
   const consentId = payload.consentId
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
-  const data: RegisterConsentData = {
+  const data: VerifyTransactionData = {
+    participantDFSPId: initiatorId,
     dfspId: h.getDFSPId(),
     currentState: 'start',
-    consentsPostRequestAUTH: payload,
-    participantDFSPId: initiatorId
+    verificationRequest: payload,
   }
 
   // if the request is valid then DFSP returns response via PUT /consentRequests/{ID} call.
-  const modelConfig: RegisterConsentModelConfig = {
+  const modelConfig: VerifyTransactionModelConfig = {
     kvs: h.getKVS(),
     subscriber: h.getSubscriber(),
     key: consentId,
@@ -73,13 +73,12 @@ export async function post(
     thirdpartyRequests: h.getThirdpartyRequests(),
     mojaloopRequests: h.getMojaloopRequests(),
     authServiceParticipantFSPId: config.PARTICIPANT_ID,
-    alsEndpoint: config.SHARED.ALS_ENDPOINT,
     requestProcessingTimeoutSeconds: config.REQUEST_PROCESSING_TIMEOUT_SECONDS
   }
 
   setImmediate(async (): Promise<void> => {
     try {
-      const model: RegisterConsentModel = await create(data, modelConfig)
+      const model: VerifyTransactionModel = await create(data, modelConfig)
       await model.run()
     } catch (error) {
       // the model catches all planned, catches unplanned errors,
