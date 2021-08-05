@@ -67,7 +67,6 @@ jest.mock('axios')
 // todo: un-mock this once we have a better payload
 jest.mock('~/domain/consents')
 
-// todo: update this test data with a payload that includes scope actions
 const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: '76059a0a-684f-4002-a880-b01159afe119',
   scopes: [
