@@ -39,16 +39,16 @@ import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-com
 import {
   RegisterConsentModel,
   create
-} from '~/model/registerConsent.model'
+} from '~/domain/stateMachine/registerConsent.model'
 import { RedisConnectionConfig } from '~/shared/redis-connection'
 import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
-import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/model/registerConsent.interface'
+import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
 import config from '~/shared/config';
 import axios from 'axios';
-import shouldNotBeExecuted from '../shouldNotBeExecuted'
+import shouldNotBeExecuted from '../../shouldNotBeExecuted'
 import { createAndStoreConsent } from '~/domain/consents'
 import * as challenge  from '~/domain/challenge'
 import * as consents from '~/domain/consents'
