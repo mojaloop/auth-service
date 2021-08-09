@@ -40,7 +40,6 @@ import { mocked } from 'ts-jest/utils'
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
 import config from '~/shared/config';
-import axios from 'axios';
 import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface';
 import { ThirdpartyRequestsVerificationsPostRequest } from '~/server/handlers/thirdpartyRequestsVerifications';
 import { create, VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model';
@@ -96,11 +95,10 @@ describe('VerifyTransactionModel', () => {
       kvs: new KVS(connectionConfig),
       subscriber: new PubSub(connectionConfig),
       logger: connectionConfig.logger,
-      mojaloopRequests: {} as unknown as MojaloopRequests,
-      thirdpartyRequests: {
-        putConsents: jest.fn(() => Promise.resolve({ statusCode: 200 })),
-        putConsentsError: jest.fn(() => Promise.resolve({ statusCode: 200 }))
-      } as unknown as ThirdpartyRequests,
+      mojaloopRequests: {
+        _put: jest.fn(() => Promise.resolve({ statusCode: 200 })),
+      } as unknown as MojaloopRequests,
+      thirdpartyRequests: { } as unknown as ThirdpartyRequests,
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       requestProcessingTimeoutSeconds: 3
     }
@@ -141,24 +139,24 @@ describe('VerifyTransactionModel', () => {
     expect(typeof VerifyTransactionModel.fsm.sendCallbackToDFSP).toEqual('function')
 
     // check fsm notification handler
-    expect(typeof VerifyTransactionModel.onRetreiveConsent()).toEqual('function')
-    expect(typeof VerifyTransactionModel.onVerifyTransaction()).toEqual('function')
-    expect(typeof VerifyTransactionModel.onSendCallbackToDFSP()).toEqual('function')
+    expect(typeof VerifyTransactionModel.onRetreiveConsent).toEqual('function')
+    expect(typeof VerifyTransactionModel.onVerifyTransaction).toEqual('function')
+    expect(typeof VerifyTransactionModel.onSendCallbackToDFSP).toEqual('function')
 
     expect(sortedArray(VerifyTransactionModel.fsm.allStates())).toEqual([
       'callbackSent',
-      'transactionVerified',
       'consentRetreived',
       'errored',
       'none',
-      'start'
+      'start',
+      'transactionVerified'
     ])
     expect(sortedArray(VerifyTransactionModel.fsm.allTransitions())).toEqual([
       'error',
       'init',
       'retreiveConsent',
-      'verifyTransaction',
       'sendCallbackToDFSP',
+      'verifyTransaction',
     ])
   }
 
@@ -283,49 +281,28 @@ describe('VerifyTransactionModel', () => {
       expect(result).toBeUndefined()
     })
 
-    it('exceptions - sendConsentCallbackToDFSP stage', async () => {
+    it('exceptions - sendCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
+      //@ts-ignore - note this will we removed once we add the putVerifications function to thirdpartyRequests
+      mocked(modelConfig.mojaloopRequests._put).mockImplementationOnce(
         () => {
           throw error
         }
       )
-      const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
+      const model = await create({ ...registerConsentData, currentState: 'transactionVerified' }, modelConfig)
 
       expect(async () => await model.run()).rejects.toEqual(error)
     })
 
-    it('exceptions - Error - sendConsentCallbackToDFSP stage', async () => {
-      const error = new Error('the-exception')
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
+    it('exceptions - Error - sendCallbackToDFSP stage', async () => {
+      const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
+      //@ts-ignore - note this will we removed once we add the putVerifications function to thirdpartyRequests
+      mocked(modelConfig.mojaloopRequests._put).mockImplementationOnce(
         () => {
           throw error
         }
       )
-      const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
-      expect(model.run()).rejects.toEqual(error)
-    })
-
-    it('exceptions - registerAuthoritativeSourceWithALS stage', async () => {
-      const error = { message: 'error from axios.post', consentReqState: 'broken' }
-      mocked(axios.post).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
-      const model = await create({ ...registerConsentData, currentState: 'consentStoredAndVerified' }, modelConfig)
-
-      expect(async () => await model.run()).rejects.toEqual(error)
-    })
-
-    it('exceptions - Error - registerAuthoritativeSourceWithALS stage', async () => {
-      const error = new Error('the-exception')
-      mocked(axios.post).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
-      const model = await create({ ...registerConsentData, currentState: 'consentStoredAndVerified' }, modelConfig)
+      const model = await create({ ...registerConsentData, currentState: 'transactionVerified' }, modelConfig)
       expect(model.run()).rejects.toEqual(error)
     })
   })
