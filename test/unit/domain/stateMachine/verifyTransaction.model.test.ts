@@ -25,10 +25,7 @@ optionally within square brackets <email>.
 --------------
 ******/
 
-import {
-  v1_1 as fspiopAPI,
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+
 import { KVS } from '~/shared/kvs'
 import {
   Message,
@@ -36,22 +33,17 @@ import {
   PubSub
 } from '~/shared/pub-sub'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components';
-import {
-  RegisterConsentModel,
-  create
-} from '~/domain/stateMachine/registerConsent.model'
+
 import { RedisConnectionConfig } from '~/shared/redis-connection'
 import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
-import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
 import config from '~/shared/config';
 import axios from 'axios';
-import shouldNotBeExecuted from '../../shouldNotBeExecuted'
-import { createAndStoreConsent } from '~/domain/consents'
-import * as challenge from '~/domain/challenge'
-import * as consents from '~/domain/consents'
+import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface';
+import { ThirdpartyRequestsVerificationsPostRequest } from '~/server/handlers/thirdpartyRequestsVerifications';
+import { create, VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model';
 
 
 // mock KVS default exported class
@@ -68,6 +60,20 @@ jest.mock('axios')
 jest.mock('~/domain/consents')
 
 
+// TODO: this payload will need updating for FIDO attestations
+const verificationRequest: ThirdpartyRequestsVerificationsPostRequest = {
+  verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
+  challenge: 'some base64 encoded challenge string',
+  value: {
+    authenticationInfo: {
+      authentication: 'U2F',
+      authenticationValue: 'base64 encoded signed challenge'
+    },
+    responseType: 'ENTERED'
+  },
+  consentId: '687ecdfd-98a0-41a5-8f07-8e0a8bca00cf'
+}
+
 
 describe('VerifyTransactionModel', () => {
   const connectionConfig: RedisConnectionConfig = {
@@ -75,7 +81,7 @@ describe('VerifyTransactionModel', () => {
     host: 'localhost',
     logger: mockLogger()
   }
-  let modelConfig: RegisterConsentModelConfig
+  let modelConfig: VerifyTransactionModelConfig
   let publisher: PubSub
 
   beforeEach(async () => {
@@ -96,7 +102,6 @@ describe('VerifyTransactionModel', () => {
         putConsentsError: jest.fn(() => Promise.resolve({ statusCode: 200 }))
       } as unknown as ThirdpartyRequests,
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
-      alsEndpoint: config.SHARED.ALS_ENDPOINT!,
       requestProcessingTimeoutSeconds: 3
     }
     mocked(modelConfig.subscriber.subscribe).mockImplementationOnce(
@@ -119,73 +124,83 @@ describe('VerifyTransactionModel', () => {
     await modelConfig.subscriber.disconnect()
   })
 
-  function checkRegisterConsentModelLayout(RegisterConsentModel: RegisterConsentModel, optData?: RegisterConsentData) {
-    expect(RegisterConsentModel).toBeTruthy()
-    expect(RegisterConsentModel.data).toBeDefined()
-    expect(RegisterConsentModel.fsm.state).toEqual(optData?.currentState || 'start')
+  function checkModelLayout(VerifyTransactionModel: VerifyTransactionModel, optData?: VerifyTransactionData) {
+    expect(VerifyTransactionModel).toBeTruthy()
+    expect(VerifyTransactionModel.data).toBeDefined()
+    expect(VerifyTransactionModel.fsm.state).toEqual(optData?.currentState || 'start')
 
     // check new getters
-    expect(RegisterConsentModel.subscriber).toEqual(modelConfig.subscriber)
-    expect(RegisterConsentModel.thirdpartyRequests).toEqual(modelConfig.thirdpartyRequests) 
-    expect(RegisterConsentModel.mojaloopRequests).toEqual(modelConfig.mojaloopRequests)
+    expect(VerifyTransactionModel.subscriber).toEqual(modelConfig.subscriber)
+    expect(VerifyTransactionModel.thirdpartyRequests).toEqual(modelConfig.thirdpartyRequests)
+    expect(VerifyTransactionModel.mojaloopRequests).toEqual(modelConfig.mojaloopRequests)
 
     // check is fsm correctly constructed
-    expect(typeof RegisterConsentModel.fsm.init).toEqual('function')
-    expect(typeof RegisterConsentModel.fsm.verifyConsent).toEqual('function')
-    expect(typeof RegisterConsentModel.fsm.registerAuthoritativeSourceWithALS).toEqual('function')
-    expect(typeof RegisterConsentModel.fsm.sendConsentCallbackToDFSP).toEqual('function')
+    expect(typeof VerifyTransactionModel.fsm.init).toEqual('function')
+    expect(typeof VerifyTransactionModel.fsm.retreiveConsent).toEqual('function')
+    expect(typeof VerifyTransactionModel.fsm.verifyTransaction).toEqual('function')
+    expect(typeof VerifyTransactionModel.fsm.sendCallbackToDFSP).toEqual('function')
 
     // check fsm notification handler
-    expect(typeof RegisterConsentModel.onVerifyConsent).toEqual('function')
-    expect(typeof RegisterConsentModel.onRegisterAuthoritativeSourceWithALS).toEqual('function')
-    expect(typeof RegisterConsentModel.onSendConsentCallbackToDFSP).toEqual('function')
+    expect(typeof VerifyTransactionModel.onRetreiveConsent()).toEqual('function')
+    expect(typeof VerifyTransactionModel.onVerifyTransaction()).toEqual('function')
+    expect(typeof VerifyTransactionModel.onSendCallbackToDFSP()).toEqual('function')
 
-    expect(sortedArray(RegisterConsentModel.fsm.allStates())).toEqual([
+    expect(sortedArray(VerifyTransactionModel.fsm.allStates())).toEqual([
       'callbackSent',
-      'consentStoredAndVerified',
-      'consentVerified',
+      'transactionVerified',
+      'consentRetreived',
       'errored',
       'none',
-      'registeredAsAuthoritativeSource',
       'start'
     ])
-    expect(sortedArray(RegisterConsentModel.fsm.allTransitions())).toEqual([
+    expect(sortedArray(VerifyTransactionModel.fsm.allTransitions())).toEqual([
       'error',
       'init',
-      'registerAuthoritativeSourceWithALS',
-      'sendConsentCallbackToDFSP',
-      'storeConsent',
-      'verifyConsent',
+      'retreiveConsent',
+      'verifyTransaction',
+      'sendCallbackToDFSP',
     ])
   }
 
   it('module layout', () => {
-    expect(typeof RegisterConsentModel).toEqual('function')
+    expect(typeof VerifyTransactionModel).toEqual('function')
     expect(typeof create).toEqual('function')
   })
 
-  describe('notificationChannel', () => {
-    it('should generate proper channel name', () => {
-      const id = '123'
-      expect(RegisterConsentModel.notificationChannel(
-        RegisterConsentPhase.waitOnParticipantResponseFromALS,
-        id)).toEqual('RegisterConsent_waitOnParticipantResponseFromALS_123')
-    })
+  // TODO: do we need notification channel? Delete if not...
+  // describe('notificationChannel', () => {
+  //   it('should generate proper channel name', () => {
+  //     const id = '123'
+  //     expect(VerifyTransactionModel.notificationChannel(
+  //       RegisterConsentPhase.waitOnParticipantResponseFromALS,
+  //       id)).toEqual('RegisterConsent_waitOnParticipantResponseFromALS_123')
+  //   })
 
-    it('input validation', () => {
-      expect(
-        () => RegisterConsentModel.notificationChannel(
-          RegisterConsentPhase.waitOnParticipantResponseFromALS,
-          null as unknown as string
-        )
-      ).toThrow()
-    })
-  })
-
-
+  //   it('input validation', () => {
+  //     expect(
+  //       () => RegisterConsentModel.notificationChannel(
+  //         RegisterConsentPhase.waitOnParticipantResponseFromALS,
+  //         null as unknown as string
+  //       )
+  //     ).toThrow()
+  //   })
+  // })
 
 
   describe('onRetreiveConsent', () => {
+    const verifyTransactionData: VerifyTransactionData = { 
+      currentState: 'start',
+      participantDFSPId: 'dfspa',
+      verificationRequest
+
+    }
+
+    it('should be well constructed', async () => {
+      const model = await create(verifyTransactionData, modelConfig)
+      checkModelLayout(model, verifyTransactionData)
+    })
+
+
     it.todo('fetches the consent from the database')
     it.todo('responds with an error if something went wrong fetching the consent')
   })
@@ -202,16 +217,16 @@ describe('VerifyTransactionModel', () => {
 
   describe('checkModelDataForErrorInformation', () => {
     it('should transition fsm to errored state if errorInformation is truthy', async () => {
-      const registerConsentData: RegisterConsentData = {
-        currentState: 'start',
+      const verifyTransactionData: VerifyTransactionData = {
         participantDFSPId: 'dfspA',
-        consentsPostRequestAUTH,
+        currentState: 'start',
+        verificationRequest,
         errorInformation: {
           errorCode: '3000',
           errorDescription: 'Generic error'
         }
       }
-      const model = await create(registerConsentData, modelConfig)
+      const model = await create(verifyTransactionData, modelConfig)
       await model.checkModelDataForErrorInformation()
 
       // check that the fsm was able to transition properly
@@ -222,25 +237,25 @@ describe('VerifyTransactionModel', () => {
   // run this test last since it can interfere with other tests because of the
   // timed pubsub publishing
   describe('run workflow', () => {
-    const registerConsentData: RegisterConsentData = {
+    const registerConsentData: VerifyTransactionData = {
       currentState: 'start',
       participantDFSPId: 'dfspA',
-      consentsPostRequestAUTH
+      verificationRequest
     }
 
     it('start', async () => {
       const model = await create(registerConsentData, modelConfig)
-      const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
-        RegisterConsentPhase.waitOnParticipantResponseFromALS,
-        registerConsentData.consentsPostRequestAUTH.consentId
-      )
+      // const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
+      //   RegisterConsentPhase.waitOnParticipantResponseFromALS,
+      //   registerConsentData.consentsPostRequestAUTH.consentId
+      // )
 
-      setImmediate(() => {
-        publisher.publish(
-          waitOnParticipantResponseFromALSChannel,
-          participantsTypeIDPutResponse as unknown as Message
-        )
-      })
+      // setImmediate(() => {
+      //   publisher.publish(
+      //     waitOnParticipantResponseFromALSChannel,
+      //     participantsTypeIDPutResponse as unknown as Message
+      //   )
+      // })
 
       await model.run()
       // check that the fsm was able complete the workflow
