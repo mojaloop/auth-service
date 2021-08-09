@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.7.0](https://github.com/mojaloop/auth-service/compare/v11.6.0...v11.7.0) (2021-08-09)
+
+
+### Features
+
+* **api:** add `/thirpartyRequests/verifications` resource support ([#83](https://github.com/mojaloop/auth-service/issues/83)) ([d6e2137](https://github.com/mojaloop/auth-service/commit/d6e213760773bd3212d40a95306b86e63606943e))
+
 ## [11.6.0](https://github.com/mojaloop/auth-service/compare/v11.5.2...v11.6.0) (2021-08-02)
 
 
