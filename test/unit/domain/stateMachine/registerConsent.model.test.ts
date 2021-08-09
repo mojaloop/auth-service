@@ -39,19 +39,20 @@ import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-com
 import {
   RegisterConsentModel,
   create
-} from '~/model/registerConsent.model'
+} from '~/domain/stateMachine/registerConsent.model'
 import { RedisConnectionConfig } from '~/shared/redis-connection'
 import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
-import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/model/registerConsent.interface'
+import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
 import config from '~/shared/config';
 import axios from 'axios';
-import shouldNotBeExecuted from '../shouldNotBeExecuted'
+import shouldNotBeExecuted from '../../shouldNotBeExecuted'
 import { createAndStoreConsent } from '~/domain/consents'
 import * as challenge  from '~/domain/challenge'
 import * as consents from '~/domain/consents'
+import { MojaloopApiErrorCode } from '~/shared/api-error';
 
 
 // mock KVS default exported class
@@ -67,7 +68,6 @@ jest.mock('axios')
 // todo: un-mock this once we have a better payload
 jest.mock('~/domain/consents')
 
-// todo: update this test data with a payload that includes scope actions
 const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: '76059a0a-684f-4002-a880-b01159afe119',
   scopes: [
@@ -335,6 +335,38 @@ describe('RegisterConsentModel', () => {
         shouldNotBeExecuted()
       } catch (error) {
         expect(error.message).toEqual('the-exception')
+      }
+
+      // check we send an error callback to DFSP
+      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+        '76059a0a-684f-4002-a880-b01159afe119',
+        {
+          errorInformation: {
+            errorCode: '7200',
+            errorDescription: 'Generic Thirdparty account linking error'
+          }
+        },
+        'dfspA'
+      )
+    })
+
+    it('verifyConsent() should transition start to errored state when unsuccessful with a planned error code', async () => {
+      const error: MojaloopApiErrorCode = {
+        code: '7200',
+        message: 'Generic Thirdparty account linking error',
+        httpStatusCode: 500
+      }
+      jest.spyOn(challenge, 'deriveChallenge')
+        .mockImplementationOnce(() => {
+          throw error
+        })
+      const model = await create(registerConsentData, modelConfig)
+
+      try {
+        await model.fsm.verifyConsent()
+        shouldNotBeExecuted()
+      } catch (error) {
+        expect(error.message).toEqual('Generic Thirdparty account linking error')
       }
 
       // check we send an error callback to DFSP

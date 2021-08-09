@@ -28,7 +28,6 @@
 
 import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-// import { logger } from '~/shared/logger'
 import { Consent } from '~/model/consent'
 import { ModelScope } from '~/model/scope'
 import { thirdPartyRequest } from '~/domain/requests'
@@ -42,9 +41,7 @@ import { putAuthorizationErrorRequest } from '~/domain/errors'
 import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
-// import { mocked } from 'ts-jest/utils'
 
-// jest.mock('~/shared/logger')
 
 /*
  * POST /thirdpartyRequests/transactions/{ID}/authorizations
@@ -317,9 +314,6 @@ describe('Incoming POST Transaction Authorization Domain', (): void => {
           request.params.ID,
           request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
         )
-
-        // expect(mocked(logger.error)).toHaveBeenCalled()
-        // expect(mocked(logger.push)).toHaveBeenCalled()
       }
     )
   })

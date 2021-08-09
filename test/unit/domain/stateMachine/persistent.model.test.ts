@@ -35,7 +35,7 @@ import {
   StateData,
   create,
   loadFromKVS
-} from '~/model/persistent.model'
+} from '~/domain/stateMachine/persistent.model'
 import { mocked } from 'ts-jest/utils'
 import mockLogger from 'test/unit/mockLogger'
 import shouldNotBeExecuted from 'test/unit/shouldNotBeExecuted'

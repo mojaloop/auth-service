@@ -21,50 +21,44 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kevin Leyow - kevin.leyow@modusbox.com
+ - Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
 import {
   ControlledStateMachine,
   PersistentModelConfig, StateData
-} from '~/model/persistent.model'
+} from './persistent.model'
 import { Method } from 'javascript-state-machine'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
 import { PubSub } from '~/shared/pub-sub'
+import { ThirdpartyRequestsVerificationsPostRequest } from '~/server/handlers/thirdpartyRequestsVerifications'
 
-export enum RegisterConsentPhase {
-  waitOnParticipantResponseFromALS = 'waitOnParticipantResponseFromALS',
+export interface VerifyTransactionStateMachine extends ControlledStateMachine {
+  retreiveConsent: Method
+  onRetreiveConsent: Method
+  verifyTransaction: Method
+  onVerifyTransaction: Method
+  sendCallbackToDFSP: Method
+  onSendCallbackToDFSP: Method
 }
 
-export interface RegisterConsentStateMachine extends ControlledStateMachine {
-  verifyConsent: Method
-  onVerifyConsent: Method
-  storeConsent: Method
-  onStoreConsent: Method
-  registerAuthoritativeSourceWithALS: Method
-  onRegisterAuthoritativeSourceWithALS: Method
-  sendConsentCallbackToDFSP: Method
-  onSendConsentCallbackToDFSP: Method
-}
-
-export interface RegisterConsentModelConfig extends PersistentModelConfig {
+export interface VerifyTransactionModelConfig extends PersistentModelConfig {
   subscriber: PubSub
   thirdpartyRequests: ThirdpartyRequests
   mojaloopRequests: MojaloopRequests
   requestProcessingTimeoutSeconds: number
   authServiceParticipantFSPId: string
-  alsEndpoint: string
 }
 
-export interface RegisterConsentData extends StateData {
-  // the DFSP requesting the registering of the Consent object
+export interface VerifyTransactionData extends StateData {
+  // the DFSP requesting the verification of the transaction
   participantDFSPId: string
 
-  // initial /POST consents request
-  consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH
+  // initial POST /thirdpartyRequests/verifications request
+  verificationRequest: ThirdpartyRequestsVerificationsPostRequest
 
   errorInformation?: tpAPI.Schemas.ErrorInformation
 }

@@ -27,6 +27,7 @@ import Metrics from './metrics'
 import Consents from './consents'
 import ParticipantsTypeID from './participants/{Type}/{ID}'
 import ParticipantsTypeIDError from './participants/{Type}/{ID}/error'
+import thirdpartyRequestsVerifications from './thirdpartyRequestsVerifications'
 const OpenapiBackend = Util.OpenapiBackend
 
 export default {
@@ -35,6 +36,9 @@ export default {
   PostConsents: Consents.post,
   ParticipantsByTypeAndID3: ParticipantsTypeID.put,
   ParticipantsErrorByTypeAndID: ParticipantsTypeIDError.put,
+  // TODO: this should be PostThirdpartyRequestsVerifications
+  // waiting for PR: https://github.com/mojaloop/api-snippets/pull/101
+  PutThirdpartyRequestsVerifications: thirdpartyRequestsVerifications.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
   methodNotAllowed: OpenapiBackend.methodNotAllowed

@@ -192,9 +192,9 @@ const ConvictConfig = Convict<ServiceConfig>({
 
 // Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
-console.log('NODE_ENV:', env)
+// console.log('NODE_ENV:', env)
 const configPath = path.resolve(__dirname, `../../config/${env}.json`)
-console.log('loading configuration from:', configPath)
+// console.log('loading configuration from:', configPath)
 ConvictConfig.loadFile(configPath)
 ConvictConfig.validate({ allowed: 'strict' })
 

@@ -21,64 +21,74 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- - Kevin Leyow <kevin.leyow@modusbox.com>
+ - Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
+
 import { Request } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
-import ParticipantsTypeIDErrorHandler from '~/server/handlers/participants/{Type}/{ID}/error'
+import thirdpartyRequestsVerificationsHandler from '~/server/handlers/thirdpartyRequestsVerifications'
 import { StateResponseToolkit } from '~/server/plugins/state'
-import { RegisterConsentModel } from '~/domain/stateMachine/registerConsent.model'
-import { RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
 
-jest.mock('~/domain/errors')
+const flushPromises = () => new Promise(setImmediate);
+const mockRun = jest.fn()
 
-const errorInformationResponse = {
+jest.mock('~/domain/stateMachine/verifyTransaction.model', () => ({
+  VerifyTransactionModel: {
+    // notificationChannel: jest.fn(() => 'the-mocked-channel')
+  },
+  create: jest.fn(async () => ({
+    // this result will be tested
+    run: mockRun
+  }))
+}))
+
+const PostThirdpartyRequestsVerificationsRequest = {
   headers: {
-    'fspiop-source': 'als',
-    'fspiop-destination': 'centralAuth'
+
   },
-  params: {
-    Type: 'CONSENT',
-    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
-  },
+  params: {},
   payload: {
-    errorInformation: {
-      errorCode: '3000',
-      errorDescription: 'Some error code'
-    }
+    //TODO:
   }
 }
 
-describe('server/handlers/consents', (): void => {
-  it('Should return 200 success code', async (): Promise<void> => {
-    jest.useFakeTimers()
-    const request = errorInformationResponse
+describe('POST /thirdpartyRequests/verifications', (): void => {
+  it('should return 202 synchronously', async () => {
+    //Arrange
+    // jest.useFakeTimers()
     const pubSubMock = {
-      publish: jest.fn()
+      subscribe: jest.fn()
     }
     const toolkit = {
-      getPublisher: jest.fn(() => pubSubMock),
+      getSubscriber: jest.fn(() => pubSubMock),
       response: jest.fn(() => ({
         code: jest.fn((code: number) => ({
           statusCode: code
         }))
+      })),
+      getDFSPId: jest.fn(() => 'centralAuth'),
+      getThirdpartyRequests: jest.fn(() => ({
+        putConsents: jest.fn(),
+        putConsentsError: jest.fn()
+      })),
+      getMojaloopRequests: jest.fn(),
+      getKVS: jest.fn(() => ({
+        set: jest.fn()
       }))
     }
-    const response = await ParticipantsTypeIDErrorHandler.put(
+    
+    // Act
+    const response = await thirdpartyRequestsVerificationsHandler.post(
       null,
-      request as unknown as Request,
+      PostThirdpartyRequestsVerificationsRequest as unknown as Request,
       toolkit as unknown as StateResponseToolkit
     )
-
-    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
-    jest.runAllImmediates()
-    expect(toolkit.getPublisher).toBeCalledTimes(1)
-
-    const channel = RegisterConsentModel.notificationChannel(
-      RegisterConsentPhase.waitOnParticipantResponseFromALS,
-      request.params.ID
-    )
-    expect(pubSubMock.publish).toBeCalledWith(channel, request.payload)
+    
+    // Assert
+    expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+    // Wait out any other promises
+    await flushPromises()
+    expect(mockRun).toHaveBeenCalledTimes(1)
   })
 })

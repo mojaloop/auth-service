@@ -25,7 +25,7 @@ import Config from '~/shared/config'
 import server from '~/server'
 jest.mock('~/server')
 
-describe('cli', (): void => {
+describe.only('cli', (): void => {
   it('should use default port & host', async (): Promise<void> => {
     const cli = await import('~/cli')
     expect(cli).toBeDefined()
