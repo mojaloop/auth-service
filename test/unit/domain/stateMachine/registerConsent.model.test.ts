@@ -52,6 +52,7 @@ import shouldNotBeExecuted from '../../shouldNotBeExecuted'
 import { createAndStoreConsent } from '~/domain/consents'
 import * as challenge  from '~/domain/challenge'
 import * as consents from '~/domain/consents'
+import { MojaloopApiErrorCode } from '~/shared/api-error';
 
 
 // mock KVS default exported class
@@ -334,6 +335,38 @@ describe('RegisterConsentModel', () => {
         shouldNotBeExecuted()
       } catch (error) {
         expect(error.message).toEqual('the-exception')
+      }
+
+      // check we send an error callback to DFSP
+      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+        '76059a0a-684f-4002-a880-b01159afe119',
+        {
+          errorInformation: {
+            errorCode: '7200',
+            errorDescription: 'Generic Thirdparty account linking error'
+          }
+        },
+        'dfspA'
+      )
+    })
+
+    it('verifyConsent() should transition start to errored state when unsuccessful with a planned error code', async () => {
+      const error: MojaloopApiErrorCode = {
+        code: '7200',
+        message: 'Generic Thirdparty account linking error',
+        httpStatusCode: 500
+      }
+      jest.spyOn(challenge, 'deriveChallenge')
+        .mockImplementationOnce(() => {
+          throw error
+        })
+      const model = await create(registerConsentData, modelConfig)
+
+      try {
+        await model.fsm.verifyConsent()
+        shouldNotBeExecuted()
+      } catch (error) {
+        expect(error.message).toEqual('Generic Thirdparty account linking error')
       }
 
       // check we send an error callback to DFSP

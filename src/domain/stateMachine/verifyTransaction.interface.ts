@@ -36,10 +36,6 @@ import {
 import { PubSub } from '~/shared/pub-sub'
 import { ThirdpartyRequestsVerificationsPostRequest } from '~/server/handlers/thirdpartyRequestsVerifications'
 
-export enum VerifyTransactionPhase {
-  waitOnParticipantResponseFromALS = 'waitOnParticipantResponseFromALS',
-}
-
 export interface VerifyTransactionStateMachine extends ControlledStateMachine {
   retreiveConsent: Method
   onRetreiveConsent: Method
