@@ -126,7 +126,7 @@ describe('VerifyTransactionModel', () => {
 
     // check new getters
     expect(RegisterConsentModel.subscriber).toEqual(modelConfig.subscriber)
-    expect(RegisterConsentModel.thirdpartyRequests).toEqual(modelConfig.thirdpartyRequests)
+    expect(RegisterConsentModel.thirdpartyRequests).toEqual(modelConfig.thirdpartyRequests) 
     expect(RegisterConsentModel.mojaloopRequests).toEqual(modelConfig.mojaloopRequests)
 
     // check is fsm correctly constructed
