@@ -387,7 +387,12 @@ describe('RegisterConsentModel', () => {
     const registerConsentData: RegisterConsentData = {
       currentState: 'consentVerified',
       participantDFSPId: 'dfspA',
-      consentsPostRequestAUTH
+      consentsPostRequestAUTH,
+      credentialPublicKey: '-----BEGIN PUBLIC KEY-----\n' +
+        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+        'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+        '-----END PUBLIC KEY-----\n',
+      credentialCounter: 4
     }
 
     it('should be well constructed', async () => {
@@ -400,17 +405,21 @@ describe('RegisterConsentModel', () => {
       await model.fsm.storeConsent()
       expect(createAndStoreConsent).toBeCalledWith(
         consentsPostRequestAUTH.consentId,
-        // initiatorId is deprecated so just using empty string for now
-        '',
         'dfspA',
         consentsPostRequestAUTH.scopes,
-        consentsPostRequestAUTH.credential
+        consentsPostRequestAUTH.credential,
+        '-----BEGIN PUBLIC KEY-----\n' +
+        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+        'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+        '-----END PUBLIC KEY-----\n',
+        'c4adabb33e9306b038088132affcde556c50d82f603f47711a9510bf3beef6d6',
+        4
       )
       // check that the fsm was able to transition properly
       expect(model.data.currentState).toEqual('consentStoredAndVerified')
     })
 
-    it('storedConsent() should transition consentVerified to errored state when unsuccessful', async () => {
+    it('storeConsent() should transition consentVerified to errored state when unsuccessful', async () => {
       const error = new Error('the-exception')
       jest.spyOn(consents, 'createAndStoreConsent')
         .mockImplementationOnce(() => {

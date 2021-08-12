@@ -42,7 +42,7 @@
  * of 'createdAt' field may need to be tested in the future.
  */
 
-import { NotFoundError, RevokedConsentModificationError } from '../errors'
+import { NotFoundError } from '../errors'
 import Knex from 'knex'
 
 /*
@@ -50,35 +50,65 @@ import Knex from 'knex'
  */
 export interface Consent {
   id: string;
-  initiatorId?: string;
-  participantId?: string;
+  // participant DFSP that requested a Consent resource be made
+  participantId: string;
+  // status of the consent
   status: string;
-  credentialId?: string;
-  credentialType?: string;
-  credentialStatus?: string;
-  credentialPayload?: string;
-  credentialChallenge?: string;
+  // NOTE: not sure what purpose credentialId serves.
+  credentialId: string;
+  // credential type - currently trying to support FIDO/Generic credentials
+  credentialType: string;
+  // NOTE: unsure this field is needed since `auth-service` verifies
+  //       credential on receiving them
+  credentialStatus: string;
+  // assuming this is the public key of the pair
+  credentialPayload: string;
+  // NOTE: not sure what `credentialChallenge` is used for.
+  //       best guess is that in `retrieveValidConsent` the original challenge
+  //       used to register the consent is needed to retrieve the Consent.
+  //       assuming this is an extra layer of protection since only the
+  //       DFSP has the variables used to derive the original challenge?
+  // TODO: remove this if it serves a redundant purpose
+  credentialChallenge: string;
+  // not sure how this fido2 counter works but fido2-lib suggests we store it
+  credentialCounter: number;
   createdAt?: Date;
   revokedAt?: string;
-  attestationObject?: string;
-  clientDataJSON?: string;
+}
+
+/*
+ * Interface for Consent resource type
+ * A consent resource should be marked ACTIVE on creation.
+ * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
+ */
+export enum ConsentStatus {
+  ACTIVE = 'ACTIVE',
+  REVOKED = 'REVOKED',
 }
 
 /*
  * Interface for Consent Credential resource type
+ * NOTE: unsure if we still PENDING. VERIFIED should be the only status needed
+ *       now since the credential is verified at once when received by the
+ *       auth-service and stored AFTER. VERIFIED might also not be needed
+ *       because assuming the prior, row existence equates verified
  */
-
 export enum CredentialStatusEnum {
   VERIFIED = 'VERIFIED',
   PENDING = 'PENDING',
 }
 
+/*
+ * Interface for Consent Credential resource type
+ * This is a subset of the Consent resource representing a FIDO credential
+ */
 export interface ConsentCredential {
   credentialId?: string;
-  credentialType: 'FIDO';
+  credentialType: 'FIDO' | 'GENERIC';
   credentialStatus: CredentialStatusEnum;
   credentialPayload: string | null;
   credentialChallenge: string;
+  credentialCounter: string;
 }
 
 /*
@@ -103,60 +133,6 @@ export class ConsentDB {
       await action
     }
     return true
-  }
-
-  // Update Consent
-  public async update (consent: Consent): Promise<number> {
-    // Returns number of updated rows
-    // Here is only logic dedicated to keep data consistency & constraints
-    // Transaction to make the update atomic
-    return this.Db.transaction(async (trx): Promise<number> => {
-      // Transaction is rolled back automatically if there is
-      // an error and the returned promise is rejected
-      const consents: Consent[] = await trx<Consent>('Consent')
-        .select('*')
-        .where({ id: consent.id })
-        .limit(1)
-
-      if (consents.length === 0) {
-        throw new NotFoundError('Consent', consent.id)
-      }
-
-      // Cannot overwrite REVOKED status Consent
-      if (consents[0].status === 'REVOKED') {
-        throw new RevokedConsentModificationError('Consent', consent.id)
-      }
-
-      const existingConsent: Consent = consents[0]
-      const updatedConsent: Record<string, string | Date> = {}
-
-      // Prepare a new Consent with only allowable updates
-      Object.keys(existingConsent).forEach((key): void => {
-        const value: string | Date =
-          existingConsent[key as keyof Consent] as string | Date
-
-        // Cannot overwrite an `ACTIVE` credentialStatus
-        if (key === 'credentialStatus' && value === 'ACTIVE') {
-          return
-        }
-
-        // Cannot overwrite non-null fields
-        if (value !== null && key !== 'credentialStatus' && key !== 'status') {
-          return
-        }
-
-        updatedConsent[key] = consent[key as keyof Consent] as string | Date
-      })
-
-      // If there are no fields that can be updated
-      if (Object.keys(updatedConsent).length === 0) {
-        return 0
-      }
-
-      return trx<Consent>('Consent')
-        .where({ id: consent.id })
-        .update(updatedConsent)
-    })
   }
 
   // Retrieve Consent by ID (unique)
@@ -189,5 +165,28 @@ export class ConsentDB {
     }
 
     return deleteCount
+  }
+
+  // Revoke Consent
+  public async revoke (id: string): Promise<number> {
+    const consents: Consent[] = await this
+      .Db<Consent>('Consent')
+      .select('*')
+      .where({ id })
+      .limit(1)
+
+    if (consents.length === 0) {
+      throw new NotFoundError('Consent', id)
+    }
+
+    const existingConsent: Consent = consents[0]
+    const revokedConsent: Consent = {
+      ...existingConsent,
+      'status': 'REVOKED'
+    }
+
+    return await this.Db<Consent>('Consent')
+      .where({ id })
+      .update(revokedConsent)
   }
 }

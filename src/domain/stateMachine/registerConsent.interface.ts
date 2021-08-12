@@ -66,5 +66,9 @@ export interface RegisterConsentData extends StateData {
   // initial /POST consents request
   consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH
 
+  // info needed from the result of attestation
+  credentialPublicKey?: string
+  credentialCounter?: number
+
   errorInformation?: tpAPI.Schemas.ErrorInformation
 }
