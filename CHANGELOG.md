@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.7.1](https://github.com/mojaloop/auth-service/compare/v11.7.0...v11.7.1) (2021-08-12)
+
+
+### Maintenance
+
+* **deps:** bump path-parse from 1.0.6 to 1.0.7 ([#84](https://github.com/mojaloop/auth-service/issues/84)) ([5291e66](https://github.com/mojaloop/auth-service/commit/5291e66e7ae820857aa88c89105991d531195914))
+
 ## [11.7.0](https://github.com/mojaloop/auth-service/compare/v11.6.0...v11.7.0) (2021-08-09)
 
 
