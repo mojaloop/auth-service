@@ -36,37 +36,35 @@ import { NotFoundError } from '~/model/errors'
 /*
  * Mock Consent Resources
  */
-const partialConsent1: Consent = {
-  status: 'ACTIVE',
+const testConsentObject: Consent = {
   id: '1234',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123'
-}
-
-const partialConsent2: Consent = {
+  participantId: 'dfsp-3333-2123',
   status: 'ACTIVE',
-  id: '948',
-  initiatorId: 'pisp-2342-2013',
-  participantId: 'dfsp-3333-2773'
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'VERIFIED',
+  credentialChallenge: 'xyhdushsoa82w92mzs',
+  credentialPayload: 'dwuduwd&e2idjoj0w',
+  credentialCounter: 4
 }
 
 /*
  * Mock Scope Resources
  */
 const tempScope1: ModelScope = {
-  consentId: partialConsent1.id,
+  consentId: testConsentObject.id,
   action: 'transfer',
   accountId: 'sjdn-3333-2123'
 }
 
 const tempScope2: ModelScope = {
-  consentId: partialConsent1.id,
+  consentId: testConsentObject.id,
   action: 'balance',
   accountId: 'sjdn-q333-2123'
 }
 
 const tempScope3: ModelScope = {
-  consentId: partialConsent1.id,
+  consentId: testConsentObject.id,
   action: 'saving',
   accountId: 'sjdn-q333-2123'
 }
@@ -96,7 +94,7 @@ describe('src/model/scope', (): void => {
     await Db<Consent>('Consent').del()
     await Db<ModelScope>('Scope').del()
     await Db<Consent>('Consent')
-      .insert([partialConsent1, partialConsent2])
+      .insert([testConsentObject])
   })
 
   describe('insert', (): void => {
@@ -110,7 +108,7 @@ describe('src/model/scope', (): void => {
       const scopes: ModelScope[] = await Db<ModelScope>('Scope')
         .select('*')
         .where({
-          consentId: partialConsent1.id
+          consentId: testConsentObject.id
         })
 
       expect(scopes.length).toEqual(1)
@@ -128,7 +126,7 @@ describe('src/model/scope', (): void => {
       const scopes: ModelScope[] = await Db<ModelScope>('Scope')
         .select('*')
         .where({
-          consentId: partialConsent1.id
+          consentId: testConsentObject.id
         })
 
       expect(scopes.length).toEqual(3)
@@ -185,13 +183,13 @@ describe('src/model/scope', (): void => {
     })
 
     it('throws an error on retrieving non-existent scopes for an existing consent', async (): Promise<void> => {
-      await expect(scopeDB.retrieveAll(partialConsent1.id))
+      await expect(scopeDB.retrieveAll(testConsentObject.id))
         .rejects.toThrowError(NotFoundError)
     })
 
     it('throws an error on retrieving non-existent scopes for a non-existent consent', async (): Promise<void> => {
       await Db<Consent>('Consent').del()
-      await expect(scopeDB.retrieveAll(partialConsent1.id))
+      await expect(scopeDB.retrieveAll(testConsentObject.id))
         .rejects.toThrowError(NotFoundError)
     })
   })

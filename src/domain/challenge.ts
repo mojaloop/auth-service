@@ -35,30 +35,11 @@
  * ticket #354
  */
 
-import util from 'util'
 import crypto from 'crypto'
 import { logger } from '~/shared/logger'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { canonicalize } from 'json-canonicalize'
 import sha256 from 'crypto-js/sha256'
-
-// Async promisified randomBytes function
-const randomBytesAsync = util.promisify(crypto.randomBytes)
-
-/**
- * Helper function which uses the crypto library to generate
- * a secure random challenge string (Base 64 encoding) of given size
- * @param size Integer value of how many bytes should generated, 32 by default
- */
-export async function generate (size = 32): Promise<string> {
-  try {
-    const buf = await randomBytesAsync(Math.round(Math.abs(size)))
-    return buf.toString('base64')
-  } catch (error) {
-    logger.push({ error }).error('Unable to generate challenge string')
-    throw error
-  }
-}
 
 /**
  * Helper function to validate signatures using public key

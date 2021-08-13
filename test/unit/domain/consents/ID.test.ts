@@ -26,7 +26,6 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { Request } from '@hapi/hapi'
 import { consentDB, scopeDB } from '~/model/db'
 import {
   retrieveValidConsent,
@@ -45,45 +44,6 @@ const mockScopeDbRetrieveAll = jest.spyOn(scopeDB, 'retrieveAll')
 const mockPutConsentsOutbound = jest.spyOn(thirdPartyRequest, 'putConsents')
 const mockconvertModelScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertModelScopesToThirdpartyScopes')
 
-/*
- * Mock Request Resources
- */
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pisp-2342-2233',
-    'fspiop-destination': 'dfsp-3333-2123'
-  },
-  params: {
-    ID: '1234'
-  },
-  payload: {
-    id: '1234',
-    requestId: '475234',
-    initiatorId: 'pispa',
-    participantId: 'sfsfdf23',
-    scopes: [
-      {
-        accountId: '3423',
-        actions: ['acc.getMoney', 'acc.sendMoney']
-      },
-      {
-        accountId: '232345',
-        actions: ['acc.accessSaving']
-      }
-    ],
-    credential: {
-      id: '9876',
-      credentialType: 'FIDO',
-      status: 'PENDING',
-      challenge: {
-        payload: 'string_representing_challenge_payload',
-        signature: 'string_representing_challenge_signature'
-      },
-      payload: 'string_representing_credential_payload'
-    }
-  }
-} as unknown as Request
-
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
   id: '1234',
@@ -94,6 +54,7 @@ const retrievedConsent: Consent = {
   credentialStatus: 'PENDING',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
+  credentialCounter: 4
 }
 
 const retrievedConsentRevoked: Consent = {
@@ -105,7 +66,8 @@ const retrievedConsentRevoked: Consent = {
   credentialStatus: 'PENDING',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
-  revokedAt: (new Date()).toISOString()
+  revokedAt: (new Date()).toISOString(),
+  credentialCounter: 4
 }
 
 const retrievedConsentWrongChallenge: Consent = {
@@ -117,7 +79,8 @@ const retrievedConsentWrongChallenge: Consent = {
   credentialStatus: 'PENDING',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'wrong_string_representing_challenge_payload',
-  revokedAt: (new Date()).toISOString()
+  revokedAt: (new Date()).toISOString(),
+  credentialCounter: 4
 }
 
 /* Mock the retrieved scope value. */

@@ -202,7 +202,6 @@ describe('src/model/consent', (): void => {
         id: '1234',
         participantId: 'dfsp-3333-2123',
         status: 'REVOKED',
-
         credentialId: '123',
         credentialType: 'FIDO',
         credentialStatus: 'VERIFIED',
