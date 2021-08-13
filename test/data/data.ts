@@ -1,7 +1,6 @@
-import { Consent, ConsentCredential } from '~/model/consent'
+import { Consent } from '~/model/consent'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { ModelScope } from '~/model/scope'
-import { CredentialStatusEnum } from '~/model/consent/consent'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 /*
@@ -107,59 +106,37 @@ export const h: ResponseToolkit = {
 /*
  * Mock Consent Resources
  */
-export const partialConsentActive: Consent = {
-  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  status: 'ACTIVE'
-}
-
-export const partialConsentActiveConflictingInitiatorId: Consent = {
-  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  initiatorId: 'pi2-2233',
-  participantId: 'dfs333-2123',
-  status: 'ACTIVE'
-}
-
-export const partialConsentRevoked: Consent = {
-  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  revokedAt: '2020-08-19T05:44:18.843Z',
-  status: 'REVOKED'
-}
-
 export const completeConsentRevoked: Consent = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   status: 'REVOKED',
   revokedAt: '2020-08-19T05:44:18.843Z',
+  credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
+  credentialChallenge: 'xyhdushsoa82w92mzs=',
+  credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
+  'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+  'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+  '-----END PUBLIC KEY-----\n',
+  credentialCounter: 4
 }
 
 export const completeConsentActive: Consent = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
   credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
+  credentialChallenge: 'xyhdushsoa82w92mzs=',
+  credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
+  'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+  'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+  '-----END PUBLIC KEY-----\n',
+  credentialCounter: 4
 }
 
-export const completeConsentActiveNoCredentialID: Consent = {
-  id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
-}
 
 /*
  * Mock Scope Resources
@@ -197,25 +174,21 @@ export const scopes: ModelScope[] = [{
 /*
  * Mock Credential Resources
 */
-
-export const credentialPending: ConsentCredential = {
-  credentialType: 'FIDO',
-  credentialStatus: CredentialStatusEnum.PENDING,
-  credentialChallenge: 'xyhdushsoa82w92mzs=',
-  credentialPayload: null
-}
-
 export const challenge = 'xyhdushsoa82w92mzs='
 
 export const completeConsentActiveCredential: Consent = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'ACTIVE',
-  credentialChallenge: 'xyhdushsoa82w92mzs='
+  credentialStatus: 'VERIFIED',
+  credentialChallenge: 'xyhdushsoa82w92mzs=',
+  credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
+    'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+    'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+    '-----END PUBLIC KEY-----\n',
+  credentialCounter: 4
 }
 
 

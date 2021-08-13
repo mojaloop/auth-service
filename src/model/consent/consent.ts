@@ -43,7 +43,7 @@
  */
 
 import { NotFoundError } from '../errors'
-import Knex from 'knex'
+import Knex from 'knex';
 
 /*
  * Interface for Consent resource type
@@ -57,7 +57,7 @@ export interface Consent {
   // NOTE: not sure what purpose credentialId serves.
   credentialId: string;
   // credential type - currently trying to support FIDO/Generic credentials
-  credentialType: string;
+  credentialType: 'FIDO' | 'GENERIC' | undefined;
   // NOTE: unsure this field is needed since `auth-service` verifies
   //       credential on receiving them
   credentialStatus: string;
@@ -96,19 +96,6 @@ export enum ConsentStatus {
 export enum CredentialStatusEnum {
   VERIFIED = 'VERIFIED',
   PENDING = 'PENDING',
-}
-
-/*
- * Interface for Consent Credential resource type
- * This is a subset of the Consent resource representing a FIDO credential
- */
-export interface ConsentCredential {
-  credentialId?: string;
-  credentialType: 'FIDO' | 'GENERIC';
-  credentialStatus: CredentialStatusEnum;
-  credentialPayload: string | null;
-  credentialChallenge: string;
-  credentialCounter: string;
 }
 
 /*
@@ -179,14 +166,11 @@ export class ConsentDB {
       throw new NotFoundError('Consent', id)
     }
 
-    const existingConsent: Consent = consents[0]
-    const revokedConsent: Consent = {
-      ...existingConsent,
-      'status': 'REVOKED'
-    }
-
     return await this.Db<Consent>('Consent')
       .where({ id })
-      .update(revokedConsent)
+      .update({
+        'status': 'REVOKED',
+        'revokedAt': this.Db.fn.now()
+      })
   }
 }

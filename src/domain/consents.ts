@@ -42,7 +42,6 @@ import { convertThirdpartyScopesToDatabaseScope } from './scopes'
 import {
   DatabaseError,
 } from './errors'
-import { CredentialStatusEnum } from '~/model/consent/consent'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /**
@@ -80,17 +79,4 @@ export async function createAndStoreConsent (
     logger.push({ error }).error('Error: Unable to store consent and scopes')
     throw new DatabaseError(consent.id)
   }
-}
-
-export interface UpdateCredentialRequest {
-  credential: {
-    id: string;
-    payload: string;
-    // When Updating the credential, only a status of `PENDING` is allowed
-    status: CredentialStatusEnum.PENDING;
-    challenge: {
-      signature: string;
-      payload: string;
-    };
-  };
 }

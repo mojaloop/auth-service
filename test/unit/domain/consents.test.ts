@@ -32,7 +32,7 @@ import { createAndStoreConsent } from '~/domain/consents'
 import * as ScopeFunction from '~/domain/scopes'
 import {
   requestWithPayloadScopes, externalScopes,
-  partialConsentActive, scopes
+  scopes
 } from '~/../test/data/data'
 import { DatabaseError } from '~/domain/errors'
 import { logger } from '~/shared/logger'
@@ -50,7 +50,6 @@ const mockConvertThirdpartyScopesToDatabaseScope = jest.spyOn(
 
 describe('server/domain/consents', (): void => {
   const consentId = requestWithPayloadScopes.params.ID
-  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
   const participantId = requestWithPayloadScopes.headers['fspiop-destination']
   const scopesExternal: tpAPI.Schemas.Scope[] = (requestWithPayloadScopes.payload as Record<string, unknown>).scopes as unknown as tpAPI.Schemas.Scope[]
   const credential: tpAPI.Schemas.SignedCredential = {
@@ -131,11 +130,15 @@ describe('server/domain/consents', (): void => {
     }
   }
   const consentActiveFIDO = {
-    ...partialConsentActive,
+    id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+    status: 'ACTIVE',
+    participantId: 'dfsp-3333-2123',
+    credentialStatus: 'VERIFIED',
     credentialType: 'FIDO',
     credentialId: credential.payload.id,
-    attestationObject: credential.payload.response.attestationObject,
-    clientDataJSON: credential.payload.response.clientDataJSON
+    credentialPayload: 'some-public-key',
+    credentialChallenge: 'some-credential-challenge',
+    credentialCounter: 4,
   }
   beforeAll(async (): Promise<void> => {
     await Db.migrate.latest()
@@ -160,8 +163,15 @@ describe('server/domain/consents', (): void => {
     expect(logger.push({})).toBeDefined()
   })
   it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
-      .resolves
+    await expect(createAndStoreConsent(
+      consentId,
+      participantId,
+      scopesExternal,
+      credential,
+      'some-public-key',
+      'some-credential-challenge',
+      4
+    )).resolves
       .toBe(undefined)
 
     expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
@@ -172,8 +182,15 @@ describe('server/domain/consents', (): void => {
   it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
     const testError = new Error('Unable to Register Consent')
     mockInsertConsent.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
-      .rejects
+    await expect(createAndStoreConsent(
+      consentId,
+      participantId,
+      scopesExternal,
+      credential,
+      'some-public-key',
+      'some-credential-challenge',
+      4
+    )).rejects
       .toThrowError(new DatabaseError(consentId))
     expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
@@ -185,8 +202,15 @@ describe('server/domain/consents', (): void => {
   it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
     const testError = new Error('Unable to Register Scopes')
     mockInsertScopes.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, credential))
-      .rejects
+    await expect(createAndStoreConsent(
+      consentId,
+      participantId,
+      scopesExternal,
+      credential,
+      'some-public-key',
+      'some-credential-challenge',
+      4
+    )).rejects
       .toThrowError(new DatabaseError(consentId))
     expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
     expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())

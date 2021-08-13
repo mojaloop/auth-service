@@ -314,13 +314,11 @@ describe('fido-lib', (): void => {
       }
     }
     try {
-      var regResult = await f2l.attestationResult(
+      await f2l.attestationResult(
         clientAttestationResponse,
         attestationExpectations
       )
-      console.log(regResult)
     } catch (error){
-      console.log(error)
       throw error
     }
   })
