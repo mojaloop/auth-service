@@ -36,18 +36,28 @@ import { NotFoundError } from '../../../src/model/errors'
 /*
  * Mock Consent Resources
  */
-const partialConsents: Consent[] = [
+const consents: Consent[] = [
   {
     id: '1234',
     status: 'ACTIVE',
-    initiatorId: 'pisp-2342-2233',
-    participantId: 'dfsp-3333-2123'
+    participantId: 'dfsp-3333-2123',
+    credentialId: '123',
+    credentialType: 'FIDO',
+    credentialStatus: 'VERIFIED',
+    credentialChallenge: 'xyhdushsoa82w92mzs',
+    credentialPayload: 'dwuduwd&e2idjoj0w',
+    credentialCounter: 4
   },
   {
     id: '948',
     status: 'ACTIVE',
-    initiatorId: 'pisp-2342-2013',
-    participantId: 'dfsp-3333-2773'
+    participantId: 'dfsp-3333-2123',
+    credentialId: '123',
+    credentialType: 'FIDO',
+    credentialStatus: 'VERIFIED',
+    credentialChallenge: 'xyhdushsoa82w92mzs',
+    credentialPayload: 'dwuduwd&e2idjoj0w',
+    credentialCounter: 4
   }
 ]
 
@@ -56,17 +66,17 @@ const partialConsents: Consent[] = [
  */
 const tempScopes: ModelScope[] = [
   {
-    consentId: partialConsents[0].id,
+    consentId: consents[0].id,
     action: 'transfer',
     accountId: 'sjdn-3333-2123'
   },
   {
-    consentId: partialConsents[0].id,
+    consentId: consents[0].id,
     action: 'balance',
     accountId: 'sjdn-q333-2123'
   },
   {
-    consentId: partialConsents[0].id,
+    consentId: consents[0].id,
     action: 'saving',
     accountId: 'sjdn-q333-2123'
   }
@@ -93,7 +103,7 @@ describe('src/model/scope', (): void => {
   beforeEach(async (): Promise<void> => {
     await Db<Consent>('Consent').del()
     await Db<ModelScope>('Scope').del()
-    await Db<Consent>('Consent').insert(partialConsents)
+    await Db<Consent>('Consent').insert(consents)
   })
 
   describe('insert', (): void => {
@@ -107,7 +117,7 @@ describe('src/model/scope', (): void => {
         const scopes: ModelScope[] = await Db<ModelScope>('Scope')
           .select('*')
           .where({
-            consentId: partialConsents[0].id
+            consentId: consents[0].id
           })
 
         expect(scopes.length).toEqual(1)
@@ -126,7 +136,7 @@ describe('src/model/scope', (): void => {
         const scopes: ModelScope[] = await Db<ModelScope>('Scope')
           .select('*')
           .where({
-            consentId: partialConsents[0].id
+            consentId: consents[0].id
           })
 
         expect(scopes.length).toEqual(3)
@@ -186,7 +196,7 @@ describe('src/model/scope', (): void => {
 
     it('throws an error on retrieving non-existent scopes for existing consent',
       async (): Promise<void> => {
-        await expect(scopeDB.retrieveAll(partialConsents[0].id))
+        await expect(scopeDB.retrieveAll(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }
     )
@@ -194,7 +204,7 @@ describe('src/model/scope', (): void => {
     it('throws an error on retrieving non-existent scopes for non-existent consent',
       async (): Promise<void> => {
         await Db<Consent>('Consent').del()
-        await expect(scopeDB.retrieveAll(partialConsents[0].id))
+        await expect(scopeDB.retrieveAll(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }
     )

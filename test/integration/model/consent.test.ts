@@ -36,91 +36,31 @@ import { NotFoundError } from '../../../src/model/errors'
 /*
  * Mock Consent Resources
  */
-const partialConsent: Consent = {
-  id: '1234',
-  status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
-  participantId: 'dfsp-3333-2123'
-}
-
 const completeConsent: Consent = {
   id: '1234',
   status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
+  credentialStatus: 'VERIFIED',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
-  attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIgHq9' +
-  'JKpi/bFnnu0uVV+k6JjHfBcFwWRRCXJWlejgzJLUCIQD2iOONGXebOCxq37UqvumxC/d' +
-  'Jz1a3U9F1DaxVMFnzf2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0' +
-  'BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDY' +
-  'zMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0U' +
-  'xEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3R' +
-  'hdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwY' +
-  'HKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZd' +
-  'RvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAo' +
-  'CBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwY' +
-  'BBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb' +
-  '3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TO' +
-  'iPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5' +
-  'T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7' +
-  'E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+E' +
-  'IJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9' +
-  'bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO' +
-  '6gx2XY0EAAAAEFJogIY72QTOWuIH41bfx9QBAX8aQc8WgIOiYzoRIKbTYJdlzMZ/8zo3' +
-  'ZiIL3Rvh/ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3aUBAgMmIAEhWCB' +
-  '0Zo9xAj7V50Tu7Hj8F5Wo0A3AloIpsVDSY2icW9eSwiJYIH79t0O2hnPDguuloYn2eSd' +
-'R7caaZd/Ffnmk4vyOATab',
-  clientDataJSON: '{"type":"webauthn.create","challenge":"MgA3ADgANQBjADIAZ' +
-  'AA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiA' +
-  'DUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZ' +
-  'gA2ADcAOAAzADQAMAA","origin":"http://localhost:5000","crossOrigin":false}'
+  credentialCounter: 4
 }
 
-// Intentional lack of initiatorId and participantId
-const consentWithOnlyUpdateFields: Consent = {
+const expectedCompleteConsent = {
   id: '1234',
   status: 'ACTIVE',
-  credentialId: '123',
-  credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
-  credentialChallenge: 'xyhdushsoa82w92mzs',
-  credentialPayload: 'dwuduwd&e2idjoj0w'
-}
-
-const conflictingConsent: Consent = {
-  id: '1234',
-  status: 'ACTIVE',
-  // Conflicting initiatorId and participantId
-  // between completeConsent and this Consent
-  initiatorId: 'pisp-0000-1133',
-  participantId: 'dfs-1233-5623',
-  credentialId: '123',
-  credentialType: 'FIDO',
-  credentialStatus: 'ACTIVE',
-  credentialChallenge: 'xyhdushsoa82w92mzs',
-  credentialPayload: 'dwuduwd&e2idjoj0w'
-}
-
-const expectedPartialConsent = {
-  id: '1234',
-  status: 'ACTIVE',
-  initiatorId: 'pisp-2342-2233',
   participantId: 'dfsp-3333-2123',
   createdAt: expect.any(Date),
-  credentialId: null,
-  credentialType: null,
-  credentialStatus: null,
-  credentialPayload: null,
-  credentialChallenge: null,
+  credentialId: '123',
+  credentialType: 'FIDO',
+  credentialStatus: 'VERIFIED',
+  credentialChallenge: 'xyhdushsoa82w92mzs',
+  credentialPayload: 'dwuduwd&e2idjoj0w',
+  credentialCounter: 4,
   revokedAt: null,
-  clientDataJSON: null,
-  attestationObject: null
 }
-
 /*
  * Consent Resource Model Integration Tests
  */
@@ -144,40 +84,40 @@ describe('src/model/consent', (): void => {
   })
 
   describe('insert', (): void => {
-    it('adds consent with partial info to the database',
+    it('adds consent to the database',
       async (): Promise<void> => {
-        const inserted: boolean = await consentDB.insert(partialConsent)
+        const inserted: boolean = await consentDB.insert(completeConsent)
 
         expect(inserted).toEqual(true)
 
         const consents: Consent[] = await Db<Consent>('Consent')
           .select('*')
           .where({
-            id: partialConsent.id
+            id: completeConsent.id
           })
 
         expect(consents.length).toEqual(1)
-        expect(consents[0]).toEqual(expectedPartialConsent)
+        expect(consents[0]).toEqual(expectedCompleteConsent)
       }
     )
 
     it('throws an error on adding a consent with existing consentId',
       async (): Promise<void> => {
-        const inserted: boolean = await consentDB.insert(partialConsent)
+        const inserted: boolean = await consentDB.insert(completeConsent)
 
         expect(inserted).toEqual(true)
 
         const consents: Consent[] = await Db<Consent>('Consent')
           .select('*')
           .where({
-            id: partialConsent.id
+            id: completeConsent.id
           })
 
         // Consent has been added
-        expect(consents[0]).toEqual(expectedPartialConsent)
+        expect(consents[0]).toEqual(expectedCompleteConsent)
 
         // Fail primary key constraint
-        await expect(consentDB.insert(partialConsent)).rejects.toThrow()
+        await expect(consentDB.insert(completeConsent)).rejects.toThrow()
       }
     )
 
@@ -186,113 +126,18 @@ describe('src/model/consent', (): void => {
         const consentWithoutId: Consent = {
           id: null as unknown as string,
           status: 'ACTIVE',
-          initiatorId: '494949',
-          participantId: '3030303'
+          participantId: 'dfsp-3333-2123',
+          credentialId: '123',
+          credentialType: 'FIDO',
+          credentialStatus: 'VERIFIED',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialPayload: 'dwuduwd&e2idjoj0w',
+          credentialCounter: 4
         }
 
         await expect(consentDB.insert(consentWithoutId)).rejects.toThrow()
       }
     )
-  })
-
-  describe('update', (): void => {
-    it('updates existing consent from a consent having only required fields',
-      async (): Promise<void> => {
-        // Inserting record to update
-        await Db<Consent>('Consent').insert(partialConsent)
-
-        // Update only selected fields of inserted record
-        const updateCount: number = await consentDB.update(
-          consentWithOnlyUpdateFields
-        )
-
-        expect(updateCount).toEqual(1)
-
-        const consents: Consent[] = await Db<Consent>('Consent')
-          .select('*')
-          .where({
-            id: completeConsent.id
-          })
-
-        expect(consents[0].id).toEqual(partialConsent.id)
-        expect(consents[0].createdAt).toEqual(expect.any(Date))
-        expect(consents[0]).toEqual(
-          expect.objectContaining(consentWithOnlyUpdateFields)
-        )
-      }
-    )
-
-    // credentialStatus is non-conflicting if not `ACTIVE`
-    // Any other field is non-conflicting if not null
-    it('updates existing consent with only non-conflicting fields from consent',
-      async (): Promise<void> => {
-        // Inserting record to update
-        await Db<Consent>('Consent').insert(partialConsent)
-
-        const updateCount: number = await consentDB.update(conflictingConsent)
-
-        expect(updateCount).toEqual(1)
-
-        const consents: Consent[] = await Db<Consent>('Consent')
-          .select('*')
-          .where({
-            id: completeConsent.id
-          })
-
-        const expectedConsent = {
-          // Conflicting fields (initiatorId, participantId) are still the same
-          ...partialConsent,
-          createdAt: expect.any(Date),
-          // Rest of the fields are updated
-          credentialId: conflictingConsent.credentialId,
-          credentialStatus: conflictingConsent.credentialStatus,
-          credentialType: conflictingConsent.credentialType,
-          credentialPayload: conflictingConsent.credentialPayload,
-          credentialChallenge: conflictingConsent.credentialChallenge,
-          revokedAt: null,
-          clientDataJSON: null,
-          attestationObject: null
-        }
-
-        expect(consents[0]).toEqual(expectedConsent)
-      }
-    )
-
-    it('updates credentialStatus if it is not null but also not ACTIVE',
-      async (): Promise<void> => {
-        // Inserting record to update
-        await Db<Consent>('Consent').insert(completeConsent)
-
-        const updateCount: number = await consentDB.update(conflictingConsent)
-
-        expect(updateCount).toEqual(1)
-
-        const consents: Consent[] = await Db<Consent>('Consent')
-          .select('*')
-          .where({
-            id: completeConsent.id
-          })
-
-        const expectedConsent = {
-          // Conflicting fields (initiatorId, participantId) are still the same
-          // Even other fields are the same
-          ...completeConsent,
-          createdAt: expect.any(Date),
-          // credentialStatus is updated to 'ACTIVE'
-          credentialStatus: 'ACTIVE',
-          revokedAt: null,
-          clientDataJSON: expect.any(String),
-          attestationObject: expect.any(String)
-        }
-
-        expect(consents[0]).toEqual(expectedConsent)
-      }
-    )
-
-    it('throws an error on updating non-existent consent', async (): Promise<void> => {
-      await expect(consentDB.update(completeConsent))
-        .rejects.toThrowError(NotFoundError)
-    })
   })
 
   describe('retrieve', (): void => {
@@ -391,5 +236,39 @@ describe('src/model/consent', (): void => {
         expect(scopes.length).toEqual(0)
       }
     )
+  })
+
+  describe('revoke', (): void => {
+    it('revokes an existing consent', async (): Promise<void> => {
+      await Db<Consent>('Consent').insert(completeConsent)
+
+      const consent: Consent = await consentDB.retrieve(completeConsent.id)
+
+      expect(consent.createdAt).toEqual(expect.any(Date))
+      expect(consent).toEqual(expect.objectContaining(completeConsent))
+
+      await consentDB.revoke(completeConsent.id)
+
+      const consentRevoked: Consent = await consentDB.retrieve(completeConsent.id)
+
+      expect(consentRevoked).toEqual({
+        id: '1234',
+        participantId: 'dfsp-3333-2123',
+        status: 'REVOKED',
+        credentialId: '123',
+        credentialType: 'FIDO',
+        credentialStatus: 'VERIFIED',
+        credentialChallenge: 'xyhdushsoa82w92mzs',
+        credentialPayload: 'dwuduwd&e2idjoj0w',
+        credentialCounter: 4,
+        createdAt: expect.any(Date),
+        revokedAt: expect.any(String),
+      })
+    })
+
+    it('throws an error on retrieving non-existent consent', async (): Promise<void> => {
+      await expect(consentDB.revoke(completeConsent.id))
+        .rejects.toThrowError(NotFoundError)
+    })
   })
 })
