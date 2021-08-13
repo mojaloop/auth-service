@@ -40,7 +40,7 @@ import { Consent } from '../model/consent'
 import { logger } from '~/shared/logger'
 import { convertThirdpartyScopesToDatabaseScope } from './scopes'
 import {
-  DatabaseError,
+  DatabaseError
 } from './errors'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
