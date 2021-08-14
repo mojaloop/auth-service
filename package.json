@@ -119,7 +119,7 @@
     "@hapi/hapi": "^20.1.5",
     "@hapi/inert": "^6.0.3",
     "@hapi/vision": "^6.1.0",
-    "@mojaloop/api-snippets": "^12.4.6",
+    "@mojaloop/api-snippets": "^12.6.0",
     "@mojaloop/central-services-error-handling": "11.3.0",
     "@mojaloop/central-services-health": "^13.0.0",
     "@mojaloop/central-services-logger": "10.6.1",

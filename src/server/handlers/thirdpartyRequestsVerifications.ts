@@ -79,7 +79,6 @@ export async function post(
   setImmediate(async (): Promise<void> => {
     try {
       const model: VerifyTransactionModel = await create(data, modelConfig)
-      console.log("model is", model)
       await model.run()
     } catch (error) {
       // the model catches all planned, catches unplanned errors,
