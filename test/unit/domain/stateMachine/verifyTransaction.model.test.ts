@@ -56,7 +56,6 @@ jest.mock('~/shared/pub-sub')
 jest.mock('axios')
 
 
-// TODO: this payload will need updating for FIDO attestations
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
     challenge: 'some challenge base64 encoded',
