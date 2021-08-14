@@ -31,7 +31,7 @@ import { validate, unpackAttestationObject, packAttestationObject, FIDOAttestati
 
 describe('fido-credential', () => {
   describe('validate', () => {
-    const credential: tpAPI.Schemas.FIDOPublicKeyCredential = {
+    const credential: tpAPI.Schemas.FIDOPublicKeyCredentialAttestation = {
       id: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ_8zo3ZiIL3Rvh_ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q',
       rawId: Buffer.from([
         95, 198, 144, 115, 197, 160, 32, 232, 152, 206, 132, 72, 41, 180, 216, 37, 217, 115, 49, 159, 252, 206,
@@ -111,7 +111,7 @@ describe('fido-credential', () => {
     it('should accept only public-key type', async (done) => {
       const invalidCredentialType = { ...credential, type: 'private-key' }
       try {
-        await validate(invalidCredentialType as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+        await validate(invalidCredentialType as unknown as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
       } catch (e) {
         expect(e).toBeDefined()
         expect(e.message).toEqual('type must be public-key')
@@ -132,7 +132,7 @@ describe('fido-credential', () => {
         }
       }
       try {
-        await validate(invalidCredentialLackOfChallenge as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+        await validate(invalidCredentialLackOfChallenge as unknown as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
       } catch (e) {
         expect(e).toBeDefined()
         expect(e.message).toEqual('clientData.challenge must be nonempty string')
@@ -154,7 +154,7 @@ describe('fido-credential', () => {
         }
       }
       try {
-        await validate(invalidCredentialAttestationFMT as unknown as tpAPI.Schemas.FIDOPublicKeyCredential)
+        await validate(invalidCredentialAttestationFMT as unknown as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
       } catch (e) {
         expect(e).toBeDefined()
         expect(e.message).toEqual(`attestation format '${attestation.fmt}' not supported`)

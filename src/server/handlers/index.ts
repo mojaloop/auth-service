@@ -7,7 +7,6 @@
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
  --------------
- This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
  should be listed with a '*' in the first column. People who have
  contributed from an organization can be listed under the organization
@@ -36,9 +35,7 @@ export default {
   PostConsents: Consents.post,
   ParticipantsByTypeAndID3: ParticipantsTypeID.put,
   ParticipantsErrorByTypeAndID: ParticipantsTypeIDError.put,
-  // TODO: this should be PostThirdpartyRequestsVerifications
-  // waiting for PR: https://github.com/mojaloop/api-snippets/pull/101
-  PutThirdpartyRequestsVerifications: thirdpartyRequestsVerifications.post,
+  PostThirdpartyRequestsVerifications: thirdpartyRequestsVerifications.post,
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
   methodNotAllowed: OpenapiBackend.methodNotAllowed
