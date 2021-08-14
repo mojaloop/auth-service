@@ -274,7 +274,7 @@ export async function validateAttestation (
 }
 
 export async function validate (
-  credential: tpAPI.Schemas.FIDOPublicKeyCredential
+  credential: tpAPI.Schemas.FIDOPublicKeyCredentialAttestation
 ): Promise<boolean> {
   const { response, type } = credential
   const { clientDataJSON, attestationObject } = response
