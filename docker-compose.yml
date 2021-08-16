@@ -52,7 +52,7 @@ services:
       interval: 30s
 
   redis:
-    container_name: redis
+    container_name: as_redis
     image: "redis:6.2.4-alpine"
     networks:
       - mojaloop-net
@@ -62,7 +62,7 @@ services:
 
   ml-testing-toolkit:
     image: mojaloop/ml-testing-toolkit:v12.4.0
-    container_name: ml-testing-toolkit
+    container_name: as_ml-testing-toolkit
     volumes:
       - "./docker/ml-testing-toolkit/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
       - "./docker/ml-testing-toolkit/secrets:/opt/mojaloop-testing-toolkit/secrets"
@@ -77,7 +77,7 @@ services:
 
   ml-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:v12.0.0
-    container_name: ml-testing-toolkit-ui
+    container_name: as_ml-testing-toolkit-ui
     ports:
       - "6060:6060"
     command: nginx -g "daemon off;"
@@ -89,6 +89,6 @@ services:
 
   mongo:
     image: mongo
-    container_name: 3p_mongo
+    container_name: as_mongo
     ports:
       - "27017:27017"

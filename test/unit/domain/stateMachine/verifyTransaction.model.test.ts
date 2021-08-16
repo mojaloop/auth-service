@@ -41,8 +41,10 @@ import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
 import config from '~/shared/config';
 import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface';
-import { ThirdpartyRequestsVerificationsPostRequest } from '~/server/handlers/thirdpartyRequestsVerifications';
 import { create, VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model';
+import {
+  thirdparty as tpAPI
+  } from '@mojaloop/api-snippets'
 
 
 // mock KVS default exported class
@@ -53,24 +55,22 @@ jest.mock('~/shared/pub-sub')
 
 jest.mock('axios')
 
-// mocking the createAndStoreConsent function since
-// our test payload does not have any scopes so the function will fail
-// todo: un-mock this once we have a better payload
-jest.mock('~/domain/consents')
 
-
-// TODO: this payload will need updating for FIDO attestations
-const verificationRequest: ThirdpartyRequestsVerificationsPostRequest = {
+const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
-  challenge: 'some base64 encoded challenge string',
-  value: {
-    authenticationInfo: {
-      authentication: 'U2F',
-      authenticationValue: 'base64 encoded signed challenge'
+    challenge: 'some challenge base64 encoded',
+      consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
+        signedPayloadType: 'FIDO',
+          signedPayload: {
+    id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+      rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+        response: {
+      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+          signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
     },
-    responseType: 'ENTERED'
-  },
-  consentId: '687ecdfd-98a0-41a5-8f07-8e0a8bca00cf'
+    type: 'public-key'
+  }
 }
 
 

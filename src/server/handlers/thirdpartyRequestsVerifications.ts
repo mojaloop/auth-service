@@ -33,16 +33,12 @@ import inspect from '~/shared/inspect'
 import { create } from '~/domain/stateMachine/verifyTransaction.model'
 import { StateResponseToolkit } from '../plugins/state'
 import config from '~/shared/config'
-// import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-
-
-// TODO: grab these from api-snippets once https://github.com/mojaloop/api-snippets/pull/101 is merged in
-import { components } from '@mojaloop/api-snippets/lib/thirdparty/openapi'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface'
 import { VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model'
-export type ThirdpartyRequestsVerificationsIDPutResponse = components['schemas']['ThirdpartyRequestsVerificationsIDPutResponse']
-export type ThirdpartyRequestsVerificationsPostRequest = components['schemas']['ThirdpartyRequestsVerificationsPostRequest']
 
+// shortcut
+type VerificationsPostRequest = tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
 
 /** 
  * The HTTP request `POST /thirdpartyRequests/verifications` is used by the DFSP to verify a 
@@ -53,7 +49,7 @@ export async function post(
   _context: unknown,
   request: Request,
   h: StateResponseToolkit): Promise<ResponseObject> {
-  const payload: ThirdpartyRequestsVerificationsPostRequest = request.payload as ThirdpartyRequestsVerificationsPostRequest
+  const payload: VerificationsPostRequest = request.payload as VerificationsPostRequest
   const consentId = payload.consentId
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
 
@@ -79,7 +75,6 @@ export async function post(
   setImmediate(async (): Promise<void> => {
     try {
       const model: VerifyTransactionModel = await create(data, modelConfig)
-      console.log("model is", model)
       await model.run()
     } catch (error) {
       // the model catches all planned, catches unplanned errors,

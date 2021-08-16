@@ -32,7 +32,9 @@ import { ThirdpartyRequests, MojaloopRequests, Errors } from '@mojaloop/sdk-stan
 import inspect from '~/shared/inspect'
 import { reformatError } from '~/shared/api-error'
 import { VerifyTransactionModelConfig, VerifyTransactionData, VerifyTransactionStateMachine } from './verifyTransaction.interface'
-import { ThirdpartyRequestsVerificationsIDPutResponse } from '~/server/handlers/thirdpartyRequestsVerifications'
+import {
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
 
 export class VerifyTransactionModel
   extends PersistentModel<VerifyTransactionStateMachine, VerifyTransactionData> {
@@ -112,7 +114,7 @@ export class VerifyTransactionModel
     const { verificationRequest, participantDFSPId } = this.data
 
     try {
-      const response: ThirdpartyRequestsVerificationsIDPutResponse = {
+      const response: tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse = {
         authenticationResponse: 'VERIFIED'
       }
 

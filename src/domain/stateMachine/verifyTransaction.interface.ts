@@ -34,7 +34,6 @@ import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
 import { PubSub } from '~/shared/pub-sub'
-import { ThirdpartyRequestsVerificationsPostRequest } from '~/server/handlers/thirdpartyRequestsVerifications'
 
 export interface VerifyTransactionStateMachine extends ControlledStateMachine {
   retreiveConsent: Method
@@ -58,7 +57,7 @@ export interface VerifyTransactionData extends StateData {
   participantDFSPId: string
 
   // initial POST /thirdpartyRequests/verifications request
-  verificationRequest: ThirdpartyRequestsVerificationsPostRequest
+  verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
 
   errorInformation?: tpAPI.Schemas.ErrorInformation
 }
