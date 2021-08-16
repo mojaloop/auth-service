@@ -128,10 +128,6 @@ export interface paths {
     /** The HTTP request `POST /thirdpartyRequests/verifications` is used by the DFSP to verify a third party authorization. */
     post: operations['PostThirdpartyRequestsVerifications'];
     parameters: {
-      path: {
-        /** The identifier value. */
-        ID: components['parameters']['ID'];
-      };
       header: {
         /** The `Content-Type` header indicates the specific version of the API used to send the payload body. */
         'Content-Type': components['parameters']['Content-Type'];
@@ -999,10 +995,6 @@ export interface operations {
   /** The HTTP request `POST /thirdpartyRequests/verifications` is used by the DFSP to verify a third party authorization. */
   PostThirdpartyRequestsVerifications: {
     parameters: {
-      path: {
-        /** The identifier value. */
-        ID: components['parameters']['ID'];
-      };
       header: {
         /** The `Content-Type` header indicates the specific version of the API used to send the payload body. */
         'Content-Type': components['parameters']['Content-Type'];
