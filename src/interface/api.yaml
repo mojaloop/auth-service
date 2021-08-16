@@ -1065,7 +1065,7 @@ components:
               type: string
               description: |
                 Authenticator data object.
-              minLength: 59
+              minLength: 49
               maxLength: 256
             clientDataJSON:
               type: string
