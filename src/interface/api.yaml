@@ -338,7 +338,6 @@ paths:
           $ref: '#/components/responses/503'
   /thirdpartyRequests/verifications:
     parameters:
-      - $ref: '#/components/parameters/ID'
       - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'

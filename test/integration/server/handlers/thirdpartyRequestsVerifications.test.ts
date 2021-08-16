@@ -32,21 +32,14 @@ import headers from '~/../test/data/headers.json'
 import { validVerificationRequest } from '~/../test/data/data'
 
 describe('POST /thirdpartyRequests/verifications', () => {
-  it('shold return 202 status code for a valid request', async () => {
+  it('should return 202 status code for a valid request', async () => {
     // Arrange
     const url = 'http://localhost:4004/thirdpartyRequests/verifications'
 
     // Act
-    let response
-    try {
-      response = await axios.post(url, validVerificationRequest, { headers })
-    } catch (err) {
-      console.log(err);
-      throw err
-    }
+    const response = await axios.post(url, validVerificationRequest, { headers })
     
     // Assert
-    console.log('resonse is, ', response)
-
+    expect(response.status).toEqual(202)
   })
 })
