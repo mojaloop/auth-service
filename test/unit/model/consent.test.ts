@@ -238,6 +238,7 @@ describe('src/model/consent', (): void => {
         credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
+        // sqllite stores timestamps as strings
         createdAt: expect.any(String),
         revokedAt: expect.any(String),
       })
