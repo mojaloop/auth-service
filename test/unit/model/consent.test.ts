@@ -39,6 +39,7 @@ import Knex from 'knex'
 import Config from '~/shared/config'
 import { ConsentDB, Consent } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
+import { RevokedConsentModificationError } from '../../../src/model/errors';
 
 /*
  * Mock Consent Resources
@@ -179,7 +180,7 @@ describe('src/model/consent', (): void => {
   })
 
   describe('revoke', (): void => {
-    it('adds consent to the database', async (): Promise<void> => {
+    it('revokes a consent in the database', async (): Promise<void> => {
       const inserted: boolean = await consentDB.insert(completeConsent)
 
       expect(inserted).toEqual(true)
@@ -206,6 +207,43 @@ describe('src/model/consent', (): void => {
         createdAt: expect.any(String),
         revokedAt: expect.any(String),
       })
+    })
+
+    it('throws an error on revoking non-existent consent', async (): Promise<void> => {
+      await expect(consentDB.revoke(completeConsent.id))
+        .rejects.toThrowError(NotFoundError)
+    })
+
+    it('does not revoke a revoked consent again in the database', async (): Promise<void> => {
+      const inserted: boolean = await consentDB.insert(completeConsent)
+
+      expect(inserted).toEqual(true)
+
+      // Action
+      await consentDB.revoke(completeConsent.id)
+
+      // Assertion
+      const consents: Consent[] = await Db<Consent>('Consent')
+        .select('*')
+        .where({
+          id: completeConsent.id
+        })
+
+      expect(consents[0]).toEqual({
+        id: '1234',
+        participantId: 'dfsp-3333-2123',
+        status: 'REVOKED',
+        credentialId: '123',
+        credentialType: 'FIDO',
+              credentialChallenge: 'xyhdushsoa82w92mzs',
+        credentialPayload: 'dwuduwd&e2idjoj0w',
+        credentialCounter: 4,
+        createdAt: expect.any(String),
+        revokedAt: expect.any(String),
+      })
+
+      await expect(consentDB.revoke(completeConsent.id))
+        .rejects.toThrowError(RevokedConsentModificationError)
     })
   })
 

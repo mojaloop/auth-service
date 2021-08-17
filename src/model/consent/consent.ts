@@ -42,7 +42,7 @@
  * of 'createdAt' field may need to be tested in the future.
  */
 
-import { NotFoundError } from '../errors'
+import { NotFoundError, RevokedConsentModificationError } from '../errors';
 import Knex from 'knex'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
@@ -139,6 +139,10 @@ export class ConsentDB {
 
     if (consents.length === 0) {
       throw new NotFoundError('Consent', id)
+    }
+
+    if (consents[0].status == 'REVOKED') {
+      throw new RevokedConsentModificationError('Consent', id)
     }
 
     return await this.Db<Consent>('Consent')
