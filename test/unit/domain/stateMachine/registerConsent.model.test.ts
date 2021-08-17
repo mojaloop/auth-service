@@ -35,7 +35,7 @@ import {
   NotificationCallback,
   PubSub
 } from '~/shared/pub-sub'
-import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components';
+import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 import {
   RegisterConsentModel,
   create
@@ -46,13 +46,13 @@ import { mocked } from 'ts-jest/utils'
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
 import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
-import config from '~/shared/config';
-import axios from 'axios';
+import config from '~/shared/config'
+import axios from 'axios'
 import shouldNotBeExecuted from '../../shouldNotBeExecuted'
 import { createAndStoreConsent } from '~/domain/consents'
 import * as challenge  from '~/domain/challenge'
 import * as consents from '~/domain/consents'
-import { MojaloopApiErrorCode } from '~/shared/api-error';
+import { MojaloopApiErrorCode } from '~/shared/api-error'
 
 
 // mock KVS default exported class

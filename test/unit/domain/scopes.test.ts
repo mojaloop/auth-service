@@ -30,7 +30,7 @@
 
 import { ModelScope } from '~/model/scope/scope'
 import * as ScopeFunctions from '~/domain/scopes'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 const consentId = '1234'
 

@@ -1,7 +1,8 @@
 import { Consent } from '~/model/consent'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { ModelScope } from '~/model/scope'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import moment from 'moment'
 
 /*
  * Mock Request Resources
@@ -110,7 +111,7 @@ export const completeConsentRevoked: Consent = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   participantId: 'dfsp-3333-2123',
   status: 'REVOKED',
-  revokedAt: '2020-08-19T05:44:18.843Z',
+  revokedAt: moment('2020-08-19T05:44:18.843Z').format('YYYY-MM-DD HH:mm:ss'),
   credentialId: '123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs=',

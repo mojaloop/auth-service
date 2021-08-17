@@ -29,9 +29,9 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import { ConsentDB, Consent } from '../../../src/model/consent'
-import { ModelScope } from '../../../src/model/scope'
-import { NotFoundError } from '../../../src/model/errors'
+import { ConsentDB, Consent } from '~/model/consent'
+import { ModelScope } from '~/model/scope'
+import { NotFoundError } from '~/model/errors'
 
 /*
  * Mock Consent Resources
@@ -127,7 +127,7 @@ describe('src/model/consent', (): void => {
           participantId: 'dfsp-3333-2123',
           credentialId: '123',
           credentialType: 'FIDO',
-                  credentialChallenge: 'xyhdushsoa82w92mzs',
+          credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
           credentialCounter: 4
         }
@@ -254,11 +254,11 @@ describe('src/model/consent', (): void => {
         status: 'REVOKED',
         credentialId: '123',
         credentialType: 'FIDO',
-              credentialChallenge: 'xyhdushsoa82w92mzs',
+        credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
         createdAt: expect.any(Date),
-        revokedAt: expect.any(String),
+        revokedAt: expect.any(Date),
       })
     })
 

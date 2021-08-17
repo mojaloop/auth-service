@@ -23,9 +23,10 @@
  --------------
  ******/
 
-import * as Knex from 'knex'
 import knex from 'knex'
+import moment from 'moment'
 import Config from '~/shared/config'
+import { Consent } from '~/model/consent/consent'
 
 describe('testing Consent table', (): void => {
   let db: knex<unknown[]>
@@ -41,7 +42,7 @@ describe('testing Consent table', (): void => {
 
   it('should properly select all the entries in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
-    const users: Knex.QueryBuilder[] = await db.from('Consent').select('*')
+    const users: Array<Consent> = await db<Consent>('Consent').select('*')
     expect(users.length).toEqual(2)
     expect(users[0]).toMatchObject({
       id: '123',
@@ -60,8 +61,9 @@ describe('testing Consent table', (): void => {
       credentialType: 'FIDO',
           credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      revokedAt: '2011-10-05T14:48:00.000Z'
+      revokedAt: expect.any(Date)
     })
+    expect(moment(users[1].revokedAt).toISOString()).toEqual('2011-10-05T14:48:00.000Z')
   })
 })
 

@@ -30,7 +30,7 @@
 import axios from 'axios'
 import headers from '~/../test/data/headers.json'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import { closeKnexConnection } from '~/model/db';
+import { closeKnexConnection } from '~/model/db'
 
 interface MLTestingToolkitRequest {
   timestamp: string

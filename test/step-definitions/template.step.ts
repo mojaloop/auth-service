@@ -3,7 +3,7 @@ import { loadFeature, defineFeature } from 'jest-cucumber'
 import { Server, ServerInjectResponse } from '@hapi/hapi'
 import Config from '~/shared/config'
 
-import AuthService from '../../src/server'
+import AuthService from '~/server'
 
 const featurePath = path.join(__dirname, '../features/template.scenario.feature')
 const feature = loadFeature(featurePath)
@@ -45,5 +45,5 @@ defineFeature(feature, (test): void => {
       expect(healthResponse.uptime).toBeGreaterThan(1.0)
     })
   })
-  
+
 })

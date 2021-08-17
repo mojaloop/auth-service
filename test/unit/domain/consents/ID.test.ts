@@ -37,7 +37,8 @@ import {
   ChallengeMismatchError,
   IncorrectConsentStatusError
 } from '~/domain/errors'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import moment from 'moment'
 
 const mockConsentDbRetrieve = jest.spyOn(consentDB, 'retrieve')
 const mockScopeDbRetrieveAll = jest.spyOn(scopeDB, 'retrieveAll')
@@ -64,7 +65,7 @@ const retrievedConsentRevoked: Consent = {
   credentialType: 'FIDO',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
-  revokedAt: (new Date()).toISOString(),
+  revokedAt: moment('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss'),
   credentialCounter: 4
 }
 
@@ -76,7 +77,7 @@ const retrievedConsentWrongChallenge: Consent = {
   credentialType: 'FIDO',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'wrong_string_representing_challenge_payload',
-  revokedAt: (new Date()).toISOString(),
+  revokedAt: moment('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss'),
   credentialCounter: 4
 }
 

@@ -29,9 +29,9 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import { ScopeDB, ModelScope } from '../../../src/model/scope'
-import { Consent } from '../../../src/model/consent'
-import { NotFoundError } from '../../../src/model/errors'
+import { ScopeDB, ModelScope } from '~/model/scope'
+import { Consent } from '~/model/consent'
+import { NotFoundError } from '~/model/errors'
 
 /*
  * Mock Consent Resources

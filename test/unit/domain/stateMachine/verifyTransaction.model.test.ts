@@ -32,16 +32,16 @@ import {
   NotificationCallback,
   PubSub
 } from '~/shared/pub-sub'
-import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components';
+import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 
 import { RedisConnectionConfig } from '~/shared/redis-connection'
 import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
-import config from '~/shared/config';
-import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface';
-import { create, VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model';
+import config from '~/shared/config'
+import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface'
+import { create, VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model'
 import {
   thirdparty as tpAPI
   } from '@mojaloop/api-snippets'
@@ -186,7 +186,7 @@ describe('VerifyTransactionModel', () => {
 
 
   describe('onRetreiveConsent', () => {
-    const verifyTransactionData: VerifyTransactionData = { 
+    const verifyTransactionData: VerifyTransactionData = {
       currentState: 'start',
       participantDFSPId: 'dfspa',
       verificationRequest
