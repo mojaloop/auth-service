@@ -50,7 +50,7 @@ describe('testing Consent table', (): void => {
       participantId: 'DFSPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-          credentialPayload: 'string_representing_public_key_a',
+      credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b'
     })
     expect(users[1]).toMatchObject({
@@ -59,7 +59,7 @@ describe('testing Consent table', (): void => {
       participantId: 'DFSPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-          credentialPayload: 'string_representing_public_key_a',
+      credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
       revokedAt: expect.any(Date)
     })
@@ -88,7 +88,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       status: 'VERIFIED',
       credentialId: null,
       credentialType: null,
-          credentialPayload: null,
+      credentialPayload: null,
       credentialChallenge: null,
       revokedAt: null,
       attestationObject: null,
@@ -102,7 +102,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       status: 'VERIFIED',
       credentialId: null,
       credentialType: null,
-          credentialPayload: null,
+      credentialPayload: null,
       credentialChallenge: null,
       revokedAt: null,
       attestationObject: null,
@@ -117,7 +117,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       participantId: 'DFSPA',
       credentialId: null,
       credentialType: null,
-          credentialPayload: null,
+      credentialPayload: null,
       credentialChallenge: null,
       attestationObject: null,
       clientDataJSON: null
@@ -132,7 +132,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       status: null,
       credentialId: null,
       credentialType: null,
-          credentialPayload: null,
+      credentialPayload: null,
       credentialChallenge: null,
       revokedAt: null,
       attestationObject: null,
@@ -148,7 +148,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       participantId: null,
       credentialId: null,
       credentialType: null,
-          credentialPayload: null,
+      credentialPayload: null,
       credentialChallenge: null,
       revokedAt: null,
       attestationObject: null,

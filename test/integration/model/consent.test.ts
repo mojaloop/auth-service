@@ -289,7 +289,7 @@ describe('src/model/consent', (): void => {
         status: 'REVOKED',
         credentialId: '123',
         credentialType: 'FIDO',
-              credentialChallenge: 'xyhdushsoa82w92mzs',
+        credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
         createdAt: expect.any(String),

@@ -133,7 +133,7 @@ describe('server/domain/consents', (): void => {
     id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     status: 'VERIFIED',
     participantId: 'dfsp-3333-2123',
-      credentialType: 'FIDO',
+    credentialType: 'FIDO',
     credentialId: credential.payload.id,
     credentialPayload: 'some-public-key',
     credentialChallenge: 'some-credential-challenge',
