@@ -47,11 +47,10 @@ const mockconvertModelScopesToThirdpartyScopes = jest.spyOn(Scopes, 'convertMode
 /* Mock the retrieved consent value. */
 const retrievedConsent: Consent = {
   id: '1234',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   participantId: 'sfsfdf23',
   credentialId: '9876',
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
   credentialCounter: 4
@@ -63,7 +62,6 @@ const retrievedConsentRevoked: Consent = {
   participantId: 'sfsfdf23',
   credentialId: '9876',
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
   revokedAt: (new Date()).toISOString(),
@@ -72,11 +70,10 @@ const retrievedConsentRevoked: Consent = {
 
 const retrievedConsentWrongChallenge: Consent = {
   id: '1234',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   participantId: 'sfsfdf23',
   credentialId: '9876',
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'wrong_string_representing_challenge_payload',
   revokedAt: (new Date()).toISOString(),

@@ -62,10 +62,9 @@ export async function createAndStoreConsent (
   const consent: Consent = {
     id: consentId,
     participantId,
-    status: 'ACTIVE',
+    status: 'VERIFIED',
     credentialType: 'FIDO',
     credentialId: credential.payload.id,
-    credentialStatus: 'VERIFIED',
     credentialPayload: publicKey,
     credentialChallenge: credentialChallenge,
     credentialCounter: credentialCounter

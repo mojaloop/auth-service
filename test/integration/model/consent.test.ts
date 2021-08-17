@@ -38,11 +38,10 @@ import { NotFoundError } from '../../../src/model/errors'
  */
 const completeConsent: Consent = {
   id: '1234',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'VERIFIED',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4
@@ -50,12 +49,11 @@ const completeConsent: Consent = {
 
 const expectedCompleteConsent = {
   id: '1234',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
   createdAt: expect.any(Date),
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'VERIFIED',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4,
@@ -125,12 +123,11 @@ describe('src/model/consent', (): void => {
       async (): Promise<void> => {
         const consentWithoutId: Consent = {
           id: null as unknown as string,
-          status: 'ACTIVE',
+          status: 'VERIFIED',
           participantId: 'dfsp-3333-2123',
           credentialId: '123',
           credentialType: 'FIDO',
-          credentialStatus: 'VERIFIED',
-          credentialChallenge: 'xyhdushsoa82w92mzs',
+                  credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
           credentialCounter: 4
         }
@@ -257,8 +254,7 @@ describe('src/model/consent', (): void => {
         status: 'REVOKED',
         credentialId: '123',
         credentialType: 'FIDO',
-        credentialStatus: 'VERIFIED',
-        credentialChallenge: 'xyhdushsoa82w92mzs',
+              credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
         createdAt: expect.any(Date),

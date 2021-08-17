@@ -31,19 +31,18 @@ export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
       if (!exists) {
         return knex.schema.createTable('Consent',
           (t: Knex.CreateTableBuilder): void => {
-            // TODO: Confirm string length for status and revoked at
             t.string('id', 36).primary().notNullable()
             t.string('status', 32).notNullable()
-            t.string('initiatorId', 32).notNullable()
             t.string('participantId', 32).notNullable()
+
+            t.string('credentialId', 256).notNullable()
+            t.string('credentialType', 16).notNullable()
+            t.string('credentialPayload').notNullable()
+            t.string('credentialChallenge', 128).notNullable()
+            t.integer('credentialCounter').notNullable()
+
             t.timestamp('createdAt').defaultTo(knex.fn.now())
-            // TODO: Do we need to change internal representation to Date object
-            t.string('revokedAt', 256).nullable()
-            t.string('credentialId', 256).nullable()
-            t.string('credentialType', 16).nullable()
-            t.string('credentialStatus', 10).nullable()
-            t.string('credentialPayload').nullable()
-            t.string('credentialChallenge', 128).nullable()
+            t.timestamp('revokedAt').nullable()
           })
       }
     })

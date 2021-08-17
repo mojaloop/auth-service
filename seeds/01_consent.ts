@@ -32,15 +32,16 @@
 
 'use strict'
 import * as Knex from 'knex'
+import { Consent } from '../src/model/consent/consent';
 
-export const consents = [
+
+export const consents: Array<Consent> = [
   {
     id: '123',
-    status: 'ACTIVE',
+    status: 'VERIFIED',
     participantId: 'DFSPA',
     credentialId: '9875',
     credentialType: 'FIDO',
-    credentialStatus: 'VERIFIED',
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
     credentialCounter: 4
@@ -51,7 +52,6 @@ export const consents = [
     participantId: 'DFSPA',
     credentialId: '9875',
     credentialType: 'FIDO',
-    credentialStatus: 'VERIFIED',
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
     credentialCounter: 4,

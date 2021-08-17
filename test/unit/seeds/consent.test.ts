@@ -46,12 +46,11 @@ describe('testing Consent table', (): void => {
     expect(users.length).toEqual(2)
     expect(users[0]).toMatchObject({
       id: '123',
-      status: 'ACTIVE',
+      status: 'VERIFIED',
       participantId: 'DFSPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-      credentialStatus: 'VERIFIED',
-      credentialPayload: 'string_representing_public_key_a',
+          credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b'
     })
     expect(users[1]).toMatchObject({
@@ -60,8 +59,7 @@ describe('testing Consent table', (): void => {
       participantId: 'DFSPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-      credentialStatus: 'VERIFIED',
-      credentialPayload: 'string_representing_public_key_a',
+          credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
       revokedAt: '2011-10-05T14:48:00.000Z'
     })
@@ -89,8 +87,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       participantId: 'DFSPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-      credentialStatus: 'VERIFIED',
-      credentialPayload: 'string_representing_public_key_a',
+          credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b'
     })).rejects.toThrow()
     /* Tests for non-nullity */
@@ -99,8 +96,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       participantId: 'DFSPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-      credentialStatus: 'VERIFIED',
-      credentialPayload: 'string_representing_public_key_a',
+          credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b'
     })).rejects.toThrow()
   })
@@ -108,12 +104,11 @@ describe('testing that constraints are enforced in the consent table', (): void 
     expect(db).toBeDefined()
     await expect(db.from('Consent').insert({
       id: '128',
-      status: 'ACTIVE',
+      status: 'VERIFIED',
       participantId: null,
       credentialId: '9875',
       credentialType: 'FIDO',
-      credentialStatus: 'VERIFIED',
-      credentialPayload: 'string_representing_public_key_a',
+          credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b'
     })).rejects.toThrow()
   })
@@ -125,8 +120,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       initiatorId: 'PISPA',
       credentialId: '9875',
       credentialType: 'FIDO',
-      credentialStatus: 'VERIFIED',
-      credentialPayload: 'string_representing_public_key_a',
+          credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b'
     })).rejects.toThrow()
   })

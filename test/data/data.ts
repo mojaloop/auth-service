@@ -113,7 +113,6 @@ export const completeConsentRevoked: Consent = {
   revokedAt: '2020-08-19T05:44:18.843Z',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
   'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
@@ -124,11 +123,10 @@ export const completeConsentRevoked: Consent = {
 
 export const completeConsentActive: Consent = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'PENDING',
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
   'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
@@ -178,11 +176,10 @@ export const challenge = 'xyhdushsoa82w92mzs='
 
 export const completeConsentActiveCredential: Consent = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'VERIFIED',
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
     'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +

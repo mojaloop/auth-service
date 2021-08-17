@@ -39,10 +39,9 @@ import { NotFoundError } from '~/model/errors'
 const testConsentObject: Consent = {
   id: '1234',
   participantId: 'dfsp-3333-2123',
-  status: 'ACTIVE',
+  status: 'VERIFIED',
   credentialId: '123',
   credentialType: 'FIDO',
-  credentialStatus: 'VERIFIED',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4

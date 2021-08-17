@@ -43,7 +43,8 @@
  */
 
 import { NotFoundError } from '../errors'
-import Knex from 'knex';
+import Knex from 'knex'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /*
  * Interface for Consent resource type
@@ -52,50 +53,24 @@ export interface Consent {
   id: string;
   // participant DFSP that requested a Consent resource be made
   participantId: string;
-  // status of the consent
-  status: string;
+  /*
+  * status of a Consent
+  * a consent resource will be marked VERIFIED on creation.
+  * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
+  */
+  status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
   // NOTE: not sure what purpose credentialId serves.
   credentialId: string;
   // credential type - currently trying to support FIDO/Generic credentials
-  credentialType: 'FIDO' | 'GENERIC' | undefined;
-  // NOTE: unsure this field is needed since `auth-service` verifies
-  //       credential on receiving them
-  credentialStatus: string;
+  credentialType: 'FIDO' | 'GENERIC';
   // assuming this is the public key of the pair
   credentialPayload: string;
-  // NOTE: not sure what `credentialChallenge` is used for.
-  //       best guess is that in `retrieveValidConsent` the original challenge
-  //       used to register the consent is needed to retrieve the Consent.
-  //       assuming this is an extra layer of protection since only the
-  //       DFSP has the variables used to derive the original challenge?
-  // TODO: remove this if it serves a redundant purpose
+  // This is the original challenge sent by the DFSP to the PISP that is derived from the scopes + consentId
   credentialChallenge: string;
   // not sure how this fido2 counter works but fido2-lib suggests we store it
   credentialCounter: number;
   createdAt?: Date;
   revokedAt?: string;
-}
-
-/*
- * Interface for Consent resource type
- * A consent resource should be marked ACTIVE on creation.
- * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
- */
-export enum ConsentStatus {
-  ACTIVE = 'ACTIVE',
-  REVOKED = 'REVOKED',
-}
-
-/*
- * Interface for Consent Credential resource type
- * NOTE: unsure if we still PENDING. VERIFIED should be the only status needed
- *       now since the credential is verified at once when received by the
- *       auth-service and stored AFTER. VERIFIED might also not be needed
- *       because assuming the prior, row existence equates verified
- */
-export enum CredentialStatusEnum {
-  VERIFIED = 'VERIFIED',
-  PENDING = 'PENDING',
 }
 
 /*
