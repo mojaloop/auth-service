@@ -64,10 +64,10 @@ export async function createAndStoreConsent (
     participantId,
     status: 'VERIFIED',
     credentialType: 'FIDO',
-    credentialId: credential.payload.id,
     credentialPayload: publicKey,
     credentialChallenge: credentialChallenge,
-    credentialCounter: credentialCounter
+    credentialCounter: credentialCounter,
+    originalCredential: JSON.stringify(credential)
   }
 
   const scopes: ModelScope[] = convertThirdpartyScopesToDatabaseScope(thirdpartyScopes, consentId)

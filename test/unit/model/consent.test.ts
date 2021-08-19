@@ -48,11 +48,11 @@ const completeConsent: Consent = {
   id: '1234',
   participantId: 'dfsp-3333-2123',
   status: 'VERIFIED',
-  credentialId: '123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
-  credentialCounter: 4
+  credentialCounter: 4,
+  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
 }
 
 /*
@@ -97,11 +97,11 @@ describe('src/model/consent', (): void => {
           id: '1234',
           participantId: 'dfsp-3333-2123',
           status: 'VERIFIED',
-          credentialId: '123',
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
           credentialCounter: 4,
+          originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
           createdAt: expect.any(String),
           revokedAt: null
         })
@@ -126,11 +126,11 @@ describe('src/model/consent', (): void => {
           id: '1234',
           participantId: 'dfsp-3333-2123',
           status: 'VERIFIED',
-          credentialId: '123',
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
           credentialCounter: 4,
+          originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
           createdAt: expect.any(String),
           revokedAt: null
         })
@@ -148,11 +148,11 @@ describe('src/model/consent', (): void => {
           participantId: 'dfsp-3333-2123',
           status: 'VERIFIED',
           createdAt: expect.any(String),
-          credentialId: '123',
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
-          credentialCounter: 4
+          credentialCounter: 4,
+          originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
         })).rejects.toThrow()
       })
   })
@@ -199,11 +199,11 @@ describe('src/model/consent', (): void => {
         id: '1234',
         participantId: 'dfsp-3333-2123',
         status: 'REVOKED',
-        credentialId: '123',
         credentialType: 'FIDO',
         credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
+        originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
         createdAt: expect.any(String),
         revokedAt: expect.any(String),
       })
@@ -233,11 +233,11 @@ describe('src/model/consent', (): void => {
         id: '1234',
         participantId: 'dfsp-3333-2123',
         status: 'REVOKED',
-        credentialId: '123',
         credentialType: 'FIDO',
         credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
+        originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
         // sqllite stores timestamps as strings
         createdAt: expect.any(String),
         revokedAt: expect.any(String),

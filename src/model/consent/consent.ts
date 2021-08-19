@@ -42,7 +42,7 @@
  * of 'createdAt' field may need to be tested in the future.
  */
 
-import { NotFoundError, RevokedConsentModificationError } from '../errors';
+import { NotFoundError, RevokedConsentModificationError } from '../errors'
 import Knex from 'knex'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
@@ -59,8 +59,6 @@ export interface Consent {
   * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
   */
   status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
-  // NOTE: not sure what purpose credentialId serves.
-  credentialId: string;
   // credential type - currently trying to support FIDO/Generic credentials
   credentialType: 'FIDO' | 'GENERIC';
   // assuming this is the public key of the pair
@@ -69,6 +67,8 @@ export interface Consent {
   credentialChallenge: string;
   // not sure how this fido2 counter works but fido2-lib suggests we store it
   credentialCounter: number;
+  // the original credential used to register the consent
+  originalCredential: string;
   createdAt?: Date;
   revokedAt?: string;
 }

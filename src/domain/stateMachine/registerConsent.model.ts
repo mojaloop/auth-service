@@ -131,6 +131,7 @@ export class RegisterConsentModel
         challenge: encodedDerivedChallenge,
         // not sure what origin should be here
         // decoding and copying the origin for now
+        // PISP should be the origin
         origin: parsedClientData.origin,
         factor: 'either'
       }

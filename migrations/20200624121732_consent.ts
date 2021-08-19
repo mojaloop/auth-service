@@ -35,11 +35,11 @@ export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
             t.string('status', 32).notNullable()
             t.string('participantId', 32).notNullable()
 
-            t.string('credentialId', 256).notNullable()
             t.string('credentialType', 16).notNullable()
             t.string('credentialPayload').notNullable()
             t.string('credentialChallenge', 128).notNullable()
             t.integer('credentialCounter').notNullable()
+            t.json('originalCredential').notNullable()
 
             t.timestamp('createdAt').defaultTo(knex.fn.now())
             t.timestamp('revokedAt').nullable()

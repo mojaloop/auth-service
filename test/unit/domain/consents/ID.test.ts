@@ -50,35 +50,35 @@ const retrievedConsent: Consent = {
   id: '1234',
   status: 'VERIFIED',
   participantId: 'sfsfdf23',
-  credentialId: '9876',
   credentialType: 'FIDO',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
-  credentialCounter: 4
+  credentialCounter: 4,
+  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
 }
 
 const retrievedConsentRevoked: Consent = {
   id: '1234',
   status: 'REVOKED',
   participantId: 'sfsfdf23',
-  credentialId: '9876',
   credentialType: 'FIDO',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'string_representing_challenge_payload',
   revokedAt: moment('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss'),
-  credentialCounter: 4
+  credentialCounter: 4,
+  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
 }
 
 const retrievedConsentWrongChallenge: Consent = {
   id: '1234',
   status: 'VERIFIED',
   participantId: 'sfsfdf23',
-  credentialId: '9876',
   credentialType: 'FIDO',
   credentialPayload: 'string_representing_credential_payload',
   credentialChallenge: 'wrong_string_representing_challenge_payload',
   revokedAt: moment('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss'),
-  credentialCounter: 4
+  credentialCounter: 4,
+  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
 }
 
 /* Mock the retrieved scope value. */

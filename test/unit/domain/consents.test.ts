@@ -134,10 +134,10 @@ describe('server/domain/consents', (): void => {
     status: 'VERIFIED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
-    credentialId: credential.payload.id,
     credentialPayload: 'some-public-key',
     credentialChallenge: 'some-credential-challenge',
     credentialCounter: 4,
+    originalCredential: JSON.stringify(credential)
   }
   beforeAll(async (): Promise<void> => {
     await Db.migrate.latest()

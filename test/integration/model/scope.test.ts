@@ -41,21 +41,21 @@ const consents: Consent[] = [
     id: '1234',
     status: 'VERIFIED',
     participantId: 'dfsp-3333-2123',
-    credentialId: '123',
     credentialType: 'FIDO',
     credentialChallenge: 'xyhdushsoa82w92mzs',
     credentialPayload: 'dwuduwd&e2idjoj0w',
-    credentialCounter: 4
+    credentialCounter: 4,
+    originalCredential: JSON.stringify({  status: 'PENDING', payload: {}, credentialType: 'test'}),
   },
   {
     id: '948',
     status: 'VERIFIED',
     participantId: 'dfsp-3333-2123',
-    credentialId: '123',
     credentialType: 'FIDO',
     credentialChallenge: 'xyhdushsoa82w92mzs',
     credentialPayload: 'dwuduwd&e2idjoj0w',
-    credentialCounter: 4
+    credentialCounter: 4,
+    originalCredential: JSON.stringify({  status: 'PENDING', payload: {}, credentialType: 'test'}),
   }
 ]
 

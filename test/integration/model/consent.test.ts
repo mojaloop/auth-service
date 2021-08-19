@@ -41,11 +41,11 @@ const completeConsent: Consent = {
   id: '1234',
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
-  credentialId: '123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
-  credentialCounter: 4
+  credentialCounter: 4,
+  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
 }
 
 const expectedCompleteConsent = {
@@ -53,11 +53,11 @@ const expectedCompleteConsent = {
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
   createdAt: expect.any(Date),
-  credentialId: '123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4,
+  originalCredential: expect.any(String),
   revokedAt: null,
 }
 /*
@@ -97,6 +97,7 @@ describe('src/model/consent', (): void => {
 
         expect(consents.length).toEqual(1)
         expect(consents[0]).toEqual(expectedCompleteConsent)
+        expect(JSON.parse(consents[0].originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
       }
     )
 
@@ -126,11 +127,11 @@ describe('src/model/consent', (): void => {
           id: null as unknown as string,
           status: 'VERIFIED',
           participantId: 'dfsp-3333-2123',
-          credentialId: '123',
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
-          credentialCounter: 4
+          credentialCounter: 4,
+          originalCredential: expect.any(String),
         }
 
         await expect(consentDB.insert(consentWithoutId)).rejects.toThrow()
@@ -145,7 +146,8 @@ describe('src/model/consent', (): void => {
       const consent: Consent = await consentDB.retrieve(completeConsent.id)
 
       expect(consent.createdAt).toEqual(expect.any(Date))
-      expect(consent).toEqual(expect.objectContaining(completeConsent))
+      expect(consent).toEqual(expect.objectContaining(expectedCompleteConsent))
+      expect(JSON.parse(consent.originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
     })
 
     it('throws an error on retrieving non-existent consent', async (): Promise<void> => {
@@ -243,7 +245,7 @@ describe('src/model/consent', (): void => {
       const consent: Consent = await consentDB.retrieve(completeConsent.id)
 
       expect(consent.createdAt).toEqual(expect.any(Date))
-      expect(consent).toEqual(expect.objectContaining(completeConsent))
+      expect(consent).toEqual(expect.objectContaining(expectedCompleteConsent))
 
       await consentDB.revoke(completeConsent.id)
 
@@ -253,14 +255,16 @@ describe('src/model/consent', (): void => {
         id: '1234',
         participantId: 'dfsp-3333-2123',
         status: 'REVOKED',
-        credentialId: '123',
         credentialType: 'FIDO',
         credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
+        originalCredential: expect.any(String),
         createdAt: expect.any(Date),
         revokedAt: expect.any(Date),
       })
+
+      expect(JSON.parse(consentRevoked.originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
     })
 
     it('throws an error on revoking non-existent consent', async (): Promise<void> => {
@@ -287,14 +291,16 @@ describe('src/model/consent', (): void => {
         id: '1234',
         participantId: 'dfsp-3333-2123',
         status: 'REVOKED',
-        credentialId: '123',
         credentialType: 'FIDO',
         credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
         credentialCounter: 4,
+        originalCredential: expect.any(String),
         createdAt: expect.any(Date),
         revokedAt: expect.any(Date)
       })
+
+      expect(JSON.parse(consents[0].originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
 
       await expect(consentDB.revoke(completeConsent.id))
         .rejects.toThrowError(RevokedConsentModificationError)

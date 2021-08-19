@@ -104,10 +104,27 @@ export class VerifyTransactionModel
 
   async onRetreiveConsent(): Promise<void> {
     // TODO: lookup consent in the database. If not found, error
+    /*
+    // NOTE: how are we getting the original challenge from the DFSP
+    const consent = retrieveValidConsent(request.consentId, originalChallenge)
+    this.data.consent = consent
+    */
   }
 
   async onVerifyTransaction(): Promise<void> {
     // TODO: verify that the transaction is valid, If not, error.
+    // look up the consent and retrieve
+    /*
+      var assertionExpectations = {
+        challenge: request.challenge,
+        origin: parse(request.value.response.clientDataJSON).origin,
+        factor: "either",
+        publicKey: this.data.consent.credentialPayload
+        prevCounter: this.data.consent.crendentialCounter
+      };
+
+      var authnResult = await f2l.assertionResult(clientAssertionResponse, assertionExpectations); // will throw on error
+  */
   }
 
   async onSendCallbackToDFSP(): Promise<void> {

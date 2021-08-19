@@ -41,21 +41,21 @@ export const consents: Array<Consent> = [
     id: '123',
     status: 'VERIFIED',
     participantId: 'DFSPA',
-    credentialId: '9875',
     credentialType: 'FIDO',
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
-    credentialCounter: 4
+    credentialCounter: 4,
+    originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
   },
   {
     id: '124',
     status: 'REVOKED',
     participantId: 'DFSPA',
-    credentialId: '9875',
     credentialType: 'FIDO',
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
     credentialCounter: 4,
+    originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
     revokedAt: moment.utc('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss')
   }
 ]

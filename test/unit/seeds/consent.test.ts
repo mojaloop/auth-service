@@ -49,20 +49,20 @@ describe('testing Consent table', (): void => {
       id: '123',
       status: 'VERIFIED',
       participantId: 'DFSPA',
-      credentialId: '9875',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b'
+      credentialChallenge: 'string_representing_challenge_b',
+      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
     })
     expect(users[1]).toMatchObject({
       id: '124',
       status: 'REVOKED',
       participantId: 'DFSPA',
-      credentialId: '9875',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      revokedAt: moment('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss')
+      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+      revokedAt: moment.utc('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss')
     })
   })
 })
@@ -86,19 +86,19 @@ describe('testing that constraints are enforced in the consent table', (): void 
     await expect(db.from('Consent').insert({
       id: '123',
       participantId: 'DFSPA',
-      credentialId: '9875',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b'
+      credentialChallenge: 'string_representing_challenge_b',
+      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
     })).rejects.toThrow()
     /* Tests for non-nullity */
     await expect(db.from('Consent').insert({
       id: null,
       participantId: 'DFSPA',
-      credentialId: '9875',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b'
+      credentialChallenge: 'string_representing_challenge_b',
+      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
     })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
@@ -107,10 +107,10 @@ describe('testing that constraints are enforced in the consent table', (): void 
       id: '128',
       status: 'VERIFIED',
       participantId: null,
-      credentialId: '9875',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b'
+      credentialChallenge: 'string_representing_challenge_b',
+      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
     })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for status', async (): Promise<void> => {
@@ -119,10 +119,10 @@ describe('testing that constraints are enforced in the consent table', (): void 
       id: '128',
       status: null,
       initiatorId: 'PISPA',
-      credentialId: '9875',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b'
+      credentialChallenge: 'string_representing_challenge_b',
+      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
     })).rejects.toThrow()
   })
 })
