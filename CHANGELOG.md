@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.8.1](https://github.com/mojaloop/auth-service/compare/v11.8.0...v11.8.1) (2021-08-20)
+
+
+### Code Refactor
+
+* restructure consent model for updated api ([#85](https://github.com/mojaloop/auth-service/issues/85)) ([7999312](https://github.com/mojaloop/auth-service/commit/79993124281644b82d60fb7904312b4a955e938c))
+
 ## [11.8.0](https://github.com/mojaloop/auth-service/compare/v11.7.1...v11.8.0) (2021-08-16)
 
 
