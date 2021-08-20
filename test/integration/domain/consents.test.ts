@@ -34,7 +34,6 @@ import { requestWithPayloadScopes } from 'test/data/data'
 
 describe('server/domain/consents', (): void => {
   const consentId = requestWithPayloadScopes.params.ID
-  const initiatorId = requestWithPayloadScopes.headers['fspiop-source']
   const participantId = requestWithPayloadScopes.headers['fspiop-destination']
   const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
@@ -133,8 +132,15 @@ describe('server/domain/consents', (): void => {
   })
 
   it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(consentId, initiatorId, participantId, scopesExternal, payload.credential))
-      .resolves
+    await expect(createAndStoreConsent(
+      consentId,
+      participantId,
+      scopesExternal,
+      payload.credential,
+      'dwuduwd&e2idjoj0w',
+      'xyhdushsoa82w92mzs',
+      4
+    )).resolves
       .toBe(undefined)
   })
 })

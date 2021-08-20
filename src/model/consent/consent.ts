@@ -44,41 +44,33 @@
 
 import { NotFoundError, RevokedConsentModificationError } from '../errors'
 import Knex from 'knex'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /*
  * Interface for Consent resource type
  */
 export interface Consent {
   id: string;
-  initiatorId?: string;
-  participantId?: string;
-  status: string;
-  credentialId?: string;
-  credentialType?: string;
-  credentialStatus?: string;
-  credentialPayload?: string;
-  credentialChallenge?: string;
+  // participant DFSP that requested a Consent resource be made
+  participantId: string;
+  /*
+  * status of a Consent
+  * a consent resource will be marked VERIFIED on creation.
+  * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
+  */
+  status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
+  // credential type - currently trying to support FIDO/Generic credentials
+  credentialType: 'FIDO' | 'GENERIC';
+  // assuming this is the public key of the pair
+  credentialPayload: string;
+  // This is the original challenge sent by the DFSP to the PISP that is derived from the scopes + consentId
+  credentialChallenge: string;
+  // not sure how this fido2 counter works but fido2-lib suggests we store it
+  credentialCounter: number;
+  // the original credential used to register the consent
+  originalCredential: string;
   createdAt?: Date;
   revokedAt?: string;
-  attestationObject?: string;
-  clientDataJSON?: string;
-}
-
-/*
- * Interface for Consent Credential resource type
- */
-
-export enum CredentialStatusEnum {
-  VERIFIED = 'VERIFIED',
-  PENDING = 'PENDING',
-}
-
-export interface ConsentCredential {
-  credentialId?: string;
-  credentialType: 'FIDO';
-  credentialStatus: CredentialStatusEnum;
-  credentialPayload: string | null;
-  credentialChallenge: string;
 }
 
 /*
@@ -103,60 +95,6 @@ export class ConsentDB {
       await action
     }
     return true
-  }
-
-  // Update Consent
-  public async update (consent: Consent): Promise<number> {
-    // Returns number of updated rows
-    // Here is only logic dedicated to keep data consistency & constraints
-    // Transaction to make the update atomic
-    return this.Db.transaction(async (trx): Promise<number> => {
-      // Transaction is rolled back automatically if there is
-      // an error and the returned promise is rejected
-      const consents: Consent[] = await trx<Consent>('Consent')
-        .select('*')
-        .where({ id: consent.id })
-        .limit(1)
-
-      if (consents.length === 0) {
-        throw new NotFoundError('Consent', consent.id)
-      }
-
-      // Cannot overwrite REVOKED status Consent
-      if (consents[0].status === 'REVOKED') {
-        throw new RevokedConsentModificationError('Consent', consent.id)
-      }
-
-      const existingConsent: Consent = consents[0]
-      const updatedConsent: Record<string, string | Date> = {}
-
-      // Prepare a new Consent with only allowable updates
-      Object.keys(existingConsent).forEach((key): void => {
-        const value: string | Date =
-          existingConsent[key as keyof Consent] as string | Date
-
-        // Cannot overwrite an `ACTIVE` credentialStatus
-        if (key === 'credentialStatus' && value === 'ACTIVE') {
-          return
-        }
-
-        // Cannot overwrite non-null fields
-        if (value !== null && key !== 'credentialStatus' && key !== 'status') {
-          return
-        }
-
-        updatedConsent[key] = consent[key as keyof Consent] as string | Date
-      })
-
-      // If there are no fields that can be updated
-      if (Object.keys(updatedConsent).length === 0) {
-        return 0
-      }
-
-      return trx<Consent>('Consent')
-        .where({ id: consent.id })
-        .update(updatedConsent)
-    })
   }
 
   // Retrieve Consent by ID (unique)
@@ -189,5 +127,29 @@ export class ConsentDB {
     }
 
     return deleteCount
+  }
+
+  // Revoke Consent
+  public async revoke (id: string): Promise<number> {
+    const consents: Consent[] = await this
+      .Db<Consent>('Consent')
+      .select('*')
+      .where({ id })
+      .limit(1)
+
+    if (consents.length === 0) {
+      throw new NotFoundError('Consent', id)
+    }
+
+    if (consents[0].status == 'REVOKED') {
+      throw new RevokedConsentModificationError('Consent', id)
+    }
+
+    return await this.Db<Consent>('Consent')
+      .where({ id })
+      .update({
+        'status': 'REVOKED',
+        'revokedAt': this.Db.fn.now()
+      })
   }
 }

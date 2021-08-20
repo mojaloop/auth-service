@@ -30,6 +30,137 @@ import str2ab from 'string-to-arraybuffer'
 import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String, encodeBase64String } from '~/domain/buffer'
 
+/*
+  Example attestation result
+  The typescript interface doesn't dive deep into the returned values.
+  So this is to be used as reference
+
+  Fido2AttestationResult {
+    audit: {
+      validExpectations: true,
+      validRequest: true,
+      complete: true,
+      journal: Set {
+        'type',
+        'aaguid',
+        'credentialPublicKeyCose',
+        'credentialPublicKeyJwk',
+        'credentialPublicKeyPem',
+        'rawClientDataJson',
+        'origin',
+        'challenge',
+        'tokenBinding',
+        'rawId',
+        'rawAuthnrData',
+        'rpIdHash',
+        'flags',
+        'sig',
+        'alg',
+        'x5c',
+        'attCert',
+        'fmt',
+        'counter',
+        'credId',
+        'credIdLen',
+        'transports'
+      },
+      warning: Map {
+        'attesation-not-validated' => 'could not validate attestation because the root attestation certification could not be found'
+      },
+      info: Map {
+        'yubico-device-id' => 'Security Key by Yubico',
+        'fido-u2f-transports' => [Set],
+        'fido-aaguid' => [ArrayBuffer],
+        'basic-constraints' => [BasicConstraints],
+        'attestation-type' => 'basic'
+      }
+    },
+    validateAudit: [AsyncFunction: validateAudit],
+    requiredExpectations: Set { 'origin', 'challenge', 'flags' },
+    optionalExpectations: Set { 'rpId' },
+    expectations: Map {
+      'origin' => 'http://localhost:42181',
+      'challenge' => 'YzRhZGFiYjMzZTkzMDZiMDM4MDg4MTMyYWZmY2RlNTU2YzUwZDgyZjYwM2Y0NzcxMWE5NTEwYmYzYmVlZjZkNg',
+      'flags' => Set { 'AT', 'UP-or-UV' }
+    },
+    request: {
+      id: ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 86
+      },
+      rawId: ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 64
+      },
+      response: {
+        clientDataJSON: long string
+        attestationObject: long string
+      }
+    },
+    clientData: Map {
+      'challenge' => 'YzRhZGFiYjMzZTkzMDZiMDM4MDg4MTMyYWZmY2RlNTU2YzUwZDgyZjYwM2Y0NzcxMWE5NTEwYmYzYmVlZjZkNg',
+      'origin' => 'http://localhost:42181',
+      'type' => 'webauthn.create',
+      'tokenBinding' => undefined,
+      'rawClientDataJson' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 181
+      },
+      'rawId' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 64
+      }
+    },
+    authnrData: Map {
+      'fmt' => 'packed',
+      'alg' => { algName: 'ECDSA_w_SHA256', hashAlg: 'SHA256' },
+      'attCert' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 705
+      },
+      'x5c' => [],
+      'sig' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 71
+      },
+      'rawAuthnrData' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 196
+      },
+      'transports' => undefined,
+      'rpIdHash' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 32
+      },
+      'flags' => Set { 'UP', 'AT' },
+      'counter' => 4,
+      'aaguid' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 16
+      },
+      'credIdLen' => 64,
+      'credId' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 64
+      },
+      'credentialPublicKeyCose' => ArrayBuffer {
+        [Uint8Contents]: Some Array,
+        byteLength: 77
+      },
+      'credentialPublicKeyJwk' => {
+        kty: 'EC',
+        alg: 'ECDSA_w_SHA256',
+        crv: 'P-256',
+        x: 'WM/klen0su2Yxc3Y/klsWjG32sOGU/sGIApTd7/d5FU=',
+        y: 'ZLNjjUM0uuHWNengnneoKerj5v0dhe53/RQSxmq4N5U='
+      },
+      'credentialPublicKeyPem' => '-----BEGIN PUBLIC KEY-----\n' +
+        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+        'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+        '-----END PUBLIC KEY-----\n'
+    }
+  }
+*/
 
 const consentsPostRequestAUTH = {
   headers: {
@@ -183,13 +314,11 @@ describe('fido-lib', (): void => {
       }
     }
     try {
-      var regResult = await f2l.attestationResult(
+      await f2l.attestationResult(
         clientAttestationResponse,
         attestationExpectations
       )
-      console.log(regResult)
     } catch (error){
-      console.log(error)
       throw error
     }
   })

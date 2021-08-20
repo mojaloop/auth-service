@@ -29,44 +29,8 @@
  ******/
 
 import crypto from 'crypto'
-// import { logger } from '~/shared/logger'
 import Credential from './credential'
-import { generate, verifySignature } from '~/domain/challenge'
-// import { mocked } from 'ts-jest/utils'
-
-// jest.mock('~/shared/logger')
-
-describe('Challenge Generation', (): void => {
-  it('Should return a 32 byte string by default', async (): Promise<void> => {
-    const challenge = await generate()
-    expect(Buffer.byteLength(challenge, 'base64')).toBe(32)
-  })
-
-  it('Should return a 64 byte string if argument passed',
-    async (): Promise<void> => {
-      const challenge = await generate(64)
-      expect(Buffer.byteLength(challenge, 'base64')).toBe(64)
-    })
-
-  it('Should return a 64 byte string even if negative argument passed',
-    async (): Promise<void> => {
-      const challenge = await generate(-64)
-      expect(Buffer.byteLength(challenge, 'base64')).toBe(64)
-    })
-
-  it('Should return a 50 byte string even if float point argument passed',
-    async (): Promise<void> => {
-      const challenge = await generate(49.88)
-      expect(Buffer.byteLength(challenge, 'base64')).toBe(50)
-    })
-
-  // eslint-disable-next-line max-len
-  it('Should return a 8 byte string even if negative float point argument passed',
-    async (): Promise<void> => {
-      const challenge = await generate(-8.1)
-      expect(Buffer.byteLength(challenge, 'base64')).toBe(8)
-    })
-})
+import { verifySignature } from '~/domain/challenge'
 
 /*
  * Signature Verification Unit Tests

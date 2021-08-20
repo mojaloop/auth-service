@@ -131,6 +131,7 @@ export class RegisterConsentModel
         challenge: encodedDerivedChallenge,
         // not sure what origin should be here
         // decoding and copying the origin for now
+        // PISP should be the origin
         origin: parsedClientData.origin,
         factor: 'either'
       }
@@ -145,10 +146,13 @@ export class RegisterConsentModel
         }
       }
 
-      await f2l.attestationResult(
+      const attestationResult =  await f2l.attestationResult(
         clientAttestationResponse,
         attestationExpectations
       )
+
+      this.data.credentialPublicKey = attestationResult!.authnrData.get('credentialPublicKeyPem')
+      this.data.credentialCounter = attestationResult!.authnrData.get('counter')
     } catch (error) {
       this.logger.push({ error }).error('start -> consentVerified')
 
@@ -176,15 +180,17 @@ export class RegisterConsentModel
   }
 
   async onStoreConsent (): Promise<void> {
-    const { consentsPostRequestAUTH, participantDFSPId } = this.data
+    const { consentsPostRequestAUTH, participantDFSPId, credentialPublicKey, credentialCounter } = this.data
+
     try {
       await createAndStoreConsent(
         consentsPostRequestAUTH.consentId,
-        // initiatorId is deprecated so just using empty string for now
-        '',
         participantDFSPId,
         consentsPostRequestAUTH.scopes,
-        consentsPostRequestAUTH.credential
+        consentsPostRequestAUTH.credential,
+        credentialPublicKey!,
+        deriveChallenge(consentsPostRequestAUTH),
+        credentialCounter!
       )
     } catch (error) {
       this.logger.push({ error }).error('consentVerified -> consentStoredAndVerified')

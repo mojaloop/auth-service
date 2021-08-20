@@ -82,7 +82,7 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
     /* Tests for duplication */
     await expect(db.from('Scope').insert({
       id: 1,
-      consentId: '125',
+      consentId: '123',
       action: 'accounts.transfer',
       accountId: '78901-12345'
     })).rejects.toThrow()
