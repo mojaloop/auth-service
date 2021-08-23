@@ -42,17 +42,16 @@ Convict.addFormat({
   name: 'string-array',
   validate: function (sources, _schema) {
     if (!Array.isArray(sources)) {
-      throw new Error('must be of type Array');
+      throw new Error('must be of type Array')
     }
-    
+
     sources.forEach(source => {
       if (typeof source !== 'string') {
         throw new Error('Expected a string in array!')
       }
     })
   }
-});
-
+})
 
 interface ServiceConfig {
   PORT: number;
