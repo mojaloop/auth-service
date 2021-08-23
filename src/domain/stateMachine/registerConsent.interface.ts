@@ -56,7 +56,8 @@ export interface RegisterConsentModelConfig extends PersistentModelConfig {
   mojaloopRequests: MojaloopRequests
   requestProcessingTimeoutSeconds: number
   authServiceParticipantFSPId: string
-  alsEndpoint: string
+  alsEndpoint: string,
+  demoSkipValidationForCredentialIds: Array<string>
 }
 
 export interface RegisterConsentData extends StateData {

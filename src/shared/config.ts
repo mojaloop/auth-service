@@ -37,6 +37,21 @@ import path from 'path'
 import fs, { PathLike } from 'fs'
 import { BaseRequestTLSConfig } from '@mojaloop/sdk-standard-components'
 
+Convict.addFormat({
+  name: 'string-array',
+  validate: function (sources, _schema) {
+    if (!Array.isArray(sources)) {
+      throw new Error('must be of type Array')
+    }
+
+    sources.forEach(source => {
+      if (typeof source !== 'string') {
+        throw new Error('Expected a string in array!')
+      }
+    })
+  }
+})
+
 interface ServiceConfig {
   PORT: number;
   HOST: string;
@@ -74,6 +89,7 @@ interface ServiceConfig {
     };
     TLS: BaseRequestTLSConfig;
   };
+  DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS: Array<string>
 }
 
 export function getFileContent (path: PathLike): Buffer {
@@ -187,7 +203,12 @@ const ConvictConfig = Convict<ServiceConfig>({
       }
     }
   },
-  DATABASE: DatabaseConfigScheme
+  DATABASE: DatabaseConfigScheme,
+  DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS: {
+    doc: 'For demo purposes only. Set a list of credentialIds you want to skip validation for.',
+    format: 'string-array',
+    default: []
+  }
 })
 
 // Load and validate general config based on environment variable
@@ -216,6 +237,10 @@ ConvictConfig.set('SHARED.TLS.creds.key',
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()
+
+if (config.DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS.length > 0) {
+  console.warn('DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS set. This is for testing purposes only and should not be used in production.')
+}
 
 export default config
 export {
