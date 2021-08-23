@@ -201,7 +201,7 @@ describe('RegisterConsentModel', () => {
       requestProcessingTimeoutSeconds: 3,
       // TODO: fill these in
       demoSkipValidationForCredentialIds: [
-        
+        '123456789'
       ]
       
     }
@@ -385,6 +385,27 @@ describe('RegisterConsentModel', () => {
         },
         'dfspA'
       )
+    })
+
+    it('skips consent verification if the payload.id is in the DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS list', async () => {
+      // Arrange
+      const consentsPostRequestSkipCredentialId = JSON.parse(JSON.stringify(consentsPostRequestAUTH))
+      consentsPostRequestSkipCredentialId.credential.payload.id = '123456789'
+      // Change the consentId so that that derived challenge will be incorrect
+      consentsPostRequestSkipCredentialId.consentId = 'some_consent_id'
+
+      const registerConsentSkipVerificationData: RegisterConsentData = {
+        currentState: 'start',
+        participantDFSPId: 'dfspA',
+        consentsPostRequestAUTH: consentsPostRequestSkipCredentialId,
+      }
+      const model = await create(registerConsentSkipVerificationData, modelConfig)
+      
+      // Act
+      await model.fsm.verifyConsent()
+
+      // Assert
+      expect(model.data.currentState).toEqual('consentVerified')
     })
   })
 
