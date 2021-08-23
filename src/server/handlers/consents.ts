@@ -67,7 +67,8 @@ export async function post (
     mojaloopRequests: h.getMojaloopRequests(),
     authServiceParticipantFSPId: config.PARTICIPANT_ID,
     alsEndpoint: config.SHARED.ALS_ENDPOINT,
-    requestProcessingTimeoutSeconds: config.REQUEST_PROCESSING_TIMEOUT_SECONDS
+    requestProcessingTimeoutSeconds: config.REQUEST_PROCESSING_TIMEOUT_SECONDS,
+    skipValidationForCredentialIds: config.SKIP_VALIDATION_FOR_CREDENTIAL_IDS
   }
 
   setImmediate(async (): Promise<void> => {

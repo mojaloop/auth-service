@@ -74,6 +74,8 @@ interface ServiceConfig {
     };
     TLS: BaseRequestTLSConfig;
   };
+  SKIP_VALIDATION_FOR_CREDENTIAL_IDS: Array<string>
+  // DEMO_PUBLIC_KEY: Array<string>
 }
 
 export function getFileContent (path: PathLike): Buffer {
@@ -187,7 +189,12 @@ const ConvictConfig = Convict<ServiceConfig>({
       }
     }
   },
-  DATABASE: DatabaseConfigScheme
+  DATABASE: DatabaseConfigScheme,
+  SKIP_VALIDATION_FOR_CREDENTIAL_IDS: {
+    doc: 'For demo purposes only. Set a list of credentialIds you want to skip validation for.',
+    format: 'Array<String>',
+    default: []
+  }
 })
 
 // Load and validate general config based on environment variable
