@@ -38,12 +38,17 @@ import fs, { PathLike } from 'fs'
 import { BaseRequestTLSConfig } from '@mojaloop/sdk-standard-components'
 
 Convict.addFormat({
-  name: 'source-array',
-  validate: function (sources, schema) {
+  name: 'string-array',
+  validate: function (sources, _schema) {
     if (!Array.isArray(sources)) {
       throw new Error('must be of type Array');
     }
-    sources.forEach(source => Convict(schema.children).load(source).validate())
+    
+    sources.forEach(source => {
+      if (typeof source !== 'string') {
+        throw new Error('Expected a string in array!')
+      }
+    })
   }
 });
 
@@ -202,7 +207,7 @@ const ConvictConfig = Convict<ServiceConfig>({
   DATABASE: DatabaseConfigScheme,
   DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS: {
     doc: 'For demo purposes only. Set a list of credentialIds you want to skip validation for.',
-    format: 'source-array',
+    format: 'string-array',
     default: []
   }
 })

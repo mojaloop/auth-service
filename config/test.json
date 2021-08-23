@@ -53,5 +53,6 @@
         ".ts"
       ]
     }
-  }
+  },
+  "DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS": [ "123456789" ]
 }
