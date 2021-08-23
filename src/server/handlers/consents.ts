@@ -68,7 +68,7 @@ export async function post (
     authServiceParticipantFSPId: config.PARTICIPANT_ID,
     alsEndpoint: config.SHARED.ALS_ENDPOINT,
     requestProcessingTimeoutSeconds: config.REQUEST_PROCESSING_TIMEOUT_SECONDS,
-    skipValidationForCredentialIds: config.SKIP_VALIDATION_FOR_CREDENTIAL_IDS
+    demoSkipValidationForCredentialIds: config.DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS
   }
 
   setImmediate(async (): Promise<void> => {

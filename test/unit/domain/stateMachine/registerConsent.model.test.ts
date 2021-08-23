@@ -198,7 +198,12 @@ describe('RegisterConsentModel', () => {
       } as unknown as ThirdpartyRequests,
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       alsEndpoint: config.SHARED.ALS_ENDPOINT!,
-      requestProcessingTimeoutSeconds: 3
+      requestProcessingTimeoutSeconds: 3,
+      // TODO: fill these in
+      demoSkipValidationForCredentialIds: [
+        
+      ]
+      
     }
     mocked(modelConfig.subscriber.subscribe).mockImplementationOnce(
       (_channel: string, cb: NotificationCallback) => {

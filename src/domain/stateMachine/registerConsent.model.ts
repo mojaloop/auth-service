@@ -148,8 +148,8 @@ export class RegisterConsentModel
 
       // TODO: if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
       // then skip this step, and make up a random public key
-      if (this.config.skipValidationForCredentialIds.length > 0 && 
-        this.config.skipValidationForCredentialIds.indexOf(consentsPostRequestAUTH.credential.payload.id) > -1) {
+      if (this.config.demoSkipValidationForCredentialIds.length > 0 &&
+        this.config.demoSkipValidationForCredentialIds.indexOf(consentsPostRequestAUTH.credential.payload.id) > -1) {
         
         this.logger.warn(`found demo credentialId: ${consentsPostRequestAUTH.credential.payload.id}. Skipping FIDO attestation validation step.`)
         
