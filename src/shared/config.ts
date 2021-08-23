@@ -36,6 +36,7 @@ import PACKAGE from '../../package.json'
 import path from 'path'
 import fs, { PathLike } from 'fs'
 import { BaseRequestTLSConfig } from '@mojaloop/sdk-standard-components'
+import { logger } from './logger'
 
 Convict.addFormat({
   name: 'string-array',
@@ -238,6 +239,10 @@ ConvictConfig.set('SHARED.TLS.creds.key',
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()
+
+if (config.DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS.length > 0) {
+  logger.warn('DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS set. This is for testing purposes only and should not be used in production.')
+}
 
 export default config
 export {
