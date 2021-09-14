@@ -101,7 +101,6 @@ export async function createAndStoreConsent (
   }
 }
 
-
 export async function getConsent(consentId: string): Promise<Consent> {
   const consentModel = await DB.getConsent(consentId)
   const scopesModel = await DB.getScopesForConsentId(consentId)

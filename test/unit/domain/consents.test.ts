@@ -26,27 +26,27 @@
  - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import { Db, consentDB, scopeDB } from '~/model/db'
-import { createAndStoreConsent } from '~/domain/consents'
-
-import * as ScopeFunction from '~/domain/scopes'
+import * as DB from '~/model/db'
+import * as ConsentDomain from '~/domain/consents'
 import {
-  requestWithPayloadScopes, externalScopes,
+  requestWithPayloadScopes,
+  scopesWithoutIds,
   scopes
 } from '~/../test/data/data'
-import { DatabaseError } from '~/domain/errors'
 import { logger } from '~/shared/logger'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { ConsentModel } from '~/model/consent'
+import { NotFoundError } from '~/model/errors'
 
-// import { mocked } from 'ts-jest/utils'
-
-// jest.mock('~/shared/logger')
 
 // Declare Mocks
-const mockInsertConsent = jest.spyOn(consentDB, 'insert')
-const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
-const mockConvertThirdpartyScopesToDatabaseScope = jest.spyOn(
-  ScopeFunction, 'convertThirdpartyScopesToDatabaseScope')
+// jest.mock('~/model/db')
+const mockInsertConsentWithScopes = jest.spyOn(DB, 'insertConsentWithScopes')
+const mockGetConsent = jest.spyOn(DB, 'getConsent')
+const mockGetScopesForConsentId = jest.spyOn(DB, 'getScopesForConsentId')
+// const mockInsertScopes = jest.spyOn(scopeDB, 'insert')
+// const mockConvertThirdpartyScopesToDatabaseScope = jest.spyOn(
+//   ScopeFunction, 'convertThirdpartyScopesToDatabaseScope')
 
 describe('server/domain/consents', (): void => {
   const consentId = requestWithPayloadScopes.params.ID
@@ -129,7 +129,7 @@ describe('server/domain/consents', (): void => {
       type: 'public-key'
     }
   }
-  const consentActiveFIDO = {
+  const consentActiveFIDO: ConsentModel = {
     id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     status: 'VERIFIED',
     participantId: 'dfsp-3333-2123',
@@ -139,90 +139,221 @@ describe('server/domain/consents', (): void => {
     credentialCounter: 4,
     originalCredential: JSON.stringify(credential)
   }
+  const mockGetConsentActive: ConsentModel = {
+    id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+    status: 'VERIFIED',
+    participantId: 'dfsp-3333-2123',
+    credentialType: 'FIDO',
+    credentialPayload: 'some-public-key',
+    credentialChallenge: 'some-credential-challenge',
+    credentialCounter: 4,
+    originalCredential: JSON.stringify(credential),
+    createdAt: new Date('2020-01-01')
+  }
+  const mockGetConsentRevoked: ConsentModel = {
+    id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+    status: 'REVOKED',
+    participantId: 'dfsp-3333-2123',
+    credentialType: 'FIDO',
+    credentialPayload: 'some-public-key',
+    credentialChallenge: 'some-credential-challenge',
+    credentialCounter: 4,
+    originalCredential: JSON.stringify(credential),
+    createdAt: new Date('2020-01-01'),
+    revokedAt: new Date('2021-01-01')
+  }
+
   beforeAll(async (): Promise<void> => {
-    await Db.migrate.latest()
-    await Db.raw('PRAGMA foreign_keys = ON')
-    mockConvertThirdpartyScopesToDatabaseScope.mockReturnValue(scopes)
+    // await Db.migrate.latest()
+    // await Db.raw('PRAGMA foreign_keys = ON')
+    // mockConvertThirdpartyScopesToDatabaseScope.mockReturnValue(scopes)
   })
 
   afterAll(async (): Promise<void> => {
-    Db.destroy()
+    // Db.destroy()
   })
 
   beforeEach(async (): Promise<void> => {
     jest.clearAllMocks()
-    mockInsertConsent.mockResolvedValue(true)
-    mockInsertScopes.mockResolvedValue(true)
-    await Db('Consent').del()
-    await Db('Scope').del()
+    // mockInsertConsent.mockResolvedValue(true)
+    // mockInsertScopes.mockResolvedValue(true)
+    // // await Db('Consent').del()
+    // // await Db('Scope').del()
   })
 
   it('test logger', (): void => {
     expect(logger).toBeDefined()
     expect(logger.push({})).toBeDefined()
   })
-  it('Should resolve successfully', async (): Promise<void> => {
-    await expect(createAndStoreConsent(
-      consentId,
-      participantId,
-      scopesExternal,
-      credential,
-      'some-public-key',
-      'some-credential-challenge',
-      4
-    )).resolves
-      .toBe(undefined)
 
-    expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
-    expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
-  })
+  describe('createAndStoreConsent', () => {
+    it('stores the consent', async (): Promise<void> => {
+      // Arrange
+      mockInsertConsentWithScopes.mockResolvedValueOnce()
+      
+      // Act
+      await ConsentDomain.createAndStoreConsent(
+        consentId,
+        participantId,
+        scopesExternal,
+        credential,
+        'some-public-key',
+        'some-credential-challenge',
+        4
+      )
+          
+      // Assert
+      expect(mockInsertConsentWithScopes).toHaveBeenCalledWith(consentActiveFIDO, scopesWithoutIds)
+    })
 
-  it('Should propagate error in inserting Consent in database', async (): Promise<void> => {
-    const testError = new Error('Unable to Register Consent')
-    mockInsertConsent.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(
-      consentId,
-      participantId,
-      scopesExternal,
-      credential,
-      'some-public-key',
-      'some-credential-challenge',
-      4
-    )).rejects
-      .toThrowError(new DatabaseError(consentId))
-    expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
-    expect(mockInsertScopes).not.toHaveBeenCalled()
-    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
-    mockInsertConsent.mockClear()
-  })
-
-  it('Should propagate error in inserting Scopes in database', async (): Promise<void> => {
-    const testError = new Error('Unable to Register Scopes')
-    mockInsertScopes.mockRejectedValueOnce(testError)
-    await expect(createAndStoreConsent(
-      consentId,
-      participantId,
-      scopesExternal,
-      credential,
-      'some-public-key',
-      'some-credential-challenge',
-      4
-    )).rejects
-      .toThrowError(new DatabaseError(consentId))
-    expect(mockConvertThirdpartyScopesToDatabaseScope).toHaveBeenCalledWith(externalScopes, 'b51ec534-ee48-4575-b6a9-ead2955b8069')
-    expect(mockInsertConsent).toHaveBeenCalledWith(consentActiveFIDO, expect.anything())
-    expect(mockInsertScopes).toHaveBeenCalledWith(scopes, expect.anything())
-    // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
-    mockInsertScopes.mockClear()
+    it('throw if there is an error in the db', async (): Promise<void> => {
+      // Arrange
+      mockInsertConsentWithScopes.mockRejectedValueOnce(new Error('test error'))
+      
+      // Act
+      try {
+        await ConsentDomain.createAndStoreConsent(
+          consentId,
+          participantId,
+          scopesExternal,
+          credential,
+          'some-public-key',
+          'some-credential-challenge',
+          4
+        )
+        throw new Error('should not be executed')
+      } catch (err: any) {
+        // Assert
+        expect(mockInsertConsentWithScopes).toHaveBeenCalledWith(consentActiveFIDO, scopesWithoutIds)
+        expect(err.message).toMatch(`Auth service database error for`)
+      }
+    })
   })
 
   describe('getConsent', () => {
-    it.todo('gets the ConsentModel and ScopeModel from the database and maps correctly')
-    it.todo('parses the credential object')
-    it.todo('throws an error if the consent status has been modified after being revoked')
-    it.todo('throws an error if scopes cannot be found')
-    it.todo('throws an error if the consent cannot be found')
+    it('gets the ConsentModel and ScopeModel from the database and maps correctly', async () => {
+      // Arrange
+      mockGetConsent.mockResolvedValue(mockGetConsentActive)
+      mockGetScopesForConsentId.mockResolvedValueOnce(scopes)
+      const expected = {
+        consentId: expect.stringMatching('.*'),
+        participantId: expect.stringMatching('.*'),
+        scopes: [
+          {
+            accountId: 'as2342',
+            actions: [ 'accounts.getBalance', 'accounts.transfer'],
+          },
+          {
+            accountId: 'as22',
+            actions: [ 'accounts.getBalance'],
+          },
+        ],
+        credential: credential,
+        status: 'VERIFIED',
+        credentialCounter: 4,
+        credentialPayload: 'some-public-key',
+        createdAt: expect.objectContaining({}),
+        revokedAt: undefined
+      }
+      
+      // Act
+      const result = await ConsentDomain.getConsent(consentId)
+      
+      // Assert
+      expect(result).toStrictEqual(expected)
+      // test dates separately for better guarantees
+      expect(result.createdAt.toISOString()).toBe('2020-01-01T00:00:00.000Z')
+      expect(result.revokedAt).toBeUndefined()
+    })
+
+    it('gets a consent that has been revoked', async () => {
+      // Arrange
+      mockGetConsent.mockResolvedValue(mockGetConsentRevoked)
+      mockGetScopesForConsentId.mockResolvedValueOnce(scopes)
+      const expected = {
+        consentId: expect.stringMatching('.*'),
+        participantId: expect.stringMatching('.*'),
+        scopes: [
+          {
+            accountId: 'as2342',
+            actions: ['accounts.getBalance', 'accounts.transfer'],
+          },
+          {
+            accountId: 'as22',
+            actions: ['accounts.getBalance'],
+          },
+        ],
+        credential: credential,
+        status: 'REVOKED',
+        credentialCounter: 4,
+        credentialPayload: 'some-public-key',
+        createdAt: expect.objectContaining({}),
+        revokedAt: expect.objectContaining({}),
+      }
+      
+      // Act
+      const result = await ConsentDomain.getConsent(consentId)
+      
+      // Assert
+      expect(result).toStrictEqual(expected)
+      expect(result.createdAt.toISOString()).toBe('2020-01-01T00:00:00.000Z')
+      expect(result.revokedAt!.toISOString()).toBe('2021-01-01T00:00:00.000Z')
+    })
+
+    it('throws an error if the consent status has been modified after being revoked', async () => {
+      // Arrange
+      const mockInvalidConsent: ConsentModel = {
+        id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+        status: 'VERIFIED',
+        participantId: 'dfsp-3333-2123',
+        credentialType: 'FIDO',
+        credentialPayload: 'some-public-key',
+        credentialChallenge: 'some-credential-challenge',
+        credentialCounter: 4,
+        originalCredential: JSON.stringify(credential),
+        createdAt: new Date('2020-01-01'),
+        revokedAt: new Date('2021-01-01')
+      }
+      mockGetConsent.mockResolvedValue(mockInvalidConsent)
+      mockGetScopesForConsentId.mockResolvedValueOnce(scopes)
+
+      // Act
+      try {
+        await ConsentDomain.getConsent(consentId)
+        throw new Error('Should not be executed!')
+      } catch (err: any) {
+        // Assert
+        expect(err.message).toStrictEqual('Invalid ConsentModel - status cannot be modified after it has been revoked')
+      }
+    })
+
+    it('throws an error if scopes cannot be found', async () => {
+      // Arrange
+      mockGetConsent.mockResolvedValue(mockGetConsentActive)
+      mockGetScopesForConsentId.mockRejectedValueOnce(new Error('Test Error'))
+
+      // Act
+      try {
+        await ConsentDomain.getConsent(consentId)
+        throw new Error('Should not be executed!')
+      } catch (err: any) {
+        // Assert
+        expect(err.message).toStrictEqual('Test Error')
+      }
+    })
+
+    it('throws an error if the consent cannot be found', async () => {
+      // Arrange
+      mockGetConsent.mockRejectedValueOnce(new NotFoundError('Consent', consentId))
+
+      // Act
+      try {
+        await ConsentDomain.getConsent(consentId)
+        throw new Error('Should not be executed!')
+      } catch (err: any) {
+        // Assert
+        expect(err.message).toStrictEqual('NotFoundError: Consent for ConsentId b51ec534-ee48-4575-b6a9-ead2955b8069')
+      }
+    })
   })
 })

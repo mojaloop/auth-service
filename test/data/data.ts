@@ -247,6 +247,23 @@ export const scopes: ScopeModel[] = [{
 }
 ]
 
+export const scopesWithoutIds: ScopeModel[] = [{
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+  accountId: 'as2342',
+  action: 'accounts.getBalance'
+},
+{
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+  accountId: 'as2342',
+  action: 'accounts.transfer'
+},
+{
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+  accountId: 'as22',
+  action: 'accounts.getBalance'
+}
+]
+
 /*
  * Mock Credential Resources
 */
