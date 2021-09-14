@@ -51,10 +51,20 @@ async function insertConsentWithScopes(consent: ConsentModel, scopes: ScopeModel
   }
 }
 
+async function getConsent(consentId: string): Promise<ConsentModel> {
+  return consentDB.retrieve(consentId)
+}
+
+async function getScopesForConsentId(consentId: string): Promise<Array<ScopeModel>> {
+  return scopeDB.getForConsentId(consentId)
+}
+
 export {
   Db,
   consentDB,
   scopeDB,
   closeKnexConnection,
-  insertConsentWithScopes
+  insertConsentWithScopes,
+  getConsent,
+  getScopesForConsentId,
 }

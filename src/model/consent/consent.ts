@@ -65,12 +65,12 @@ export interface ConsentModel {
   credentialPayload: string;
   // This is the original challenge sent by the DFSP to the PISP that is derived from the scopes + consentId
   credentialChallenge: string;
-  // not sure how this fido2 counter works but fido2-lib suggests we store it
+  // a counter that gets incremented every time the credential is used
   credentialCounter: number;
   // the original credential used to register the consent
   originalCredential: string;
   createdAt?: Date;
-  revokedAt?: string;
+  revokedAt?: Date;
 }
 
 const tableName = 'Consent'

@@ -79,7 +79,7 @@ export class ScopeDB {
   }
 
   // Retrieve Scopes by Consent ID
-  public async retrieveAll (consentId: string): Promise<ScopeModel[]> {
+  public async getForConsentId (consentId: string): Promise<ScopeModel[]> {
     const scopes: ScopeModel[] = await this
       .Db<ScopeModel>('Scope')
       .select('*')

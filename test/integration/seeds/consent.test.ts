@@ -26,7 +26,7 @@
 import knex from 'knex'
 import moment from 'moment'
 import Config from '~/shared/config'
-import { Consent } from '~/model/consent/consent'
+import { ConsentModel } from '~/model/consent/consent'
 
 describe('testing Consent table', (): void => {
   let db: knex<unknown[]>
