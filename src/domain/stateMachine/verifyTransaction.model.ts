@@ -131,7 +131,7 @@ export class VerifyTransactionModel
     console.log('authnresult', authnResult)
 
     // TODO: for greater security, store the updated counter result
-    // but that is considered out of scope for now.
+    // out of scope for now.
 
   }
 
