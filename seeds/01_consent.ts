@@ -33,7 +33,7 @@
 'use strict'
 import * as Knex from 'knex'
 import moment from 'moment'
-import { Consent } from '../src/model/consent/consent'
+import { ConsentModel } from '../src/model/consent/consent'
 
 
 export const consents: Array<ConsentModel> = [
