@@ -24,7 +24,6 @@
  ******/
 
 import knex from 'knex'
-import moment from 'moment'
 import Config from '~/shared/config'
 import { ConsentModel } from '~/model/consent/consent'
 
@@ -61,7 +60,7 @@ describe('testing Consent table', (): void => {
       credentialChallenge: 'string_representing_challenge_b',
       revokedAt: expect.any(Date)
     })
-    expect(moment(users[1].revokedAt).toISOString()).toEqual('2011-10-05T14:48:00.000Z')
+    expect(users[1].revokedAt!.toISOString()).toEqual('2011-10-05T14:48:00.000Z')
   })
 })
 

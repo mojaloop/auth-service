@@ -26,7 +26,6 @@
 
 import Config from '~/shared/config'
 import Knex from 'knex'
-import moment from 'moment'
 
 describe('testing Consent table', (): void => {
   let db: Knex<unknown[]>
@@ -62,7 +61,7 @@ describe('testing Consent table', (): void => {
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
       originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
-      revokedAt: moment.utc('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss')
+      revokedAt: new Date('2011-10-05T14:48:00.000Z')
     })
   })
 })
