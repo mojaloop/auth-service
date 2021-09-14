@@ -103,12 +103,9 @@ export class VerifyTransactionModel
 
 
   async onRetreiveConsent(): Promise<void> {
-    // TODO: lookup consent in the database. If not found, error
-    /*
-    // NOTE: how are we getting the original challenge from the DFSP
-    const consent = retrieveValidConsent(request.consentId, originalChallenge)
-    this.data.consent = consent
-    */
+      
+
+
   }
 
   async onVerifyTransaction(): Promise<void> {

@@ -79,3 +79,16 @@ export async function createAndStoreConsent (
     throw new DatabaseError(consent.id)
   }
 }
+
+
+export async function getConsent(consentId: string): Promise<tpAPI.Schemas.> {
+
+  // if (consent.status === 'REVOKED') {
+  //   throw new IncorrectConsentStatusError(consentId)
+  // }
+  // // TODO: figure out why the original challenge is needed to retrieve a
+  // //       Consent object
+  // if (consent.credentialChallenge !== requestChallenge) {
+  //   throw new ChallengeMismatchError(consentId)
+  // }
+}

@@ -47,9 +47,9 @@ import Knex from 'knex'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /*
- * Interface for Consent resource type
+ * Interface for Consent resource type as modelled in DB
  */
-export interface Consent {
+export interface ConsentDB {
   id: string;
   // participant DFSP that requested a Consent resource be made
   participantId: string;
@@ -73,10 +73,12 @@ export interface Consent {
   revokedAt?: string;
 }
 
+const tableName = 'Consent'
+
 /*
  * Class to abstract Consent DB operations
  */
-export class ConsentDB {
+export class ConsentModel {
   // Knex instance
   private Db: Knex
 
@@ -86,9 +88,9 @@ export class ConsentDB {
 
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
-  public async insert (consent: Consent, trx?: Knex.Transaction): Promise<boolean> {
+  public async insert(consent: ConsentDB, trx?: Knex.Transaction): Promise<boolean> {
     // optionally insert in transaction
-    const action = this.Db<Consent>('Consent').insert(consent)
+    const action = this.Db<ConsentDB>(tableName).insert(consent)
     if (trx) {
       await action.transacting(trx)
     } else {
@@ -98,16 +100,16 @@ export class ConsentDB {
   }
 
   // Retrieve Consent by ID (unique)
-  public async retrieve (id: string): Promise<Consent> {
+  public async retrieve(id: string): Promise<ConsentDB> {
     // Returns array containing consents
-    const consents: Consent[] = await this
-      .Db<Consent>('Consent')
+    const consents: ConsentDB[] = await this
+      .Db<ConsentDB>(tableName)
       .select('*')
       .where({ id: id })
       .limit(1)
 
     if (consents.length === 0) {
-      throw new NotFoundError('Consent', id)
+      throw new NotFoundError(tableName, id)
     }
 
     return consents[0]
@@ -118,12 +120,12 @@ export class ConsentDB {
   public async delete (id: string): Promise<number> {
     // Returns number of deleted rows
     const deleteCount: number = await this
-      .Db<Consent>('Consent')
+      .Db<ConsentDB>(tableName)
       .where({ id: id })
       .del()
 
     if (deleteCount === 0) {
-      throw new NotFoundError('Consent', id)
+      throw new NotFoundError(tableName, id)
     }
 
     return deleteCount
@@ -131,21 +133,21 @@ export class ConsentDB {
 
   // Revoke Consent
   public async revoke (id: string): Promise<number> {
-    const consents: Consent[] = await this
-      .Db<Consent>('Consent')
+    const consents: ConsentDB[] = await this
+      .Db<ConsentDB>(tableName)
       .select('*')
       .where({ id })
       .limit(1)
 
     if (consents.length === 0) {
-      throw new NotFoundError('Consent', id)
+      throw new NotFoundError(tableName, id)
     }
 
     if (consents[0].status == 'REVOKED') {
-      throw new RevokedConsentModificationError('Consent', id)
+      throw new RevokedConsentModificationError(tableName, id)
     }
 
-    return await this.Db<Consent>('Consent')
+    return await this.Db<ConsentDB>(tableName)
       .where({ id })
       .update({
         'status': 'REVOKED',
