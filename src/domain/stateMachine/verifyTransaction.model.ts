@@ -35,6 +35,10 @@ import { VerifyTransactionModelConfig, VerifyTransactionData, VerifyTransactionS
 import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
+import * as ConsentDomain from '../consents'
+import { IncorrectConsentStatusError } from '../errors'
+import { InvalidDataError } from '~/shared/invalidDataError'
+import { AssertionResult, ExpectedAssertionResult, Fido2Lib } from 'fido2-lib'
 
 export class VerifyTransactionModel
   extends PersistentModel<VerifyTransactionStateMachine, VerifyTransactionData> {
@@ -83,45 +87,52 @@ export class VerifyTransactionModel
     }
   }
 
-  // TODO: I don't think we need this!
-  // static notificationChannel(phase: RegisterConsentPhase, id: string): string {
-  //   if (!id) {
-  //     throw new Error('VerifyTransactionModel.notificationChannel: \'id\' parameter is required')
-  //   }
-  //   // channel name
-  //   return `VerifyTransaction_${phase}_${id}`
-  // }
-
-  // static async triggerWorkflow(
-  //   id: string,
-  //   pubSub: PubSub,
-  //   message: Message
-  // ): Promise<void> {
-  //   const channel = VerifyTransactionModel.notificationChannel(phase, id)
-  //   return deferredJob(pubSub, channel).trigger(message)
-  // }
-
-
   async onRetreiveConsent(): Promise<void> {
-      
-
-
+    const consentId = this.data.verificationRequest.consentId
+    const consent = await ConsentDomain.getConsent(consentId)
+    this.data.consent = consent
   }
 
   async onVerifyTransaction(): Promise<void> {
-    // TODO: verify that the transaction is valid, If not, error.
-    // look up the consent and retrieve
-    /*
-      var assertionExpectations = {
-        challenge: request.challenge,
-        origin: parse(request.value.response.clientDataJSON).origin,
-        factor: "either",
-        publicKey: this.data.consent.credentialPayload
-        prevCounter: this.data.consent.crendentialCounter
-      };
+    InvalidDataError.throwIfInvalidProperty(this.data, 'consent')
+    const f2l = new Fido2Lib()
 
-      var authnResult = await f2l.assertionResult(clientAssertionResponse, assertionExpectations); // will throw on error
-  */
+    const consent = this.data.consent!
+    const request = this.data.verificationRequest
+
+    if (consent.status === 'REVOKED') {
+      throw new IncorrectConsentStatusError(consent.consentId)
+    }
+
+    if (request.signedPayloadType !== 'FIDO') {
+      throw new Error('Auth-Service currently only supports verifying FIDO-based credentials')
+    }
+
+    const origin = JSON.parse(request.signedPayload.response.clientDataJSON).origin
+    const assertionExpectations: ExpectedAssertionResult = {
+      challenge: request.challenge,
+      origin,
+      factor: "either",
+      publicKey: consent.credentialPayload,
+      prevCounter: consent.credentialCounter,
+      userHandle: request.signedPayload.response.userHandle || null
+    };
+    const assertionResult: AssertionResult = {
+      id: Buffer.from(request.signedPayload.id),
+      response: {
+        clientDataJSON: request.signedPayload.response.clientDataJSON,
+        authenticatorData: Buffer.from(request.signedPayload.response.authenticatorData),
+        signature: request.signedPayload.response.signature,
+        userHandle: request.signedPayload.response.userHandle
+      }
+    }
+
+    const authnResult = await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+    console.log('authnresult', authnResult)
+
+    // TODO: for greater security, store the updated counter result
+    // but that is considered out of scope for now.
+
   }
 
   async onSendCallbackToDFSP(): Promise<void> {
@@ -137,7 +148,7 @@ export class VerifyTransactionModel
       // @ts-ignore
       return this.mojaloopRequests._put(url, 'thirdpartyRequests', response, participantDFSPId);
     } catch (error) {
-      this.logger.push({ error }).error('registeredAsAuthoritativeSource -> callbackSent')
+      this.logger.push({ error }).error('onSendCallbackToDFSP -> callbackSent')
   //     // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_REQUEST_NOT_VALID,

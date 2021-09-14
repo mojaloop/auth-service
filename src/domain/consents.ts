@@ -59,6 +59,8 @@ export interface Consent {
   // being lazy here - technically we shouldn't borrow this def from the API
   status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
   credentialCounter: number,
+  // Parsed public key
+  credentialPayload: string
   createdAt: Date;
   revokedAt?: Date;
 }
@@ -117,6 +119,7 @@ export async function getConsent(consentId: string): Promise<Consent> {
     credential: JSON.parse(consentModel.originalCredential),
     status: consentModel.status,
     credentialCounter: consentModel.credentialCounter,
+    credentialPayload: consentModel.credentialPayload,
     // Must be non-undefined since we are getting it from the db
     createdAt: consentModel.createdAt!,
     revokedAt
