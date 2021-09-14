@@ -165,32 +165,11 @@ describe('VerifyTransactionModel', () => {
     expect(typeof create).toEqual('function')
   })
 
-  // TODO: do we need notification channel? Delete if not...
-  // describe('notificationChannel', () => {
-  //   it('should generate proper channel name', () => {
-  //     const id = '123'
-  //     expect(VerifyTransactionModel.notificationChannel(
-  //       RegisterConsentPhase.waitOnParticipantResponseFromALS,
-  //       id)).toEqual('RegisterConsent_waitOnParticipantResponseFromALS_123')
-  //   })
-
-  //   it('input validation', () => {
-  //     expect(
-  //       () => RegisterConsentModel.notificationChannel(
-  //         RegisterConsentPhase.waitOnParticipantResponseFromALS,
-  //         null as unknown as string
-  //       )
-  //     ).toThrow()
-  //   })
-  // })
-
-
   describe('onRetreiveConsent', () => {
     const verifyTransactionData: VerifyTransactionData = {
       currentState: 'start',
       participantDFSPId: 'dfspa',
       verificationRequest
-
     }
 
     it('should be well constructed', async () => {
@@ -206,6 +185,8 @@ describe('VerifyTransactionModel', () => {
   describe('onVerifyTransaction', () => {
     it.todo('verifies that the transaction is correct')
     it.todo('responds with an error if the transaction was not signed correctly')
+    it.todo('responds with an error if the consent status is REVOKED')
+    it.todo('responds with an error if the signedPayloadType !== FIDO')
   })
 
   describe('onSendCallbackToDFSP', () => {

@@ -217,4 +217,12 @@ describe('server/domain/consents', (): void => {
     // expect(mocked(logger.push)).toHaveBeenCalledWith({ error: testError })
     mockInsertScopes.mockClear()
   })
+
+  describe('getConsent', () => {
+    it.todo('gets the ConsentModel and ScopeModel from the database and maps correctly')
+    it.todo('parses the credential object')
+    it.todo('throws an error if the consent status has been modified after being revoked')
+    it.todo('throws an error if scopes cannot be found')
+    it.todo('throws an error if the consent cannot be found')
+  })
 })
