@@ -30,7 +30,7 @@
 import Knex from 'knex'
 import Config from '../shared/config'
 import { Consent, ConsentDB } from './consent'
-import { ModelScope, ScopeDB } from './scope'
+import { ScopeModel, ScopeDB } from './scope'
 
 const Db: Knex = Knex(Config.DATABASE)
 const consentDB: ConsentDB = new ConsentDB(Db)
@@ -38,7 +38,7 @@ const scopeDB: ScopeDB = new ScopeDB(Db)
 
 const closeKnexConnection = async (): Promise<void> => Db.destroy()
 
-async function insertConsentWithScopes (consent: Consent, scopes: ModelScope[]): Promise<void> {
+async function insertConsentWithScopes (consent: Consent, scopes: ScopeModel[]): Promise<void> {
   const trxProvider = Db.transactionProvider()
   const trx = await trxProvider()
   try {

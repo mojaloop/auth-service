@@ -41,7 +41,7 @@ import { NotFoundError } from '../errors'
 /*
 * Interface for Scope resource type
 */
-export interface ModelScope {
+export interface ScopeModel {
   id?: number;
   consentId: string;
   action: string;
@@ -60,7 +60,7 @@ export class ScopeDB {
   }
 
   // Add a single Scope or an array of Scopes
-  public async insert (scopes: ModelScope | ModelScope[], trx?: Knex.Transaction): Promise<boolean> {
+  public async insert (scopes: ScopeModel | ScopeModel[], trx?: Knex.Transaction): Promise<boolean> {
     // To avoid inconsistencies between DBs, we define a standard
     // way to deal with empty arrays.
     // We just return true because an empty array was anyways
@@ -69,7 +69,7 @@ export class ScopeDB {
       return true
     }
 
-    const action = this.Db<ModelScope>('Scope').insert(scopes)
+    const action = this.Db<ScopeModel>('Scope').insert(scopes)
     if (trx) {
       await action.transacting(trx)
     } else {
@@ -79,9 +79,9 @@ export class ScopeDB {
   }
 
   // Retrieve Scopes by Consent ID
-  public async retrieveAll (consentId: string): Promise<ModelScope[]> {
-    const scopes: ModelScope[] = await this
-      .Db<ModelScope>('Scope')
+  public async retrieveAll (consentId: string): Promise<ScopeModel[]> {
+    const scopes: ScopeModel[] = await this
+      .Db<ScopeModel>('Scope')
       .select('*')
       .where({ consentId })
 

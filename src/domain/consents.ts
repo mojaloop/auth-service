@@ -35,7 +35,7 @@
  ******/
 
 import { insertConsentWithScopes } from '../model/db'
-import { ModelScope } from '../model/scope'
+import { ScopeModel } from '../model/scope'
 import { Consent } from '../model/consent'
 import { logger } from '~/shared/logger'
 import { convertThirdpartyScopesToDatabaseScope } from './scopes'
@@ -70,7 +70,7 @@ export async function createAndStoreConsent (
     originalCredential: JSON.stringify(credential)
   }
 
-  const scopes: ModelScope[] = convertThirdpartyScopesToDatabaseScope(thirdpartyScopes, consentId)
+  const scopes: ScopeModel[] = convertThirdpartyScopesToDatabaseScope(thirdpartyScopes, consentId)
 
   try {
     await insertConsentWithScopes(consent, scopes)

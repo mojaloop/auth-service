@@ -29,7 +29,7 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import { ModelScope, ScopeDB } from '~/model/scope'
+import { ScopeModel, ScopeDB } from '~/model/scope'
 import { Consent } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
 
@@ -50,19 +50,19 @@ const testConsentObject: Consent = {
 /*
  * Mock Scope Resources
  */
-const tempScope1: ModelScope = {
+const tempScope1: ScopeModel = {
   consentId: testConsentObject.id,
   action: 'transfer',
   accountId: 'sjdn-3333-2123'
 }
 
-const tempScope2: ModelScope = {
+const tempScope2: ScopeModel = {
   consentId: testConsentObject.id,
   action: 'balance',
   accountId: 'sjdn-q333-2123'
 }
 
-const tempScope3: ModelScope = {
+const tempScope3: ScopeModel = {
   consentId: testConsentObject.id,
   action: 'saving',
   accountId: 'sjdn-q333-2123'
@@ -91,7 +91,7 @@ describe('src/model/scope', (): void => {
   // Reset table for new test
   beforeEach(async (): Promise<void> => {
     await Db<Consent>('Consent').del()
-    await Db<ModelScope>('Scope').del()
+    await Db<ScopeModel>('Scope').del()
     await Db<Consent>('Consent')
       .insert([testConsentObject])
   })
@@ -104,7 +104,7 @@ describe('src/model/scope', (): void => {
       expect(inserted).toEqual(true)
 
       // Assertion
-      const scopes: ModelScope[] = await Db<ModelScope>('Scope')
+      const scopes: ScopeModel[] = await Db<ScopeModel>('Scope')
         .select('*')
         .where({
           consentId: testConsentObject.id
@@ -122,7 +122,7 @@ describe('src/model/scope', (): void => {
       expect(inserted).toEqual(true)
 
       // Assertion
-      const scopes: ModelScope[] = await Db<ModelScope>('Scope')
+      const scopes: ScopeModel[] = await Db<ScopeModel>('Scope')
         .select('*')
         .where({
           consentId: testConsentObject.id
@@ -144,12 +144,12 @@ describe('src/model/scope', (): void => {
 
     it('returns without affecting the DB on inserting empty scopes array', async (): Promise<void> => {
       // Assertion
-      const scopesInitial: ModelScope[] = await Db<ModelScope>('Scope')
+      const scopesInitial: ScopeModel[] = await Db<ScopeModel>('Scope')
         .select('*')
 
       const inserted: boolean = await scopeDB.insert([])
 
-      const scopesAfter: ModelScope[] = await Db<ModelScope>('Scope')
+      const scopesAfter: ScopeModel[] = await Db<ScopeModel>('Scope')
         .select('*')
 
       expect(inserted).toEqual(true)
@@ -161,11 +161,11 @@ describe('src/model/scope', (): void => {
   describe('retrieveAll', (): void => {
     it('retrieves only existing scopes from the database', async (): Promise<void> => {
       // Setup
-      await Db<ModelScope>('Scope')
+      await Db<ScopeModel>('Scope')
         .insert([tempScope1, tempScope2, tempScope3])
 
       // Action
-      const scopes: ModelScope[] = await scopeDB.retrieveAll(tempScope1.consentId)
+      const scopes: ScopeModel[] = await scopeDB.retrieveAll(tempScope1.consentId)
 
       // Assertion
       expect(scopes.length).toEqual(3)

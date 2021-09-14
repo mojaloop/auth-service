@@ -1,6 +1,6 @@
 import { Consent } from '~/model/consent'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { ModelScope } from '~/model/scope'
+import { ScopeModel } from '~/model/scope'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import moment from 'moment'
 
@@ -228,7 +228,7 @@ export const externalScopes: tpAPI.Schemas.Scope[] = [{
 }
 ]
 
-export const scopes: ModelScope[] = [{
+export const scopes: ScopeModel[] = [{
   id: 123234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',

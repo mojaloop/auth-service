@@ -30,7 +30,7 @@
 import Knex from 'knex'
 import Config from '~/shared/config'
 import { ConsentDB, Consent } from '~/model/consent'
-import { ModelScope } from '~/model/scope'
+import { ScopeModel } from '~/model/scope'
 import { NotFoundError } from '~/model/errors'
 import { RevokedConsentModificationError } from '../../../src/model/errors';
 
@@ -205,9 +205,9 @@ describe('src/model/consent', (): void => {
 
         await Db<Consent>('Consent').insert(completeConsent)
         // Insert associated scopes
-        await Db<ModelScope>('Scope').insert(tempScopes)
+        await Db<ScopeModel>('Scope').insert(tempScopes)
 
-        let scopes = await Db<ModelScope>('Scope')
+        let scopes = await Db<ScopeModel>('Scope')
           .select('*')
           .where({
             consentId: completeConsent.id
@@ -219,7 +219,7 @@ describe('src/model/consent', (): void => {
 
         expect(deleteCount).toEqual(1)
 
-        scopes = await Db<ModelScope>('Scope')
+        scopes = await Db<ScopeModel>('Scope')
           .select('*')
           .where({
             consentId: completeConsent.id
