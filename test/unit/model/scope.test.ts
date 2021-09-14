@@ -90,9 +90,9 @@ describe('src/model/scope', (): void => {
 
   // Reset table for new test
   beforeEach(async (): Promise<void> => {
-    await Db<Consent>('Consent').del()
+    await Db<ConsentModel>('Consent').del()
     await Db<ScopeModel>('Scope').del()
-    await Db<Consent>('Consent')
+    await Db<ConsentModel>('Consent')
       .insert([testConsentObject])
   })
 
@@ -138,7 +138,7 @@ describe('src/model/scope', (): void => {
     })
 
     it('throws an error on adding a scope for a non-existent consent', async (): Promise<void> => {
-      await Db<Consent>('Consent').del()
+      await Db<ConsentModel>('Consent').del()
       await expect(scopeDB.insert(tempScope1)).rejects.toThrow()
     })
 
@@ -187,7 +187,7 @@ describe('src/model/scope', (): void => {
     })
 
     it('throws an error on retrieving non-existent scopes for a non-existent consent', async (): Promise<void> => {
-      await Db<Consent>('Consent').del()
+      await Db<ConsentModel>('Consent').del()
       await expect(scopeDB.retrieveAll(testConsentObject.id))
         .rejects.toThrowError(NotFoundError)
     })

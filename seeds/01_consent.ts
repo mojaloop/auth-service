@@ -36,7 +36,7 @@ import moment from 'moment'
 import { Consent } from '../src/model/consent/consent'
 
 
-export const consents: Array<Consent> = [
+export const consents: Array<ConsentModel> = [
   {
     id: '123',
     status: 'VERIFIED',

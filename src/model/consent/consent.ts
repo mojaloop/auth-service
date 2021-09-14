@@ -49,7 +49,7 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 /*
  * Interface for Consent resource type as modelled in DB
  */
-export interface ConsentDB {
+export interface ConsentModel {
   id: string;
   // participant DFSP that requested a Consent resource be made
   participantId: string;
@@ -78,7 +78,7 @@ const tableName = 'Consent'
 /*
  * Class to abstract Consent DB operations
  */
-export class ConsentModel {
+export class ConsentDB {
   // Knex instance
   private Db: Knex
 
@@ -88,9 +88,9 @@ export class ConsentModel {
 
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
-  public async insert(consent: ConsentDB, trx?: Knex.Transaction): Promise<boolean> {
+  public async insert(consent: ConsentModel, trx?: Knex.Transaction): Promise<boolean> {
     // optionally insert in transaction
-    const action = this.Db<ConsentDB>(tableName).insert(consent)
+    const action = this.Db<ConsentModel>(tableName).insert(consent)
     if (trx) {
       await action.transacting(trx)
     } else {
@@ -100,10 +100,10 @@ export class ConsentModel {
   }
 
   // Retrieve Consent by ID (unique)
-  public async retrieve(id: string): Promise<ConsentDB> {
+  public async retrieve(id: string): Promise<ConsentModel> {
     // Returns array containing consents
-    const consents: ConsentDB[] = await this
-      .Db<ConsentDB>(tableName)
+    const consents: ConsentModel[] = await this
+      .Db<ConsentModel>(tableName)
       .select('*')
       .where({ id: id })
       .limit(1)
@@ -120,7 +120,7 @@ export class ConsentModel {
   public async delete (id: string): Promise<number> {
     // Returns number of deleted rows
     const deleteCount: number = await this
-      .Db<ConsentDB>(tableName)
+      .Db<ConsentModel>(tableName)
       .where({ id: id })
       .del()
 
@@ -133,8 +133,8 @@ export class ConsentModel {
 
   // Revoke Consent
   public async revoke (id: string): Promise<number> {
-    const consents: ConsentDB[] = await this
-      .Db<ConsentDB>(tableName)
+    const consents: ConsentModel[] = await this
+      .Db<ConsentModel>(tableName)
       .select('*')
       .where({ id })
       .limit(1)
@@ -147,7 +147,7 @@ export class ConsentModel {
       throw new RevokedConsentModificationError(tableName, id)
     }
 
-    return await this.Db<ConsentDB>(tableName)
+    return await this.Db<ConsentModel>(tableName)
       .where({ id })
       .update({
         'status': 'REVOKED',

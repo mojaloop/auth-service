@@ -30,13 +30,13 @@
 import Knex from 'knex'
 import Config from '~/shared/config'
 import { ScopeDB, ScopeModel } from '~/model/scope'
-import { Consent } from '~/model/consent'
+import { ConsentModel } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
 
 /*
  * Mock Consent Resources
  */
-const consents: Consent[] = [
+const consents: ConsentModel[] = [
   {
     id: '1234',
     status: 'VERIFIED',
@@ -99,9 +99,9 @@ describe('src/model/scope', (): void => {
 
   // Reset table for new test
   beforeEach(async (): Promise<void> => {
-    await Db<Consent>('Consent').del()
+    await Db<ConsentModel>('Consent').del()
     await Db<ScopeModel>('Scope').del()
-    await Db<Consent>('Consent').insert(consents)
+    await Db<ConsentModel>('Consent').insert(consents)
   })
 
   describe('insert', (): void => {
@@ -149,7 +149,7 @@ describe('src/model/scope', (): void => {
 
     it('throws an error on adding a scope for non-existent consent',
       async (): Promise<void> => {
-        await Db<Consent>('Consent').del()
+        await Db<ConsentModel>('Consent').del()
         await expect(scopeDB.insert(tempScopes[0])).rejects.toThrow()
       }
     )
@@ -201,7 +201,7 @@ describe('src/model/scope', (): void => {
 
     it('throws an error on retrieving non-existent scopes for non-existent consent',
       async (): Promise<void> => {
-        await Db<Consent>('Consent').del()
+        await Db<ConsentModel>('Consent').del()
         await expect(scopeDB.retrieveAll(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }

@@ -79,7 +79,7 @@ describe('src/model/consent', (): void => {
 
   // Reset table for new test
   beforeEach(async (): Promise<void> => {
-    await Db<Consent>('Consent').del()
+    await Db<ConsentModel>('Consent').del()
   })
 
   describe('insert', (): void => {
@@ -89,7 +89,7 @@ describe('src/model/consent', (): void => {
 
         expect(inserted).toEqual(true)
 
-        const consents: Consent[] = await Db<Consent>('Consent')
+        const consents: Consent[] = await Db<ConsentModel>('Consent')
           .select('*')
           .where({
             id: completeConsent.id
@@ -107,7 +107,7 @@ describe('src/model/consent', (): void => {
 
         expect(inserted).toEqual(true)
 
-        const consents: Consent[] = await Db<Consent>('Consent')
+        const consents: Consent[] = await Db<ConsentModel>('Consent')
           .select('*')
           .where({
             id: completeConsent.id
@@ -141,7 +141,7 @@ describe('src/model/consent', (): void => {
 
   describe('retrieve', (): void => {
     it('retrieves an existing consent', async (): Promise<void> => {
-      await Db<Consent>('Consent').insert(completeConsent)
+      await Db<ConsentModel>('Consent').insert(completeConsent)
 
       const consent: Consent = await consentDB.retrieve(completeConsent.id)
 
@@ -158,9 +158,9 @@ describe('src/model/consent', (): void => {
 
   describe('delete', (): void => {
     it('deletes an existing consent', async (): Promise<void> => {
-      await Db<Consent>('Consent').insert(completeConsent)
+      await Db<ConsentModel>('Consent').insert(completeConsent)
 
-      let consents: Consent[] = await Db<Consent>('Consent')
+      let consents: Consent[] = await Db<ConsentModel>('Consent')
         .select('*')
         .where({
           id: completeConsent.id
@@ -173,7 +173,7 @@ describe('src/model/consent', (): void => {
 
       expect(deleteCount).toEqual(1)
 
-      consents = await Db<Consent>('Consent')
+      consents = await Db<ConsentModel>('Consent')
         .select('*')
         .where({
           id: completeConsent.id
@@ -203,7 +203,7 @@ describe('src/model/consent', (): void => {
           }
         ]
 
-        await Db<Consent>('Consent').insert(completeConsent)
+        await Db<ConsentModel>('Consent').insert(completeConsent)
         // Insert associated scopes
         await Db<ScopeModel>('Scope').insert(tempScopes)
 
@@ -240,7 +240,7 @@ describe('src/model/consent', (): void => {
 
   describe('revoke', (): void => {
     it('revokes an existing consent', async (): Promise<void> => {
-      await Db<Consent>('Consent').insert(completeConsent)
+      await Db<ConsentModel>('Consent').insert(completeConsent)
 
       const consent: Consent = await consentDB.retrieve(completeConsent.id)
 
@@ -281,7 +281,7 @@ describe('src/model/consent', (): void => {
       await consentDB.revoke(completeConsent.id)
 
       // Assertion
-      const consents: Consent[] = await Db<Consent>('Consent')
+      const consents: Consent[] = await Db<ConsentModel>('Consent')
         .select('*')
         .where({
           id: completeConsent.id

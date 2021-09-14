@@ -42,7 +42,7 @@ describe('testing Consent table', (): void => {
 
   it('should properly select all the entries in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
-    const users: Array<Consent> = await db<Consent>('Consent').select('*')
+    const users: Array<ConsentModel> = await db<ConsentModel>('Consent').select('*')
     expect(users.length).toEqual(2)
     expect(users[0]).toMatchObject({
       id: '123',
