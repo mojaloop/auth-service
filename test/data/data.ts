@@ -1,4 +1,4 @@
-import { Consent } from '~/model/consent'
+import { ConsentModel } from '~/model/consent'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { ScopeModel } from '~/model/scope'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
@@ -185,7 +185,7 @@ const credential: tpAPI.Schemas.SignedCredential = {
 /*
  * Mock Consent Resources
  */
-export const completeConsentRevoked: Consent = {
+export const completeConsentRevoked: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   participantId: 'dfsp-3333-2123',
   status: 'REVOKED',
@@ -200,7 +200,7 @@ export const completeConsentRevoked: Consent = {
   originalCredential: JSON.stringify(credential)
 }
 
-export const completeConsentActive: Consent = {
+export const completeConsentActive: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
@@ -253,7 +253,7 @@ export const scopes: ScopeModel[] = [{
 */
 export const challenge = 'xyhdushsoa82w92mzs='
 
-export const completeConsentActiveCredential: Consent = {
+export const completeConsentActiveCredential: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',

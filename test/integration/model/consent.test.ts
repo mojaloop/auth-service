@@ -29,7 +29,7 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import { ConsentDB, Consent } from '~/model/consent'
+import { ConsentDB, ConsentModel } from '~/model/consent'
 import { ScopeModel } from '~/model/scope'
 import { NotFoundError } from '~/model/errors'
 import { RevokedConsentModificationError } from '../../../src/model/errors';
@@ -37,7 +37,7 @@ import { RevokedConsentModificationError } from '../../../src/model/errors';
 /*
  * Mock Consent Resources
  */
-const completeConsent: Consent = {
+const completeConsent: ConsentModel = {
   id: '1234',
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
@@ -89,7 +89,7 @@ describe('src/model/consent', (): void => {
 
         expect(inserted).toEqual(true)
 
-        const consents: Consent[] = await Db<ConsentModel>('Consent')
+        const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
           .select('*')
           .where({
             id: completeConsent.id
@@ -107,7 +107,7 @@ describe('src/model/consent', (): void => {
 
         expect(inserted).toEqual(true)
 
-        const consents: Consent[] = await Db<ConsentModel>('Consent')
+        const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
           .select('*')
           .where({
             id: completeConsent.id
@@ -123,7 +123,7 @@ describe('src/model/consent', (): void => {
 
     it('throws an error on adding consent without an id',
       async (): Promise<void> => {
-        const consentWithoutId: Consent = {
+        const consentWithoutId: ConsentModel = {
           id: null as unknown as string,
           status: 'VERIFIED',
           participantId: 'dfsp-3333-2123',
@@ -143,7 +143,7 @@ describe('src/model/consent', (): void => {
     it('retrieves an existing consent', async (): Promise<void> => {
       await Db<ConsentModel>('Consent').insert(completeConsent)
 
-      const consent: Consent = await consentDB.retrieve(completeConsent.id)
+      const consent: ConsentModel = await consentDB.retrieve(completeConsent.id)
 
       expect(consent.createdAt).toEqual(expect.any(Date))
       expect(consent).toEqual(expect.objectContaining(expectedCompleteConsent))
@@ -160,7 +160,7 @@ describe('src/model/consent', (): void => {
     it('deletes an existing consent', async (): Promise<void> => {
       await Db<ConsentModel>('Consent').insert(completeConsent)
 
-      let consents: Consent[] = await Db<ConsentModel>('Consent')
+      let consents: ConsentModel[] = await Db<ConsentModel>('Consent')
         .select('*')
         .where({
           id: completeConsent.id
@@ -242,14 +242,14 @@ describe('src/model/consent', (): void => {
     it('revokes an existing consent', async (): Promise<void> => {
       await Db<ConsentModel>('Consent').insert(completeConsent)
 
-      const consent: Consent = await consentDB.retrieve(completeConsent.id)
+      const consent: ConsentModel = await consentDB.retrieve(completeConsent.id)
 
       expect(consent.createdAt).toEqual(expect.any(Date))
       expect(consent).toEqual(expect.objectContaining(expectedCompleteConsent))
 
       await consentDB.revoke(completeConsent.id)
 
-      const consentRevoked: Consent = await consentDB.retrieve(completeConsent.id)
+      const consentRevoked: ConsentModel = await consentDB.retrieve(completeConsent.id)
 
       expect(consentRevoked).toEqual({
         id: '1234',
@@ -281,7 +281,7 @@ describe('src/model/consent', (): void => {
       await consentDB.revoke(completeConsent.id)
 
       // Assertion
-      const consents: Consent[] = await Db<ConsentModel>('Consent')
+      const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
         .select('*')
         .where({
           id: completeConsent.id
