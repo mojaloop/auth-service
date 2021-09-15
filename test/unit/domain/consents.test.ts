@@ -330,7 +330,7 @@ describe('server/domain/consents', (): void => {
     it('throws an error if scopes cannot be found', async () => {
       // Arrange
       mockGetConsent.mockResolvedValue(mockGetConsentActive)
-      mockGetScopesForConsentId.mockRejectedValueOnce(new Error('Test Error'))
+      mockGetScopesForConsentId.mock RejectedValueOnce(new Error('Test Error'))
 
       // Act
       try {
