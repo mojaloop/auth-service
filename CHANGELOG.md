@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.9.0](https://github.com/mojaloop/auth-service/compare/v11.8.2...v11.9.0) (2021-09-15)
+
+
+### Features
+
+* **verifyTransaction:** implement fetch consent and verify transaction logic  ([#88](https://github.com/mojaloop/auth-service/issues/88)) ([650ef99](https://github.com/mojaloop/auth-service/commit/650ef9970c2ccfc032bac32855921e29065d68c1))
+
 ### [11.8.2](https://github.com/mojaloop/auth-service/compare/v11.8.1...v11.8.2) (2021-08-23)
 
 ### [11.8.1](https://github.com/mojaloop/auth-service/compare/v11.8.0...v11.8.1) (2021-08-20)
