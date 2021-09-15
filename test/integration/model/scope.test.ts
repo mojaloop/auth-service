@@ -174,7 +174,7 @@ describe('src/model/scope', (): void => {
       async (): Promise<void> => {
         await Db<ScopeModel>('Scope').insert(tempScopes)
 
-        const scopes: ScopeModel[] = await scopeDB.retrieveAll(
+        const scopes: ScopeModel[] = await scopeDB.getForConsentId(
           tempScopes[0].consentId
         )
 
@@ -194,7 +194,7 @@ describe('src/model/scope', (): void => {
 
     it('throws an error on retrieving non-existent scopes for existing consent',
       async (): Promise<void> => {
-        await expect(scopeDB.retrieveAll(consents[0].id))
+        await expect(scopeDB.getForConsentId(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }
     )
@@ -202,7 +202,7 @@ describe('src/model/scope', (): void => {
     it('throws an error on retrieving non-existent scopes for non-existent consent',
       async (): Promise<void> => {
         await Db<ConsentModel>('Consent').del()
-        await expect(scopeDB.retrieveAll(consents[0].id))
+        await expect(scopeDB.getForConsentId(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }
     )
