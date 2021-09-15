@@ -39,6 +39,7 @@ import * as ConsentDomain from '../consents'
 import { IncorrectConsentStatusError } from '../errors'
 import { InvalidDataError } from '~/shared/invalidDataError'
 import { AssertionResult, ExpectedAssertionResult, Fido2Lib } from 'fido2-lib'
+import FidoUtils from '~/shared/fido-utils'
 
 export class VerifyTransactionModel
   extends PersistentModel<VerifyTransactionStateMachine, VerifyTransactionData> {
@@ -108,7 +109,9 @@ export class VerifyTransactionModel
       throw new Error('Auth-Service currently only supports verifying FIDO-based credentials')
     }
 
-    const origin = JSON.parse(request.signedPayload.response.clientDataJSON).origin
+    const clientDataObj = FidoUtils.parseClientDataBase64(request.signedPayload.response.clientDataJSON)
+    const origin = clientDataObj.origin
+
     const assertionExpectations: ExpectedAssertionResult = {
       challenge: request.challenge,
       origin,
@@ -118,10 +121,11 @@ export class VerifyTransactionModel
       userHandle: request.signedPayload.response.userHandle || null
     };
     const assertionResult: AssertionResult = {
-      id: Buffer.from(request.signedPayload.id),
+      // fido2lib requires an ArrayBuffer, not just any old Buffer!
+      id: FidoUtils.stringToArrayBuffer(request.signedPayload.id),
       response: {
         clientDataJSON: request.signedPayload.response.clientDataJSON,
-        authenticatorData: Buffer.from(request.signedPayload.response.authenticatorData),
+        authenticatorData: FidoUtils.stringToArrayBuffer(request.signedPayload.response.authenticatorData),
         signature: request.signedPayload.response.signature,
         userHandle: request.signedPayload.response.userHandle
       }
@@ -186,7 +190,7 @@ export class VerifyTransactionModel
           this.logger.info('State machine in errored state')
           return
       }
-    } catch (err) {
+    } catch (err: any) {
       this.logger.info(`Error running VerifyTransactionModel : ${inspect(err)}`)
 
       // as this function is recursive, we don't want to error the state machine multiple times

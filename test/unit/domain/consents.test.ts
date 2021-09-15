@@ -163,22 +163,10 @@ describe('server/domain/consents', (): void => {
     revokedAt: new Date('2021-01-01')
   }
 
-  beforeAll(async (): Promise<void> => {
-    // await Db.migrate.latest()
-    // await Db.raw('PRAGMA foreign_keys = ON')
-    // mockConvertThirdpartyScopesToDatabaseScope.mockReturnValue(scopes)
-  })
 
-  afterAll(async (): Promise<void> => {
-    // Db.destroy()
-  })
 
   beforeEach(async (): Promise<void> => {
     jest.clearAllMocks()
-    // mockInsertConsent.mockResolvedValue(true)
-    // mockInsertScopes.mockResolvedValue(true)
-    // // await Db('Consent').del()
-    // // await Db('Scope').del()
   })
 
   it('test logger', (): void => {
@@ -330,7 +318,7 @@ describe('server/domain/consents', (): void => {
     it('throws an error if scopes cannot be found', async () => {
       // Arrange
       mockGetConsent.mockResolvedValue(mockGetConsentActive)
-      mockGetScopesForConsentId.mock RejectedValueOnce(new Error('Test Error'))
+      mockGetScopesForConsentId.mockRejectedValueOnce(new Error('Test Error'))
 
       // Act
       try {
