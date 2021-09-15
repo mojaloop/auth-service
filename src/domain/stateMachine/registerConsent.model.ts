@@ -137,17 +137,20 @@ export class RegisterConsentModel
         factor: 'either'
       }
 
-      const f2l = new Fido2Lib()
-      const clientAttestationResponse: AttestationResult = {
+      const f2l = new Fido2Lib({
+        rpId: "demo.yubico.com",
+        rpName: "YubicoDemo",
+        authenticatorUserVerification: 'discouraged',
+      })
+      const clientAttestationResponse: AttestationResult = {  
         id: str2ab(consentsPostRequestAUTH.credential.payload.id),
-        rawId: str2ab(consentsPostRequestAUTH.credential.payload.rawId),
         response: {
           clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
           attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject
         }
       }
 
-      // TODO: if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
+      // if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
       // then skip this step, and make up a random public key
       if (this.config.demoSkipValidationForCredentialIds.length > 0 &&
         this.config.demoSkipValidationForCredentialIds.indexOf(consentsPostRequestAUTH.credential.payload.id) > -1) {
