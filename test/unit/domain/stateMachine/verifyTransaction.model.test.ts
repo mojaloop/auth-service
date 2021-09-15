@@ -48,7 +48,6 @@ import {
 import * as ConsentDomain from '~/domain/consents'
 
 
-
 // mock KVS default exported class
 jest.mock('~/shared/kvs')
 
@@ -61,6 +60,7 @@ jest.mock('~/shared/pub-sub')
 jest.mock('axios')
 
 const mockGetConsent = jest.spyOn(ConsentDomain, 'getConsent')
+// yubi demo
 const credential: tpAPI.Schemas.VerifiedCredential = {
   credentialType: 'FIDO',
   status: 'VERIFIED',
@@ -174,6 +174,8 @@ const validConsent: ConsentDomain.Consent = {
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
   // challenge: '0fd916df0d0f9ecac2df16906027838bae2aa87935cf3e1a3a71971635da1844',
+  // not a 'real' challenge from mojaloop, but taken from a demo credential here
+  // https://demo.yubico.com/webauthn-technical/login
   challenge: 'auD0C7oP/OBW/uoTgx3G6NSvIl7W+uwDoOGXCSDpGek=',
   consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
   signedPayloadType: 'FIDO',

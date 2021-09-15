@@ -42,7 +42,7 @@ import deferredJob from '~/shared/deferred-job'
 import { reformatError } from '~/shared/api-error'
 import axios from 'axios'
 import { deriveChallenge } from '~/domain/challenge'
-import { encodeBase64String, decodeBase64String } from '../buffer'
+import { decodeBase64String } from '../buffer'
 import {
   v1_1 as fspiopAPI,
   thirdparty as tpAPI
@@ -121,14 +121,15 @@ export class RegisterConsentModel
   async onVerifyConsent (): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
     try {
-      const derivedChallenge = deriveChallenge(consentsPostRequestAUTH)
-      const encodedDerivedChallenge = encodeBase64String(derivedChallenge)
 
+      const challenge = deriveChallenge(consentsPostRequestAUTH)
       const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.credential.payload.response.clientDataJSON)
       const parsedClientData = JSON.parse(decodedJsonString)
 
+      console.log('parsedClientData', parsedClientData)
+
       const attestationExpectations: ExpectedAttestationResult = {
-        challenge: encodedDerivedChallenge,
+        challenge,
         // not sure what origin should be here
         // decoding and copying the origin for now
         // PISP should be the origin
