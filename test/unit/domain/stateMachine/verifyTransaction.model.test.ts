@@ -159,9 +159,6 @@ describe('VerifyTransactionModel', () => {
         return ++subId
       }
     )
-    //@ts-ignore
-    console.log('handler is', handler)
-
 
     mocked(publisher.publish).mockImplementationOnce(
       async (channel: string, message: Message) => handler(channel, message, subId)
@@ -478,8 +475,7 @@ describe('VerifyTransactionModel', () => {
 
     it('exceptions - sendCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      //@ts-ignore - note this will we removed once we add the putVerifications function to thirdpartyRequests
-      mocked(modelConfig.mojaloopRequests._put).mockImplementationOnce(
+      mocked(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).mockImplementationOnce(
         () => {
           throw error
         }
@@ -491,8 +487,7 @@ describe('VerifyTransactionModel', () => {
 
     it('exceptions - Error - sendCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      //@ts-ignore - note this will we removed once we add the putVerifications function to thirdpartyRequests
-      mocked(modelConfig.mojaloopRequests._put).mockImplementationOnce(
+      mocked(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).mockImplementationOnce(
         () => {
           throw error
         }
