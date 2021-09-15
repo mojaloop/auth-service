@@ -52,7 +52,7 @@ const errorInformationResponse = {
 
 describe('server/handlers/consents', (): void => {
   it('Should return 200 success code', async (): Promise<void> => {
-    jest.useFakeTimers('legacy')
+    jest.useFakeTimers()
     const request = errorInformationResponse
     const pubSubMock = {
       publish: jest.fn()
