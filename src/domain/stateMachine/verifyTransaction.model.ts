@@ -33,7 +33,8 @@ import inspect from '~/shared/inspect'
 import { reformatError } from '~/shared/api-error'
 import { VerifyTransactionModelConfig, VerifyTransactionData, VerifyTransactionStateMachine } from './verifyTransaction.interface'
 import {
-  thirdparty as tpAPI
+  thirdparty as tpAPI,
+  v1_1 as fspiopAPI,
 } from '@mojaloop/api-snippets'
 import * as ConsentDomain from '../consents'
 import { IncorrectConsentStatusError } from '../errors'
@@ -89,54 +90,102 @@ export class VerifyTransactionModel
   }
 
   async onRetreiveConsent(): Promise<void> {
-    const consentId = this.data.verificationRequest.consentId
-    const consent = await ConsentDomain.getConsent(consentId)
-    this.data.consent = consent
+    try {
+      const consentId = this.data.verificationRequest.consentId
+      const consent = await ConsentDomain.getConsent(consentId)
+      this.data.consent = consent
+    } catch (error) {
+      this.logger.push({ error }).error('start -> consentRetreived')
+
+      let mojaloopError
+      // if error is planned and is a MojaloopApiErrorCode we send back that code
+      if ((error as Errors.MojaloopApiErrorCode).code) {
+        mojaloopError = reformatError(error, this.logger)
+      } else {
+        // if error is not planned send back a generalized error
+        mojaloopError = reformatError(
+          Errors.MojaloopApiErrorCodes.TP_AUTH_SERVICE_ERROR,
+          this.logger
+        )
+      }
+
+      await this.thirdpartyRequests.putThirdpartyRequestsVerificationsError(
+        mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
+        this.data.verificationRequest.verificationRequestId,
+        this.data.participantDFSPId
+      )
+
+      // throw error to stop state machine
+      throw error
+    }
   }
 
   async onVerifyTransaction(): Promise<void> {
-    InvalidDataError.throwIfInvalidProperty(this.data, 'consent')
-    const f2l = new Fido2Lib()
+    try {
+      InvalidDataError.throwIfInvalidProperty(this.data, 'consent')
+      const f2l = new Fido2Lib()
 
-    const consent = this.data.consent!
-    const request = this.data.verificationRequest
+      const consent = this.data.consent!
+      const request = this.data.verificationRequest
 
-    if (consent.status === 'REVOKED') {
-      throw new IncorrectConsentStatusError(consent.consentId)
-    }
-
-    if (request.signedPayloadType !== 'FIDO') {
-      throw new Error('Auth-Service currently only supports verifying FIDO-based credentials')
-    }
-
-    const clientDataObj = FidoUtils.parseClientDataBase64(request.signedPayload.response.clientDataJSON)
-    const origin = clientDataObj.origin
-
-    const assertionExpectations: ExpectedAssertionResult = {
-      challenge: request.challenge,
-      origin,
-      factor: "either",
-      publicKey: consent.credentialPayload,
-      prevCounter: consent.credentialCounter,
-      userHandle: request.signedPayload.response.userHandle || null
-    };
-    const assertionResult: AssertionResult = {
-      // fido2lib requires an ArrayBuffer, not just any old Buffer!
-      id: FidoUtils.stringToArrayBuffer(request.signedPayload.id),
-      response: {
-        clientDataJSON: request.signedPayload.response.clientDataJSON,
-        authenticatorData: FidoUtils.stringToArrayBuffer(request.signedPayload.response.authenticatorData),
-        signature: request.signedPayload.response.signature,
-        userHandle: request.signedPayload.response.userHandle
+      if (consent.status === 'REVOKED') {
+        throw new IncorrectConsentStatusError(consent.consentId)
       }
+
+      if (request.signedPayloadType !== 'FIDO') {
+        throw new Error('Auth-Service currently only supports verifying FIDO-based credentials')
+      }
+
+      const clientDataObj = FidoUtils.parseClientDataBase64(request.signedPayload.response.clientDataJSON)
+      const origin = clientDataObj.origin
+
+      const assertionExpectations: ExpectedAssertionResult = {
+        challenge: request.challenge,
+        origin,
+        factor: "either",
+        publicKey: consent.credentialPayload,
+        prevCounter: consent.credentialCounter,
+        userHandle: request.signedPayload.response.userHandle || null
+      };
+      const assertionResult: AssertionResult = {
+        // fido2lib requires an ArrayBuffer, not just any old Buffer!
+        id: FidoUtils.stringToArrayBuffer(request.signedPayload.id),
+        response: {
+          clientDataJSON: request.signedPayload.response.clientDataJSON,
+          authenticatorData: FidoUtils.stringToArrayBuffer(request.signedPayload.response.authenticatorData),
+          signature: request.signedPayload.response.signature,
+          userHandle: request.signedPayload.response.userHandle
+        }
+      }
+
+      // TODO: for greater security, store the updated counter result
+      // out of scope for now.
+      await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+
+    } catch (error) {
+      this.logger.push({ error }).error('consentRetreived -> transactionVerified')
+
+      let mojaloopError
+      // if error is planned and is a MojaloopApiErrorCode we send back that code
+      if ((error as Errors.MojaloopApiErrorCode).code) {
+        mojaloopError = reformatError(error, this.logger)
+      } else {
+        // if error is not planned send back a generalized error
+        mojaloopError = reformatError(
+          Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID,
+          this.logger
+        )
+      }
+
+      await this.thirdpartyRequests.putThirdpartyRequestsVerificationsError(
+        mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
+        this.data.verificationRequest.verificationRequestId,
+        this.data.participantDFSPId
+      )
+
+      // throw error to stop state machine
+      throw error
     }
-
-    const authnResult = await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
-    console.log('authnresult', authnResult)
-
-    // TODO: for greater security, store the updated counter result
-    // out of scope for now.
-
   }
 
   async onSendCallbackToDFSP(): Promise<void> {
@@ -147,10 +196,9 @@ export class VerifyTransactionModel
         authenticationResponse: 'VERIFIED'
       }
 
-      // TODO: implement PUT /thirdpartyRequests/verifications/{ID} in sdk-standard-components
-      const url = `thirdpartyRequests/verifications/${verificationRequest.verificationRequestId}`
-      // @ts-ignore
-      return this.mojaloopRequests._put(url, 'thirdpartyRequests', response, participantDFSPId);
+      await this.thirdpartyRequests.putThirdpartyRequestsVerifications(
+        response, verificationRequest.verificationRequestId, participantDFSPId
+      )
     } catch (error) {
       this.logger.push({ error }).error('onSendCallbackToDFSP -> callbackSent')
   //     // we send back an account linking error despite the actual error

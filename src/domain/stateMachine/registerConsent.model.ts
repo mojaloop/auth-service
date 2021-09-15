@@ -137,10 +137,11 @@ export class RegisterConsentModel
         factor: 'either'
       }
 
+      // Todo: clean up 
       const f2l = new Fido2Lib({
-        rpId: "demo.yubico.com",
-        rpName: "YubicoDemo",
-        authenticatorUserVerification: 'discouraged',
+        // rpId: "demo.yubico.com",
+        // rpName: "YubicoDemo",
+        // authenticatorUserVerification: 'discouraged',
       })
       const clientAttestationResponse: AttestationResult = {  
         id: str2ab(consentsPostRequestAUTH.credential.payload.id),

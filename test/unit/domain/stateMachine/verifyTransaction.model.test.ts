@@ -46,7 +46,9 @@ import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
 import * as ConsentDomain from '~/domain/consents'
+import shouldNotBeExecuted from 'test/unit/shouldNotBeExecuted'
 const atob = require('atob')
+const btoa = require('btoa')
 
 
 // mock KVS default exported class
@@ -77,8 +79,8 @@ const credential: tpAPI.Schemas.VerifiedCredential = {
 }
 
 const validConsent: ConsentDomain.Consent = {
-  consentId: expect.stringMatching('.*'),
-  participantId: expect.stringMatching('.*'),
+  consentId: 'c121df2a-2a36-4163-ad04-2c8f2913dadd',
+  participantId: 'dfspa',
   scopes: [
     {
       accountId: 'as2342',
@@ -96,31 +98,23 @@ const validConsent: ConsentDomain.Consent = {
     'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl\n' +
     '3Vs0iQUW6QF4IHXi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==\n' +
     '-----END PUBLIC KEY-----\n',
-  createdAt: expect.objectContaining({}),
+  createdAt: new Date('2021-01-01'),
 }
 
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
-  // challenge: '0fd916df0d0f9ecac2df16906027838bae2aa87935cf3e1a3a71971635da1844',
   // not a 'real' challenge from mojaloop, but taken from a demo credential here
   // https://demo.yubico.com/webauthn-technical/login
   challenge: 'quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU=',
   consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
   signedPayloadType: 'FIDO',
   signedPayload: {
-    // id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-    // rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-    // response: {
-    //   authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-    //   clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-    //   signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
-    // },
-    "id": "xLTeD-OP1DVEh7tviGu0jDRuN0H8KGRIJBstMc96XbtpGBi8MXvtSArI3IAdcJiDMAHhjugGM1Gz9F-1u8aQBA",
-    "rawId": "xLTeD-OP1DVEh7tviGu0jDRuN0H8KGRIJBstMc96XbtpGBi8MXvtSArI3IAdcJiDMAHhjugGM1Gz9F-1u8aQBA",
+    "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
+    "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
     "response": {
-      "authenticatorData": "xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAAAw==",
-      "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJhdUQwQzdvUF9PQldfdW9UZ3gzRzZOU3ZJbDdXLXV3RG9PR1hDU0RwR2VrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=",
-      "signature": "MEUCIQDmiC6+ugp9tU4Czl3mXaTByykjKdcrn+4vWkk7K5mGTwIgOBt3xwuaovUxBMdvtQnaY+pWKunIGPtXdnLNa9x1wlA="
+      "authenticatorData": "xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==",
+      "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=",
+      "signature": "MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8="
     },
     type: 'public-key'
   }
@@ -152,7 +146,10 @@ describe('VerifyTransactionModel', () => {
       mojaloopRequests: {
         _put: jest.fn(() => Promise.resolve({ statusCode: 200 })),
       } as unknown as MojaloopRequests,
-      thirdpartyRequests: {} as unknown as ThirdpartyRequests,
+      thirdpartyRequests: {
+        putThirdpartyRequestsVerifications: jest.fn(() => Promise.resolve({ statusCode: 200 })),
+        putThirdpartyRequestsVerificationsError: jest.fn(() => Promise.resolve({ statusCode: 200 })),
+      } as unknown as ThirdpartyRequests,
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       requestProcessingTimeoutSeconds: 3
     }
@@ -220,32 +217,179 @@ describe('VerifyTransactionModel', () => {
   })
 
   describe('onRetreiveConsent', () => {
-    const verifyTransactionData: VerifyTransactionData = {
+    const retreiveConsentData: VerifyTransactionData = {
       currentState: 'start',
       participantDFSPId: 'dfspa',
       verificationRequest
     }
 
     it('should be well constructed', async () => {
-      const model = await create(verifyTransactionData, modelConfig)
-      checkModelLayout(model, verifyTransactionData)
+      const model = await create(retreiveConsentData, modelConfig)
+      checkModelLayout(model, retreiveConsentData)
     })
 
 
-    it.todo('fetches the consent from the database')
-    it.todo('responds with an error if something went wrong fetching the consent')
+    it('fetches the consent from the database', async () => {
+      // Arrange
+      mockGetConsent.mockResolvedValueOnce(validConsent)
+      const model = await create(retreiveConsentData, modelConfig)
+
+      // Act
+      await model.fsm.retreiveConsent()
+
+      // Assert
+      expect(mockGetConsent).toHaveBeenCalledTimes(1)
+      expect(model.data.currentState).toEqual('consentRetreived')
+    })
+
+    it('responds with an error if something went wrong fetching the consent', async () => {
+      // Arrange
+      mockGetConsent.mockImplementationOnce(() => {
+        throw new Error('test error')
+      })
+      const model = await create(retreiveConsentData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.retreiveConsent()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(mockGetConsent).toHaveBeenCalledTimes(1)
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+        expect(error.message).toEqual('test error')
+      }
+    })
   })
 
   describe('onVerifyTransaction', () => {
-    it.todo('verifies that the transaction is correct')
-    it.todo('responds with an error if the transaction was not signed correctly')
-    it.todo('responds with an error if clientDataJSON cannot be parsed')
-    it.todo('responds with an error if the consent status is REVOKED')
-    it.todo('responds with an error if the signedPayloadType !== FIDO')
+    const verifyTransactionData: VerifyTransactionData = {
+      currentState: 'consentRetreived',
+      participantDFSPId: 'dfspa',
+      verificationRequest,
+      consent: validConsent
+    }
+
+    it('verifies that the transaction is correct', async () => {
+      // Arrange
+      const model = await create(verifyTransactionData, modelConfig)
+
+      // Act
+      await model.fsm.verifyTransaction()
+
+      // Assert
+      expect(model.data.currentState).toEqual('transactionVerified')
+    })
+
+    it('responds with an error if the transaction signature does not match the publickey', async () => {
+      // Arrange
+      const invalidTransactionData = JSON.parse(JSON.stringify(verifyTransactionData))
+      // the wrong publickey:
+      invalidTransactionData.consent.credentialPayload = '-----BEGIN PUBLIC KEY-----\n' +
+        'MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEgAxzw4HxmDWmxJ8dWuzV/DR6+N1diG3U\n' +
+        'rPwJWdQbUAvDtQ+mRKPl8lD6WrN6PajHwxyeBE77QyOrOCGWn16xzQ==\n' +
+        '-----END PUBLIC KEY-----'
+      const model = await create(invalidTransactionData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.verifyTransaction()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toEqual('signature validation failed')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
+    })
+
+    it('responds with an error if clientDataJSON cannot be parsed', async () => {
+      // Arrange
+      const invalidTransactionData: VerifyTransactionData = JSON.parse(JSON.stringify(verifyTransactionData))
+      // Add an assertion to help ts out
+      if (invalidTransactionData.verificationRequest.signedPayloadType !== 'FIDO') {
+        throw new Error('test data error')
+      }
+      invalidTransactionData.verificationRequest.signedPayload.response.clientDataJSON = 
+        btoa('{"notChallenge":"quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU","clientExtensions":{},"hashAlgorithm":"SHA-256","origin":"https://demo.yubico.com","type":"webauthn.get"}')
+      
+      const model = await create(invalidTransactionData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.verifyTransaction()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toEqual('clientData challenge was not a string')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
+    })
+
+    it('responds with an error if the consent status is REVOKED', async () => {
+      // Arrange
+      const invalidTransactionData: VerifyTransactionData = JSON.parse(JSON.stringify(verifyTransactionData))
+      invalidTransactionData.consent!.status = 'REVOKED'
+      invalidTransactionData.consent!.revokedAt = new Date('2020-01-1')
+     
+      const model = await create(invalidTransactionData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.verifyTransaction()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toEqual('Incorrect Consent status c121df2a-2a36-4163-ad04-2c8f2913dadd')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
+    })
+
+    it('responds with an error if the signedPayloadType !== FIDO', async () => {
+      // Arrange
+      const invalidTransactionData: VerifyTransactionData = JSON.parse(JSON.stringify(verifyTransactionData))
+      invalidTransactionData.verificationRequest = {
+        verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
+        challenge: 'quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU=',
+        consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
+        signedPayloadType: 'GENERIC',
+        signedPayload: '12345678'
+      }
+    
+      const model = await create(invalidTransactionData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.verifyTransaction()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toEqual('Auth-Service currently only supports verifying FIDO-based credentials')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
+    })
   })
 
   describe('onSendCallbackToDFSP', () => {
-    it.todo('sends the callback to the DFSP')
+    const sendCallbackData: VerifyTransactionData = {
+      currentState: 'transactionVerified',
+      participantDFSPId: 'dfspa',
+      verificationRequest,
+      consent: validConsent
+    }
+
+    it.only('sends the callback to the DFSP', async () => { 
+      // Arrange
+      const model = await create(sendCallbackData, modelConfig)
+  
+
+      // Act
+      await model.fsm.sendCallbackToDFSP()
+
+      // Assert
+      expect(model.data.currentState).toEqual('transactionVerified')
+      expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledTimes(1)
+    })
+
     it.todo('sends an error callback to the DFSP if the original request fails')
   })
 
@@ -277,30 +421,19 @@ describe('VerifyTransactionModel', () => {
       verificationRequest
     }
 
-    it.only('start', async () => {
+    it('start', async () => {
       // Arrange
       mockGetConsent.mockResolvedValueOnce(validConsent)
-
-      // Assert
       const model = await create(registerConsentData, modelConfig)
-
-      // const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
-      //   RegisterConsentPhase.waitOnParticipantResponseFromALS,
-      //   registerConsentData.consentsPostRequestAUTH.consentId
-      // )
-
-      // setImmediate(() => {
-      //   publisher.publish(
-      //     waitOnParticipantResponseFromALSChannel,
-      //     participantsTypeIDPutResponse as unknown as Message
-      //   )
-      // })
-
+      
       // Act
       await model.run()
-
+      
+      // Assert
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')
+      // @ts-ignore - will be changed once we update sdk-standard-components
+      expect(modelConfig.mojaloopRequests._put).toHaveBeenCalledTimes(1)
       mocked(modelConfig.logger.info).mockReset()
     })
 

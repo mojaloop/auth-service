@@ -329,7 +329,7 @@ describe('RegisterConsentModel', () => {
       expect(model.data.credentialCounter).toBeDefined()
     })
 
-    it.only('verifyConsent() should work with an example from yubikey site', async () => {
+    it('verifyConsent() should work with an example from yubikey site', async () => {
       // We can't use the scopes to derive the challenge, it must be provided for us
       jest.spyOn(challenge, 'deriveChallenge').mockReturnValueOnce('ApFjVfRTQw5/NR4Y5poTz8ktd3ga4jI5Ly62/g97oFk=')
       const consentsPostRequestYubi: tpAPI.Schemas.ConsentsPostRequestAUTH = {
