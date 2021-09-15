@@ -207,10 +207,11 @@ export class VerifyTransactionModel
         this.logger
       )
 
-      // TODO: implement PUT /thirdpartyRequests/verifications/{ID} in sdk-standard-components
-      const url = `thirdpartyRequests/verifications/${verificationRequest.verificationRequestId}/error`
-      // @ts-ignore
-      await this.mojaloopRequests._put(url, 'thirdpartyRequests', mojaloopError, participantDFSPId);
+      await this.thirdpartyRequests.putThirdpartyRequestsVerificationsError(
+        mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
+        verificationRequest.verificationRequestId,
+        participantDFSPId
+      )
 
       // throw error to stop state machine
       throw error

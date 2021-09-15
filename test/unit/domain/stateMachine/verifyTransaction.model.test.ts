@@ -47,6 +47,7 @@ import {
 } from '@mojaloop/api-snippets'
 import * as ConsentDomain from '~/domain/consents'
 import shouldNotBeExecuted from 'test/unit/shouldNotBeExecuted'
+
 const atob = require('atob')
 const btoa = require('btoa')
 
@@ -377,20 +378,36 @@ describe('VerifyTransactionModel', () => {
       consent: validConsent
     }
 
-    it.only('sends the callback to the DFSP', async () => { 
+    it('sends the callback to the DFSP', async () => { 
       // Arrange
       const model = await create(sendCallbackData, modelConfig)
   
-
       // Act
       await model.fsm.sendCallbackToDFSP()
 
       // Assert
-      expect(model.data.currentState).toEqual('transactionVerified')
+      expect(model.data.currentState).toEqual('callbackSent')
       expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledTimes(1)
     })
 
-    it.todo('sends an error callback to the DFSP if the original request fails')
+    it('sends an error callback to the DFSP if the original request fails', async () => {
+      // Arrange
+      const model = await create(sendCallbackData, modelConfig)
+      modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications
+      // @ts-ignore - mocked function
+        .mockRejectedValueOnce(new Error('Test Error'))
+
+      // Act
+      try {
+        await model.fsm.sendCallbackToDFSP()
+        shouldNotBeExecuted()
+      } catch (err: any) { 
+        // Assert
+        expect(err.message).toBe('Test Error')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledTimes(1)
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
+    })
   })
 
   describe('checkModelDataForErrorInformation', () => {
@@ -432,8 +449,8 @@ describe('VerifyTransactionModel', () => {
       // Assert
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')
-      // @ts-ignore - will be changed once we update sdk-standard-components
-      expect(modelConfig.mojaloopRequests._put).toHaveBeenCalledTimes(1)
+      expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications)
+        .toHaveBeenCalledTimes(1)
       mocked(modelConfig.logger.info).mockReset()
     })
 
