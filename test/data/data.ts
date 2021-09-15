@@ -1,8 +1,7 @@
-import { Consent } from '~/model/consent'
+import { ConsentModel } from '~/model/consent'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { ModelScope } from '~/model/scope'
+import { ScopeModel } from '~/model/scope'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import moment from 'moment'
 
 /*
  * Mock Request Resources
@@ -185,11 +184,11 @@ const credential: tpAPI.Schemas.SignedCredential = {
 /*
  * Mock Consent Resources
  */
-export const completeConsentRevoked: Consent = {
+export const completeConsentRevoked: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   participantId: 'dfsp-3333-2123',
   status: 'REVOKED',
-  revokedAt: moment('2020-08-19T05:44:18.843Z').format('YYYY-MM-DD HH:mm:ss'),
+  revokedAt: new Date('2020-08-19T05:44:18.843Z'),
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs=',
   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
@@ -200,7 +199,7 @@ export const completeConsentRevoked: Consent = {
   originalCredential: JSON.stringify(credential)
 }
 
-export const completeConsentActive: Consent = {
+export const completeConsentActive: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',
@@ -228,7 +227,7 @@ export const externalScopes: tpAPI.Schemas.Scope[] = [{
 }
 ]
 
-export const scopes: ModelScope[] = [{
+export const scopes: ScopeModel[] = [{
   id: 123234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   accountId: 'as2342',
@@ -248,12 +247,29 @@ export const scopes: ModelScope[] = [{
 }
 ]
 
+export const scopesWithoutIds: ScopeModel[] = [{
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+  accountId: 'as2342',
+  action: 'accounts.getBalance'
+},
+{
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+  accountId: 'as2342',
+  action: 'accounts.transfer'
+},
+{
+  consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
+  accountId: 'as22',
+  action: 'accounts.getBalance'
+}
+]
+
 /*
  * Mock Credential Resources
 */
 export const challenge = 'xyhdushsoa82w92mzs='
 
-export const completeConsentActiveCredential: Consent = {
+export const completeConsentActiveCredential: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
   status: 'VERIFIED',
   participantId: 'dfsp-3333-2123',

@@ -32,11 +32,10 @@
 
 'use strict'
 import * as Knex from 'knex'
-import moment from 'moment'
-import { Consent } from '../src/model/consent/consent'
+import { ConsentModel } from '../src/model/consent/consent'
 
 
-export const consents: Array<Consent> = [
+export const consents: Array<ConsentModel> = [
   {
     id: '123',
     status: 'VERIFIED',
@@ -56,7 +55,7 @@ export const consents: Array<Consent> = [
     credentialChallenge: 'string_representing_challenge_b',
     credentialCounter: 4,
     originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
-    revokedAt: moment.utc('2011-10-05T14:48:00.000Z').format('YYYY-MM-DD HH:mm:ss')
+    revokedAt: new Date('2011-10-05T14:48:00.000Z')
   }
 ]
 

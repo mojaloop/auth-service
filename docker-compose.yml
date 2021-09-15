@@ -7,7 +7,7 @@ networks:
 services:
   auth-service:
     container_name: as_auth-service
-    image: mojaloop/auth-service:local
+    # image: mojaloop/auth-service:local
     build:
       context: .
       cache_from:

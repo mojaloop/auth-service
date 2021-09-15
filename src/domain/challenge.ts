@@ -40,6 +40,7 @@ import { logger } from '~/shared/logger'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { canonicalize } from 'json-canonicalize'
 import sha256 from 'crypto-js/sha256'
+import { encodeBase64String } from './buffer'
 
 /**
  * Helper function to validate signatures using public key
@@ -74,5 +75,5 @@ export function deriveChallenge (consentsPostRequest: tpAPI.Schemas.ConsentsPost
   }
 
   const RFC8785String = canonicalize(rawChallenge)
-  return sha256(RFC8785String).toString()
+  return encodeBase64String(sha256(RFC8785String).toString())
 }

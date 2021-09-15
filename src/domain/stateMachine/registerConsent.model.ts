@@ -42,7 +42,7 @@ import deferredJob from '~/shared/deferred-job'
 import { reformatError } from '~/shared/api-error'
 import axios from 'axios'
 import { deriveChallenge } from '~/domain/challenge'
-import { encodeBase64String, decodeBase64String } from '../buffer'
+import { decodeBase64String } from '../buffer'
 import {
   v1_1 as fspiopAPI,
   thirdparty as tpAPI
@@ -121,14 +121,13 @@ export class RegisterConsentModel
   async onVerifyConsent (): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
     try {
-      const derivedChallenge = deriveChallenge(consentsPostRequestAUTH)
-      const encodedDerivedChallenge = encodeBase64String(derivedChallenge)
 
+      const challenge = deriveChallenge(consentsPostRequestAUTH)
       const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.credential.payload.response.clientDataJSON)
       const parsedClientData = JSON.parse(decodedJsonString)
 
       const attestationExpectations: ExpectedAttestationResult = {
-        challenge: encodedDerivedChallenge,
+        challenge,
         // not sure what origin should be here
         // decoding and copying the origin for now
         // PISP should be the origin
@@ -137,16 +136,15 @@ export class RegisterConsentModel
       }
 
       const f2l = new Fido2Lib()
-      const clientAttestationResponse: AttestationResult = {
+      const clientAttestationResponse: AttestationResult = {  
         id: str2ab(consentsPostRequestAUTH.credential.payload.id),
-        rawId: str2ab(consentsPostRequestAUTH.credential.payload.rawId),
         response: {
           clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
           attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject
         }
       }
 
-      // TODO: if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
+      // if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
       // then skip this step, and make up a random public key
       if (this.config.demoSkipValidationForCredentialIds.length > 0 &&
         this.config.demoSkipValidationForCredentialIds.indexOf(consentsPostRequestAUTH.credential.payload.id) > -1) {

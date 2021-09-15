@@ -28,13 +28,13 @@
  --------------
  ******/
 
-import { ModelScope } from '~/model/scope/scope'
+import { ScopeModel } from '~/model/scope/scope'
 import * as ScopeFunctions from '~/domain/scopes'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 const consentId = '1234'
 
-const scopes: ModelScope[] = [{
+const scopes: ScopeModel[] = [{
   id: 123234,
   consentId: '1234',
   accountId: 'as2342',
@@ -54,7 +54,7 @@ const scopes: ModelScope[] = [{
 }
 ]
 
-const scopesNoId: ModelScope[] = [{
+const scopesNoId: ScopeModel[] = [{
   consentId: '1234',
   accountId: 'as2342',
   action: 'accounts.getBalance'
@@ -83,7 +83,7 @@ const externalScope: tpAPI.Schemas.Scope[] = [{
 
 describe('Scope Convert Scopes to ExternalScopes', (): void => {
   it('Should return Scope array when input ExternalScope array', (): void => {
-    expect(ScopeFunctions.convertModelScopesToThirdpartyScopes(scopes))
+    expect(ScopeFunctions.convertScopeModelsToThirdpartyScopes(scopes))
       .toStrictEqual(externalScope)
   })
 })

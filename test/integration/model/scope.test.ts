@@ -29,14 +29,14 @@
 
 import Knex from 'knex'
 import Config from '~/shared/config'
-import { ScopeDB, ModelScope } from '~/model/scope'
-import { Consent } from '~/model/consent'
+import { ScopeDB, ScopeModel } from '~/model/scope'
+import { ConsentModel } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
 
 /*
  * Mock Consent Resources
  */
-const consents: Consent[] = [
+const consents: ConsentModel[] = [
   {
     id: '1234',
     status: 'VERIFIED',
@@ -62,7 +62,7 @@ const consents: Consent[] = [
 /*
  * Mock Scope Resources
  */
-const tempScopes: ModelScope[] = [
+const tempScopes: ScopeModel[] = [
   {
     consentId: consents[0].id,
     action: 'transfer',
@@ -99,9 +99,9 @@ describe('src/model/scope', (): void => {
 
   // Reset table for new test
   beforeEach(async (): Promise<void> => {
-    await Db<Consent>('Consent').del()
-    await Db<ModelScope>('Scope').del()
-    await Db<Consent>('Consent').insert(consents)
+    await Db<ConsentModel>('Consent').del()
+    await Db<ScopeModel>('Scope').del()
+    await Db<ConsentModel>('Consent').insert(consents)
   })
 
   describe('insert', (): void => {
@@ -112,7 +112,7 @@ describe('src/model/scope', (): void => {
         // Return type check
         expect(inserted).toEqual(true)
 
-        const scopes: ModelScope[] = await Db<ModelScope>('Scope')
+        const scopes: ScopeModel[] = await Db<ScopeModel>('Scope')
           .select('*')
           .where({
             consentId: consents[0].id
@@ -131,7 +131,7 @@ describe('src/model/scope', (): void => {
         // Return type check
         expect(inserted).toEqual(true)
 
-        const scopes: ModelScope[] = await Db<ModelScope>('Scope')
+        const scopes: ScopeModel[] = await Db<ScopeModel>('Scope')
           .select('*')
           .where({
             consentId: consents[0].id
@@ -149,18 +149,18 @@ describe('src/model/scope', (): void => {
 
     it('throws an error on adding a scope for non-existent consent',
       async (): Promise<void> => {
-        await Db<Consent>('Consent').del()
+        await Db<ConsentModel>('Consent').del()
         await expect(scopeDB.insert(tempScopes[0])).rejects.toThrow()
       }
     )
 
     it('returns without affecting the DB on inserting empty scopes array',
       async (): Promise<void> => {
-        const scopesInitial: ModelScope[] = await Db<ModelScope>('Scope').select('*')
+        const scopesInitial: ScopeModel[] = await Db<ScopeModel>('Scope').select('*')
 
         const inserted: boolean = await scopeDB.insert([])
 
-        const scopesAfter: ModelScope[] = await Db<ModelScope>('Scope').select('*')
+        const scopesAfter: ScopeModel[] = await Db<ScopeModel>('Scope').select('*')
 
         expect(inserted).toEqual(true)
         // No effect on the DB
@@ -172,9 +172,9 @@ describe('src/model/scope', (): void => {
   describe('retrieveAll', (): void => {
     it('retrieves only existing scopes from the database',
       async (): Promise<void> => {
-        await Db<ModelScope>('Scope').insert(tempScopes)
+        await Db<ScopeModel>('Scope').insert(tempScopes)
 
-        const scopes: ModelScope[] = await scopeDB.retrieveAll(
+        const scopes: ScopeModel[] = await scopeDB.getForConsentId(
           tempScopes[0].consentId
         )
 
@@ -194,15 +194,15 @@ describe('src/model/scope', (): void => {
 
     it('throws an error on retrieving non-existent scopes for existing consent',
       async (): Promise<void> => {
-        await expect(scopeDB.retrieveAll(consents[0].id))
+        await expect(scopeDB.getForConsentId(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }
     )
 
     it('throws an error on retrieving non-existent scopes for non-existent consent',
       async (): Promise<void> => {
-        await Db<Consent>('Consent').del()
-        await expect(scopeDB.retrieveAll(consents[0].id))
+        await Db<ConsentModel>('Consent').del()
+        await expect(scopeDB.getForConsentId(consents[0].id))
           .rejects.toThrowError(NotFoundError)
       }
     )

@@ -34,15 +34,35 @@
  --------------
  ******/
 
-import { insertConsentWithScopes } from '../model/db'
-import { ModelScope } from '../model/scope'
-import { Consent } from '../model/consent'
+import * as DB from '../model/db'
+import { ScopeModel } from '../model/scope'
+import { ConsentModel } from '../model/consent'
 import { logger } from '~/shared/logger'
-import { convertThirdpartyScopesToDatabaseScope } from './scopes'
+import { convertScopeModelsToThirdpartyScopes, convertThirdpartyScopesToDatabaseScope } from './scopes'
 import {
   DatabaseError
 } from './errors'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+
+/**
+ * A 'pure' consent object as understood by the
+ * auth-service.
+ */
+export interface Consent {
+  consentId: string,
+  participantId: string,
+  // being lazy here - technically we shouldn't borrow this def from the API
+  scopes: Array<tpAPI.Schemas.Scope>,
+  // being lazy here - technically we shouldn't borrow this def from the API
+  credential: tpAPI.Schemas.VerifiedCredential,
+  // being lazy here - technically we shouldn't borrow this def from the API
+  status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
+  credentialCounter: number,
+  // Parsed public key
+  credentialPayload: string
+  createdAt: Date;
+  revokedAt?: Date;
+}
 
 /**
  * Builds internal Consent and Scope objects from request payload
@@ -59,7 +79,7 @@ export async function createAndStoreConsent (
   credentialCounter: number
 
 ): Promise<void> {
-  const consent: Consent = {
+  const consent: ConsentModel = {
     id: consentId,
     participantId,
     status: 'VERIFIED',
@@ -70,12 +90,36 @@ export async function createAndStoreConsent (
     originalCredential: JSON.stringify(credential)
   }
 
-  const scopes: ModelScope[] = convertThirdpartyScopesToDatabaseScope(thirdpartyScopes, consentId)
+  const scopes: ScopeModel[] = convertThirdpartyScopesToDatabaseScope(thirdpartyScopes, consentId)
 
   try {
-    await insertConsentWithScopes(consent, scopes)
+    await DB.insertConsentWithScopes(consent, scopes)
   } catch (error) {
     logger.push({ error }).error('Error: Unable to store consent and scopes')
     throw new DatabaseError(consent.id)
+  }
+}
+
+export async function getConsent (consentId: string): Promise<Consent> {
+  const consentModel = await DB.getConsent(consentId)
+  const scopesModel = await DB.getScopesForConsentId(consentId)
+
+  if (consentModel.revokedAt && consentModel.status !== 'REVOKED') {
+    throw new Error('Invalid ConsentModel - status cannot be modified after it has been revoked')
+  }
+
+  // Map to Domain
+  const revokedAt = consentModel.revokedAt
+  return {
+    consentId,
+    participantId: consentModel.participantId,
+    scopes: convertScopeModelsToThirdpartyScopes(scopesModel),
+    credential: JSON.parse(consentModel.originalCredential),
+    status: consentModel.status,
+    credentialCounter: consentModel.credentialCounter,
+    credentialPayload: consentModel.credentialPayload,
+    // Must be non-undefined since we are getting it from the db
+    createdAt: consentModel.createdAt!,
+    revokedAt
   }
 }

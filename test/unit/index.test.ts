@@ -79,9 +79,9 @@ describe('api routes', (): void => {
     server = await index.server.run(Config)
   })
 
-  afterAll(async (done): Promise<void> => {
+  afterAll((done): void => {
     server.events.on('stop', done)
-    await server.stop({ timeout: 0 })
+    server.stop({ timeout: 0 })
   })
 
   describe('Endpoint: /consents', (): void => {

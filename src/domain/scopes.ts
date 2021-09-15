@@ -35,7 +35,7 @@
  --------------
  ******/
 
-import { ModelScope } from '../model/scope'
+import { ScopeModel } from '../model/scope'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /**
@@ -43,12 +43,12 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
  * scope & consent ids, and returns array of formatted scopes
  * @param scopes Scopes retrieved from database
  */
-export function convertModelScopesToThirdpartyScopes (
-  scopes: ModelScope[]): tpAPI.Schemas.Scope[] {
+export function convertScopeModelsToThirdpartyScopes (
+  scopes: ScopeModel[]): tpAPI.Schemas.Scope[] {
   // Dictionary of accountId to Thirdparty Scope object
   const scopeDictionary = {}
 
-  scopes.forEach((scope: ModelScope): void => {
+  scopes.forEach((scope: ScopeModel): void => {
     const accountId: string = scope.accountId
 
     if (!(accountId in scopeDictionary)) {
@@ -73,10 +73,10 @@ export function convertModelScopesToThirdpartyScopes (
  * @param consentId Id of Consent to which scopes belong
  */
 export function convertThirdpartyScopesToDatabaseScope (
-  thirdpartyScopes: tpAPI.Schemas.Scope[], consentId: string): ModelScope[] {
-  const scopes: ModelScope[] = thirdpartyScopes.map(
-    (element: tpAPI.Schemas.Scope): ModelScope[] =>
-      element.actions.map((action: string): ModelScope => ({
+  thirdpartyScopes: tpAPI.Schemas.Scope[], consentId: string): ScopeModel[] {
+  const scopes: ScopeModel[] = thirdpartyScopes.map(
+    (element: tpAPI.Schemas.Scope): ScopeModel[] =>
+      element.actions.map((action: string): ScopeModel => ({
         consentId,
         accountId: element.accountId,
         action

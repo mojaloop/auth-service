@@ -60,7 +60,7 @@ export async function post(
     verificationRequest: payload,
   }
 
-  // if the request is valid then DFSP returns response via PUT /consentRequests/{ID} call.
+  // if the request is valid then DFSP returns response via PUT /thirdpartyRequests/verifications/{ID} call.
   const modelConfig: VerifyTransactionModelConfig = {
     kvs: h.getKVS(),
     subscriber: h.getSubscriber(),

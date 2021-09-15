@@ -34,6 +34,7 @@ import {
   thirdparty as tpAPI
 } from '@mojaloop/api-snippets'
 import { PubSub } from '~/shared/pub-sub'
+import { Consent } from '../consents'
 
 export interface VerifyTransactionStateMachine extends ControlledStateMachine {
   retreiveConsent: Method
@@ -59,5 +60,10 @@ export interface VerifyTransactionData extends StateData {
   // initial POST /thirdpartyRequests/verifications request
   verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
 
-  errorInformation?: tpAPI.Schemas.ErrorInformation
+  // // metadata related to the verification request (for now just the origin)
+  // verificationRequestMetadata: { origin: string }
+
+  errorInformation?: tpAPI.Schemas.ErrorInformation,
+
+  consent?: Consent
 }
