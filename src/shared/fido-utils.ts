@@ -27,7 +27,6 @@ function stringToArrayBuffer(input: string): ArrayBuffer {
   return ab;
 }
 
-
 export default {
   parseClientDataBase64,
   stringToArrayBuffer
