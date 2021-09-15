@@ -38,7 +38,7 @@ const scopeDB: ScopeDB = new ScopeDB(Db)
 
 const closeKnexConnection = async (): Promise<void> => Db.destroy()
 
-async function insertConsentWithScopes(consent: ConsentModel, scopes: ScopeModel[]): Promise<void> {
+async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeModel[]): Promise<void> {
   const trxProvider = Db.transactionProvider()
   const trx = await trxProvider()
   try {
@@ -51,11 +51,11 @@ async function insertConsentWithScopes(consent: ConsentModel, scopes: ScopeModel
   }
 }
 
-async function getConsent(consentId: string): Promise<ConsentModel> {
+async function getConsent (consentId: string): Promise<ConsentModel> {
   return consentDB.retrieve(consentId)
 }
 
-async function getScopesForConsentId(consentId: string): Promise<Array<ScopeModel>> {
+async function getScopesForConsentId (consentId: string): Promise<Array<ScopeModel>> {
   return scopeDB.getForConsentId(consentId)
 }
 
@@ -66,5 +66,5 @@ export {
   closeKnexConnection,
   insertConsentWithScopes,
   getConsent,
-  getScopesForConsentId,
+  getScopesForConsentId
 }

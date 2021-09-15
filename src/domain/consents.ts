@@ -44,14 +44,13 @@ import {
 } from './errors'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
-
 /**
  * A 'pure' consent object as understood by the
  * auth-service.
  */
 export interface Consent {
   consentId: string,
-  participantId: string, 
+  participantId: string,
   // being lazy here - technically we shouldn't borrow this def from the API
   scopes: Array<tpAPI.Schemas.Scope>,
   // being lazy here - technically we shouldn't borrow this def from the API
@@ -101,16 +100,16 @@ export async function createAndStoreConsent (
   }
 }
 
-export async function getConsent(consentId: string): Promise<Consent> {
+export async function getConsent (consentId: string): Promise<Consent> {
   const consentModel = await DB.getConsent(consentId)
   const scopesModel = await DB.getScopesForConsentId(consentId)
 
-  if(consentModel.revokedAt && consentModel.status !== 'REVOKED') {
+  if (consentModel.revokedAt && consentModel.status !== 'REVOKED') {
     throw new Error('Invalid ConsentModel - status cannot be modified after it has been revoked')
   }
 
   // Map to Domain
-  let revokedAt = consentModel.revokedAt
+  const revokedAt = consentModel.revokedAt
   return {
     consentId,
     participantId: consentModel.participantId,
