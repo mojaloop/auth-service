@@ -28,7 +28,7 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-lib'
 import str2ab from 'string-to-arraybuffer'
 import { deriveChallenge } from '~/domain/challenge'
-import { decodeBase64String, encodeBase64String } from '~/domain/buffer'
+import { decodeBase64String } from '~/domain/buffer'
 
 /*
   Example attestation result
@@ -264,7 +264,7 @@ const consentsPostRequestAUTH = {
 describe('fido-lib', (): void => {
   it('should derive the challenge correctly', () => {
     // Arrange
-    const expected = 'c4adabb33e9306b038088132affcde556c50d82f603f47711a9510bf3beef6d6'
+    const expected = 'YzRhZGFiYjMzZTkzMDZiMDM4MDg4MTMyYWZmY2RlNTU2YzUwZDgyZjYwM2Y0NzcxMWE5NTEwYmYzYmVlZjZkNg=='
 
     // Act
     const challenge = deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH)
@@ -294,11 +294,9 @@ describe('fido-lib', (): void => {
 
   it('attestation should succeed', async (): Promise<void> => {
     // The base challenge that was derived
-    const inputChallenge = 'c4adabb33e9306b038088132affcde556c50d82f603f47711a9510bf3beef6d6'
-    // encode to a utf-8 base64 format for Fido2Lib to like it:
-    const encodedInputChallenge = encodeBase64String(inputChallenge)
+    const challenge = 'YzRhZGFiYjMzZTkzMDZiMDM4MDg4MTMyYWZmY2RlNTU2YzUwZDgyZjYwM2Y0NzcxMWE5NTEwYmYzYmVlZjZkNg=='
     const attestationExpectations: ExpectedAttestationResult = {
-      challenge: encodedInputChallenge,
+      challenge,
       origin: "http://localhost:42181",
       factor: "either"
     }

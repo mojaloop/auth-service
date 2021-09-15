@@ -53,8 +53,9 @@ import { createAndStoreConsent } from '~/domain/consents'
 import * as challenge  from '~/domain/challenge'
 import * as consents from '~/domain/consents'
 import { MojaloopApiErrorCode } from '~/shared/api-error'
-const atob = require('atob')
+import { mockDeferredJobWithCallbackMessage } from '../../mockDeferredJob'
 
+const atob = require('atob')
 
 // mock KVS default exported class
 jest.mock('~/shared/kvs')
@@ -68,6 +69,9 @@ jest.mock('axios')
 // our test payload does not have any scopes so the function will fail
 // todo: un-mock this once we have a better payload
 jest.mock('~/domain/consents')
+
+// Mock deferredJob to inject our async callbacks
+jest.mock('~/shared/deferred-job')
 
 const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: '76059a0a-684f-4002-a880-b01159afe119',
@@ -84,8 +88,8 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
     credentialType: 'FIDO',
     status: 'PENDING',
     payload: {
-      id: 'HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw',
-      rawId: 'HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw==',
+      id: atob('HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw'),
+      rawId: atob('HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw=='),
       response: {
         clientDataJSON: Buffer.from(
           [123, 34, 116, 121,
@@ -178,6 +182,7 @@ describe('RegisterConsentModel', () => {
   let publisher: PubSub
 
   beforeEach(async () => {
+    // jest.clearAllMocks()
     let subId = 0
     let handler: NotificationCallback
 
@@ -197,11 +202,9 @@ describe('RegisterConsentModel', () => {
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       alsEndpoint: config.SHARED.ALS_ENDPOINT!,
       requestProcessingTimeoutSeconds: 3,
-      // TODO: fill these in
       demoSkipValidationForCredentialIds: [
         '123456789'
       ]
-      
     }
     mocked(modelConfig.subscriber.subscribe).mockImplementationOnce(
       (_channel: string, cb: NotificationCallback) => {
@@ -324,7 +327,6 @@ describe('RegisterConsentModel', () => {
       // check that the fsm was able to transition properly
       expect(model.data.currentState).toEqual('consentVerified')
 
-      console.log('publicKey is', model.data.credentialPublicKey)
       expect(model.data.credentialPublicKey).toBeDefined()
       expect(model.data.credentialCounter).toBeDefined()
     })
@@ -483,7 +485,7 @@ describe('RegisterConsentModel', () => {
         'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
         'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
         '-----END PUBLIC KEY-----\n',
-        'c4adabb33e9306b038088132affcde556c50d82f603f47711a9510bf3beef6d6',
+        'YzRhZGFiYjMzZTkzMDZiMDM4MDg4MTMyYWZmY2RlNTU2YzUwZDgyZjYwM2Y0NzcxMWE5NTEwYmYzYmVlZjZkNg==',
         4
       )
       // check that the fsm was able to transition properly
@@ -540,14 +542,13 @@ describe('RegisterConsentModel', () => {
 
     it('registerAuthoritativeSourceWithALS() should transition consentVerified to registeredAsAuthoritativeSource state when successful', async () => {
       const model = await create(registerConsentData, modelConfig)
-      // defer publication to notification channel
-      setImmediate(() => publisher.publish(
-        RegisterConsentModel.notificationChannel(
-          RegisterConsentPhase.waitOnParticipantResponseFromALS,
-          registerConsentData.consentsPostRequestAUTH.consentId
-        ),
-        participantsTypeIDPutResponse as unknown as Message
-      ))
+      const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
+        RegisterConsentPhase.waitOnParticipantResponseFromALS,
+        registerConsentData.consentsPostRequestAUTH.consentId
+      )
+      mockDeferredJobWithCallbackMessage(waitOnParticipantResponseFromALSChannel, participantsTypeIDPutResponse)
+
+
       await model.fsm.registerAuthoritativeSourceWithALS()
       await model.checkModelDataForErrorInformation()
 
@@ -563,13 +564,12 @@ describe('RegisterConsentModel', () => {
     })
 
     it('should handle a PUT /participants/CONSENT/{ID}/error response', async () => {
-      setImmediate(() => publisher.publish(
-        RegisterConsentModel.notificationChannel(
-          RegisterConsentPhase.waitOnParticipantResponseFromALS,
-          registerConsentData.consentsPostRequestAUTH.consentId
-        ),
-        genericALSErrorResponse as unknown as Message
-      ))
+      const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
+        RegisterConsentPhase.waitOnParticipantResponseFromALS,
+        registerConsentData.consentsPostRequestAUTH.consentId
+      )
+      mockDeferredJobWithCallbackMessage(waitOnParticipantResponseFromALSChannel, genericALSErrorResponse)
+
 
       const model = await create(registerConsentData, modelConfig)
       await model.fsm.registerAuthoritativeSourceWithALS()
@@ -662,19 +662,14 @@ describe('RegisterConsentModel', () => {
     }
 
     it('start', async () => {
-      const model = await create(registerConsentData, modelConfig)
       const waitOnParticipantResponseFromALSChannel = RegisterConsentModel.notificationChannel(
         RegisterConsentPhase.waitOnParticipantResponseFromALS,
         registerConsentData.consentsPostRequestAUTH.consentId
       )
+      mockDeferredJobWithCallbackMessage(waitOnParticipantResponseFromALSChannel, participantsTypeIDPutResponse)
 
-      setImmediate(() => {
-        publisher.publish(
-          waitOnParticipantResponseFromALSChannel,
-          participantsTypeIDPutResponse as unknown as Message
-        )
-      })
-
+      const model = await create(registerConsentData, modelConfig)
+  
       await model.run()
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')
@@ -708,6 +703,7 @@ describe('RegisterConsentModel', () => {
           throw error
         }
       )
+      mockDeferredJobWithCallbackMessage('test1', participantsTypeIDPutResponse)
       const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
 
       expect(async () => await model.run()).rejects.toEqual(error)
@@ -720,12 +716,15 @@ describe('RegisterConsentModel', () => {
           throw error
         }
       )
+      mockDeferredJobWithCallbackMessage('test2', participantsTypeIDPutResponse)
       const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
       expect(model.run()).rejects.toEqual(error)
     })
 
     it('exceptions - registerAuthoritativeSourceWithALS stage', async () => {
       const error = { message: 'error from axios.post', consentReqState: 'broken' }
+      mockDeferredJobWithCallbackMessage('test3', participantsTypeIDPutResponse)
+
       mocked(axios.post).mockImplementationOnce(
         () => {
           throw error
@@ -738,6 +737,8 @@ describe('RegisterConsentModel', () => {
 
     it('exceptions - Error - registerAuthoritativeSourceWithALS stage', async () => {
       const error = new Error('the-exception')
+      mockDeferredJobWithCallbackMessage('test4', participantsTypeIDPutResponse)
+
       mocked(axios.post).mockImplementationOnce(
         () => {
           throw error

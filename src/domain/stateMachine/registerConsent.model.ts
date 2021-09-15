@@ -126,8 +126,6 @@ export class RegisterConsentModel
       const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.credential.payload.response.clientDataJSON)
       const parsedClientData = JSON.parse(decodedJsonString)
 
-      console.log('parsedClientData', parsedClientData)
-
       const attestationExpectations: ExpectedAttestationResult = {
         challenge,
         // not sure what origin should be here
@@ -137,12 +135,7 @@ export class RegisterConsentModel
         factor: 'either'
       }
 
-      // Todo: clean up 
-      const f2l = new Fido2Lib({
-        // rpId: "demo.yubico.com",
-        // rpName: "YubicoDemo",
-        // authenticatorUserVerification: 'discouraged',
-      })
+      const f2l = new Fido2Lib()
       const clientAttestationResponse: AttestationResult = {  
         id: str2ab(consentsPostRequestAUTH.credential.payload.id),
         response: {

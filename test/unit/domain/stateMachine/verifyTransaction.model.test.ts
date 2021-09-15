@@ -132,7 +132,6 @@ describe('VerifyTransactionModel', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-
     let subId = 0
     let handler: NotificationCallback
 
@@ -160,6 +159,9 @@ describe('VerifyTransactionModel', () => {
         return ++subId
       }
     )
+    //@ts-ignore
+    console.log('handler is', handler)
+
 
     mocked(publisher.publish).mockImplementationOnce(
       async (channel: string, message: Message) => handler(channel, message, subId)
