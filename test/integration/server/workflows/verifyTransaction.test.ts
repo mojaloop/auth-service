@@ -113,12 +113,12 @@ export const validVerificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificat
   consentId: validConsentId,
   signedPayloadType: 'FIDO',
   signedPayload: {
-    id: '4yGzY_utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2-EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w',
+    id: atob('4yGzY_utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2-EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w'),
     rawId: '4yGzY/utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2+EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w==',
     response: {
       authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAABg==',
       clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-      signature: 'MEUCIBX4G3vb/v+j0y0U+k47TBzbZLyqUXp/t+bMQ/yXb1ibAiEA9ylAn6jqHcHUK2j+RQwnr73wp3RqhKcaqTsh28AknF4='
+      signature: atob('MEUCIBX4G3vb/v+j0y0U+k47TBzbZLyqUXp/t+b MQ/yXb1ibAiEA9ylAn6jqHcHUK2j+RQwnr73wp3RqhKcaqTsh28AknF4=')
     },
     type: 'public-key'
   }
