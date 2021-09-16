@@ -97,6 +97,8 @@ const ttkRequestsHistoryUri = `http://localhost:5050/api/history/requests`
 
 
 describe('POST /thirdpartyRequests/verifications', () => {
+  jest.setTimeout(15000)
+  
   beforeEach(async () => {
     // clear the request history in TTK between tests.
     await axios.delete(ttkRequestsHistoryUri, {})
