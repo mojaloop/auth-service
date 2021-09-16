@@ -195,6 +195,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
             ./scripts/wait4.js cicd-integration-tests
+          # use development env since we are connecting to db outside of docker
           environment:
             NODE_ENV: "development"
       - run:
@@ -202,15 +203,17 @@ jobs:
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             npm -s run migrate
+          # use development env since we are connecting to db outside of docker
           environment:
-            NODE_ENV: "integration"
+            NODE_ENV: "development"
       - run:
           name: Execute integration tests
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             npm -s run test:integration
+          # use development env since we are connecting to db outside of docker
           environment:
-            NODE_ENV: "integration"
+            NODE_ENV: "development"
       - run:
           name: Prepare test results
           command: |
