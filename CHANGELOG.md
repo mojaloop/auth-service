@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.9.1](https://github.com/mojaloop/auth-service/compare/v11.9.0...v11.9.1) (2021-09-16)
+
+
+### Bug Fixes
+
+* **integration:** reenable skipped integration tests ([#89](https://github.com/mojaloop/auth-service/issues/89)) ([d2a4114](https://github.com/mojaloop/auth-service/commit/d2a4114d34c7aa109e6d78ea37da533c110e5fc5))
+
 ## [11.9.0](https://github.com/mojaloop/auth-service/compare/v11.8.2...v11.9.0) (2021-09-15)
 
 

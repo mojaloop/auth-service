@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/auth-service",
-  "version": "11.9.0",
+  "version": "11.9.1",
   "description": "PISP authorization service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
