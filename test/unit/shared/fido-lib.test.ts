@@ -303,12 +303,14 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
       userHandle: null,
       // userHandle: request.signedPayload.response.userHandle || null
     };
+    const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
+    console.log('authenticatorData.length', authenticatorData.byteLength)
     const assertionResult: AssertionResult = {
       // fido2lib requires an ArrayBuffer, not just any old Buffer!
       id: FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.id),
       response: {
         clientDataJSON: verificationRequest.signedPayload.response.clientDataJSON,
-        authenticatorData: FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData),
+        authenticatorData,
         signature: verificationRequest.signedPayload.response.signature,
         userHandle: verificationRequest.signedPayload.response.userHandle
       }
