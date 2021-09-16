@@ -202,6 +202,8 @@ jobs:
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             npm -s run migrate
+          environment:
+            NODE_ENV: "integration"
       - run:
           name: Execute integration tests
           command: |

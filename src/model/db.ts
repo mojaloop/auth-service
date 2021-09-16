@@ -59,6 +59,12 @@ async function getScopesForConsentId (consentId: string): Promise<Array<ScopeMod
   return scopeDB.getForConsentId(consentId)
 }
 
+async function testCleanupConsents (consentIds: Array<string>): Promise<void> {
+  await Promise.all(consentIds.map(async id => {
+    return consentDB.delete(id)
+  }))
+}
+
 export {
   Db,
   consentDB,
@@ -66,5 +72,8 @@ export {
   closeKnexConnection,
   insertConsentWithScopes,
   getConsent,
-  getScopesForConsentId
+  getScopesForConsentId,
+
+  // Test utils
+  testCleanupConsents
 }

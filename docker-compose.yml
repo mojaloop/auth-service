@@ -7,7 +7,7 @@ networks:
 services:
   auth-service:
     container_name: as_auth-service
-    # image: mojaloop/auth-service:local
+    image: mojaloop/auth-service:local
     build:
       context: .
       cache_from:
@@ -22,13 +22,17 @@ services:
     volumes:
       - ./scripts/wait4.js:/opt/auth-service/scripts/wait4.js
       - ./scripts/wait4.config.js:/opt/auth-service/scripts/wait4.config.js
+      # Mount the config folder for easy config updates
+      - ./config:/opt/auth-service/config
     environment:
       - NODE_ENV=integration
+      - LOG_LEVEL=debug
     healthcheck:
       test: wget -q http://localhost:4004/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
+    user: root
 
   mysql:
     image: mysql/mysql-server

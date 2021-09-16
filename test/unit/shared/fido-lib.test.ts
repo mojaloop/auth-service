@@ -161,6 +161,8 @@ import { decodeBase64String } from '~/domain/buffer'
     }
   }
 */
+const atob = require('atob')
+
 
 const consentsPostRequestAUTH = {
   headers: {
@@ -183,11 +185,8 @@ const consentsPostRequestAUTH = {
       credentialType: 'FIDO',
       status: 'PENDING',
       payload: {
-        id: 'HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw',
-        rawId: Buffer.from([30, 201, 20, 218, 12, 56, 158, 157, 61, 33, 75, 88, 52, 121, 241, 48, 206, 189,
-          234, 50, 71, 170, 247, 28, 81, 208, 102, 119, 76, 79, 233, 113, 22, 192, 125, 49, 45,
-          232, 181, 61, 76, 195, 36, 35, 53, 245, 38, 119, 3, 97, 49, 209, 243, 75, 195, 73, 220,
-          218, 26, 200, 148, 89, 192, 183]).toString('base64'),
+        id: atob('HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw'),
+        rawId: atob('HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw=='),
         response: {
           clientDataJSON: Buffer.from(
             [123, 34, 116, 121,
