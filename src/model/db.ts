@@ -28,6 +28,7 @@
  ******/
 
 import Knex from 'knex'
+import { logger } from '~/shared/logger'
 import Config from '../shared/config'
 import { ConsentModel, ConsentDB } from './consent'
 import { ScopeModel, ScopeDB } from './scope'
@@ -39,13 +40,16 @@ const scopeDB: ScopeDB = new ScopeDB(Db)
 const closeKnexConnection = async (): Promise<void> => Db.destroy()
 
 async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeModel[]): Promise<void> {
+  
   const trxProvider = Db.transactionProvider()
   const trx = await trxProvider()
+  console.log('tmp doing stuff!')
   try {
     await consentDB.insert(consent, trx)
     await scopeDB.insert(scopes, trx)
     await trx.commit()
   } catch (err) {
+    logger.push(err).debug(`db.insertConsentWithScopes error`)
     await trx.rollback()
     throw err
   }

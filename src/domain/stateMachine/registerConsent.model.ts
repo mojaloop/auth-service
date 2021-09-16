@@ -256,7 +256,7 @@ export class RegisterConsentModel
           }
           const res = await axios.post(alsParticipantURI, payload, axiosConfig)
           this.logger.push({ res, channel })
-            .log('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
+            .debug('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
         })
         .job(async (message: Message): Promise<void> => {
           try {

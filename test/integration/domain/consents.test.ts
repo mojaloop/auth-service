@@ -91,6 +91,7 @@ describe('server/domain/consents', (): void => {
     )
     
     // Assert
-    expect(response).toBe({})
+    // We're mainly testing that nothing threw!
+    expect(response).toBe(undefined)
   })
 })
