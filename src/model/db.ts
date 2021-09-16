@@ -28,6 +28,7 @@
  ******/
 
 import Knex from 'knex'
+import { logger } from '~/shared/logger'
 import Config from '../shared/config'
 import { ConsentModel, ConsentDB } from './consent'
 import { ScopeModel, ScopeDB } from './scope'
@@ -46,6 +47,7 @@ async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeMode
     await scopeDB.insert(scopes, trx)
     await trx.commit()
   } catch (err) {
+    logger.push(err).debug('db.insertConsentWithScopes error')
     await trx.rollback()
     throw err
   }
@@ -59,6 +61,12 @@ async function getScopesForConsentId (consentId: string): Promise<Array<ScopeMod
   return scopeDB.getForConsentId(consentId)
 }
 
+async function testCleanupConsents (consentIds: Array<string>): Promise<void> {
+  await Promise.all(consentIds.map(async id => {
+    return consentDB.delete(id)
+  }))
+}
+
 export {
   Db,
   consentDB,
@@ -66,5 +74,8 @@ export {
   closeKnexConnection,
   insertConsentWithScopes,
   getConsent,
-  getScopesForConsentId
+  getScopesForConsentId,
+
+  // Test utils
+  testCleanupConsents
 }
