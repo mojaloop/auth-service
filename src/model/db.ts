@@ -43,7 +43,6 @@ async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeMode
   
   const trxProvider = Db.transactionProvider()
   const trx = await trxProvider()
-  console.log('tmp doing stuff!')
   try {
     await consentDB.insert(consent, trx)
     await scopeDB.insert(scopes, trx)
