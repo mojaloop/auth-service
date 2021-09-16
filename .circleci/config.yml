@@ -196,7 +196,7 @@ jobs:
             docker-compose up -d
             ./scripts/wait4.js cicd-integration-tests
           environment:
-            NODE_ENV: "integration"
+            NODE_ENV: "development"
       - run:
           name: Migrate DB
           command: |
