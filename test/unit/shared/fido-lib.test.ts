@@ -30,7 +30,6 @@ import str2ab from 'string-to-arraybuffer'
 import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '~/domain/buffer'
 import FidoUtils from '~/shared/fido-utils'
-// import * as ConsentDomain from '~/domain/consents'
 
 function ab2str(buf: ArrayBuffer) {
   var str = "";
@@ -204,25 +203,10 @@ const consentsPostRequestAUTH = {
   }
 }
 
-/*
- {id: vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ, rawId: [191, 5, 143, 189, 173, 98, 137, 50,
-72, 147, 247, 59, 159, 214, 184, 246, 202, 68, 180, 150, 65, 170, 185, 248, 72, 64, 158, 173, 200, 180, 111, 229, 30, 251, 162, 111, 247, 240, 217, 163, 122, 205, 95, 77,
-139, 171, 147, 212, 224, 222, 100, 26, 89, 4, 60, 9, 8, 161, 157, 248, 247, 208, 51, 89], response: {authenticatorData: [73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23,
-15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131, 29, 151, 99, 1, 0, 0, 0, 18], clientDataJSON: [123, 34, 116, 121, 112, 101, 34, 58,
-34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103, 101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87,
-49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104,
-111, 115, 116, 58, 52, 50, 49, 56, 49, 34, 44, 34, 99, 114, 111, 115, 115, 79, 114, 105, 103, 105, 110, 34, 58, 102, 97, 108, 115, 101, 44, 34, 111, 116, 104, 101, 114,
-95, 107, 101, 121, 115, 95, 99, 97, 110, 95, 98, 101, 95, 97, 100, 100, 101, 100, 95, 104, 101, 114, 101, 34, 58, 34, 100, 111, 32, 110, 111, 116, 32, 99, 111, 109, 112,
-97, 114, 101, 32, 99, 108, 105, 101, 110, 116, 68, 97, 116, 97, 74, 83, 79, 78, 32, 97, 103, 97, 105, 110, 115, 116, 32, 97, 32, 116, 101, 109, 112, 108, 97, 116, 101,
-46, 32, 83, 101, 101, 32, 104, 116, 116, 112, 115, 58, 47, 47, 103, 111, 111, 46, 103, 108, 47, 121, 97, 98, 80, 101, 120, 34, 125], signature: [48, 68, 2, 32, 104, 17,
-39, 167, 189, 118, 136, 100, 84, 72, 120, 29, 255, 74, 131, 59, 254, 132, 36, 19, 184, 24, 93, 103, 67, 195, 25, 252, 6, 224, 120, 69, 2, 32, 56, 251, 234, 96, 138, 6,
-158, 231, 246, 168, 254, 147, 129, 142, 100, 145, 234, 99, 91, 152, 199, 15, 72, 19, 176, 237, 209, 176, 131, 243, 70, 167], userHandle: []}}
-*/
-
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
   // This is stubbed out for pisp-demo-svc
-  // I don't know how this ends up being something different?
+  // FIDO library actually signs the base64 hash of this challenge
   challenge: btoa('unimplemented123'),
   consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
   signedPayloadType: 'FIDO',
@@ -370,29 +354,6 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
         type: 'public-key'
       }
     }
-
-    // const validConsent: ConsentDomain.Consent = {
-    //   consentId: 'c121df2a-2a36-4163-ad04-2c8f2913dadd',
-    //   participantId: 'dfspa',
-    //   scopes: [
-    //     {
-    //       accountId: 'as2342',
-    //       actions: ['accounts.getBalance', 'accounts.transfer'],
-    //     },
-    //     {
-    //       accountId: 'as22',
-    //       actions: ['accounts.getBalance'],
-    //     },
-    //   ],
-    //   credential: credential,
-    //   status: 'VERIFIED',
-    //   credentialCounter: 0,
-    //   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
-    //     'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl\n' +
-    //     '3Vs0iQUW6QF4IHXi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==\n' +
-    //     '-----END PUBLIC KEY-----\n',
-    //   createdAt: new Date('2021-01-01'),
-    // }
 
     const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
       verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
