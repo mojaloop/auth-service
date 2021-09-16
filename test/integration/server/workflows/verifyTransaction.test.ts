@@ -140,7 +140,7 @@ describe('POST /thirdpartyRequests/verifications', () => {
 
   afterAll(async (): Promise<void> => {
     await testCleanupConsents([
-      validConsentId
+      // validConsentId
     ])
     await closeKnexConnection()
   })

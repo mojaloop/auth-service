@@ -319,4 +319,9 @@ describe('fido-lib', (): void => {
       throw error
     }
   })
+
+  // it('assertion should succeed', async () => {
+
+  // })
+
 })
