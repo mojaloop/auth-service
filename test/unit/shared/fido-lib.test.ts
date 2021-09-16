@@ -31,6 +31,8 @@ import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '~/domain/buffer'
 import FidoUtils from '~/shared/fido-utils'
 
+const btoa = require('btoa')
+
 /*
   Example attestation result
   The typescript interface doesn't dive deep into the returned values.
@@ -193,19 +195,32 @@ const consentsPostRequestAUTH = {
   }
 }
 
+/*
+{id: 4yGzY_utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2-EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w, rawId: [227, 33, 179, 99, 251, 173, 56, 31, 102, 183, 1, 23, 40, 230,
+166, 151, 19, 130, 145, 130, 87, 52, 145, 124, 75, 201, 89, 219, 225, 41, 188, 65, 112, 89, 37, 75, 171, 31, 78, 6, 71, 22, 60, 53, 111, 164, 25, 165, 228, 20, 218, 180, 67, 163, 97, 150, 6, 208,
+205, 150, 48, 183, 214, 231], response: {authenticatorData: [73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23, 15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131,
+29, 151, 99, 1, 0, 0, 0, 10], clientDataJSON: [123, 34, 116, 121, 112, 101, 34, 58, 34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103,
+101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87, 49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47,
+47, 108, 111, 99, 97, 108, 104, 111, 115, 116, 58, 52, 50, 49, 56, 49, 34, 44, 34, 99, 114, 111, 115, 115, 79, 114, 105, 103, 105, 110, 34, 58, 102, 97, 108, 115, 101, 125], signature: [48, 70,
+2, 33, 0, 238, 34, 235, 68, 160, 63, 227, 153, 26, 207, 197, 2, 199, 15, 105, 226, 202, 214, 10, 38, 78, 17, 134, 216, 73, 27, 156, 59, 115, 190, 241, 125, 2, 33, 0, 130, 255, 65, 198, 117, 213,
+33, 140, 106, 216, 239, 172, 137, 64, 212, 88, 76, 59, 142, 46, 217, 31, 130, 225, 138, 151, 178, 113, 131, 225, 124, 135], userHandle: []}}
+
+*/
+
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
   // This is stubbed out for pisp-demo-svc
-  challenge: 'AAAAAAAAAAAAAAAAAAECAw',
+  // I don't know how this ends up being something different?
+  challenge: btoa('unimplemented123'),
   consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
   signedPayloadType: 'FIDO',
   signedPayload: {
     id: atob('4yGzY_utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2-EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w'),
     rawId: '4yGzY/utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2+EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w==',
     response: {
-      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAABg==',
-      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-      signature: 'MEUCIBX4G3vb/v+j0y0U+k47TBzbZLyqUXp/t+b MQ/yXb1ibAiEA9ylAn6jqHcHUK2j+RQwnr73wp3RqhKcaqTsh28AknF4='
+      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACg==',
+      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiZFc1cGJYQnNaVzFsYm5SbFpERXlNdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2V9',
+      signature: 'MEYCIQDuIutEoD/jmRrPxQLHD2niytYKJk4RhthJG5w7c77xfQIhAIL/QcZ11SGMatjvrIlA1FhMO44u2R+C4YqXsnGD4XyH'
     },
     type: 'public-key'
   }
