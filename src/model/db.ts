@@ -40,7 +40,6 @@ const scopeDB: ScopeDB = new ScopeDB(Db)
 const closeKnexConnection = async (): Promise<void> => Db.destroy()
 
 async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeModel[]): Promise<void> {
-  
   const trxProvider = Db.transactionProvider()
   const trx = await trxProvider()
   try {
@@ -48,7 +47,7 @@ async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeMode
     await scopeDB.insert(scopes, trx)
     await trx.commit()
   } catch (err) {
-    logger.push(err).debug(`db.insertConsentWithScopes error`)
+    logger.push(err).debug('db.insertConsentWithScopes error')
     await trx.rollback()
     throw err
   }
