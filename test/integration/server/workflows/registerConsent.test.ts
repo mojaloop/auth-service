@@ -131,7 +131,7 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
 // note to Kevin - I want to get the PR for main implementation and unit tests in 
 // now, so I'll cover the fixes to the integration tests and new integration tests
 // for tx in the next one!
-describe.skip('Inbound POST /consents', (): void => {
+describe('Inbound POST /consents', (): void => {
   const ttkRequestsHistoryUri = `http://localhost:5050/api/history/requests`
 
   beforeEach(async(): Promise<void> => {
