@@ -30,6 +30,15 @@ import str2ab from 'string-to-arraybuffer'
 import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '~/domain/buffer'
 import FidoUtils from '~/shared/fido-utils'
+// import * as ConsentDomain from '~/domain/consents'
+
+function ab2str(buf: ArrayBuffer) {
+  var str = "";
+  new Uint8Array(buf).forEach((ch) => {
+    str += String.fromCharCode(ch);
+  });
+  return str;
+}
 
 const btoa = require('btoa')
 
@@ -196,15 +205,18 @@ const consentsPostRequestAUTH = {
 }
 
 /*
-{id: 4yGzY_utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2-EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w, rawId: [227, 33, 179, 99, 251, 173, 56, 31, 102, 183, 1, 23, 40, 230,
-166, 151, 19, 130, 145, 130, 87, 52, 145, 124, 75, 201, 89, 219, 225, 41, 188, 65, 112, 89, 37, 75, 171, 31, 78, 6, 71, 22, 60, 53, 111, 164, 25, 165, 228, 20, 218, 180, 67, 163, 97, 150, 6, 208,
-205, 150, 48, 183, 214, 231], response: {authenticatorData: [73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23, 15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131,
-29, 151, 99, 1, 0, 0, 0, 10], clientDataJSON: [123, 34, 116, 121, 112, 101, 34, 58, 34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103,
-101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87, 49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47,
-47, 108, 111, 99, 97, 108, 104, 111, 115, 116, 58, 52, 50, 49, 56, 49, 34, 44, 34, 99, 114, 111, 115, 115, 79, 114, 105, 103, 105, 110, 34, 58, 102, 97, 108, 115, 101, 125], signature: [48, 70,
-2, 33, 0, 238, 34, 235, 68, 160, 63, 227, 153, 26, 207, 197, 2, 199, 15, 105, 226, 202, 214, 10, 38, 78, 17, 134, 216, 73, 27, 156, 59, 115, 190, 241, 125, 2, 33, 0, 130, 255, 65, 198, 117, 213,
-33, 140, 106, 216, 239, 172, 137, 64, 212, 88, 76, 59, 142, 46, 217, 31, 130, 225, 138, 151, 178, 113, 131, 225, 124, 135], userHandle: []}}
-
+ {id: vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ, rawId: [191, 5, 143, 189, 173, 98, 137, 50,
+72, 147, 247, 59, 159, 214, 184, 246, 202, 68, 180, 150, 65, 170, 185, 248, 72, 64, 158, 173, 200, 180, 111, 229, 30, 251, 162, 111, 247, 240, 217, 163, 122, 205, 95, 77,
+139, 171, 147, 212, 224, 222, 100, 26, 89, 4, 60, 9, 8, 161, 157, 248, 247, 208, 51, 89], response: {authenticatorData: [73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23,
+15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131, 29, 151, 99, 1, 0, 0, 0, 18], clientDataJSON: [123, 34, 116, 121, 112, 101, 34, 58,
+34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103, 101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87,
+49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104,
+111, 115, 116, 58, 52, 50, 49, 56, 49, 34, 44, 34, 99, 114, 111, 115, 115, 79, 114, 105, 103, 105, 110, 34, 58, 102, 97, 108, 115, 101, 44, 34, 111, 116, 104, 101, 114,
+95, 107, 101, 121, 115, 95, 99, 97, 110, 95, 98, 101, 95, 97, 100, 100, 101, 100, 95, 104, 101, 114, 101, 34, 58, 34, 100, 111, 32, 110, 111, 116, 32, 99, 111, 109, 112,
+97, 114, 101, 32, 99, 108, 105, 101, 110, 116, 68, 97, 116, 97, 74, 83, 79, 78, 32, 97, 103, 97, 105, 110, 115, 116, 32, 97, 32, 116, 101, 109, 112, 108, 97, 116, 101,
+46, 32, 83, 101, 101, 32, 104, 116, 116, 112, 115, 58, 47, 47, 103, 111, 111, 46, 103, 108, 47, 121, 97, 98, 80, 101, 120, 34, 125], signature: [48, 68, 2, 32, 104, 17,
+39, 167, 189, 118, 136, 100, 84, 72, 120, 29, 255, 74, 131, 59, 254, 132, 36, 19, 184, 24, 93, 103, 67, 195, 25, 252, 6, 224, 120, 69, 2, 32, 56, 251, 234, 96, 138, 6,
+158, 231, 246, 168, 254, 147, 129, 142, 100, 145, 234, 99, 91, 152, 199, 15, 72, 19, 176, 237, 209, 176, 131, 243, 70, 167], userHandle: []}}
 */
 
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
@@ -215,12 +227,21 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
   consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
   signedPayloadType: 'FIDO',
   signedPayload: {
-    id: atob('4yGzY_utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2-EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w'),
-    rawId: '4yGzY/utOB9mtwEXKOamlxOCkYJXNJF8S8lZ2+EpvEFwWSVLqx9OBkcWPDVvpBml5BTatEOjYZYG0M2WMLfW5w==',
+    id: atob('vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ'),
+    rawId: 'vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ',
     response: {
-      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACg==',
-      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiZFc1cGJYQnNaVzFsYm5SbFpERXlNdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2V9',
-      signature: 'MEYCIQDuIutEoD/jmRrPxQLHD2niytYKJk4RhthJG5w7c77xfQIhAIL/QcZ11SGMatjvrIlA1FhMO44u2R+C4YqXsnGD4XyH'
+      authenticatorData: Buffer.from([73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23,
+15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131, 29, 151, 99, 1, 0, 0, 0, 18]).toString('base64'),
+      clientDataJSON: Buffer.from([123, 34, 116, 121, 112, 101, 34, 58,
+        34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103, 101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87,
+        49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104,
+        111, 115, 116, 58, 52, 50, 49, 56, 49, 34, 44, 34, 99, 114, 111, 115, 115, 79, 114, 105, 103, 105, 110, 34, 58, 102, 97, 108, 115, 101, 44, 34, 111, 116, 104, 101, 114,
+        95, 107, 101, 121, 115, 95, 99, 97, 110, 95, 98, 101, 95, 97, 100, 100, 101, 100, 95, 104, 101, 114, 101, 34, 58, 34, 100, 111, 32, 110, 111, 116, 32, 99, 111, 109, 112,
+        97, 114, 101, 32, 99, 108, 105, 101, 110, 116, 68, 97, 116, 97, 74, 83, 79, 78, 32, 97, 103, 97, 105, 110, 115, 116, 32, 97, 32, 116, 101, 109, 112, 108, 97, 116, 101,
+        46, 32, 83, 101, 101, 32, 104, 116, 116, 112, 115, 58, 47, 47, 103, 111, 111, 46, 103, 108, 47, 121, 97, 98, 80, 101, 120, 34, 125]).toString('base64'),
+      signature: Buffer.from([48, 68, 2, 32, 104, 17,
+        39, 167, 189, 118, 136, 100, 84, 72, 120, 29, 255, 74, 131, 59, 254, 132, 36, 19, 184, 24, 93, 103, 67, 195, 25, 252, 6, 224, 120, 69, 2, 32, 56, 251, 234, 96, 138, 6,
+        158, 231, 246, 168, 254, 147, 129, 142, 100, 145, 234, 99, 91, 152, 199, 15, 72, 19, 176, 237, 209, 176, 131, 243, 70, 167]).toString('base64')
     },
     type: 'public-key'
   }
@@ -282,17 +303,23 @@ describe('fido-lib', (): void => {
         attestationExpectations
       )
       console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
+      
+      const credIdAB = result.authnrData.get('credId')
+      const credId = btoa(ab2str(credIdAB))
+      console.log('credId:', credId)
     } catch (error){
       throw error
     }
   })
 
-  it.only('assertion should succeed', async () => {
+  it('assertion should succeed', async () => {
     // Arrange
     const f2l = new Fido2Lib()
     const assertionExpectations: ExpectedAssertionResult = {
       challenge: verificationRequest.challenge,
       origin: 'http://localhost:42181',
+      // fido2lib infers this from origin, so we don't need to set it
+      // rpId: 'localhost',
       factor: "either",
       // Get this from the log statement in the previous request
       publicKey: `-----BEGIN PUBLIC KEY-----
@@ -301,7 +328,6 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
 -----END PUBLIC KEY-----`,
       prevCounter: 0,
       userHandle: null,
-      // userHandle: request.signedPayload.response.userHandle || null
     };
     const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
     console.log('authenticatorData.length', authenticatorData.byteLength)
@@ -320,5 +346,137 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
     await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
 
     // Assert
+  })
+
+
+  describe('yubikey site based attestation and assertion', () => {
+    const credential: tpAPI.Schemas.VerifiedCredential = {
+      credentialType: 'FIDO',
+      status: 'VERIFIED',
+      payload: {
+        "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
+        "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=="),
+        "response": {
+          "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==",
+          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0="
+        },
+        // // front end demo
+        // id: atob('vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ'),
+        // rawId: atob('vwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ=='),
+        // response: {
+        //   attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIhAJEFVHrzmq90fdBVy4nOPc48vtvJVAyQleGVcp+nQ8lUAiB67XFnGhC7q7WI3NdcrCdqnewSjCfhqEvO+sbWKC60c2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAABFJogIY72QTOWuIH41bfx9QBAvwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWaUBAgMmIAEhWCAITUwire20kCqzl0A3Fbpwx2cnSqwFfTgbA2b8+a/aUiJYIHRMWJlb4Lud02oWTdQ+fejwkVo17qD0KvrwwrZZxWIg'
+        //   clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTXpnd056QTFZMkU1TlRaaFlUZzBOMlE0T1dVMFlUUTBOR1JoT1dKbFpXUmpOR1EzTlRZNU1XSTBNV0l3WldNeE9EVTJZalJoWW1Sa05EbGhORE0yTUEiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjQyMTgxIiwiY3Jvc3NPcmlnaW4iOmZhbHNlfQ==',
+        // },
+        type: 'public-key'
+      }
+    }
+
+    // const validConsent: ConsentDomain.Consent = {
+    //   consentId: 'c121df2a-2a36-4163-ad04-2c8f2913dadd',
+    //   participantId: 'dfspa',
+    //   scopes: [
+    //     {
+    //       accountId: 'as2342',
+    //       actions: ['accounts.getBalance', 'accounts.transfer'],
+    //     },
+    //     {
+    //       accountId: 'as22',
+    //       actions: ['accounts.getBalance'],
+    //     },
+    //   ],
+    //   credential: credential,
+    //   status: 'VERIFIED',
+    //   credentialCounter: 0,
+    //   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
+    //     'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl\n' +
+    //     '3Vs0iQUW6QF4IHXi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==\n' +
+    //     '-----END PUBLIC KEY-----\n',
+    //   createdAt: new Date('2021-01-01'),
+    // }
+
+    const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
+      verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
+      // not a 'real' challenge from mojaloop, but taken from a demo credential here
+      // https://demo.yubico.com/webauthn-technical/login
+      challenge: 'quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU=',
+      consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
+      signedPayloadType: 'FIDO',
+      signedPayload: {
+        "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
+        "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
+        "response": {
+          "authenticatorData": "xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==",
+          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=",
+          "signature": "MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8="
+        },
+        type: 'public-key'
+      }
+    }
+
+    it('performs the attestation', async () => {
+      // Arrange
+
+      // A random challenge generated by yubikey demo site
+      const challenge = 'ApFjVfRTQw5_NR4Y5poTz8ktd3ga4jI5Ly62_g97oFk'
+      const attestationExpectations: ExpectedAttestationResult = {
+        challenge,
+        origin: "https://demo.yubico.com",
+        factor: "either"
+      }
+
+      const f2l = new Fido2Lib()
+      const clientAttestationResponse: AttestationResult = {
+        id: str2ab(credential.payload.id),
+        rawId: str2ab(credential.payload.rawId),
+        response: {
+          clientDataJSON: credential.payload.response.clientDataJSON,
+          attestationObject: credential.payload.response.attestationObject,
+        }
+      }
+      
+      // Act
+      const result = await f2l.attestationResult(
+        clientAttestationResponse,
+        attestationExpectations
+      )
+      console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
+
+      // Assert
+      // nothing threw!
+    })
+
+    it('performs the assertion', async () => {
+      // Arrange
+      const f2l = new Fido2Lib()
+      const assertionExpectations: ExpectedAssertionResult = {
+        challenge: verificationRequest.challenge,
+        origin: 'https://demo.yubico.com',
+        factor: "either",
+        // Get this from the log statement in the previous request
+        publicKey: `-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl
+3Vs0iQUW6QF4IHXi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==
+-----END PUBLIC KEY-----`,
+        prevCounter: 0,
+        userHandle: null,
+      };
+      const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
+      console.log('authenticatorData.length', authenticatorData.byteLength)
+      const assertionResult: AssertionResult = {
+        // fido2lib requires an ArrayBuffer, not just any old Buffer!
+        id: FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.id),
+        response: {
+          clientDataJSON: verificationRequest.signedPayload.response.clientDataJSON,
+          authenticatorData,
+          signature: verificationRequest.signedPayload.response.signature,
+          userHandle: verificationRequest.signedPayload.response.userHandle
+        }
+      }
+
+      // Act
+      await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+
+      // Assert
+    })
   })
 })

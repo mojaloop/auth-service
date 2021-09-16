@@ -483,7 +483,7 @@ describe('VerifyTransactionModel', () => {
       verificationRequest
     }
 
-    it.only('start', async () => {
+    it('start', async () => {
       // Arrange
       mockGetConsent.mockResolvedValueOnce(validConsent)
       const model = await create(registerConsentData, modelConfig)
