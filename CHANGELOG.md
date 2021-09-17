@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.10.0](https://github.com/mojaloop/auth-service/compare/v11.9.1...v11.10.0) (2021-09-17)
+
+
+### Features
+
+* **int:** implement verify tx integration tests ([#90](https://github.com/mojaloop/auth-service/issues/90)) ([b47ccc5](https://github.com/mojaloop/auth-service/commit/b47ccc5c9998474e9cc11442b4339328eeb4ce7f))
+
 ### [11.9.1](https://github.com/mojaloop/auth-service/compare/v11.9.0...v11.9.1) (2021-09-16)
 
 
