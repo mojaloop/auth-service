@@ -125,7 +125,7 @@ export class RegisterConsentModel
       const challenge = deriveChallenge(consentsPostRequestAUTH)
       const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.credential.payload.response.clientDataJSON)
       const parsedClientData = JSON.parse(decodedJsonString)
-
+ 
       const attestationExpectations: ExpectedAttestationResult = {
         challenge,
         // not sure what origin should be here

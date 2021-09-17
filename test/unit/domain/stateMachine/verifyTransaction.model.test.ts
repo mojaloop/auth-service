@@ -79,6 +79,7 @@ const credential: tpAPI.Schemas.VerifiedCredential = {
   }
 }
 
+// yubico example
 const validConsent: ConsentDomain.Consent = {
   consentId: 'c121df2a-2a36-4163-ad04-2c8f2913dadd',
   participantId: 'dfspa',
@@ -102,6 +103,8 @@ const validConsent: ConsentDomain.Consent = {
   createdAt: new Date('2021-01-01'),
 }
 
+
+// yubico example
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
   // not a 'real' challenge from mojaloop, but taken from a demo credential here

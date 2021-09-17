@@ -31,16 +31,9 @@ import axios from 'axios'
 import headers from '~/../test/data/headers.json'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { closeKnexConnection } from '~/model/db'
+import { MLTestingToolkitRequest } from 'test/integration/ttkHelpers'
 const atob = require('atob')
 
-
-interface MLTestingToolkitRequest {
-  timestamp: string
-  method: string
-  path: string
-  headers: Record<string, unknown>
-  body: Record<string, unknown>
-}
 
 // test data from Lewis
 // here is how the client should convert ArrayBuffer to base64 strings using Browser's btoa function
