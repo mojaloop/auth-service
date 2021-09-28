@@ -390,7 +390,7 @@ jobs:
             docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:${CIRCLE_TAG}
       - slack/status:
           fail_only: true
-          webhook: "$SLACK_WEBHOOK_ANNOUNCMENT_CI_CD"
+          webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT_CI_CD"
           failure_message: 'Publishing docker image failed for: \`"${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"\`'
 
   license-scan:
