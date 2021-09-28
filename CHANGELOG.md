@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.10.1](https://github.com/mojaloop/auth-service/compare/v11.10.0...v11.10.1) (2021-09-28)
+
+
+### Bug Fixes
+
+* remove devDependencies from docker image ([#92](https://github.com/mojaloop/auth-service/issues/92)) ([888ca8e](https://github.com/mojaloop/auth-service/commit/888ca8e375d22083a83a69882ee7c2ce41f5f1da))
+
 ## [11.10.0](https://github.com/mojaloop/auth-service/compare/v11.9.1...v11.10.0) (2021-09-17)
 
 
