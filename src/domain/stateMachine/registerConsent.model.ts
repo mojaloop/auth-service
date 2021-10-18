@@ -51,6 +51,7 @@ import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-li
 import str2ab from 'string-to-arraybuffer'
 import { createAndStoreConsent } from '~/domain/consents'
 
+const atob = require('atob')
 export class RegisterConsentModel
   extends PersistentModel<RegisterConsentStateMachine, RegisterConsentData> {
   protected config: RegisterConsentModelConfig
@@ -137,7 +138,10 @@ export class RegisterConsentModel
 
       const f2l = new Fido2Lib()
       const clientAttestationResponse: AttestationResult = {  
-        id: str2ab(consentsPostRequestAUTH.credential.payload.id),
+        // This is a little tricky here
+        // we first need to convert from ascii (base64 representation) --> Binary
+        // then to an ArrayBuffer to reconstruct the object
+        id: str2ab(atob(consentsPostRequestAUTH.credential.payload.id)),
         response: {
           clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
           attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject
