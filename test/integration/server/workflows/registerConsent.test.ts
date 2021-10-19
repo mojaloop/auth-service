@@ -32,8 +32,6 @@ import headers from '~/../test/data/headers.json'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { closeKnexConnection } from '~/model/db'
 import { MLTestingToolkitRequest } from 'test/integration/ttkHelpers'
-const atob = require('atob')
-
 
 // test data from Lewis
 // here is how the client should convert ArrayBuffer to base64 strings using Browser's btoa function
@@ -55,8 +53,8 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
     credentialType: 'FIDO',
     status: 'PENDING',
     payload: {
-      id: atob('HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw'),
-      rawId: atob('HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw=='),
+      id: 'HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw',
+      rawId: 'HskU2gw4np09IUtYNHnxMM696jJHqvccUdBmd0xP6XEWwH0xLei1PUzDJCM19SZ3A2Ex0fNLw0nc2hrIlFnAtw==',
       response: {
         clientDataJSON: Buffer.from(
           [123, 34, 116, 121,
