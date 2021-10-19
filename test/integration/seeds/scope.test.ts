@@ -23,12 +23,11 @@
  --------------
  ******/
 
-import knex from 'knex'
-import * as Knex from 'knex'
+import { Knex, knex } from 'knex'
 import Config from '~/shared/config'
 
 describe('testing scope table', (): void => {
-  let db: knex<unknown[]>
+  let db: Knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
     db = knex(Config.DATABASE)
@@ -65,7 +64,7 @@ describe('testing scope table', (): void => {
 })
 
 describe('testing that constraints are enforced in the Scope table', (): void => {
-  let db: knex<unknown[]>
+  let db: Knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
     db = knex(Config.DATABASE)

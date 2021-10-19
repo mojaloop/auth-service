@@ -31,7 +31,7 @@
  ******/
 
 'use strict'
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 import { ConsentModel } from '../src/model/consent/consent'
 
 
