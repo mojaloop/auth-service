@@ -23,12 +23,12 @@
  --------------
  ******/
 
-import knex from 'knex'
+import { Knex, knex } from 'knex'
 import Config from '~/shared/config'
 import { ConsentModel } from '~/model/consent/consent'
 
 describe('testing Consent table', (): void => {
-  let db: knex<unknown[]>
+  let db: Knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
     db = knex(Config.DATABASE)
@@ -65,7 +65,7 @@ describe('testing Consent table', (): void => {
 })
 
 describe('testing that constraints are enforced in the consent table', (): void => {
-  let db: knex<unknown[]>
+  let db: Knex<unknown[]>
 
   beforeAll(async (): Promise<void> => {
     db = knex(Config.DATABASE)

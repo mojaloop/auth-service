@@ -116,7 +116,7 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/participants/{Type}/{ID}':
+  /participants/{Type}/{ID}:
     parameters:
       - $ref: '#/components/parameters/Type'
       - $ref: '#/components/parameters/ID'
@@ -285,7 +285,7 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/participants/{Type}/{ID}/error':
+  /participants/{Type}/{ID}/error:
     parameters:
       - $ref: '#/components/parameters/Type'
       - $ref: '#/components/parameters/ID'
@@ -523,7 +523,7 @@ components:
     ErrorCode:
       title: ErrorCode
       type: string
-      pattern: '^[1-9]\d{3}$'
+      pattern: ^[1-9]\d{3}$
       description: >-
         The API data type ErrorCode is a JSON String of four characters,
         consisting of digits only. Negative numbers are not allowed. A leading
@@ -625,7 +625,7 @@ components:
         be Bank Account Number or anything that may expose a User's private bank
 
         account information.
-      pattern: '^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$'
+      pattern: ^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$
       minLength: 1
       maxLength: 1023
     ConsentScopeType:
@@ -715,7 +715,7 @@ components:
           additionalProperties: false
         type:
           type: string
-          description: 'response type, we need only the type of public-key'
+          description: response type, we need only the type of public-key
           enum:
             - public-key
       required:
@@ -1093,7 +1093,7 @@ components:
           additionalProperties: false
         type:
           type: string
-          description: 'response type, we need only the type of public-key'
+          description: response type, we need only the type of public-key
           enum:
             - public-key
       required:
@@ -1139,7 +1139,7 @@ components:
       description: Describes a challenge that has been signed with a private key
     BinaryString:
       type: string
-      pattern: '^[A-Za-z0-9-_]+[=]{0,2}$'
+      pattern: ^[A-Za-z0-9-_]+[=]{0,2}$
       description: >-
         The API data type BinaryString is a JSON String. The string is a
         base64url  encoding of a string of raw bytes, where padding (character
@@ -1305,7 +1305,7 @@ components:
       required: true
       schema:
         type: string
-      description: 'The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`.'
+      description: The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`.
     ID:
       name: ID
       in: path

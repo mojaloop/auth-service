@@ -27,7 +27,7 @@
  --------------
  ******/
 
-import Knex from 'knex'
+import { Knex, knex } from 'knex'
 import Config from '~/shared/config'
 import { ScopeDB, ScopeModel } from '~/model/scope'
 import { ConsentModel } from '~/model/consent'
@@ -88,7 +88,7 @@ describe('src/model/scope', (): void => {
   let scopeDB: ScopeDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(Config.DATABASE)
+    Db = knex(Config.DATABASE)
     scopeDB = new ScopeDB(Db)
     await Db.seed.run()
   })

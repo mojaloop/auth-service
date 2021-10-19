@@ -23,7 +23,7 @@
 
  --------------
  ******/
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 
 export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
   return knex.schema.hasTable('Consent')

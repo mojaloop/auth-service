@@ -81,6 +81,19 @@ describe('challenge', (): void => {
       console.log('result is', result)
       expect(result).toStrictEqual(expected)
     })
+
+    it('parses the same hash for a different consent', () => {
+      // Arrange
+      const consent = {"consentId":"46876aac-5db8-4353-bb3c-a6a905843ce7","consentRequestId":"c51ec534-ee48-4575-b6a9-ead2955b8069","scopes":[{"accountId":"dfspa.username.5678","actions":["accounts.transfer"]}]}
+      const expected = 'NDljOTcxYmYwYTQ1ZmJkZTkzNzMwNmRjZTk3YTYzMDc3MGJkYjc3YmEzYjZmNzg0ZDI1NGY2OGE0NmRkNDBhMg=='
+      
+      // Act
+      const result = deriveChallenge(consent as unknown as tpAPI.Schemas.ConsentsPostRequestAUTH)
+      
+      // Assert
+      console.log('result is', result)
+      expect(result).toStrictEqual(expected)
+    })
   })
 
   describe('verifySignature', () => {

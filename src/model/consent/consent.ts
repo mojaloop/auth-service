@@ -43,7 +43,7 @@
  */
 
 import { NotFoundError, RevokedConsentModificationError } from '../errors'
-import Knex from 'knex'
+import { Knex } from 'knex'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { logger } from '~/shared/logger'
 

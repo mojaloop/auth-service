@@ -30,7 +30,7 @@
  ******/
 
 'use strict'
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 
 const scopes = [
   {

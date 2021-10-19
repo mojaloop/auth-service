@@ -35,7 +35,7 @@
  --------------
  ******/
 
-import Knex from 'knex'
+import { Knex } from 'knex'
 import { NotFoundError } from '../errors'
 
 /*

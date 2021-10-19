@@ -35,7 +35,7 @@
  * Thus, testing environment (SQLite) differs from Production environment.
  */
 
-import Knex from 'knex'
+import { Knex, knex } from 'knex'
 import Config from '~/shared/config'
 import { ConsentDB, ConsentModel } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
@@ -63,7 +63,7 @@ describe('src/model/consent', (): void => {
   let consentDB: ConsentDB
 
   beforeAll(async (): Promise<void> => {
-    Db = Knex(Config.DATABASE)
+    Db = knex(Config.DATABASE)
     await Db.migrate.latest()
     await Db.raw('PRAGMA foreign_keys = ON')
 
