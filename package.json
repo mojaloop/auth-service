@@ -74,7 +74,7 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
-    "@redocly/openapi-cli": "^1.0.0-beta.53",
+    "@redocly/openapi-cli": "^1.0.0-beta.63",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "add": "^2.0.6",

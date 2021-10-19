@@ -1,0 +1,69 @@
+{
+  "decisions": {
+    "1002401|@mojaloop/event-sdk>@grpc/proto-loader>yargs>cliui>wrap-ansi>strip-ansi>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@mojaloop/event-sdk>@grpc/proto-loader>yargs>cliui>wrap-ansi>string-width>strip-ansi>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@mojaloop/central-services-shared>widdershins>oas-resolver>yargs>cliui>wrap-ansi>string-width>strip-ansi>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-resolver>yargs>cliui>wrap-ansi>string-width>strip-ansi>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>oas-resolver>yargs>cliui>wrap-ansi>string-width>strip-ansi>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@types/jest>pretty-format>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@types/jest>jest-diff>pretty-format>ansi-regex": {
+      "decision": "fix",
+      "madeAt": 1634612350594
+    },
+    "1002401|@mojaloop/central-services-shared>widdershins>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1634612354543,
+      "expiresAt": 1637204325246
+    },
+    "1002401|@mojaloop/central-services-shared>widdershins>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1634612354543,
+      "expiresAt": 1637204325246
+    },
+    "1002865|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1634612356737,
+      "expiresAt": 1637204325246
+    },
+    "1002866|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1634612356737,
+      "expiresAt": 1637204325246
+    },
+    "1003019|@mojaloop/central-services-shared>widdershins>yargs>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1634612358491,
+      "expiresAt": 1637204325246
+    },
+    "1002401|@mojaloop/event-sdk>@grpc/proto-loader>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1634612509200,
+      "expiresAt": 1637204501456
+    },
+    "1002401|@mojaloop/event-sdk>@grpc/proto-loader>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1634612509200,
+      "expiresAt": 1637204501456
+    }
+  },
+  "rules": {},
+  "version": 1
+}
