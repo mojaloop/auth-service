@@ -30,9 +30,13 @@
 import { Db, consentDB, scopeDB, closeKnexConnection } from '~/model/db'
 import { mocked } from 'ts-jest/utils'
 
-jest.mock('knex', () => jest.fn(() => ({
-  destroy: jest.fn(() => Promise.resolve())
-})))
+jest.mock('knex', () => {
+  return {
+    knex: jest.fn(() => ({
+      destroy: jest.fn(() => Promise.resolve())
+    }))
+  }
+})
 
 describe('db', () => {
   describe('consentDB', () => {
