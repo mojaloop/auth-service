@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.11.0](https://github.com/mojaloop/auth-service/compare/v11.10.1...v11.11.0) (2021-10-19)
+
+
+### Features
+
+* **test:** more credential tests ([#93](https://github.com/mojaloop/auth-service/issues/93)) ([6227082](https://github.com/mojaloop/auth-service/commit/622708247cf23ce5f606bacffb6b52f510f03744))
+
 ### [11.10.1](https://github.com/mojaloop/auth-service/compare/v11.10.0...v11.10.1) (2021-09-28)
 
 
