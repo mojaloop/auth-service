@@ -27,13 +27,13 @@
  --------------
  ******/
 
-import Knex from 'knex'
+import { knex } from 'knex'
 import { logger } from '~/shared/logger'
 import Config from '../shared/config'
 import { ConsentModel, ConsentDB } from './consent'
 import { ScopeModel, ScopeDB } from './scope'
 
-const Db: Knex = Knex(Config.DATABASE)
+const Db = knex(Config.DATABASE)
 const consentDB: ConsentDB = new ConsentDB(Db)
 const scopeDB: ScopeDB = new ScopeDB(Db)
 
