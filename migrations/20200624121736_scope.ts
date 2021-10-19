@@ -22,7 +22,7 @@
 
  --------------
  ******/
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 
 export async function up (knex: Knex): Promise<Knex.SchemaBuilder | void> {
   return knex.schema.hasTable('Scope')
