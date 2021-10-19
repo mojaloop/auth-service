@@ -141,7 +141,9 @@ export class RegisterConsentModel
         // This is a little tricky here
         // we first need to convert from ascii (base64 representation) --> Binary
         // then to an ArrayBuffer to reconstruct the object
+        // TODO: fix me!
         id: str2ab(atob(consentsPostRequestAUTH.credential.payload.id)),
+        // id: str2ab(consentsPostRequestAUTH.credential.payload.id),
         response: {
           clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
           attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject
