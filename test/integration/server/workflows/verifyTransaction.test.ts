@@ -33,7 +33,7 @@ export const validVerificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificat
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
   // This is stubbed out for pisp-demo-svc, where we generated these payloads
   // FIDO library actually signs the base64 hash of this challenge
-  challenge: btoa('unimplemented123'),
+  challenge: 'unimplemented123',
   consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
   signedPayloadType: 'FIDO',
   signedPayload: {
