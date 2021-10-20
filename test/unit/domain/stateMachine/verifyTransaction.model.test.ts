@@ -109,7 +109,9 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
   verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
   // not a 'real' challenge from mojaloop, but taken from a demo credential here
   // https://demo.yubico.com/webauthn-technical/login
-  challenge: 'quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU=',
+  // we decode to binary so that we can line up with the challenge in clientDataJSON,
+  // which navigator.credentials.get converts to base64 encoding before signing
+  challenge: atob('quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU='),
   consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
   signedPayloadType: 'FIDO',
   signedPayload: {
