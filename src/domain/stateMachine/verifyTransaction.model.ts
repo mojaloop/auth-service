@@ -42,6 +42,7 @@ import { InvalidDataError } from '~/shared/invalidDataError'
 import { AssertionResult, ExpectedAssertionResult, Fido2Lib } from 'fido2-lib'
 import FidoUtils from '~/shared/fido-utils'
 
+const btoa = require('btoa')
 export class VerifyTransactionModel
   extends PersistentModel<VerifyTransactionStateMachine, VerifyTransactionData> {
   protected config: VerifyTransactionModelConfig
@@ -140,7 +141,9 @@ export class VerifyTransactionModel
       const origin = clientDataObj.origin
 
       const assertionExpectations: ExpectedAssertionResult = {
-        challenge: request.challenge,
+        // This MUST be base64 encoded, because navigator.credentials.get
+        // on the client base64 encodes the challenge BEFORE signing it.
+        challenge: btoa(request.challenge),
         origin,
         factor: "either",
         publicKey: consent.credentialPayload,

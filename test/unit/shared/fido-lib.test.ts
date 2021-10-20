@@ -340,11 +340,29 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
       credentialType: 'FIDO',
       status: 'VERIFIED',
       payload: {
-        "id": "UMyM71BqZ5G-NWnD1k3RtR6Ry_zQPLEh_ntU3zOO_3dur80eHxDOqJSvc83FnDczRTdv6hVCZ86Kuynrz5OKrw",
-        "rawId": "UMyM71BqZ5G+NWnD1k3RtR6Ry/zQPLEh/ntU3zOO/3dur80eHxDOqJSvc83FnDczRTdv6hVCZ86Kuynrz5OKrw==",
+        "id": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw",
+        "rawId": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==",
         "response": {
-          "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhALlL18WMrdV+eVDKRoNgb3iTDNxANrbC93w/sG6BDcWEAiEA1WGNy/sZPJcboqHD8YgqXjxZni9ZT4M1EL+O+gRFWSxjeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjESZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2NBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQFDMjO9QameRvjVpw9ZN0bUekcv80DyxIf57VN8zjv93bq/NHh8QzqiUr3PNxZw3M0U3b+oVQmfOirsp68+Tiq+lAQIDJiABIVggy/NJCW5QMqfxRdvjCT6PeJMC/enM2b/83KeuHJAwENAiWCCLLEUZifuehFbVabqd/Cni7GvAEZikU3J6Q0+b+CXnqg==",
-          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=="
+          "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIgC8d5Y5Tfs4nNybpZT97j5ZVuTNFu1AWWwqpR8em4LJcCIQDDzayDA6lzgrbB3jDMM2/NI70TtZux2T3lIWMK8IGxr2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMTLX5kZhaUsGGUVJvPd6efRKHVvWMqnrf4u23AvlzDddEEAAAAAAAAAAAAAAAAAAAAAAAAAAABAiehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrz6UBAgMmIAEhWCDAVRRKKW4qj4bWykF+8L4FI49plPv1i7yD+ef0ATwwlyJYIO7sxbQE+9J1LAY6lLMMh+jiSU0/Rf9j0MXiqC2/b7Cq",
+          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHBzOi8vc2FuZGJveC5tb2phbG9vcC5pbyIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=="
+        },
+        "type": "public-key"
+      }
+    }
+
+    const customSiteVR: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
+      verificationRequestId: '835a8444-8cdc-41ef-bf18-ca4916c2e005',
+      // FIDO library actually signs the base64 hash of this challenge
+      challenge: 'OWZhYjAxZTcwYjU4YzRhMzRmOWQwNzBmZjllZDFiNjc2NWVhMzA1NGI1MWZjZThjZGFjNDEyZDBmNmM2MWFhMQ',
+      consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
+      signedPayloadType: 'FIDO',
+      signedPayload: {
+        "id": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw",
+        "rawId": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==",
+        "response": {
+          "authenticatorData": "y1+ZGYWlLBhlFSbz3enn0Sh1b1jKp63+LttwL5cw3XQBAAAAAg==",
+          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJUMWRhYUZscVFYaGFWR04zV1dwVk5GbDZVbWhOZWxKdFQxZFJkMDU2UW0xYWFteHNXa1JHYVU1cVl6Sk9WMVpvVFhwQk1VNUhTVEZOVjFwcVdsUm9hbHBIUm1wT1JFVjVXa1JDYlU1dFRUSk5WMFpvVFZFIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9zYW5kYm94Lm1vamFsb29wLmlvIiwidHlwZSI6IndlYmF1dGhuLmdldCJ9",
+          "signature": "MEYCIQC3Igm0I4uFjJydEYIcDPn6Wq39fY0QyQdZu2pEwaaMoAIhAKb2B6XaVXKO+ORsUgP5Riw22rkvIhS6eb3KadyFfaos"
         },
         "type": "public-key"
       }
@@ -354,7 +372,7 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
       // Arrange
       const attestationExpectations: ExpectedAttestationResult = {
         challenge,
-        origin: "http://localhost:8080",
+        origin: "https://sandbox.mojaloop.io",
         factor: "either"
       }
 
@@ -377,6 +395,42 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
 
       // Assert
       // nothing threw!
+    })
+
+    it('performs the assertion', async () => {
+      // Arrange
+      const f2l = new Fido2Lib()
+      const assertionExpectations: ExpectedAssertionResult = {
+        // This must be base64 encoded,
+        // as navigator.credentials.get base64 encodes the challenge
+        challenge: btoa(customSiteVR.challenge),
+        origin: "https://sandbox.mojaloop.io",
+        factor: "either",
+        // Get this from the log statement in the previous request
+        publicKey: `-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
+9Yu8g/nn9AE8MJfu7MW0BPvSdSwGOpSzDIfo4klNP0X/Y9DF4qgtv2+wqg==
+-----END PUBLIC KEY-----`,
+        prevCounter: 0,
+        userHandle: null,
+      };
+      const authenticatorData = FidoUtils.stringToArrayBuffer(customSiteVR.signedPayload.response.authenticatorData)
+      console.log('authenticatorData.length', authenticatorData.byteLength)
+      const assertionResult: AssertionResult = {
+        // fido2lib requires an ArrayBuffer, not just any old Buffer!
+        id: FidoUtils.stringToArrayBuffer(customSiteVR.signedPayload.id),
+        response: {
+          clientDataJSON: customSiteVR.signedPayload.response.clientDataJSON,
+          authenticatorData,
+          signature: customSiteVR.signedPayload.response.signature,
+          userHandle: customSiteVR.signedPayload.response.userHandle
+        }
+      }
+
+      // Act
+      await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+
+      // Assert
     })
   })
 
