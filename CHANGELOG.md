@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.11.1](https://github.com/mojaloop/auth-service/compare/v11.11.0...v11.11.1) (2021-10-20)
+
+
+### Bug Fixes
+
+* **verify:** challenge expectation ([#94](https://github.com/mojaloop/auth-service/issues/94)) ([0253b41](https://github.com/mojaloop/auth-service/commit/0253b41797a40a76ad8d9a33149655bfefc6d910))
+
 ## [11.11.0](https://github.com/mojaloop/auth-service/compare/v11.10.1...v11.11.0) (2021-10-19)
 
 
