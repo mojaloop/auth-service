@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+// tested in integration tests
 /*****
  License
  --------------

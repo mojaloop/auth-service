@@ -1,7 +1,5 @@
-FROM node:12.16.1-alpine as builder
-
+FROM node:14.15-alpine as builder
 USER root
-
 WORKDIR /opt/auth-service
 
 RUN apk add --no-cache -t build-dependencies git make gcc g++ python libtool autoconf automake \
@@ -9,13 +7,15 @@ RUN apk add --no-cache -t build-dependencies git make gcc g++ python libtool aut
     && npm config set unsafe-perm true \
     && npm install -g node-gyp 
 
-COPY package.json package-lock.json* /opt/auth-service/
-
+COPY package.json package-lock.json* ./
 RUN npm ci
 
-COPY . /opt/auth-service
+COPY ./ ./
+RUN npm run build
+RUN rm -rf src secrets test docs
+RUN npm prune --production
 
-FROM node:12.16.1-alpine
+FROM node:14.15-alpine
 
 WORKDIR /opt/auth-service
 
@@ -23,12 +23,10 @@ WORKDIR /opt/auth-service
 RUN mkdir ./logs && touch ./logs/combined.log
 RUN ln -sf /dev/stdout ./logs/combined.log
 
-# Create a non-root user: as-user
-RUN adduser -D as-user 
-USER as-user
-COPY --chown=as-user --from=builder /opt/auth-service .
+# Create a non-root user: ml-user
+RUN adduser -D ml-user 
+USER ml-user
+COPY --chown=ml-user --from=builder /opt/auth-service .
 
-# cleanup
-RUN npm prune --production
 EXPOSE 4004
 CMD ["npm", "run", "start"]

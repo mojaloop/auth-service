@@ -70,5 +70,21 @@ describe('api-error', () => {
         }
       })
     })
+    
+    it('should handle MojaloopApiErrorCode in res.body', () => {
+      const err = new HTTPResponseError<ResponseErrorData>(
+        { msg: 'some-message', res: { body: '{ "statusCode":7200 }' } }
+      )
+
+      const getDataResult = err.getData()
+      console.log('getDataResult', getDataResult)
+      const result = reformatError(err, logger)
+      expect(result).toEqual({
+        errorInformation: {
+          errorCode: '7200',
+          errorDescription: 'Generic Thirdparty account linking error'
+        }
+      })
+    })
   })
 })

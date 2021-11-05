@@ -224,7 +224,7 @@ export const DatabaseConfigScheme = {
     loadExtensions: {
       doc: 'Array of extensions to load',
       format: 'Array',
-      default: ['.ts']
+      default: ['.js']
     }
   },
   seeds: {
@@ -236,7 +236,7 @@ export const DatabaseConfigScheme = {
     loadExtensions: {
       doc: 'Array of extensions to load',
       format: 'Array',
-      default: ['.ts']
+      default: ['.js']
     }
   }
 }
