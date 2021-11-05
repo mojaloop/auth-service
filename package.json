@@ -1,7 +1,7 @@
 {
   "name": "@mojaloop/auth-service",
   "version": "11.11.1",
-  "description": "PISP authorization service",
+  "description": "Shared Authorization Service for the Third Party Transaction Verification",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -13,7 +13,7 @@
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit --production",
     "audit:check": "SHELL=sh check-audit --production",
-    "build": "npm run build:openapi; npm run build:dto; tsc -p ./tsconfig.build.json",
+    "build": "rm -rf dist; npm run build:openapi; npm run build:dto; tsc -p ./tsconfig.build.json; mkdir -p ./dist/src/interface; cp ./src/interface/*.yaml ./dist/src/interface/",
     "build:openapi": "openapi bundle --output ./src/interface/api.yaml --ext yaml ./src/interface/api-template.yaml",
     "build:ttk-3p:api": "openapi bundle --output ./docker/ml-testing-toolkit/spec_files/api_definitions/thirdparty_pisp/api_spec.yaml --ext yaml ./docker/ml-testing-toolkit/spec_files/api_definitions/thirdparty_pisp/thirdparty-pisp-api-template.yaml",
     "build:dto": "openapi-typescript ./src/interface/api.yaml --output ./src/interface/openapi.d.ts; npm run lint -- --fix ./src/interface/openapi.d.ts",
@@ -25,7 +25,8 @@
     "pretest": "echo \"pretest - TODO...\"",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
-    "start": "ts-node -r tsconfig-paths/register -P ./tsconfig.build.json ./src/cli.ts",
+    "start:ts": "ts-node -r tsconfig-paths/register -P ./tsconfig.build.json ./src/cli.ts",
+    "start": "node ./dist/src/cli.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register -P ./tsconfig.build.json ./src/cli.ts'",
     "test": "npm run test:unit",
     "test:bdd": "jest --config './jest.bdd.config.js' --testMatch '**/test/step-definitions/**/*.step.ts'",
@@ -51,6 +52,9 @@
   "lint-staged": {
     "*.{js,ts}": "eslint --cache --fix"
   },
+  "_moduleAliases": {
+    "~": "dist/src"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mojaloop/auth-service.git"
@@ -75,6 +79,20 @@
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@redocly/openapi-cli": "^1.0.0-beta.63",
+    "@types/convict": "^6.1.1",
+    "@types/crypto-js": "^4.0.2",
+    "@types/hapi": "^18.0.5",
+    "@types/hapi__hapi": "^20.0.8",
+    "@types/hapi__inert": "^5.2.2",
+    "@types/hapi__vision": "^5.5.2",
+    "@types/javascript-state-machine": "^2.4.2",
+    "@types/jest": "26.0.20",
+    "@types/node": "^14.14.30",
+    "@types/promise-timeout": "^1.3.0",
+    "@types/rc": "^1.1.0",
+    "@types/redis": "^2.8.28",
+    "@types/redis-mock": "^0.17.0",
+    "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "add": "^2.0.6",
@@ -103,6 +121,8 @@
     "sqlite3": "^5.0.2",
     "standard-version": "^9.3.0",
     "swagger-cli": "^4.0.4",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.10.1",
     "ts-jest": "^27.0.5"
   },
   "dependencies": {
@@ -119,20 +139,6 @@
     "@mojaloop/central-services-shared": "^15.0.0",
     "@mojaloop/event-sdk": "10.7.1",
     "@mojaloop/sdk-standard-components": "^15.13.0",
-    "@types/convict": "^6.1.1",
-    "@types/crypto-js": "^4.0.2",
-    "@types/hapi": "^18.0.5",
-    "@types/hapi__hapi": "^20.0.8",
-    "@types/hapi__inert": "^5.2.2",
-    "@types/hapi__vision": "^5.5.2",
-    "@types/javascript-state-machine": "^2.4.2",
-    "@types/jest": "26.0.20",
-    "@types/node": "^14.14.30",
-    "@types/promise-timeout": "^1.3.0",
-    "@types/rc": "^1.1.0",
-    "@types/redis": "^2.8.28",
-    "@types/redis-mock": "^0.17.0",
-    "@types/uuid": "^8.3.1",
     "ajv": "8.6.0",
     "ajv-keywords": "5.0.0",
     "atob": "^2.1.2",
@@ -151,8 +157,8 @@
     "javascript-state-machine": "^3.1.0",
     "json-canonicalize": "^1.0.4",
     "knex": "^0.95.11",
+    "module-alias": "^2.2.2",
     "mysql": "^2.18.1",
-    "npm-run-all": "^4.1.5",
     "openapi-response-validator": "^9.1.0",
     "openapi-typescript": "^4.0.1",
     "parse-strings-in-object": "^2.0.0",
@@ -161,9 +167,7 @@
     "rc": "^1.2.8",
     "redis": "^3.1.2",
     "string-to-arraybuffer": "^1.0.2",
-    "ts-node": "^10.0.0",
-    "tsconfig-paths": "^3.10.1",
-    "typescript": "4.3.5",
+    "typescript": "4.1.5",
     "uuid": "^8.3.2"
   },
   "peerDependencies": {

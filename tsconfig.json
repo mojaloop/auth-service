@@ -9,7 +9,7 @@
     "jest.config.js",
     "jest.coverage.config.js",
     "jest.integration.config.js",
-    "config/knexfile.ts"
+    "config"
   ],
   "exclude": [
     "node_modules",

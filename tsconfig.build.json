@@ -13,4 +13,14 @@
     "jest.bdd.config.js",
     "jest.config.js"
   ],
+  "compilerOptions": {
+    "paths": {
+      "~/*": [
+        "src/*"
+      ],
+      "test/*": [
+        "test/*"
+      ]
+    }
+  }
 }
