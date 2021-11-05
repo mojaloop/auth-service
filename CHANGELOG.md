@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.12.0](https://github.com/mojaloop/auth-service/compare/v11.11.1...v11.12.0) (2021-11-03)
+
+
+### Features
+
+* add pr-title-check step to ci/cd ([#95](https://github.com/mojaloop/auth-service/issues/95)) ([fc7dcef](https://github.com/mojaloop/auth-service/commit/fc7dcef70106f6f7122950fed29bed9f5e6a8a2b))
+
 ### [11.11.1](https://github.com/mojaloop/auth-service/compare/v11.11.0...v11.11.1) (2021-10-20)
 
 
