@@ -15,16 +15,18 @@ export function reformatError (
   if (err instanceof HTTPResponseError) {
     const e: ResponseErrorData = err.getData()
     if (e.res && (e.res.body || e.res.data)) {
+      console.log('1')
       if (e.res.body) {
+        console.log('2')
         try {
           const bodyObj = JSON.parse(e.res.body)
-          mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${bodyObj?.statusCode}`)
+          mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${bodyObj.statusCode}`)
         } catch (ex) {
           // do nothing, only log problems
           logger.push({ exception: ex }).error('Error parsing error message body as JSON')
         }
       } else if (e.res.data) {
-        mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${e.res.data?.statusCode}`)
+        mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${e.res.data.statusCode}`)
       }
     }
   // check are we having valid MojaloopApiErrorCodes object thrown

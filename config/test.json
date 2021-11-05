@@ -18,7 +18,7 @@
     "QUOTES_ENDPOINT": "0.0.0.0:3002",
     "TRANSFERS_ENDPOINT": "0.0.0.0:3000",
     "BULK_TRANSFERS_ENDPOINT": "",
-    "JWS_SIGN": false,
+    "JWS_SIGN": true,
     "JWS_SIGNING_KEY": "./secrets/jwsSigningKey.key",
     "WSO2_AUTH": {
       "staticToken": "0706c62f-c022-3c42-8d14-8b5df128876d",
@@ -29,7 +29,7 @@
     },
     "TLS": {
       "mutualTLS": {
-        "enabled": false
+        "enabled": true
       },
       "creds": {
         "ca": "./secrets/client.crt",
@@ -45,12 +45,12 @@
     "migrations": {
       "tableName": "auth-service",
       "loadExtensions": [
-        ".js"
+        ".ts"
       ]
     },
     "seeds": {
       "loadExtensions": [
-        ".js"
+        ".ts"
       ]
     }
   },
