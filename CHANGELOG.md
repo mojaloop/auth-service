@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [11.13.0](https://github.com/mojaloop/auth-service/compare/v11.12.0...v11.13.0) (2021-11-05)
+
+
+### Features
+
+* **mojaloop/project#1814:** compile ts to js ([#96](https://github.com/mojaloop/auth-service/issues/96)) ([1f046f9](https://github.com/mojaloop/auth-service/commit/1f046f931821f8dc8175555bdadbd3638df965d5)), closes [mojaloop/project#1814](https://github.com/mojaloop/project/issues/1814)
+
 ## [11.12.0](https://github.com/mojaloop/auth-service/compare/v11.11.1...v11.12.0) (2021-11-03)
 
 
