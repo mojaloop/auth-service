@@ -214,26 +214,30 @@ const ConvictConfig = Convict<ServiceConfig>({
 // Load and validate general config based on environment variable
 const env = ConvictConfig.get('ENV')
 console.log('NODE_ENV:', env)
-const configPath = path.resolve(__dirname, `/../../config/${env}.json`)
+const configPath = path.resolve(__dirname, `../../config/${env}.json`)
 // console.log('loading configuration from:', configPath)
 ConvictConfig.loadFile(configPath)
 ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets
-ConvictConfig.set('SHARED.JWS_SIGNING_KEY',
-  getFileContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').JWS_SIGNING_KEY as string))
-)
+if (ConvictConfig.get('SHARED.JWS_SIGN')) {
+  ConvictConfig.set('SHARED.JWS_SIGNING_KEY',
+    getFileContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').JWS_SIGNING_KEY as string))
+  )
+}
 
 // Note: Have not seen these be comma seperated value strings. mimicking sdk-scheme-adapter for now
-ConvictConfig.set('SHARED.TLS.creds.ca',
-  getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.ca as string))
-)
-ConvictConfig.set('SHARED.TLS.creds.cert',
-  getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.cert as string))
-)
-ConvictConfig.set('SHARED.TLS.creds.key',
-  getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.key as string))
-)
+if (ConvictConfig.get('SHARED.TLS.mutualTLS.enabled')) {
+  ConvictConfig.set('SHARED.TLS.creds.ca',
+    getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.ca as string))
+  )
+  ConvictConfig.set('SHARED.TLS.creds.cert',
+    getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.cert as string))
+  )
+  ConvictConfig.set('SHARED.TLS.creds.key',
+    getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.key as string))
+  )
+}
 
 // Extract simplified config from Convict object
 const config: ServiceConfig = ConvictConfig.getProperties()

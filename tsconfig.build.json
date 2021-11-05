@@ -4,6 +4,7 @@
     "src",
     "config",
     "migrations",
+    "seeds",
     "ambient.d.ts",
   ],
   "exclude": [

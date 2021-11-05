@@ -3,6 +3,7 @@
     "src",
     "test",
     "migrations",
+    "seeds",
     "ambient.d.ts",
     "commitlint.config.js",
     "jest.bdd.config.js",
