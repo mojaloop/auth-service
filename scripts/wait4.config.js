@@ -30,6 +30,20 @@ module.exports = {
           retries: 30
         }
       ]
+    },
+    {
+      name: 'mysql',
+
+      // list of services to wait for
+      wait4: [
+        {
+          description: 'MySQL Database',
+          /* Change host:port accordingly based on knexfile.ts attributbes. */
+          uri: 'localhost:3306',
+          method: 'mysql',
+          retries: 30
+        }
+      ]
     }
   ]
 }

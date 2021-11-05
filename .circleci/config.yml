@@ -192,19 +192,23 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             mkdir -p ./test/results
       - run:
-          name: Build docker images
+          name: Run mysql and migrate
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            docker-compose build
+            docker-compose up -d mysql
+            ./scripts/wait4.js mysql
+            docker run --network mojaloop-net \
+              --rm mojaloop/auth-service:local \
+              sh -c "NODE_ENV=integration npm run migrate"
+          environment:
+            NODE_ENV: "development"
+      - run:
+          name: run other containers
           command: |
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose up -d
             ./scripts/wait4.js cicd-integration-tests
-          # use development env since we are connecting to db outside of docker
-          environment:
-            NODE_ENV: "development"
-      - run:
-          name: Migrate DB
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            npm -s run migrate
           # use development env since we are connecting to db outside of docker
           environment:
             NODE_ENV: "development"
