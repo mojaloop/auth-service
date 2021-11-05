@@ -62,12 +62,12 @@
     "migrations": {
       "tableName": "auth-service",
       "loadExtensions": [
-        ".js"
+        ".ts"
       ]
     },
     "seeds": {
       "loadExtensions": [
-        ".js"
+        ".ts"
       ]
     }
   }
