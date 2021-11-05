@@ -13,7 +13,7 @@
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit --production",
     "audit:check": "SHELL=sh check-audit --production",
-    "build": "rm -rf dist; npm run build:openapi; npm run build:dto; tsc -p ./tsconfig.build.json; mkdir -p ./dist/src/interface; cp ./src/interface/*.yaml ./dist/src/interface/",
+    "build": "npm run build:openapi; npm run build:dto; tsc -p ./tsconfig.build.json; cp -R config/*.json dist/config/; mkdir -p ./dist/src/interface; cp ./src/interface/*.yaml ./dist/src/interface/",
     "build:openapi": "openapi bundle --output ./src/interface/api.yaml --ext yaml ./src/interface/api-template.yaml",
     "build:ttk-3p:api": "openapi bundle --output ./docker/ml-testing-toolkit/spec_files/api_definitions/thirdparty_pisp/api_spec.yaml --ext yaml ./docker/ml-testing-toolkit/spec_files/api_definitions/thirdparty_pisp/thirdparty-pisp-api-template.yaml",
     "build:dto": "openapi-typescript ./src/interface/api.yaml --output ./src/interface/openapi.d.ts; npm run lint -- --fix ./src/interface/openapi.d.ts",

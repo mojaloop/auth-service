@@ -9,7 +9,6 @@
     "jest.config.js",
     "jest.coverage.config.js",
     "jest.integration.config.js",
-    "config"
   ],
   "exclude": [
     "node_modules",
