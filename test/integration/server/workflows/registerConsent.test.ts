@@ -46,7 +46,7 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       actions: [
         'accounts.transfer'
       ]
-    },
+    }
   ],
   // todo: make note in api that we are converting all array buffers to base64 encoded strings
   credential: {
@@ -126,13 +126,13 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   }
 }
 
-// note to Kevin - I want to get the PR for main implementation and unit tests in 
+// note to Kevin - I want to get the PR for main implementation and unit tests in
 // now, so I'll cover the fixes to the integration tests and new integration tests
 // for tx in the next one!
 describe('Inbound POST /consents', (): void => {
-  const ttkRequestsHistoryUri = `http://localhost:5050/api/history/requests`
+  const ttkRequestsHistoryUri = 'http://localhost:5050/api/history/requests'
 
-  beforeEach(async(): Promise<void> => {
+  beforeEach(async (): Promise<void> => {
     // clear the request history in TTK between tests.
     await axios.delete(ttkRequestsHistoryUri, {})
   })
@@ -170,7 +170,7 @@ describe('Inbound POST /consents', (): void => {
 
         // check that the auth-service has sent a POST /participants/{Type}/{ID} to the ALS (TTK)
         const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
-        var postParticipantsTypeIdToALS = requestsHistory.filter(req => {
+        const postParticipantsTypeIdToALS = requestsHistory.filter(req => {
           return req.method === 'post' && req.path === '/participants/CONSENT/76059a0a-684f-4002-a880-b01159afe119'
         })
         expect(postParticipantsTypeIdToALS.length).toEqual(1)
@@ -188,7 +188,7 @@ describe('Inbound POST /consents', (): void => {
         const axiosConfig = {
           headers: {
             'Content-Type': 'application/vnd.interoperability.participants+json;version=1.1',
-            'Accept': 'application/vnd.interoperability.participants+json;version=1.1',
+            Accept: 'application/vnd.interoperability.participants+json;version=1.1',
             'FSPIOP-Source': 'als',
             Date: 'Thu, 24 Jan 2019 10:23:12 GMT',
             'FSPIOP-Destination': 'centralAuth'
@@ -198,7 +198,7 @@ describe('Inbound POST /consents', (): void => {
         const putParticipantsTypeIdFromALS = {
           fspId: 'centralAuth'
         }
-        const putScenarioUri = `http://localhost:4004/participants/CONSENT/76059a0a-684f-4002-a880-b01159afe119`
+        const putScenarioUri = 'http://localhost:4004/participants/CONSENT/76059a0a-684f-4002-a880-b01159afe119'
 
         const responseToPutParticipantsTypeId = await axios.put(putScenarioUri, putParticipantsTypeIdFromALS, axiosConfig)
         expect(responseToPutParticipantsTypeId.status).toEqual(200)
@@ -209,7 +209,7 @@ describe('Inbound POST /consents', (): void => {
 
         // check that the auth-service has sent a PUT /consents/{ID} to the DFSP (TTK)
         const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
-        var putConsentsIdToDFSP = requestsHistory.filter(req => {
+        const putConsentsIdToDFSP = requestsHistory.filter(req => {
           return req.method === 'put' && req.path === '/consents/76059a0a-684f-4002-a880-b01159afe119'
         })
         expect(putConsentsIdToDFSP.length).toEqual(1)

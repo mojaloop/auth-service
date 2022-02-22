@@ -45,5 +45,4 @@ defineFeature(feature, (test): void => {
       expect(healthResponse.uptime).toBeGreaterThan(1.0)
     })
   })
-
 })

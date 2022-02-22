@@ -37,8 +37,8 @@ import { PubSub } from '~/shared/pub-sub'
 import { Consent } from '../consents'
 
 export interface VerifyTransactionStateMachine extends ControlledStateMachine {
-  retreiveConsent: Method
-  onRetreiveConsent: Method
+  retrieveConsent: Method
+  onRetrieveConsent: Method
   verifyTransaction: Method
   onVerifyTransaction: Method
   sendCallbackToDFSP: Method

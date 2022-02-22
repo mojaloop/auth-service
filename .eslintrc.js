@@ -28,6 +28,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-var-requires': 'error',
     '@typescript-eslint/no-empty-interface': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     'no-console': 'off',
     quotes: ['error', 'single'],
     'linebreak-style': ['error', 'unix'],
@@ -38,7 +40,7 @@ module.exports = {
     'cucumber/no-arrow-functions': 2,
     'import/default': 'warn', // Support legacy modules without default export
     'import/extensions': 'off',
-    'max-len': ["warn", { "code": 120 }],
+    'max-len': ["off", { "code": 120 }],
   },
   settings: {
     "import/resolver": {
@@ -62,7 +64,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
       }
-    }, 
+    },
     { // properly handle generated DTO and autofix it
       files: [
         'src/interface/**/*.ts'

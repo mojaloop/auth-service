@@ -25,7 +25,6 @@ optionally within square brackets <email>.
 --------------
 ******/
 
-
 import { KVS } from '~/shared/kvs'
 import {
   Message,
@@ -48,9 +47,8 @@ import {
 import * as ConsentDomain from '~/domain/consents'
 import shouldNotBeExecuted from 'test/unit/shouldNotBeExecuted'
 
-const atob = require('atob')
-const btoa = require('btoa')
-
+import atob from 'atob'
+import btoa from 'btoa'
 
 // mock KVS default exported class
 jest.mock('~/shared/kvs')
@@ -69,11 +67,11 @@ const credential: tpAPI.Schemas.VerifiedCredential = {
   credentialType: 'FIDO',
   status: 'VERIFIED',
   payload: {
-    "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
-    "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=="),
-    "response": {
-      "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==",
-      "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0="
+    id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
+    rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=='),
+    response: {
+      attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
+      clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
     },
     type: 'public-key'
   }
@@ -86,12 +84,12 @@ const validConsent: ConsentDomain.Consent = {
   scopes: [
     {
       accountId: 'as2342',
-      actions: ['accounts.getBalance', 'accounts.transfer'],
+      actions: ['accounts.getBalance', 'accounts.transfer']
     },
     {
       accountId: 'as22',
-      actions: ['accounts.getBalance'],
-    },
+      actions: ['accounts.getBalance']
+    }
   ],
   credential: credential,
   status: 'VERIFIED',
@@ -100,9 +98,8 @@ const validConsent: ConsentDomain.Consent = {
     'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl\n' +
     '3Vs0iQUW6QF4IHXi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==\n' +
     '-----END PUBLIC KEY-----\n',
-  createdAt: new Date('2021-01-01'),
+  createdAt: new Date('2021-01-01')
 }
-
 
 // yubico example
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
@@ -115,12 +112,12 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
   consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
   signedPayloadType: 'FIDO',
   signedPayload: {
-    "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
-    "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
-    "response": {
-      "authenticatorData": "xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==",
-      "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=",
-      "signature": "MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8="
+    id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
+    rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
+    response: {
+      authenticatorData: 'xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==',
+      clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=',
+      signature: 'MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8='
     },
     type: 'public-key'
   }
@@ -149,11 +146,11 @@ describe('VerifyTransactionModel', () => {
       subscriber: new PubSub(connectionConfig),
       logger: connectionConfig.logger,
       mojaloopRequests: {
-        _put: jest.fn(() => Promise.resolve({ statusCode: 200 })),
+        _put: jest.fn(() => Promise.resolve({ statusCode: 200 }))
       } as unknown as MojaloopRequests,
       thirdpartyRequests: {
         putThirdpartyRequestsVerifications: jest.fn(() => Promise.resolve({ statusCode: 200 })),
-        putThirdpartyRequestsVerificationsError: jest.fn(() => Promise.resolve({ statusCode: 200 })),
+        putThirdpartyRequestsVerificationsError: jest.fn(() => Promise.resolve({ statusCode: 200 }))
       } as unknown as ThirdpartyRequests,
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       requestProcessingTimeoutSeconds: 3
@@ -178,7 +175,7 @@ describe('VerifyTransactionModel', () => {
     await modelConfig.subscriber.disconnect()
   })
 
-  function checkModelLayout(VerifyTransactionModel: VerifyTransactionModel, optData?: VerifyTransactionData) {
+  function checkModelLayout (VerifyTransactionModel: VerifyTransactionModel, optData?: VerifyTransactionData) {
     expect(VerifyTransactionModel).toBeTruthy()
     expect(VerifyTransactionModel.data).toBeDefined()
     expect(VerifyTransactionModel.fsm.state).toEqual(optData?.currentState || 'start')
@@ -190,18 +187,18 @@ describe('VerifyTransactionModel', () => {
 
     // check is fsm correctly constructed
     expect(typeof VerifyTransactionModel.fsm.init).toEqual('function')
-    expect(typeof VerifyTransactionModel.fsm.retreiveConsent).toEqual('function')
+    expect(typeof VerifyTransactionModel.fsm.retrieveConsent).toEqual('function')
     expect(typeof VerifyTransactionModel.fsm.verifyTransaction).toEqual('function')
     expect(typeof VerifyTransactionModel.fsm.sendCallbackToDFSP).toEqual('function')
 
     // check fsm notification handler
-    expect(typeof VerifyTransactionModel.onRetreiveConsent).toEqual('function')
+    expect(typeof VerifyTransactionModel.onRetrieveConsent).toEqual('function')
     expect(typeof VerifyTransactionModel.onVerifyTransaction).toEqual('function')
     expect(typeof VerifyTransactionModel.onSendCallbackToDFSP).toEqual('function')
 
     expect(sortedArray(VerifyTransactionModel.fsm.allStates())).toEqual([
       'callbackSent',
-      'consentRetreived',
+      'consentRetrieved',
       'errored',
       'none',
       'start',
@@ -210,9 +207,9 @@ describe('VerifyTransactionModel', () => {
     expect(sortedArray(VerifyTransactionModel.fsm.allTransitions())).toEqual([
       'error',
       'init',
-      'retreiveConsent',
+      'retrieveConsent',
       'sendCallbackToDFSP',
-      'verifyTransaction',
+      'verifyTransaction'
     ])
   }
 
@@ -221,30 +218,29 @@ describe('VerifyTransactionModel', () => {
     expect(typeof create).toEqual('function')
   })
 
-  describe('onRetreiveConsent', () => {
-    const retreiveConsentData: VerifyTransactionData = {
+  describe('onRetrieveConsent', () => {
+    const retrieveConsentData: VerifyTransactionData = {
       currentState: 'start',
       participantDFSPId: 'dfspa',
       verificationRequest
     }
 
     it('should be well constructed', async () => {
-      const model = await create(retreiveConsentData, modelConfig)
-      checkModelLayout(model, retreiveConsentData)
+      const model = await create(retrieveConsentData, modelConfig)
+      checkModelLayout(model, retrieveConsentData)
     })
-
 
     it('fetches the consent from the database', async () => {
       // Arrange
       mockGetConsent.mockResolvedValueOnce(validConsent)
-      const model = await create(retreiveConsentData, modelConfig)
+      const model = await create(retrieveConsentData, modelConfig)
 
       // Act
-      await model.fsm.retreiveConsent()
+      await model.fsm.retrieveConsent()
 
       // Assert
       expect(mockGetConsent).toHaveBeenCalledTimes(1)
-      expect(model.data.currentState).toEqual('consentRetreived')
+      expect(model.data.currentState).toEqual('consentRetrieved')
     })
 
     it('responds with an error if something went wrong fetching the consent', async () => {
@@ -252,11 +248,11 @@ describe('VerifyTransactionModel', () => {
       mockGetConsent.mockImplementationOnce(() => {
         throw new Error('test error')
       })
-      const model = await create(retreiveConsentData, modelConfig)
+      const model = await create(retrieveConsentData, modelConfig)
 
       // Act
       try {
-        await model.fsm.retreiveConsent()
+        await model.fsm.retrieveConsent()
         shouldNotBeExecuted()
       } catch (error: any) {
         // Assert
@@ -269,7 +265,7 @@ describe('VerifyTransactionModel', () => {
 
   describe('onVerifyTransaction', () => {
     const verifyTransactionData: VerifyTransactionData = {
-      currentState: 'consentRetreived',
+      currentState: 'consentRetrieved',
       participantDFSPId: 'dfspa',
       verificationRequest,
       consent: validConsent
@@ -314,9 +310,9 @@ describe('VerifyTransactionModel', () => {
       if (invalidTransactionData.verificationRequest.signedPayloadType !== 'FIDO') {
         throw new Error('test data error')
       }
-      invalidTransactionData.verificationRequest.signedPayload.response.clientDataJSON = 
+      invalidTransactionData.verificationRequest.signedPayload.response.clientDataJSON =
         btoa('{"notChallenge":"quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU","clientExtensions":{},"hashAlgorithm":"SHA-256","origin":"https://demo.yubico.com","type":"webauthn.get"}')
-      
+
       const model = await create(invalidTransactionData, modelConfig)
 
       // Act
@@ -335,7 +331,7 @@ describe('VerifyTransactionModel', () => {
       const invalidTransactionData: VerifyTransactionData = JSON.parse(JSON.stringify(verifyTransactionData))
       invalidTransactionData.consent!.status = 'REVOKED'
       invalidTransactionData.consent!.revokedAt = new Date('2020-01-1')
-     
+
       const model = await create(invalidTransactionData, modelConfig)
 
       // Act
@@ -359,7 +355,7 @@ describe('VerifyTransactionModel', () => {
         signedPayloadType: 'GENERIC',
         signedPayload: '12345678'
       }
-    
+
       const model = await create(invalidTransactionData, modelConfig)
 
       // Act
@@ -382,10 +378,10 @@ describe('VerifyTransactionModel', () => {
       consent: validConsent
     }
 
-    it('sends the callback to the DFSP', async () => { 
+    it('sends the callback to the DFSP', async () => {
       // Arrange
       const model = await create(sendCallbackData, modelConfig)
-  
+
       // Act
       await model.fsm.sendCallbackToDFSP()
 
@@ -398,6 +394,7 @@ describe('VerifyTransactionModel', () => {
       // Arrange
       const model = await create(sendCallbackData, modelConfig)
       modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - mocked function
         .mockRejectedValueOnce(new Error('Test Error'))
 
@@ -405,7 +402,7 @@ describe('VerifyTransactionModel', () => {
       try {
         await model.fsm.sendCallbackToDFSP()
         shouldNotBeExecuted()
-      } catch (err: any) { 
+      } catch (err: any) {
         // Assert
         expect(err.message).toBe('Test Error')
         expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledTimes(1)
@@ -446,10 +443,10 @@ describe('VerifyTransactionModel', () => {
       // Arrange
       mockGetConsent.mockResolvedValueOnce(validConsent)
       const model = await create(registerConsentData, modelConfig)
-      
+
       // Act
       await model.run()
-      
+
       // Assert
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')

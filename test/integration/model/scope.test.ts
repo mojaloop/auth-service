@@ -45,7 +45,7 @@ const consents: ConsentModel[] = [
     credentialChallenge: 'xyhdushsoa82w92mzs',
     credentialPayload: 'dwuduwd&e2idjoj0w',
     credentialCounter: 4,
-    originalCredential: JSON.stringify({  status: 'PENDING', payload: {}, credentialType: 'test'}),
+    originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
   },
   {
     id: '948',
@@ -55,7 +55,7 @@ const consents: ConsentModel[] = [
     credentialChallenge: 'xyhdushsoa82w92mzs',
     credentialPayload: 'dwuduwd&e2idjoj0w',
     credentialCounter: 4,
-    originalCredential: JSON.stringify({  status: 'PENDING', payload: {}, credentialType: 'test'}),
+    originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
   }
 ]
 

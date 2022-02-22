@@ -11,8 +11,8 @@ const validConsentId = 'be433b9e-9473-4b7d-bdd5-ac5b42463afb'
 const validConsentsPostRequestAuth: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: validConsentId,
   scopes: [
-    {actions: ['accounts.getBalance', 'accounts.transfer'], accountId: '412ddd18-07a0-490d-814d-27d0e9af9982'}, 
-    {actions: ['accounts.getBalance'], accountId: '10e88508-e542-4630-be7f-bc0076029ea7'}
+    { actions: ['accounts.getBalance', 'accounts.transfer'], accountId: '412ddd18-07a0-490d-814d-27d0e9af9982' },
+    { actions: ['accounts.getBalance'], accountId: '10e88508-e542-4630-be7f-bc0076029ea7' }
   ],
   credential: {
     credentialType: 'FIDO',
@@ -86,18 +86,17 @@ export const invalidVerificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerific
 const axiosConfig = {
   headers: {
     'Content-Type': 'application/vnd.interoperability.participants+json;version=1.1',
-    'Accept': 'application/vnd.interoperability.participants+json;version=1.1',
+    Accept: 'application/vnd.interoperability.participants+json;version=1.1',
     'FSPIOP-Source': 'als',
     Date: 'Thu, 24 Jan 2019 10:23:12 GMT',
     'FSPIOP-Destination': 'centralAuth'
   }
 }
-const ttkRequestsHistoryUri = `http://localhost:5050/api/history/requests`
-
+const ttkRequestsHistoryUri = 'http://localhost:5050/api/history/requests'
 
 describe('POST /thirdpartyRequests/verifications', () => {
   jest.setTimeout(15000)
-  
+
   beforeEach(async () => {
     // clear the request history in TTK between tests.
     await axios.delete(ttkRequestsHistoryUri, {})
@@ -124,13 +123,13 @@ describe('POST /thirdpartyRequests/verifications', () => {
 
       // Arrange
       const consentsURI = 'http://localhost:4004/consents'
-      
+
       // register the consent
-      const response = await axios.post(consentsURI, validConsentsPostRequestAuth, {headers})
-      
+      const response = await axios.post(consentsURI, validConsentsPostRequestAuth, { headers })
+
       // auth-service should return Accepted code
       expect(response.status).toEqual(202)
-      
+
       // wait a bit for the auth-service to process the request
       // takes a bit since attestation takes a bit of time
       await new Promise(resolve => setTimeout(resolve, 2000))
@@ -138,17 +137,17 @@ describe('POST /thirdpartyRequests/verifications', () => {
         fspId: 'centralAuth'
       }
       const mockAlsParticipantsURI = `http://localhost:4004/participants/CONSENT/${validConsentId}`
-      
+
       // mock the ALS callback to the auth-service
       const responseToPutParticipantsTypeId = await axios.put(mockAlsParticipantsURI, putParticipantsTypeIdFromALS, axiosConfig)
       expect(responseToPutParticipantsTypeId.status).toEqual(200)
 
-      // // we have a registered credential - now let's try verifying a transaction 
+      // // we have a registered credential - now let's try verifying a transaction
       const verifyURI = 'http://localhost:4004/thirdpartyRequests/verifications'
 
       // Act
       const result = await axios.post(verifyURI, validVerificationRequest, { headers })
-      
+
       // Assert
       expect(result.status).toBe(202)
 
@@ -199,7 +198,7 @@ describe('POST /thirdpartyRequests/verifications', () => {
       const responseToPutParticipantsTypeId = await axios.put(mockAlsParticipantsURI, putParticipantsTypeIdFromALS, axiosConfig)
       expect(responseToPutParticipantsTypeId.status).toEqual(200)
 
-      // // we have a registered credential - now let's try verifying a transaction 
+      // // we have a registered credential - now let's try verifying a transaction
       const verifyURI = 'http://localhost:4004/thirdpartyRequests/verifications'
 
       // Act
@@ -214,8 +213,8 @@ describe('POST /thirdpartyRequests/verifications', () => {
       // check that the auth-service has sent a PUT /thirdpartyRequests/verifications/{ID} to the DFSP (TTK)
       const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
       const asyncCallback = requestsHistory.filter(req => {
-        return req.method === 'put' 
-          && req.path === `/thirdpartyRequests/verifications/${invalidVerificationRequest.verificationRequestId}/error`
+        return req.method === 'put' &&
+          req.path === `/thirdpartyRequests/verifications/${invalidVerificationRequest.verificationRequestId}/error`
       })
 
       expect(asyncCallback.length).toEqual(1)
@@ -223,9 +222,9 @@ describe('POST /thirdpartyRequests/verifications', () => {
       // check the payload
       const asyncCallbackPayload = asyncCallback[0].body as tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
       expect(asyncCallbackPayload).toStrictEqual({
-        "errorInformation": {
-          "errorCode": "7105",
-          "errorDescription": "Authorization received from PISP failed DFSP validation",
+        errorInformation: {
+          errorCode: '7105',
+          errorDescription: 'Authorization received from PISP failed DFSP validation'
         }
       })
     })

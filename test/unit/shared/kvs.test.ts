@@ -107,7 +107,7 @@ describe('KVS: Key Value Storage', () => {
 
     const setSpy = jest.spyOn(kvs.client, 'set').mockImplementationOnce((
       _key: string,
-      _value: string,
+      _signedPayload: string,
       flag: string,
       _mode: string,
       _duration: number,

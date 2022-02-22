@@ -31,8 +31,7 @@ import { Knex, knex } from 'knex'
 import Config from '~/shared/config'
 import { ConsentDB, ConsentModel } from '~/model/consent'
 import { ScopeModel } from '~/model/scope'
-import { NotFoundError } from '~/model/errors'
-import { RevokedConsentModificationError } from '../../../src/model/errors';
+import { NotFoundError, RevokedConsentModificationError } from '~/model/errors'
 
 /*
  * Mock Consent Resources
@@ -45,7 +44,7 @@ const completeConsent: ConsentModel = {
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4,
-  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+  originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
 }
 
 const expectedCompleteConsent = {
@@ -58,7 +57,7 @@ const expectedCompleteConsent = {
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4,
   originalCredential: expect.any(String),
-  revokedAt: null,
+  revokedAt: null
 }
 /*
  * Consent Resource Model Integration Tests
@@ -97,7 +96,7 @@ describe('src/model/consent', (): void => {
 
         expect(consents.length).toEqual(1)
         expect(consents[0]).toEqual(expectedCompleteConsent)
-        expect(JSON.parse(consents[0].originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
+        expect(JSON.parse(consents[0].originalCredential)).toEqual({ status: 'PENDING', payload: {}, credentialType: 'test' })
       }
     )
 
@@ -131,7 +130,7 @@ describe('src/model/consent', (): void => {
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
           credentialCounter: 4,
-          originalCredential: expect.any(String),
+          originalCredential: expect.any(String)
         }
 
         await expect(consentDB.insert(consentWithoutId)).rejects.toThrow()
@@ -147,7 +146,7 @@ describe('src/model/consent', (): void => {
 
       expect(consent.createdAt).toEqual(expect.any(Date))
       expect(consent).toEqual(expect.objectContaining(expectedCompleteConsent))
-      expect(JSON.parse(consent.originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
+      expect(JSON.parse(consent.originalCredential)).toEqual({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })
 
     it('throws an error on retrieving non-existent consent', async (): Promise<void> => {
@@ -261,10 +260,10 @@ describe('src/model/consent', (): void => {
         credentialCounter: 4,
         originalCredential: expect.any(String),
         createdAt: expect.any(Date),
-        revokedAt: expect.any(Date),
+        revokedAt: expect.any(Date)
       })
 
-      expect(JSON.parse(consentRevoked.originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
+      expect(JSON.parse(consentRevoked.originalCredential)).toEqual({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })
 
     it('throws an error on revoking non-existent consent', async (): Promise<void> => {
@@ -300,7 +299,7 @@ describe('src/model/consent', (): void => {
         revokedAt: expect.any(Date)
       })
 
-      expect(JSON.parse(consents[0].originalCredential)).toEqual({ status:'PENDING', payload:{}, credentialType:'test'})
+      expect(JSON.parse(consents[0].originalCredential)).toEqual({ status: 'PENDING', payload: {}, credentialType: 'test' })
 
       await expect(consentDB.revoke(completeConsent.id))
         .rejects.toThrowError(RevokedConsentModificationError)

@@ -75,7 +75,7 @@ describe('server/domain/consents', (): void => {
   it('Should resolve successfully', async (): Promise<void> => {
     // Arrange
     consentIdsToCleanup.push(consentId)
-    
+
     // Act
     const response = await createAndStoreConsent(
       consentId,
@@ -89,7 +89,7 @@ describe('server/domain/consents', (): void => {
       deriveChallenge(payload),
       0
     )
-    
+
     // Assert
     // We're mainly testing that nothing threw!
     expect(response).toBe(undefined)

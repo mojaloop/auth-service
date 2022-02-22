@@ -50,7 +50,7 @@ import config from '~/shared/config'
 import axios from 'axios'
 import shouldNotBeExecuted from '../../shouldNotBeExecuted'
 import { createAndStoreConsent } from '~/domain/consents'
-import * as challenge  from '~/domain/challenge'
+import * as challenge from '~/domain/challenge'
 import * as consents from '~/domain/consents'
 import { MojaloopApiErrorCode } from '~/shared/api-error'
 import { mockDeferredJobWithCallbackMessage } from '../../mockDeferredJob'
@@ -79,7 +79,7 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       actions: [
         'accounts.transfer'
       ]
-    },
+    }
   ],
   // todo: make note in api that we are converting all array buffers to base64 encoded strings
   credential: {
@@ -160,7 +160,7 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
 }
 
 const participantsTypeIDPutResponse: fspiopAPI.Schemas.ParticipantsTypeIDPutResponse = {
-  'fspId': config.PARTICIPANT_ID
+  fspId: config.PARTICIPANT_ID
 }
 
 const genericErrorResponse: fspiopAPI.Schemas.ErrorInformationObject = {
@@ -260,7 +260,7 @@ describe('RegisterConsentModel', () => {
       'registerAuthoritativeSourceWithALS',
       'sendConsentCallbackToDFSP',
       'storeConsent',
-      'verifyConsent',
+      'verifyConsent'
     ])
   }
 
@@ -306,7 +306,6 @@ describe('RegisterConsentModel', () => {
     })
   })
 
-
   describe('verifyConsent', () => {
     const registerConsentData: RegisterConsentData = {
       currentState: 'start',
@@ -340,17 +339,17 @@ describe('RegisterConsentModel', () => {
             actions: [
               'accounts.transfer'
             ]
-          },
+          }
         ],
         credential: {
           credentialType: 'FIDO',
           status: 'PENDING',
           payload: {
-            "id": "Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA",
-            "rawId": "Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA==",
-            "response": {
-              "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==",
-              "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0="
+            id: 'Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA',
+            rawId: 'Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA==',
+            response: {
+              attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
+              clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
             },
             type: 'public-key'
           }
@@ -442,10 +441,10 @@ describe('RegisterConsentModel', () => {
       const registerConsentSkipVerificationData: RegisterConsentData = {
         currentState: 'start',
         participantDFSPId: 'dfspA',
-        consentsPostRequestAUTH: consentsPostRequestSkipCredentialId,
+        consentsPostRequestAUTH: consentsPostRequestSkipCredentialId
       }
       const model = await create(registerConsentSkipVerificationData, modelConfig)
-      
+
       // Act
       await model.fsm.verifyConsent()
 
@@ -546,7 +545,6 @@ describe('RegisterConsentModel', () => {
       )
       mockDeferredJobWithCallbackMessage(waitOnParticipantResponseFromALSChannel, participantsTypeIDPutResponse)
 
-
       await model.fsm.registerAuthoritativeSourceWithALS()
       await model.checkModelDataForErrorInformation()
 
@@ -556,7 +554,7 @@ describe('RegisterConsentModel', () => {
       // check we made a call to the als
       expect(axios.post).toBeCalledWith(
         `http://${config.SHARED.ALS_ENDPOINT}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`,
-        { fspId: "centralAuth"},
+        { fspId: 'centralAuth' },
         expect.any(Object)
       )
     })
@@ -568,7 +566,6 @@ describe('RegisterConsentModel', () => {
       )
       mockDeferredJobWithCallbackMessage(waitOnParticipantResponseFromALSChannel, genericALSErrorResponse)
 
-
       const model = await create(registerConsentData, modelConfig)
       await model.fsm.registerAuthoritativeSourceWithALS()
 
@@ -579,9 +576,9 @@ describe('RegisterConsentModel', () => {
 
       // check it sends an error back to DFSP
       expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
-        "76059a0a-684f-4002-a880-b01159afe119",
+        '76059a0a-684f-4002-a880-b01159afe119',
         genericErrorResponse,
-        "dfspA"
+        'dfspA'
       )
     })
   })
@@ -667,7 +664,7 @@ describe('RegisterConsentModel', () => {
       mockDeferredJobWithCallbackMessage(waitOnParticipantResponseFromALSChannel, participantsTypeIDPutResponse)
 
       const model = await create(registerConsentData, modelConfig)
-  
+
       await model.run()
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')

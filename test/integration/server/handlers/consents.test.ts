@@ -36,7 +36,6 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 describe('POST /consents - AUTH case', (): void => {
   // hmm this isn't working!!!
 
-  
   it.skip('Should return 202 (Accepted) status code', async (): Promise<void> => {
     // Endpoint
     const scenariosURI = 'http://localhost:4004/consents'
@@ -153,19 +152,19 @@ describe('POST /consents - AUTH case', (): void => {
     // https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
     // in nodejs we use only Buffer.from([...]).toString('base64')
     const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
-      consentId: "46876aac-5db8-4353-bb3c-a6a905843ce7",
-      scopes: [{ "accountId": "dfspa.username.5678", "actions": ["accounts.transfer"] }],
+      consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7',
+      scopes: [{ accountId: 'dfspa.username.5678', actions: ['accounts.transfer'] }],
       credential: {
         credentialType: 'FIDO',
         status: 'PENDING',
         payload: {
-          "id": "MNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1A",
-          "rawId": "MNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1A==",
-          "response": {
-            "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAPKGWYeG6YuLXLb+hPrS4VsmyoWWOv6swonxn49V4a04AiAJig9PLZCUCcAO9B3aWKDMIXdlUnkyyofhDZK+KIlgOGN4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAMNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1KUBAgMmIAEhWCCnZrZ1rTXKmPhbMg/x8K22H5MkS0m5dIrsaQrI7o8COiJYIInSu3mbM7G3F/BrXI8wcOQLvPq8t5d8pdm8JoS++9Hk",
-            "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=="
+          id: 'MNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1A',
+          rawId: 'MNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1A==',
+          response: {
+            attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAPKGWYeG6YuLXLb+hPrS4VsmyoWWOv6swonxn49V4a04AiAJig9PLZCUCcAO9B3aWKDMIXdlUnkyyofhDZK+KIlgOGN4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAMNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1KUBAgMmIAEhWCCnZrZ1rTXKmPhbMg/x8K22H5MkS0m5dIrsaQrI7o8COiJYIInSu3mbM7G3F/BrXI8wcOQLvPq8t5d8pdm8JoS++9Hk',
+            clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=='
           },
-          "type": "public-key"
+          type: 'public-key'
         }
       }
     }
