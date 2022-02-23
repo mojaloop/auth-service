@@ -33,7 +33,6 @@ import inspect from '~/shared/inspect'
 import { reformatError } from '~/shared/api-error'
 import { VerifyTransactionModelConfig, VerifyTransactionData, VerifyTransactionStateMachine } from './verifyTransaction.interface'
 import {
-  thirdparty as tpAPI,
   v1_1 as fspiopAPI
 } from '@mojaloop/api-snippets'
 import * as ConsentDomain from '../consents'
@@ -98,16 +97,17 @@ export class VerifyTransactionModel
     } catch (error) {
       this.logger.push({ error }).error('start -> consentRetrieved')
 
-      let mojaloopError
-      // if error is planned and is a MojaloopApiErrorCode we send back that code
-      if ((error as Errors.MojaloopApiErrorCode).code) {
-        mojaloopError = reformatError(error as Errors.MojaloopApiErrorCode, this.logger)
-      } else {
-        // if error is not planned send back a generalized error
-        mojaloopError = reformatError(
-          Errors.MojaloopApiErrorCodes.TP_AUTH_SERVICE_ERROR,
-          this.logger
-        )
+      const mojaloopError = reformatError(
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
+        this.logger
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'VerifyTransactionModel: start -> consentRetrieved' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
       }
 
       await this.thirdpartyRequests.putThirdpartyRequestsVerificationsError(
@@ -122,6 +122,8 @@ export class VerifyTransactionModel
   }
 
   async onVerifyTransaction (): Promise<void> {
+    const { verificationRequest, participantDFSPId } = this.data
+
     try {
       InvalidDataError.throwIfInvalidProperty(this.data, 'consent')
       const f2l = new Fido2Lib()
@@ -163,26 +165,43 @@ export class VerifyTransactionModel
 
       // TODO: for greater security, store the updated counter result
       // out of scope for now.
-      await f2l.assertionResult(assertionResult, assertionExpectations) // will throw on error
+
+      // the fido2lib throws an error if the challenge is not signed correctly
+      // the library doesn't have error types so we can't distinguish what
+      // exactly caused the error. this needs further investigation.
+      // for now we will assume that if it errors the challenge was signed
+      // incorrectly and inform the participant that the authentication was
+      // rejected
+      try {
+        await f2l.assertionResult(assertionResult, assertionExpectations)
+        this.data.verificationResponse = {
+          authenticationResponse: 'VERIFIED'
+        }
+      } catch (error) {
+        this.data.verificationResponse = {
+          authenticationResponse: 'REJECTED'
+        }
+      }
     } catch (error) {
       this.logger.push({ error }).error('consentRetrieved -> transactionVerified')
 
-      let mojaloopError
-      // if error is planned and is a MojaloopApiErrorCode we send back that code
-      if ((error as Errors.MojaloopApiErrorCode).code) {
-        mojaloopError = reformatError(error as Errors.MojaloopApiErrorCode, this.logger)
-      } else {
-        // if error is not planned send back a generalized error
-        mojaloopError = reformatError(
-          Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID,
-          this.logger
-        )
+      const mojaloopError = reformatError(
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
+        this.logger
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'VerifyTransactionModel: consentRetrieved -> transactionVerified' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
       }
 
       await this.thirdpartyRequests.putThirdpartyRequestsVerificationsError(
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
-        this.data.verificationRequest.verificationRequestId,
-        this.data.participantDFSPId
+        verificationRequest.verificationRequestId,
+        participantDFSPId
       )
 
       // throw error to stop state machine
@@ -191,23 +210,26 @@ export class VerifyTransactionModel
   }
 
   async onSendCallbackToDFSP (): Promise<void> {
-    const { verificationRequest, participantDFSPId } = this.data
+    const { verificationRequest, participantDFSPId, verificationResponse } = this.data
 
     try {
-      const response: tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse = {
-        authenticationResponse: 'VERIFIED'
-      }
-
       await this.thirdpartyRequests.putThirdpartyRequestsVerifications(
-        response, verificationRequest.verificationRequestId, participantDFSPId
+        verificationResponse!, verificationRequest.verificationRequestId, participantDFSPId
       )
     } catch (error) {
       this.logger.push({ error }).error('onSendCallbackToDFSP -> callbackSent')
-      //     // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_REQUEST_NOT_VALID,
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
-      )
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'VerifyTransactionModel: onSendCallbackToDFSP -> callbackSent' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
+      }
 
       await this.thirdpartyRequests.putThirdpartyRequestsVerificationsError(
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,

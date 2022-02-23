@@ -292,15 +292,11 @@ describe('VerifyTransactionModel', () => {
         '-----END PUBLIC KEY-----'
       const model = await create(invalidTransactionData, modelConfig)
 
-      // Act
-      try {
-        await model.fsm.verifyTransaction()
-        shouldNotBeExecuted()
-      } catch (error: any) {
-        // Assert
-        expect(error.message).toEqual('signature validation failed')
-        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
-      }
+      await model.fsm.verifyTransaction()
+
+      expect(model.data.verificationResponse).toEqual({
+        authenticationResponse: 'REJECTED'
+      })
     })
 
     it('responds with an error if clientDataJSON cannot be parsed', async () => {
@@ -315,15 +311,11 @@ describe('VerifyTransactionModel', () => {
 
       const model = await create(invalidTransactionData, modelConfig)
 
-      // Act
-      try {
-        await model.fsm.verifyTransaction()
-        shouldNotBeExecuted()
-      } catch (error: any) {
-        // Assert
-        expect(error.message).toEqual('clientData challenge was not a string')
-        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
-      }
+      await model.fsm.verifyTransaction()
+
+      expect(model.data.verificationResponse).toEqual({
+        authenticationResponse: 'REJECTED'
+      })
     })
 
     it('responds with an error if the consent status is REVOKED', async () => {
@@ -378,9 +370,12 @@ describe('VerifyTransactionModel', () => {
       consent: validConsent
     }
 
-    it('sends the callback to the DFSP', async () => {
+    it('sends the verificationResponse data callback to the DFSP', async () => {
       // Arrange
       const model = await create(sendCallbackData, modelConfig)
+      model.data.verificationResponse = {
+        authenticationResponse: 'VERIFIED'
+      }
 
       // Act
       await model.fsm.sendCallbackToDFSP()
@@ -388,6 +383,9 @@ describe('VerifyTransactionModel', () => {
       // Assert
       expect(model.data.currentState).toEqual('callbackSent')
       expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledTimes(1)
+      expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledWith(
+        model.data.verificationResponse, '835a8444-8cdc-41ef-bf18-ca4916c2e005', 'dfspa'
+      )
     })
 
     it('sends an error callback to the DFSP if the original request fails', async () => {

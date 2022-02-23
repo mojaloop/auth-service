@@ -171,16 +171,17 @@ export class RegisterConsentModel
     } catch (error) {
       this.logger.push({ error }).error('start -> consentVerified')
 
-      let mojaloopError
-      // if error is planned and is a MojaloopApiErrorCode we send back that code
-      if ((error as Errors.MojaloopApiErrorCode).code) {
-        mojaloopError = reformatError(error as Errors.MojaloopApiErrorCode, this.logger)
-      } else {
-        // if error is not planned send back a generalized error
-        mojaloopError = reformatError(
-          Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
-          this.logger
-        )
+      const mojaloopError = reformatError(
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
+        this.logger
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: start -> consentVerified' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
       }
 
       await this.thirdpartyRequests.putConsentsError(
@@ -210,16 +211,17 @@ export class RegisterConsentModel
     } catch (error) {
       this.logger.push({ error }).error('consentVerified -> consentStoredAndVerified')
 
-      let mojaloopError
-      // if error is planned and is a MojaloopApiErrorCode we send back that code
-      if ((error as Errors.MojaloopApiErrorCode).code) {
-        mojaloopError = reformatError(error as Errors.MojaloopApiErrorCode, this.logger)
-      } else {
-        // if error is not planned send back a generalized error
-        mojaloopError = reformatError(
-          Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
-          this.logger
-        )
+      const mojaloopError = reformatError(
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
+        this.logger
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: consentVerified -> consentStoredAndVerified' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
       }
 
       await this.thirdpartyRequests.putConsentsError(
@@ -294,22 +296,28 @@ export class RegisterConsentModel
         })
         .wait(this.config.requestProcessingTimeoutSeconds * 1000)
     } catch (error) {
+      // unplanned error - inform participant
       this.logger.push({ error }).error('consentStoredAndVerified -> registeredAsAuthoritativeSource')
-      // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
-      )
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
 
-      // if the flow fails to run for any reason notify the DFSP that the account
-      // linking process has failed
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: consentStoredAndVerified -> registeredAsAuthoritativeSource' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
+      }
+
       await this.thirdpartyRequests.putConsentsError(
         consentsPostRequestAUTH.consentId,
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
         participantDFSPId
       )
 
-      // throw the actual error
+      // throw error to stop state machine
       throw error
     }
   }
@@ -336,16 +344,23 @@ export class RegisterConsentModel
         participantDFSPId
       )
     } catch (error) {
+      // unplanned error - inform participant
       this.logger.push({ error }).error('registeredAsAuthoritativeSource -> callbackSent')
-      // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
-      )
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
 
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: registeredAsAuthoritativeSource -> callbackSent' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
+      }
       await this.thirdpartyRequests.putConsentsError(
         consentsPostRequestAUTH.consentId,
-        mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
+        mojaloopError,
         participantDFSPId
       )
 

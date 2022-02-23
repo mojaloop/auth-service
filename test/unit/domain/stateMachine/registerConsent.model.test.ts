@@ -391,8 +391,24 @@ describe('RegisterConsentModel', () => {
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
-            errorCode: '7200',
-            errorDescription: 'Generic Thirdparty account linking error'
+            errorCode: '2000',
+            errorDescription: 'Generic server error',
+            extensionList: {
+              extension: [
+                {
+                  key: 'authServiceParticipant',
+                  value: 'centralAuth'
+                },
+                {
+                  key: 'transitionFailure',
+                  value: 'RegisterConsentModel: start -> consentVerified'
+                },
+                {
+                  key: 'rawError',
+                  value: '{}'
+                }
+              ]
+            }
           }
         },
         'dfspA'
@@ -423,8 +439,24 @@ describe('RegisterConsentModel', () => {
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
-            errorCode: '7200',
-            errorDescription: 'Generic Thirdparty account linking error'
+            errorCode: '2000',
+            errorDescription: 'Generic server error',
+            extensionList: {
+              extension: [
+                {
+                  key: 'authServiceParticipant',
+                  value: 'centralAuth'
+                },
+                {
+                  key: 'transitionFailure',
+                  value: 'RegisterConsentModel: start -> consentVerified'
+                },
+                {
+                  key: 'rawError',
+                  value: JSON.stringify(error)
+                }
+              ]
+            }
           }
         },
         'dfspA'
@@ -509,8 +541,24 @@ describe('RegisterConsentModel', () => {
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
-            errorCode: '7200',
-            errorDescription: 'Generic Thirdparty account linking error'
+            errorCode: '2000',
+            errorDescription: 'Generic server error',
+            extensionList: {
+              extension: [
+                {
+                  key: 'authServiceParticipant',
+                  value: 'centralAuth'
+                },
+                {
+                  key: 'transitionFailure',
+                  value: 'RegisterConsentModel: consentVerified -> consentStoredAndVerified'
+                },
+                {
+                  key: 'rawError',
+                  value: '{}'
+                }
+              ]
+            }
           }
         },
         'dfspA'
@@ -638,8 +686,24 @@ describe('RegisterConsentModel', () => {
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
-            errorCode: '7200',
-            errorDescription: 'Generic Thirdparty account linking error'
+            errorCode: '2000',
+            errorDescription: 'Generic server error',
+            extensionList: {
+              extension: [
+                {
+                  key: 'authServiceParticipant',
+                  value: 'centralAuth'
+                },
+                {
+                  key: 'transitionFailure',
+                  value: 'RegisterConsentModel: registeredAsAuthoritativeSource -> callbackSent'
+                },
+                {
+                  key: 'rawError',
+                  value: '{}'
+                }
+              ]
+            }
           }
         },
         'dfspA'

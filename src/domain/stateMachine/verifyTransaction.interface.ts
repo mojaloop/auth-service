@@ -60,6 +60,7 @@ export interface VerifyTransactionData extends StateData {
   // initial POST /thirdpartyRequests/verifications request
   verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
 
+  verificationResponse?: tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
   // // metadata related to the verification request (for now just the origin)
   // verificationRequestMetadata: { origin: string }
 
