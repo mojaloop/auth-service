@@ -51,7 +51,7 @@ import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-li
 import str2ab from 'string-to-arraybuffer'
 import { createAndStoreConsent } from '~/domain/consents'
 
-const atob = require('atob')
+import atob from 'atob'
 export class RegisterConsentModel
   extends PersistentModel<RegisterConsentStateMachine, RegisterConsentData> {
   protected config: RegisterConsentModelConfig
@@ -121,12 +121,12 @@ export class RegisterConsentModel
 
   async onVerifyConsent (): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
+    const payload = (consentsPostRequestAUTH.credential.payload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
     try {
-
       const challenge = deriveChallenge(consentsPostRequestAUTH)
-      const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.credential.payload.response.clientDataJSON)
+      const decodedJsonString = decodeBase64String(payload.response.clientDataJSON)
       const parsedClientData = JSON.parse(decodedJsonString)
- 
+
       const attestationExpectations: ExpectedAttestationResult = {
         challenge,
         // not sure what origin should be here
@@ -137,32 +137,31 @@ export class RegisterConsentModel
       }
 
       const f2l = new Fido2Lib()
-      const clientAttestationResponse: AttestationResult = {  
+      const clientAttestationResponse: AttestationResult = {
         // This is a little tricky here
         // we first need to convert from ascii (base64 representation) --> Binary
         // then to an ArrayBuffer to reconstruct the object
         // TODO: fix me!
-        id: str2ab(atob(consentsPostRequestAUTH.credential.payload.id)),
+        id: str2ab(atob(payload.id)),
         // id: str2ab(consentsPostRequestAUTH.credential.payload.id),
         response: {
-          clientDataJSON: consentsPostRequestAUTH.credential.payload.response.clientDataJSON,
-          attestationObject: consentsPostRequestAUTH.credential.payload.response.attestationObject
+          clientDataJSON: payload.response.clientDataJSON,
+          attestationObject: payload.response.attestationObject
         }
       }
 
       // if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
       // then skip this step, and make up a random public key
       if (this.config.demoSkipValidationForCredentialIds.length > 0 &&
-        this.config.demoSkipValidationForCredentialIds.indexOf(consentsPostRequestAUTH.credential.payload.id) > -1) {
-        
-        this.logger.warn(`found demo credentialId: ${consentsPostRequestAUTH.credential.payload.id}. Skipping FIDO attestation validation step.`)
-        
-        this.data.credentialCounter = 0;
+        this.config.demoSkipValidationForCredentialIds.indexOf(payload.id) > -1) {
+        this.logger.warn(`found demo credentialId: ${payload.id}. Skipping FIDO attestation validation step.`)
+
+        this.data.credentialCounter = 0
         this.data.credentialPublicKey = 'demo public key.'
         return
       }
 
-      const attestationResult =  await f2l.attestationResult(
+      const attestationResult = await f2l.attestationResult(
         clientAttestationResponse,
         attestationExpectations
       )
@@ -172,16 +171,17 @@ export class RegisterConsentModel
     } catch (error) {
       this.logger.push({ error }).error('start -> consentVerified')
 
-      let mojaloopError
-      // if error is planned and is a MojaloopApiErrorCode we send back that code
-      if ((error as Errors.MojaloopApiErrorCode).code) {
-        mojaloopError = reformatError(error, this.logger)
-      } else {
-        // if error is not planned send back a generalized error
-        mojaloopError = reformatError(
-          Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
-          this.logger
-        )
+      const mojaloopError = reformatError(
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
+        this.logger
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: start -> consentVerified' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
       }
 
       await this.thirdpartyRequests.putConsentsError(
@@ -211,16 +211,17 @@ export class RegisterConsentModel
     } catch (error) {
       this.logger.push({ error }).error('consentVerified -> consentStoredAndVerified')
 
-      let mojaloopError
-      // if error is planned and is a MojaloopApiErrorCode we send back that code
-      if ((error as Errors.MojaloopApiErrorCode).code) {
-        mojaloopError = reformatError(error, this.logger)
-      } else {
-        // if error is not planned send back a generalized error
-        mojaloopError = reformatError(
-          Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
-          this.logger
-        )
+      const mojaloopError = reformatError(
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
+        this.logger
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: consentVerified -> consentStoredAndVerified' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
       }
 
       await this.thirdpartyRequests.putConsentsError(
@@ -295,22 +296,28 @@ export class RegisterConsentModel
         })
         .wait(this.config.requestProcessingTimeoutSeconds * 1000)
     } catch (error) {
+      // unplanned error - inform participant
       this.logger.push({ error }).error('consentStoredAndVerified -> registeredAsAuthoritativeSource')
-      // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
-      )
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
 
-      // if the flow fails to run for any reason notify the DFSP that the account
-      // linking process has failed
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: consentStoredAndVerified -> registeredAsAuthoritativeSource' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
+      }
+
       await this.thirdpartyRequests.putConsentsError(
         consentsPostRequestAUTH.consentId,
         mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
         participantDFSPId
       )
 
-      // throw the actual error
+      // throw error to stop state machine
       throw error
     }
   }
@@ -321,7 +328,8 @@ export class RegisterConsentModel
     try {
       // copy credential and update status
       const verifiedCredential: tpAPI.Schemas.VerifiedCredential = {
-        ...consentsPostRequestAUTH.credential,
+        credentialType: 'FIDO',
+        payload: (consentsPostRequestAUTH.credential.payload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation),
         status: 'VERIFIED'
       }
 
@@ -336,16 +344,23 @@ export class RegisterConsentModel
         participantDFSPId
       )
     } catch (error) {
+      // unplanned error - inform participant
       this.logger.push({ error }).error('registeredAsAuthoritativeSource -> callbackSent')
-      // we send back an account linking error despite the actual error
       const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
+        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
-      )
+      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
 
+      mojaloopError.errorInformation.extensionList = {
+        extension: [
+          { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
+          { key: 'transitionFailure', value: 'RegisterConsentModel: registeredAsAuthoritativeSource -> callbackSent' },
+          { key: 'rawError', value: JSON.stringify(error) }
+        ]
+      }
       await this.thirdpartyRequests.putConsentsError(
         consentsPostRequestAUTH.consentId,
-        mojaloopError as unknown as fspiopAPI.Schemas.ErrorInformationObject,
+        mojaloopError,
         participantDFSPId
       )
 
@@ -381,7 +396,7 @@ export class RegisterConsentModel
           this.logger.info('State machine in errored state')
           return
       }
-    } catch (err) {
+    } catch (err: any) {
       this.logger.info(`Error running RegisterConsentModel : ${inspect(err)}`)
 
       // as this function is recursive, we don't want to error the state machine multiple times

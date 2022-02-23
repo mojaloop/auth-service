@@ -31,15 +31,7 @@ import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '~/domain/buffer'
 import FidoUtils from '~/shared/fido-utils'
 
-function ab2str(buf: ArrayBuffer) {
-  var str = "";
-  new Uint8Array(buf).forEach((ch) => {
-    str += String.fromCharCode(ch);
-  });
-  return str;
-}
-
-const btoa = require('btoa')
+import btoa from 'btoa'
 
 /*
   Example attestation result
@@ -172,8 +164,15 @@ const btoa = require('btoa')
     }
   }
 */
-const atob = require('atob')
+import atob from 'atob'
 
+function ab2str (buf: ArrayBuffer) {
+  let str = ''
+  new Uint8Array(buf).forEach((ch) => {
+    str += String.fromCharCode(ch)
+  })
+  return str
+}
 
 const consentsPostRequestAUTH = {
   headers: {
@@ -195,7 +194,7 @@ const consentsPostRequestAUTH = {
         rawId: atob('vwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ=='),
         response: {
           clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTXpnd056QTFZMkU1TlRaaFlUZzBOMlE0T1dVMFlUUTBOR1JoT1dKbFpXUmpOR1EzTlRZNU1XSTBNV0l3WldNeE9EVTJZalJoWW1Sa05EbGhORE0yTUEiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjQyMTgxIiwiY3Jvc3NPcmlnaW4iOmZhbHNlfQ==',
-          attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIhAJEFVHrzmq90fdBVy4nOPc48vtvJVAyQleGVcp+nQ8lUAiB67XFnGhC7q7WI3NdcrCdqnewSjCfhqEvO+sbWKC60c2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAABFJogIY72QTOWuIH41bfx9QBAvwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWaUBAgMmIAEhWCAITUwire20kCqzl0A3Fbpwx2cnSqwFfTgbA2b8+a/aUiJYIHRMWJlb4Lud02oWTdQ+fejwkVo17qD0KvrwwrZZxWIg',
+          attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIhAJEFVHrzmq90fdBVy4nOPc48vtvJVAyQleGVcp+nQ8lUAiB67XFnGhC7q7WI3NdcrCdqnewSjCfhqEvO+sbWKC60c2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAABFJogIY72QTOWuIH41bfx9QBAvwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWaUBAgMmIAEhWCAITUwire20kCqzl0A3Fbpwx2cnSqwFfTgbA2b8+a/aUiJYIHRMWJlb4Lud02oWTdQ+fejwkVo17qD0KvrwwrZZxWIg'
         },
         type: 'public-key'
       }
@@ -215,7 +214,7 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
     rawId: 'vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ',
     response: {
       authenticatorData: Buffer.from([73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23,
-15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131, 29, 151, 99, 1, 0, 0, 0, 18]).toString('base64'),
+        15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131, 29, 151, 99, 1, 0, 0, 0, 18]).toString('base64'),
       clientDataJSON: Buffer.from([123, 34, 116, 121, 112, 101, 34, 58,
         34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103, 101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87,
         49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104,
@@ -247,10 +246,10 @@ describe('fido-lib', (): void => {
   it('should decode the clientDataJSON', () => {
     // Arrange
     const expected = {
-      "type": "webauthn.create",
-      "challenge": "MzgwNzA1Y2E5NTZhYTg0N2Q4OWU0YTQ0NGRhOWJlZWRjNGQ3NTY5MWI0MWIwZWMxODU2YjRhYmRkNDlhNDM2MA",
-      "origin": "http://localhost:42181",
-      "crossOrigin": false,
+      type: 'webauthn.create',
+      challenge: 'MzgwNzA1Y2E5NTZhYTg0N2Q4OWU0YTQ0NGRhOWJlZWRjNGQ3NTY5MWI0MWIwZWMxODU2YjRhYmRkNDlhNDM2MA',
+      origin: 'http://localhost:42181',
+      crossOrigin: false
     }
 
     // Act
@@ -268,8 +267,8 @@ describe('fido-lib', (): void => {
     const challenge = 'MzgwNzA1Y2E5NTZhYTg0N2Q4OWU0YTQ0NGRhOWJlZWRjNGQ3NTY5MWI0MWIwZWMxODU2YjRhYmRkNDlhNDM2MA=='
     const attestationExpectations: ExpectedAttestationResult = {
       challenge,
-      origin: "http://localhost:42181",
-      factor: "either"
+      origin: 'http://localhost:42181',
+      factor: 'either'
     }
 
     const f2l = new Fido2Lib()
@@ -278,20 +277,21 @@ describe('fido-lib', (): void => {
       rawId: str2ab(consentsPostRequestAUTH.payload.credential.payload.rawId),
       response: {
         clientDataJSON: consentsPostRequestAUTH.payload.credential.payload.response.clientDataJSON,
-        attestationObject: consentsPostRequestAUTH.payload.credential.payload.response.attestationObject,
+        attestationObject: consentsPostRequestAUTH.payload.credential.payload.response.attestationObject
       }
     }
+    // eslint-disable-next-line no-useless-catch
     try {
       const result = await f2l.attestationResult(
         clientAttestationResponse,
         attestationExpectations
       )
       console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
-      
+
       const credIdAB = result.authnrData.get('credId')
       const credId = btoa(ab2str(credIdAB))
       console.log('credId:', credId)
-    } catch (error){
+    } catch (error) {
       throw error
     }
   })
@@ -304,15 +304,15 @@ describe('fido-lib', (): void => {
       origin: 'http://localhost:42181',
       // fido2lib infers this from origin, so we don't need to set it
       // rpId: 'localhost',
-      factor: "either",
+      factor: 'either',
       // Get this from the log statement in the previous request
       publicKey: `-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECE1MIq3ttJAqs5dANxW6cMdnJ0qs
 BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
 -----END PUBLIC KEY-----`,
       prevCounter: 0,
-      userHandle: null,
-    };
+      userHandle: null
+    }
     const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
     console.log('authenticatorData.length', authenticatorData.byteLength)
     const assertionResult: AssertionResult = {
@@ -325,28 +325,27 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
         userHandle: verificationRequest.signedPayload.response.userHandle
       }
     }
-    
+
     // Act
-    await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+    await f2l.assertionResult(assertionResult, assertionExpectations) // will throw on error
 
     // Assert
   })
 
-  
   describe('custom site based attestation and assertion', () => {
-    const consent = { "consentId": "46876aac-5db8-4353-bb3c-a6a905843ce7", "consentRequestId": "c51ec534-ee48-4575-b6a9-ead2955b8069", "scopes": [{ "accountId": "dfspa.username.5678", "actions": ["accounts.transfer"] }] }
+    const consent = { consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7', consentRequestId: 'c51ec534-ee48-4575-b6a9-ead2955b8069', scopes: [{ accountId: 'dfspa.username.5678', actions: ['accounts.transfer'] }] }
     const challenge = deriveChallenge(consent as unknown as tpAPI.Schemas.ConsentsPostRequestAUTH)
     const credential: tpAPI.Schemas.VerifiedCredential = {
       credentialType: 'FIDO',
       status: 'VERIFIED',
       payload: {
-        "id": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw",
-        "rawId": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==",
-        "response": {
-          "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIgC8d5Y5Tfs4nNybpZT97j5ZVuTNFu1AWWwqpR8em4LJcCIQDDzayDA6lzgrbB3jDMM2/NI70TtZux2T3lIWMK8IGxr2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMTLX5kZhaUsGGUVJvPd6efRKHVvWMqnrf4u23AvlzDddEEAAAAAAAAAAAAAAAAAAAAAAAAAAABAiehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrz6UBAgMmIAEhWCDAVRRKKW4qj4bWykF+8L4FI49plPv1i7yD+ef0ATwwlyJYIO7sxbQE+9J1LAY6lLMMh+jiSU0/Rf9j0MXiqC2/b7Cq",
-          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHBzOi8vc2FuZGJveC5tb2phbG9vcC5pbyIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=="
+        id: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw',
+        rawId: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==',
+        response: {
+          attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIgC8d5Y5Tfs4nNybpZT97j5ZVuTNFu1AWWwqpR8em4LJcCIQDDzayDA6lzgrbB3jDMM2/NI70TtZux2T3lIWMK8IGxr2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMTLX5kZhaUsGGUVJvPd6efRKHVvWMqnrf4u23AvlzDddEEAAAAAAAAAAAAAAAAAAAAAAAAAAABAiehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrz6UBAgMmIAEhWCDAVRRKKW4qj4bWykF+8L4FI49plPv1i7yD+ef0ATwwlyJYIO7sxbQE+9J1LAY6lLMMh+jiSU0/Rf9j0MXiqC2/b7Cq',
+          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHBzOi8vc2FuZGJveC5tb2phbG9vcC5pbyIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=='
         },
-        "type": "public-key"
+        type: 'public-key'
       }
     }
 
@@ -357,14 +356,14 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
       consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
       signedPayloadType: 'FIDO',
       signedPayload: {
-        "id": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw",
-        "rawId": "iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==",
-        "response": {
-          "authenticatorData": "y1+ZGYWlLBhlFSbz3enn0Sh1b1jKp63+LttwL5cw3XQBAAAAAg==",
-          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJUMWRhYUZscVFYaGFWR04zV1dwVk5GbDZVbWhOZWxKdFQxZFJkMDU2UW0xYWFteHNXa1JHYVU1cVl6Sk9WMVpvVFhwQk1VNUhTVEZOVjFwcVdsUm9hbHBIUm1wT1JFVjVXa1JDYlU1dFRUSk5WMFpvVFZFIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9zYW5kYm94Lm1vamFsb29wLmlvIiwidHlwZSI6IndlYmF1dGhuLmdldCJ9",
-          "signature": "MEYCIQC3Igm0I4uFjJydEYIcDPn6Wq39fY0QyQdZu2pEwaaMoAIhAKb2B6XaVXKO+ORsUgP5Riw22rkvIhS6eb3KadyFfaos"
+        id: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw',
+        rawId: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==',
+        response: {
+          authenticatorData: 'y1+ZGYWlLBhlFSbz3enn0Sh1b1jKp63+LttwL5cw3XQBAAAAAg==',
+          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJUMWRhYUZscVFYaGFWR04zV1dwVk5GbDZVbWhOZWxKdFQxZFJkMDU2UW0xYWFteHNXa1JHYVU1cVl6Sk9WMVpvVFhwQk1VNUhTVEZOVjFwcVdsUm9hbHBIUm1wT1JFVjVXa1JDYlU1dFRUSk5WMFpvVFZFIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9zYW5kYm94Lm1vamFsb29wLmlvIiwidHlwZSI6IndlYmF1dGhuLmdldCJ9',
+          signature: 'MEYCIQC3Igm0I4uFjJydEYIcDPn6Wq39fY0QyQdZu2pEwaaMoAIhAKb2B6XaVXKO+ORsUgP5Riw22rkvIhS6eb3KadyFfaos'
         },
-        "type": "public-key"
+        type: 'public-key'
       }
     }
 
@@ -372,8 +371,8 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
       // Arrange
       const attestationExpectations: ExpectedAttestationResult = {
         challenge,
-        origin: "https://sandbox.mojaloop.io",
-        factor: "either"
+        origin: 'https://sandbox.mojaloop.io',
+        factor: 'either'
       }
 
       const f2l = new Fido2Lib()
@@ -382,7 +381,7 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
         rawId: str2ab(credential.payload.rawId),
         response: {
           clientDataJSON: credential.payload.response.clientDataJSON,
-          attestationObject: credential.payload.response.attestationObject,
+          attestationObject: credential.payload.response.attestationObject
         }
       }
 
@@ -404,16 +403,16 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
         // This must be base64 encoded,
         // as navigator.credentials.get base64 encodes the challenge
         challenge: btoa(customSiteVR.challenge),
-        origin: "https://sandbox.mojaloop.io",
-        factor: "either",
+        origin: 'https://sandbox.mojaloop.io',
+        factor: 'either',
         // Get this from the log statement in the previous request
         publicKey: `-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
 9Yu8g/nn9AE8MJfu7MW0BPvSdSwGOpSzDIfo4klNP0X/Y9DF4qgtv2+wqg==
 -----END PUBLIC KEY-----`,
         prevCounter: 0,
-        userHandle: null,
-      };
+        userHandle: null
+      }
       const authenticatorData = FidoUtils.stringToArrayBuffer(customSiteVR.signedPayload.response.authenticatorData)
       console.log('authenticatorData.length', authenticatorData.byteLength)
       const assertionResult: AssertionResult = {
@@ -428,23 +427,22 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
       }
 
       // Act
-      await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+      await f2l.assertionResult(assertionResult, assertionExpectations) // will throw on error
 
       // Assert
     })
   })
-
 
   describe('yubikey site based attestation and assertion', () => {
     const credential: tpAPI.Schemas.VerifiedCredential = {
       credentialType: 'FIDO',
       status: 'VERIFIED',
       payload: {
-        "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
-        "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=="),
-        "response": {
-          "attestationObject": "o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==",
-          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0="
+        id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
+        rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=='),
+        response: {
+          attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
+          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
         },
         // // front end demo
         // id: atob('vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ'),
@@ -465,12 +463,12 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
       consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
       signedPayloadType: 'FIDO',
       signedPayload: {
-        "id": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
-        "rawId": atob("Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA"),
-        "response": {
-          "authenticatorData": "xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==",
-          "clientDataJSON": "eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=",
-          "signature": "MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8="
+        id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
+        rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
+        response: {
+          authenticatorData: 'xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==',
+          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=',
+          signature: 'MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8='
         },
         type: 'public-key'
       }
@@ -483,8 +481,8 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
       const challenge = 'ApFjVfRTQw5_NR4Y5poTz8ktd3ga4jI5Ly62_g97oFk'
       const attestationExpectations: ExpectedAttestationResult = {
         challenge,
-        origin: "https://demo.yubico.com",
-        factor: "either"
+        origin: 'https://demo.yubico.com',
+        factor: 'either'
       }
 
       const f2l = new Fido2Lib()
@@ -493,10 +491,10 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
         rawId: str2ab(credential.payload.rawId),
         response: {
           clientDataJSON: credential.payload.response.clientDataJSON,
-          attestationObject: credential.payload.response.attestationObject,
+          attestationObject: credential.payload.response.attestationObject
         }
       }
-      
+
       // Act
       const result = await f2l.attestationResult(
         clientAttestationResponse,
@@ -514,15 +512,15 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
       const assertionExpectations: ExpectedAssertionResult = {
         challenge: verificationRequest.challenge,
         origin: 'https://demo.yubico.com',
-        factor: "either",
+        factor: 'either',
         // Get this from the log statement in the previous request
         publicKey: `-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl
 3Vs0iQUW6QF4IHXi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==
 -----END PUBLIC KEY-----`,
         prevCounter: 0,
-        userHandle: null,
-      };
+        userHandle: null
+      }
       const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
       console.log('authenticatorData.length', authenticatorData.byteLength)
       const assertionResult: AssertionResult = {
@@ -537,7 +535,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl
       }
 
       // Act
-      await f2l.assertionResult(assertionResult, assertionExpectations); // will throw on error
+      await f2l.assertionResult(assertionResult, assertionExpectations) // will throw on error
 
       // Assert
     })

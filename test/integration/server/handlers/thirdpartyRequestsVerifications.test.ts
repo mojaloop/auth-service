@@ -38,7 +38,7 @@ describe('POST /thirdpartyRequests/verifications', () => {
 
     // Act
     const response = await axios.post(url, validVerificationRequest, { headers })
-    
+
     // Assert
     expect(response.status).toEqual(202)
   })

@@ -558,7 +558,7 @@ components:
       properties:
         key:
           $ref: '#/components/schemas/ExtensionKey'
-        value:
+        signedPayload:
           $ref: '#/components/schemas/ExtensionValue'
       required:
         - key

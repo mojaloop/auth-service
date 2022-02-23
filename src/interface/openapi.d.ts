@@ -169,7 +169,7 @@ export interface components {
     /** Data model for the complex type Extension. */
     Extension: {
       key: components['schemas']['ExtensionKey'];
-      value: components['schemas']['ExtensionValue'];
+      signedPayload: components['schemas']['ExtensionValue'];
     };
     /** Data model for the complex type ExtensionList. An optional list of extensions, specific to deployment. */
     ExtensionList: {

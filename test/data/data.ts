@@ -213,7 +213,6 @@ export const completeConsentActive: ConsentModel = {
   originalCredential: JSON.stringify(credential)
 }
 
-
 /*
  * Mock Scope Resources
 */
@@ -282,7 +281,6 @@ export const completeConsentActiveCredential: ConsentModel = {
   credentialCounter: 4,
   originalCredential: JSON.stringify(credential)
 }
-
 
 /* Verifications request variations */
 export const validVerificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {

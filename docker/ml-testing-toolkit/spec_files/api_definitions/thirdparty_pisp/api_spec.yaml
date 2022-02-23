@@ -11,7 +11,7 @@ info:
 servers:
   - url: /
 paths:
-  '/consents/{ID}':
+  /consents/{ID}:
     parameters:
       - $ref: '#/components/parameters/ID'
       - $ref: '#/components/parameters/Content-Type'
@@ -182,7 +182,7 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/consents/{ID}/error':
+  /consents/{ID}/error:
     parameters:
       - $ref: '#/components/parameters/ID'
       - $ref: '#/components/parameters/Content-Type'
@@ -230,7 +230,7 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/participants/{Type}/{ID}':
+  /participants/{Type}/{ID}:
     parameters:
       - $ref: '#/components/parameters/Type'
       - $ref: '#/components/parameters/ID'
@@ -399,7 +399,7 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/thirdpartyRequests/verifications/{ID}':
+  /thirdpartyRequests/verifications/{ID}:
     parameters:
       - $ref: '#/components/parameters/ID'
       - $ref: '#/components/parameters/Content-Type'
@@ -417,18 +417,17 @@ paths:
         - sampled
       operationId: PutThirdpartyRequestsVerificationsById
       summary: PutThirdpartyRequestsVerificationsById
-      description: >
+      description: >-
         The HTTP request `PUT /thirdpartyRequests/verifications/{ID}` is used by
-        the Auth-Service to inform
+        the Auth-Service to inform the DFSP of a successful result in validating
+        the verification of a Thirdparty Transaction Request.
 
-        the DFSP of a successful result in validating the verification of a
-        Thirdparty Transaction Request.
+        If the validation fails, the auth-service will send back `PUT
+        /thirdpartyRequests/verifications/{ID}` with `authenticationResponse:
+        'REJECTED'`.
 
-
-        If the validation fails, The Auth-Service MUST use `PUT
-        /thirdpartyRequests/verifications/{ID}/error`
-
-        instead.
+        In unplanned error cases the Auth-Service MUST use `PUT
+        /thirdpartyRequests/verifications/{ID}/error`.
       parameters:
         - $ref: '#/components/parameters/Content-Length'
       requestBody:
@@ -460,7 +459,7 @@ paths:
           $ref: '#/components/responses/501'
         '503':
           $ref: '#/components/responses/503'
-  '/thirdpartyRequests/verifications/{ID}/error':
+  /thirdpartyRequests/verifications/{ID}/error:
     parameters:
       - $ref: '#/components/parameters/ID'
       - $ref: '#/components/parameters/Content-Type'
@@ -650,7 +649,7 @@ components:
       required: true
       schema:
         type: string
-      description: 'The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`.'
+      description: The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`.
   responses:
     '200':
       description: OK
@@ -767,7 +766,7 @@ components:
     ErrorCode:
       title: ErrorCode
       type: string
-      pattern: '^[1-9]\d{3}$'
+      pattern: ^[1-9]\d{3}$
       description: >-
         The API data type ErrorCode is a JSON String of four characters,
         consisting of digits only. Negative numbers are not allowed. A leading
@@ -856,7 +855,7 @@ components:
         be Bank Account Number or anything that may expose a User's private bank
 
         account information.
-      pattern: '^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$'
+      pattern: ^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$
       minLength: 1
       maxLength: 1023
     ConsentScopeType:
@@ -946,7 +945,7 @@ components:
           additionalProperties: false
         type:
           type: string
-          description: 'response type, we need only the type of public-key'
+          description: response type, we need only the type of public-key
           enum:
             - public-key
       required:
@@ -1029,7 +1028,7 @@ components:
           type: string
           enum:
             - VERIFIED
-          description: 'The Credential is valid, and ready to be used by the PISP.'
+          description: The Credential is valid, and ready to be used by the PISP.
         payload:
           $ref: '#/components/schemas/FIDOPublicKeyCredentialAttestation'
       required:
@@ -1105,7 +1104,7 @@ components:
         of the format is yyyy-MM-ddTHH:mm:ss.SSS[-HH:MM]. Examples are
         "2016-05-24T08:38:08.699-04:00", "2016-05-24T08:38:08.699Z" (where Z
         indicates Zulu time zone, same as UTC).
-      example: '2016-05-24T08:38:08.699-04:00'
+      example: 2016-05-24T08:38:08.699-04:00
     ConsentsIDPatchResponseRevoked:
       title: ConsentsIDPatchResponseRevoked
       description: |
@@ -1335,6 +1334,16 @@ components:
           $ref: '#/components/schemas/ExtensionList'
       required:
         - fspId
+    AuthenticationResponse:
+      title: AuthenticationResponse
+      type: string
+      enum:
+        - VERIFIED
+        - REJECTED
+      description: |-
+        Below are the allowed values for the enumeration AuthenticationResponse.
+        - VERIFIED - The challenge was correctly signed.
+        - REJECTED - The challenge was not correctly signed.
     ThirdpartyRequestsVerificationsIDPutResponse:
       title: ThirdpartyRequestsVerificationsIDPutResponse
       type: object
@@ -1343,9 +1352,6 @@ components:
         request.
       properties:
         authenticationResponse:
-          type: string
-          enum:
-            - VERIFIED
-          description: The verification passed
+          $ref: '#/components/schemas/AuthenticationResponse'
       required:
         - authenticationResponse

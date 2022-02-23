@@ -38,7 +38,6 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ConsentModel } from '~/model/consent'
 import { NotFoundError } from '~/model/errors'
 
-
 // Declare Mocks
 // jest.mock('~/model/db')
 const mockInsertConsentWithScopes = jest.spyOn(DB, 'insertConsentWithScopes')
@@ -163,8 +162,6 @@ describe('server/domain/consents', (): void => {
     revokedAt: new Date('2021-01-01')
   }
 
-
-
   beforeEach(async (): Promise<void> => {
     jest.clearAllMocks()
   })
@@ -178,7 +175,7 @@ describe('server/domain/consents', (): void => {
     it('stores the consent', async (): Promise<void> => {
       // Arrange
       mockInsertConsentWithScopes.mockResolvedValueOnce()
-      
+
       // Act
       await ConsentDomain.createAndStoreConsent(
         consentId,
@@ -189,7 +186,7 @@ describe('server/domain/consents', (): void => {
         'some-credential-challenge',
         4
       )
-          
+
       // Assert
       expect(mockInsertConsentWithScopes).toHaveBeenCalledWith(consentActiveFIDO, scopesWithoutIds)
     })
@@ -197,7 +194,7 @@ describe('server/domain/consents', (): void => {
     it('throw if there is an error in the db', async (): Promise<void> => {
       // Arrange
       mockInsertConsentWithScopes.mockRejectedValueOnce(new Error('test error'))
-      
+
       // Act
       try {
         await ConsentDomain.createAndStoreConsent(
@@ -213,7 +210,7 @@ describe('server/domain/consents', (): void => {
       } catch (err: any) {
         // Assert
         expect(mockInsertConsentWithScopes).toHaveBeenCalledWith(consentActiveFIDO, scopesWithoutIds)
-        expect(err.message).toMatch(`Auth service database error for`)
+        expect(err.message).toMatch('Auth service database error for')
       }
     })
   })
@@ -229,12 +226,12 @@ describe('server/domain/consents', (): void => {
         scopes: [
           {
             accountId: 'as2342',
-            actions: [ 'accounts.getBalance', 'accounts.transfer'],
+            actions: ['accounts.getBalance', 'accounts.transfer']
           },
           {
             accountId: 'as22',
-            actions: [ 'accounts.getBalance'],
-          },
+            actions: ['accounts.getBalance']
+          }
         ],
         credential: credential,
         status: 'VERIFIED',
@@ -243,10 +240,10 @@ describe('server/domain/consents', (): void => {
         createdAt: expect.objectContaining({}),
         revokedAt: undefined
       }
-      
+
       // Act
       const result = await ConsentDomain.getConsent(consentId)
-      
+
       // Assert
       expect(result).toStrictEqual(expected)
       // test dates separately for better guarantees
@@ -264,24 +261,24 @@ describe('server/domain/consents', (): void => {
         scopes: [
           {
             accountId: 'as2342',
-            actions: ['accounts.getBalance', 'accounts.transfer'],
+            actions: ['accounts.getBalance', 'accounts.transfer']
           },
           {
             accountId: 'as22',
-            actions: ['accounts.getBalance'],
-          },
+            actions: ['accounts.getBalance']
+          }
         ],
         credential: credential,
         status: 'REVOKED',
         credentialCounter: 4,
         credentialPayload: 'some-public-key',
         createdAt: expect.objectContaining({}),
-        revokedAt: expect.objectContaining({}),
+        revokedAt: expect.objectContaining({})
       }
-      
+
       // Act
       const result = await ConsentDomain.getConsent(consentId)
-      
+
       // Assert
       expect(result).toStrictEqual(expected)
       expect(result.createdAt.toISOString()).toBe('2020-01-01T00:00:00.000Z')

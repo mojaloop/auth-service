@@ -37,8 +37,8 @@ import { PubSub } from '~/shared/pub-sub'
 import { Consent } from '../consents'
 
 export interface VerifyTransactionStateMachine extends ControlledStateMachine {
-  retreiveConsent: Method
-  onRetreiveConsent: Method
+  retrieveConsent: Method
+  onRetrieveConsent: Method
   verifyTransaction: Method
   onVerifyTransaction: Method
   sendCallbackToDFSP: Method
@@ -60,6 +60,7 @@ export interface VerifyTransactionData extends StateData {
   // initial POST /thirdpartyRequests/verifications request
   verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
 
+  verificationResponse?: tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
   // // metadata related to the verification request (for now just the origin)
   // verificationRequestMetadata: { origin: string }
 
