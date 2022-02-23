@@ -213,8 +213,7 @@ describe('POST /thirdpartyRequests/verifications', () => {
       // check that the auth-service has sent a PUT /thirdpartyRequests/verifications/{ID} to the DFSP (TTK)
       const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
       const asyncCallback = requestsHistory.filter(req => {
-        return req.method === 'put' &&
-          req.path === `/thirdpartyRequests/verifications/${invalidVerificationRequest.verificationRequestId}/error`
+        return req.method === 'put' && req.path === `/thirdpartyRequests/verifications/${validVerificationRequest.verificationRequestId}`
       })
 
       expect(asyncCallback.length).toEqual(1)
@@ -222,10 +221,7 @@ describe('POST /thirdpartyRequests/verifications', () => {
       // check the payload
       const asyncCallbackPayload = asyncCallback[0].body as tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
       expect(asyncCallbackPayload).toStrictEqual({
-        errorInformation: {
-          errorCode: '7105',
-          errorDescription: 'Authorization received from PISP failed DFSP validation'
-        }
+        authenticationResponse: 'REJECTED'
       })
     })
   })
