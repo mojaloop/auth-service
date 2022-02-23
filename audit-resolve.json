@@ -71,6 +71,122 @@
       "decision": "ignore",
       "madeAt": 1636084373888,
       "expiresAt": 1638676347746
+    },
+    "1006904|hapi-swagger>swagger-ui-dist": {
+      "decision": "fix",
+      "madeAt": 1645585036388
+    },
+    "1004946|@mojaloop/event-sdk>@grpc/proto-loader>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1645585509117,
+      "expiresAt": 1648177505123
+    },
+    "1004946|@mojaloop/event-sdk>@grpc/proto-loader>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1645585509117,
+      "expiresAt": 1648177505123
+    },
+    "1006852|fido2-lib>node-jose>node-forge": {
+      "decision": "fix",
+      "madeAt": 1645585193032
+    },
+    "1006854|fido2-lib>node-jose>node-forge": {
+      "decision": "fix",
+      "madeAt": 1645585193032
+    },
+    "1006898|fido2-lib>node-jose>node-forge": {
+      "decision": "fix",
+      "madeAt": 1645585193032
+    },
+    "1006865|@mojaloop/central-services-shared>axios>follow-redirects": {
+      "decision": "ignore",
+      "madeAt": 1645585510312,
+      "expiresAt": 1648177505123
+    },
+    "1006865|axios>follow-redirects": {
+      "decision": "fix",
+      "madeAt": 1645585411869
+    },
+    "1007026|@mojaloop/central-services-shared>axios>follow-redirects": {
+      "decision": "ignore",
+      "madeAt": 1645585510312,
+      "expiresAt": 1648177505123
+    },
+    "1007026|axios>follow-redirects": {
+      "decision": "fix",
+      "madeAt": 1645585411869
+    },
+    "1006899|openapi-typescript>node-fetch": {
+      "decision": "fix",
+      "madeAt": 1645585431603
+    },
+    "1006899|@mojaloop/central-services-shared>widdershins>node-fetch": {
+      "decision": "fix",
+      "madeAt": 1645585431603
+    },
+    "1006899|@mojaloop/event-sdk>grpc>@mapbox/node-pre-gyp>node-fetch": {
+      "decision": "fix",
+      "madeAt": 1645585431603
+    },
+    "1004854|@mojaloop/central-services-shared>widdershins>openapi-sampler>json-pointer": {
+      "decision": "ignore",
+      "madeAt": 1645585478508,
+      "expiresAt": 1648177016953
+    },
+    "1004869|@mojaloop/central-services-shared>widdershins>swagger2openapi>better-ajv-errors>jsonpointer": {
+      "decision": "ignore",
+      "madeAt": 1645585479620,
+      "expiresAt": 1648177016953
+    },
+    "1004869|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>better-ajv-errors>jsonpointer": {
+      "decision": "ignore",
+      "madeAt": 1645585479620,
+      "expiresAt": 1648177016953
+    },
+    "1004876|hapi-swagger>swagger-parser>z-schema>validator": {
+      "decision": "ignore",
+      "madeAt": 1645585480639,
+      "expiresAt": 1648177016953
+    },
+    "1004946|@mojaloop/central-services-shared>widdershins>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1645585481655,
+      "expiresAt": 1648177016953
+    },
+    "1004946|@mojaloop/central-services-shared>widdershins>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1645585481655,
+      "expiresAt": 1648177016953
+    },
+    "1005383|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1645585482701,
+      "expiresAt": 1648177016953
+    },
+    "1005384|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1645585482701,
+      "expiresAt": 1648177016953
+    },
+    "1005534|@mojaloop/central-services-shared>widdershins>yargs>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1645585483849,
+      "expiresAt": 1648177016953
+    },
+    "1006846|@mojaloop/central-services-shared>shins>sanitize-html>postcss": {
+      "decision": "ignore",
+      "madeAt": 1645585485233,
+      "expiresAt": 1648177016953
+    },
+    "1006886|@mojaloop/central-services-shared>shins>markdown-it": {
+      "decision": "ignore",
+      "madeAt": 1645585486383,
+      "expiresAt": 1648177016953
+    },
+    "1007017|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>ajv": {
+      "decision": "ignore",
+      "madeAt": 1645585487352,
+      "expiresAt": 1648177016953
     }
   },
   "rules": {},

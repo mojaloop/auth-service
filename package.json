@@ -158,7 +158,7 @@
     "dot-prop": "^6.0.1",
     "fido2-lib": "2.6.7",
     "hapi-openapi": "^3.0.0",
-    "hapi-swagger": "^14.2.1",
+    "hapi-swagger": "^14.2.5",
     "javascript-state-machine": "^3.1.0",
     "json-canonicalize": "^1.0.4",
     "knex": "^0.95.11",
