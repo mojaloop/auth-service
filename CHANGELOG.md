@@ -1,4 +1,16 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [11.13.1](https://github.com/mojaloop/auth-service/compare/v11.13.0...v11.13.1) (2022-02-25)
+
+
+### Maintenance
+
+* **deps:** bump tmpl from 1.0.4 to 1.0.5 ([#91](https://github.com/mojaloop/auth-service/issues/91)) ([bb5e87d](https://github.com/mojaloop/auth-service/commit/bb5e87d74f15187ecb5011506269c3c98e444402))
+
+
+### Code Refactor
+
+* handle errors akin to core ml services and update verification response ([#99](https://github.com/mojaloop/auth-service/issues/99)) ([c97e75e](https://github.com/mojaloop/auth-service/commit/c97e75edbe7e2705c8ed30f254667b20af29973c))
+
 ## [11.13.0](https://github.com/mojaloop/auth-service/compare/v11.12.0...v11.13.0) (2021-11-05)
 
 
