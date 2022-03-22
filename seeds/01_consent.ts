@@ -34,17 +34,16 @@
 import { Knex } from 'knex'
 import { ConsentModel } from '../src/model/consent/consent'
 
-
 export const consents: Array<ConsentModel> = [
   {
     id: '123',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'DFSPA',
     credentialType: 'FIDO',
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
     credentialCounter: 4,
-    originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+    originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
   },
   {
     id: '124',
@@ -54,7 +53,7 @@ export const consents: Array<ConsentModel> = [
     credentialPayload: 'string_representing_public_key_a',
     credentialChallenge: 'string_representing_challenge_b',
     credentialCounter: 4,
-    originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+    originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' }),
     revokedAt: new Date('2011-10-05T14:48:00.000Z')
   }
 ]

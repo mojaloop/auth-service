@@ -11,8 +11,8 @@ const validConsentId = 'be433b9e-9473-4b7d-bdd5-ac5b42463afb'
 const validConsentsPostRequestAuth: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: validConsentId,
   scopes: [
-    { actions: ['accounts.getBalance', 'accounts.transfer'], accountId: '412ddd18-07a0-490d-814d-27d0e9af9982' },
-    { actions: ['accounts.getBalance'], accountId: '10e88508-e542-4630-be7f-bc0076029ea7' }
+    { actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER'], address: '412ddd18-07a0-490d-814d-27d0e9af9982' },
+    { actions: ['ACCOUNTS_GET_BALANCE'], address: '10e88508-e542-4630-be7f-bc0076029ea7' }
   ],
   credential: {
     credentialType: 'FIDO',

@@ -39,12 +39,12 @@ import { NotFoundError } from '~/model/errors'
 const testConsentObject: ConsentModel = {
   id: '1234',
   participantId: 'dfsp-3333-2123',
-  status: 'VERIFIED',
+  status: 'ISSUED',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
   credentialCounter: 4,
-  originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
+  originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
 }
 
 /*
@@ -53,19 +53,19 @@ const testConsentObject: ConsentModel = {
 const tempScope1: ScopeModel = {
   consentId: testConsentObject.id,
   action: 'transfer',
-  accountId: 'sjdn-3333-2123'
+  address: 'sjdn-3333-2123'
 }
 
 const tempScope2: ScopeModel = {
   consentId: testConsentObject.id,
   action: 'balance',
-  accountId: 'sjdn-q333-2123'
+  address: 'sjdn-q333-2123'
 }
 
 const tempScope3: ScopeModel = {
   consentId: testConsentObject.id,
   action: 'saving',
-  accountId: 'sjdn-q333-2123'
+  address: 'sjdn-q333-2123'
 }
 
 /*

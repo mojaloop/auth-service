@@ -11,17 +11,17 @@ servers:
   - url: /
 paths:
   /health:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/health.yaml'
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/health.yaml'
   /metrics:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/metrics.yaml'
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/metrics.yaml'
   # for creating, updating, removing Consent resource
   /consents:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents.yaml'
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/consents.yaml'
   # for receiving callbacks from the ALS about registering the auth-service as
   # the authoritative source for a Consent object
   /participants/{Type}/{ID}:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/participants_Type_ID.yaml'
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/participants_Type_ID.yaml'
   /participants/{Type}/{ID}/error:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/participants_Type_ID_error.yaml'
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/participants_Type_ID_error.yaml'
   /thirdpartyRequests/verifications:
-    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications.yaml'
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/thirdpartyRequests_verifications.yaml'

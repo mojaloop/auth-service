@@ -845,8 +845,8 @@ components:
       properties:
         errorInformation:
           $ref: '#/components/schemas/ErrorInformation'
-    AccountId:
-      title: AccountId
+    address:
+      title: address
       type: string
       description: >
         A long-lived unique account identifier provided by the DFSP. This MUST
@@ -862,30 +862,30 @@ components:
       title: ConsentScopeType
       type: string
       enum:
-        - accounts.getBalance
-        - accounts.transfer
+        - ACCOUNTS_GET_BALANCE
+        - ACCOUNTS_TRANSFER
       description: |
         The scopes requested for a ConsentRequest.
-        - "accounts.getBalance" - Get the balance of a given account.
-        - "accounts.transfer" - Initiate a transfer from an account.
+        - "ACCOUNTS_GET_BALANCE" - Get the balance of a given account.
+        - "ACCOUNTS_TRANSFER" - Initiate a transfer from an account.
     Scope:
       title: Scope
       type: object
       description: Scope + Account Identifier mapping for a Consent.
       example: |
         {
-          accountId: "dfsp.username.5678",
-          actions: [ "accounts.transfer", "accounts.getBalance" ]
+          address: "dfsp.username.5678",
+          actions: [ "ACCOUNTS_TRANSFER", "ACCOUNTS_GET_BALANCE" ]
         }
       properties:
-        accountId:
-          $ref: '#/components/schemas/AccountId'
+        address:
+          $ref: '#/components/schemas/address'
         actions:
           type: array
           items:
             $ref: '#/components/schemas/ConsentScopeType'
       required:
-        - accountId
+        - address
         - actions
     CredentialType:
       title: CredentialType

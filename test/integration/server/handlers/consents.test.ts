@@ -48,10 +48,10 @@ describe('POST /consents - AUTH case', (): void => {
       consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
       scopes: [
         {
-          accountId: 'dfsp.username.5678',
+          address: 'dfsp.username.5678',
           actions: [
-            'accounts.transfer',
-            'accounts.getBalance'
+            'ACCOUNTS_TRANSFER',
+            'ACCOUNTS_GET_BALANCE'
           ]
         }
       ],
@@ -153,7 +153,7 @@ describe('POST /consents - AUTH case', (): void => {
     // in nodejs we use only Buffer.from([...]).toString('base64')
     const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7',
-      scopes: [{ accountId: 'dfspa.username.5678', actions: ['accounts.transfer'] }],
+      scopes: [{ address: 'dfspa.username.5678', actions: ['ACCOUNTS_TRANSFER'] }],
       credential: {
         credentialType: 'FIDO',
         status: 'PENDING',

@@ -15,7 +15,7 @@
  except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop
- files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  Contributors
@@ -45,23 +45,23 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
  */
 export function convertScopeModelsToThirdpartyScopes (
   scopes: ScopeModel[]): tpAPI.Schemas.Scope[] {
-  // Dictionary of accountId to Thirdparty Scope object
+  // Dictionary of address' to Thirdparty Scope object
   const scopeDictionary = {}
 
   scopes.forEach((scope: ScopeModel): void => {
-    const accountId: string = scope.accountId
+    const address: string = scope.address
 
-    if (!(accountId in scopeDictionary)) {
+    if (!(address in scopeDictionary)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      scopeDictionary[accountId] = {
-        accountId,
+      scopeDictionary[address] = {
+        address,
         actions: []
       }
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    scopeDictionary[accountId].actions.push(scope.action)
+    scopeDictionary[address].actions.push(scope.action)
   })
 
   return Object.values(scopeDictionary)
@@ -78,7 +78,7 @@ export function convertThirdpartyScopesToDatabaseScope (
     (element: tpAPI.Schemas.Scope): ScopeModel[] =>
       element.actions.map((action: string): ScopeModel => ({
         consentId,
-        accountId: element.accountId,
+        address: element.address,
         action
       })
       )

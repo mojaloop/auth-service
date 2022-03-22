@@ -37,47 +37,47 @@ const consentId = '1234'
 const scopes: ScopeModel[] = [{
   id: 123234,
   consentId: '1234',
-  accountId: 'as2342',
-  action: 'accounts.getBalance'
+  address: 'as2342',
+  action: 'ACCOUNTS_GET_BALANCE'
 },
 {
   id: 232234,
   consentId: '1234',
-  accountId: 'as2342',
-  action: 'accounts.transfer'
+  address: 'as2342',
+  action: 'ACCOUNTS_TRANSFER'
 },
 {
   id: 234,
   consentId: '1234',
-  accountId: 'as22',
-  action: 'accounts.getBalance'
+  address: 'as22',
+  action: 'ACCOUNTS_GET_BALANCE'
 }
 ]
 
 const scopesNoId: ScopeModel[] = [{
   consentId: '1234',
-  accountId: 'as2342',
-  action: 'accounts.getBalance'
+  address: 'as2342',
+  action: 'ACCOUNTS_GET_BALANCE'
 },
 {
   consentId: '1234',
-  accountId: 'as2342',
-  action: 'accounts.transfer'
+  address: 'as2342',
+  action: 'ACCOUNTS_TRANSFER'
 },
 {
   consentId: '1234',
-  accountId: 'as22',
-  action: 'accounts.getBalance'
+  address: 'as22',
+  action: 'ACCOUNTS_GET_BALANCE'
 }
 ]
 
 const externalScope: tpAPI.Schemas.Scope[] = [{
-  accountId: 'as2342',
-  actions: ['accounts.getBalance', 'accounts.transfer']
+  address: 'as2342',
+  actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
 },
 {
-  accountId: 'as22',
-  actions: ['accounts.getBalance']
+  address: 'as22',
+  actions: ['ACCOUNTS_GET_BALANCE']
 }
 ]
 

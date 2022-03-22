@@ -15,7 +15,7 @@
  except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop
- files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  Contributors
@@ -56,7 +56,7 @@ export interface Consent {
   // being lazy here - technically we shouldn't borrow this def from the API
   credential: tpAPI.Schemas.VerifiedCredential,
   // being lazy here - technically we shouldn't borrow this def from the API
-  status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
+  status: tpAPI.Schemas.ConsentStatusIssued | tpAPI.Schemas.ConsentStatusRevoked;
   credentialCounter: number,
   // Parsed public key
   credentialPayload: string
@@ -82,7 +82,7 @@ export async function createAndStoreConsent (
   const consent: ConsentModel = {
     id: consentId,
     participantId,
-    status: 'VERIFIED',
+    status: 'ISSUED',
     credentialType: 'FIDO',
     credentialPayload: publicKey,
     credentialChallenge: credentialChallenge,

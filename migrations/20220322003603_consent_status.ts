@@ -18,31 +18,30 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Ahan Gupta <ahangupta.96@gmail.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com.com>
 
  --------------
  ******/
 import { Knex } from 'knex'
 
-export async function up (knex: Knex): Promise<Knex.SchemaBuilder | void> {
-  return knex.schema.hasTable('Scope')
+export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
+  return knex.schema.hasTable('Consent')
     .then((exists: boolean): Knex.SchemaBuilder | void => {
-      if (!exists) {
-        return knex.schema.createTable('Scope', (t: Knex.CreateTableBuilder): void => {
-          t.increments('id').primary().notNullable()
-          t.string('consentId', 36).notNullable()
-          t.string('action', 36).notNullable()
-          t.string('address', 36).notNullable()
-
-          t.foreign('consentId').references('id')
-            .inTable('Consent')
-            .onUpdate('CASCADE')
-            .onDelete('CASCADE')
-        })
+      if (exists) {
+        knex('Consent')
+          .where({ status: 'VERIFIED' })
+          .update({ status: 'ISSUED' })
       }
     })
 }
 
-export function down (knex: Knex): Knex.SchemaBuilder {
-  return knex.schema.dropTableIfExists('Scope')
+export function down (knex: Knex): Promise<void | Knex.SchemaBuilder> {
+  return knex.schema.hasTable('Consent')
+    .then((exists: boolean): Knex.SchemaBuilder | void => {
+      if (exists) {
+        knex('Consent')
+          .where({ status: 'ISSUED' })
+          .update({ status: 'VERIFIED' })
+      }
+    })
 }

@@ -192,13 +192,13 @@ describe('src/model/consent', (): void => {
         const tempScopes = [
           {
             consentId: '1234',
-            action: 'accounts.transfer',
-            accountId: '78901-12345'
+            action: 'ACCOUNTS_TRANSFER',
+            address: '78901-12345'
           },
           {
             consentId: '1234',
             action: 'accounts.balance',
-            accountId: '38383-22992'
+            address: '38383-22992'
           }
         ]
 

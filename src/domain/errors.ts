@@ -33,32 +33,6 @@ import {
 /*
  * Domain function make an error request using Mojaloop internal codes
  */
-export async function putAuthorizationErrorRequest (
-  consentId: string,
-  error: tpAPI.Schemas.ErrorInformation,
-  destParticipantId: string): Promise<void> {
-  const errorInfoObj: fspiopAPI.Schemas.ErrorInformationObject = {
-    errorInformation: {
-      errorCode: error.errorCode,
-      errorDescription: error.errorDescription
-    }
-  }
-
-  try {
-    await
-    thirdPartyRequest.putThirdpartyRequestsTransactionsAuthorizationsError(
-      errorInfoObj,
-      consentId,
-      destParticipantId
-    )
-  } catch (error) {
-    logger.push({ error }).error('Could not make putThirdpartyRequestsTransactionsAuthorizationsError request')
-  }
-}
-
-/*
- * Domain function make an error request using Mojaloop internal codes
- */
 export async function putConsentError (
   consentId: string,
   error: tpAPI.Schemas.ErrorInformation,

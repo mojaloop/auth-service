@@ -15,7 +15,7 @@
  except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop
- files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  Contributors
@@ -56,10 +56,10 @@ export interface ConsentModel {
   participantId: string;
   /*
   * status of a Consent
-  * a consent resource will be marked VERIFIED on creation.
+  * a consent resource will be marked ISSUED on creation.
   * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
   */
-  status: tpAPI.Schemas.ConsentStatusTypeVerified | tpAPI.Schemas.ConsentStatusTypeRevoked;
+  status: tpAPI.Schemas.ConsentStatusIssued | tpAPI.Schemas.ConsentStatusRevoked;
   // credential type - currently trying to support FIDO/Generic credentials
   credentialType: 'FIDO' | 'GENERIC';
   // assuming this is the public key of the pair
@@ -89,7 +89,7 @@ export class ConsentDB {
 
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
-  public async insert(consent: ConsentModel, trx?: Knex.Transaction): Promise<boolean> {
+  public async insert (consent: ConsentModel, trx?: Knex.Transaction): Promise<boolean> {
     logger.debug(`ConsentDB.insert - ${JSON.stringify(consent)}`)
     // optionally insert in transaction
     const action = this.Db<ConsentModel>(tableName).insert(consent)
@@ -102,7 +102,7 @@ export class ConsentDB {
   }
 
   // Retrieve Consent by ID (unique)
-  public async retrieve(id: string): Promise<ConsentModel> {
+  public async retrieve (id: string): Promise<ConsentModel> {
     // Returns array containing consents
     const consents: ConsentModel[] = await this
       .Db<ConsentModel>(tableName)
@@ -145,15 +145,15 @@ export class ConsentDB {
       throw new NotFoundError(tableName, id)
     }
 
-    if (consents[0].status == 'REVOKED') {
+    if (consents[0].status === 'REVOKED') {
       throw new RevokedConsentModificationError(tableName, id)
     }
 
     return await this.Db<ConsentModel>(tableName)
       .where({ id })
       .update({
-        'status': 'REVOKED',
-        'revokedAt': this.Db.fn.now()
+        status: 'REVOKED',
+        revokedAt: this.Db.fn.now()
       })
   }
 }

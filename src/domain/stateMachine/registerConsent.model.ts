@@ -121,7 +121,8 @@ export class RegisterConsentModel
 
   async onVerifyConsent (): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
-    const payload = (consentsPostRequestAUTH.credential.payload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
+    const payload = (consentsPostRequestAUTH.credential.fidoPayload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
+
     try {
       const challenge = deriveChallenge(consentsPostRequestAUTH)
       const decodedJsonString = decodeBase64String(payload.response.clientDataJSON)
@@ -329,7 +330,7 @@ export class RegisterConsentModel
       // copy credential and update status
       const verifiedCredential: tpAPI.Schemas.VerifiedCredential = {
         credentialType: 'FIDO',
-        payload: (consentsPostRequestAUTH.credential.payload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation),
+        fidoPayload: (consentsPostRequestAUTH.credential.fidoPayload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation),
         status: 'VERIFIED'
       }
 

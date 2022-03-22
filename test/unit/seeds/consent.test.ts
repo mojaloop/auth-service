@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /*****
  License
  --------------
@@ -46,12 +47,12 @@ describe('testing Consent table', (): void => {
     expect(users.length).toEqual(2)
     expect(users[0]).toMatchObject({
       id: '123',
-      status: 'VERIFIED',
+      status: 'ISSUED',
       participantId: 'DFSPA',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'})
+      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })
     expect(users[1]).toMatchObject({
       id: '124',
@@ -60,7 +61,7 @@ describe('testing Consent table', (): void => {
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })
   })
 })
@@ -87,7 +88,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })).rejects.toThrow()
     /* Tests for non-nullity */
     await expect(db.from('Consent').insert({
@@ -96,19 +97,19 @@ describe('testing that constraints are enforced in the consent table', (): void 
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
     expect(db).toBeDefined()
     await expect(db.from('Consent').insert({
       id: '128',
-      status: 'VERIFIED',
+      status: 'ISSUED',
       participantId: null,
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for status', async (): Promise<void> => {
@@ -120,7 +121,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
       credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status:'PENDING', payload:{}, credentialType:'test'}),
+      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
     })).rejects.toThrow()
   })
 })

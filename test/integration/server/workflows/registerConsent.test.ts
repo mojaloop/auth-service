@@ -42,9 +42,9 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: '76059a0a-684f-4002-a880-b01159afe119',
   scopes: [
     {
-      accountId: 'dfspa.username.5678',
+      address: 'dfspa.username.5678',
       actions: [
-        'accounts.transfer'
+        'ACCOUNTS_TRANSFER'
       ]
     }
   ],

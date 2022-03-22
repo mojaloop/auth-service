@@ -8,7 +8,7 @@
  except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop
- files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  Contributors
@@ -54,7 +54,7 @@ describe('server/domain/consents', (): void => {
   const credential: tpAPI.Schemas.SignedCredential = {
     credentialType: 'FIDO',
     status: 'PENDING',
-    payload: {
+    fidoPayload: {
       id: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ_8zo3ZiIL3Rvh_ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q',
       rawId: Buffer.from([
         95, 198, 144, 115, 197, 160, 32, 232, 152, 206, 132, 72, 41, 180, 216, 37, 217, 115, 49, 159, 252, 206,
@@ -130,7 +130,7 @@ describe('server/domain/consents', (): void => {
   }
   const consentActiveFIDO: ConsentModel = {
     id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
     credentialPayload: 'some-public-key',
@@ -140,7 +140,7 @@ describe('server/domain/consents', (): void => {
   }
   const mockGetConsentActive: ConsentModel = {
     id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
     credentialPayload: 'some-public-key',
@@ -225,16 +225,16 @@ describe('server/domain/consents', (): void => {
         participantId: expect.stringMatching('.*'),
         scopes: [
           {
-            accountId: 'as2342',
-            actions: ['accounts.getBalance', 'accounts.transfer']
+            address: 'as2342',
+            actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
           },
           {
-            accountId: 'as22',
-            actions: ['accounts.getBalance']
+            address: 'as22',
+            actions: ['ACCOUNTS_GET_BALANCE']
           }
         ],
         credential: credential,
-        status: 'VERIFIED',
+        status: 'ISSUED',
         credentialCounter: 4,
         credentialPayload: 'some-public-key',
         createdAt: expect.objectContaining({}),
@@ -260,12 +260,12 @@ describe('server/domain/consents', (): void => {
         participantId: expect.stringMatching('.*'),
         scopes: [
           {
-            accountId: 'as2342',
-            actions: ['accounts.getBalance', 'accounts.transfer']
+            address: 'as2342',
+            actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
           },
           {
-            accountId: 'as22',
-            actions: ['accounts.getBalance']
+            address: 'as22',
+            actions: ['ACCOUNTS_GET_BALANCE']
           }
         ],
         credential: credential,
@@ -289,7 +289,7 @@ describe('server/domain/consents', (): void => {
       // Arrange
       const mockInvalidConsent: ConsentModel = {
         id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-        status: 'VERIFIED',
+        status: 'ISSUED',
         participantId: 'dfsp-3333-2123',
         credentialType: 'FIDO',
         credentialPayload: 'some-public-key',

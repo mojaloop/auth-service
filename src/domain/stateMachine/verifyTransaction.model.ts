@@ -139,7 +139,7 @@ export class VerifyTransactionModel
         throw new Error('Auth-Service currently only supports verifying FIDO-based credentials')
       }
 
-      const clientDataObj = FidoUtils.parseClientDataBase64(request.signedPayload.response.clientDataJSON)
+      const clientDataObj = FidoUtils.parseClientDataBase64(request.fidoSignedPayload.response.clientDataJSON)
       const origin = clientDataObj.origin
 
       const assertionExpectations: ExpectedAssertionResult = {
@@ -150,37 +150,24 @@ export class VerifyTransactionModel
         factor: 'either',
         publicKey: consent.credentialPayload,
         prevCounter: consent.credentialCounter,
-        userHandle: request.signedPayload.response.userHandle || null
+        userHandle: request.fidoSignedPayload.response.userHandle || null
       }
       const assertionResult: AssertionResult = {
         // fido2lib requires an ArrayBuffer, not just any old Buffer!
-        id: FidoUtils.stringToArrayBuffer(request.signedPayload.id),
+        id: FidoUtils.stringToArrayBuffer(request.fidoSignedPayload.id),
         response: {
-          clientDataJSON: request.signedPayload.response.clientDataJSON,
-          authenticatorData: FidoUtils.stringToArrayBuffer(request.signedPayload.response.authenticatorData),
-          signature: request.signedPayload.response.signature,
-          userHandle: request.signedPayload.response.userHandle
+          clientDataJSON: request.fidoSignedPayload.response.clientDataJSON,
+          authenticatorData: FidoUtils.stringToArrayBuffer(request.fidoSignedPayload.response.authenticatorData),
+          signature: request.fidoSignedPayload.response.signature,
+          userHandle: request.fidoSignedPayload.response.userHandle
         }
       }
 
       // TODO: for greater security, store the updated counter result
       // out of scope for now.
-
-      // the fido2lib throws an error if the challenge is not signed correctly
-      // the library doesn't have error types so we can't distinguish what
-      // exactly caused the error. this needs further investigation.
-      // for now we will assume that if it errors the challenge was signed
-      // incorrectly and inform the participant that the authentication was
-      // rejected
-      try {
-        await f2l.assertionResult(assertionResult, assertionExpectations)
-        this.data.verificationResponse = {
-          authenticationResponse: 'VERIFIED'
-        }
-      } catch (error) {
-        this.data.verificationResponse = {
-          authenticationResponse: 'REJECTED'
-        }
+      await f2l.assertionResult(assertionResult, assertionExpectations)
+      this.data.verificationResponse = {
+        authenticationResponse: 'VERIFIED'
       }
     } catch (error) {
       this.logger.push({ error }).error('consentRetrieved -> transactionVerified')

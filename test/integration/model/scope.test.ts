@@ -66,17 +66,17 @@ const tempScopes: ScopeModel[] = [
   {
     consentId: consents[0].id,
     action: 'transfer',
-    accountId: 'sjdn-3333-2123'
+    address: 'sjdn-3333-2123'
   },
   {
     consentId: consents[0].id,
     action: 'balance',
-    accountId: 'sjdn-q333-2123'
+    address: 'sjdn-q333-2123'
   },
   {
     consentId: consents[0].id,
     action: 'saving',
-    accountId: 'sjdn-q333-2123'
+    address: 'sjdn-q333-2123'
   }
 ]
 
