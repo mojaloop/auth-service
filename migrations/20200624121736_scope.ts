@@ -32,7 +32,7 @@ export async function up (knex: Knex): Promise<Knex.SchemaBuilder | void> {
           t.increments('id').primary().notNullable()
           t.string('consentId', 36).notNullable()
           t.string('action', 36).notNullable()
-          t.string('address', 36).notNullable()
+          t.string('accountId', 36).notNullable()
 
           t.foreign('consentId').references('id')
             .inTable('Consent')
