@@ -39,7 +39,7 @@ import { NotFoundError } from '~/model/errors'
 const consents: ConsentModel[] = [
   {
     id: '1234',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
     credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -49,7 +49,7 @@ const consents: ConsentModel[] = [
   },
   {
     id: '948',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
     credentialChallenge: 'xyhdushsoa82w92mzs',

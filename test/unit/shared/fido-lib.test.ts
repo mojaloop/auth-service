@@ -205,6 +205,7 @@ const consentsPostRequestAUTHPayload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
     }
   }
 }
+
 const consentsPostRequestAUTH = {
   headers: {
     'fspiop-source': 'dfspA',

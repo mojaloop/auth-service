@@ -12,15 +12,15 @@ paths:
   # Account Linking Flow
   # TTK acting as DFSP receiving a callback for a POST /consents request
   /consents/{ID}:
-    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID.yaml'
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/consents_ID.yaml'
   /consents/{ID}/error:
-    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents_ID_error.yaml'
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/consents_ID_error.yaml'
   # TTK acting as the ALS
   /participants/{Type}/{ID}:
-    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/participants_Type_ID.yaml'
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/participants_Type_ID.yaml'
 
   # Transfer Verification Flow
   /thirdpartyRequests/verifications/{ID}:
-    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications_ID.yaml'
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/thirdpartyRequests_verifications_ID.yaml'
   /thirdpartyRequests/verifications/{ID}/error:
-    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_verifications_ID_error.yaml'
+    $ref: '../../../../../node_modules/@mojaloop/api-snippets/thirdparty/v1_0/openapi3/paths/thirdpartyRequests_verifications_ID_error.yaml'

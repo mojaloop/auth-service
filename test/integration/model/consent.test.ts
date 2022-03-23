@@ -38,7 +38,7 @@ import { NotFoundError, RevokedConsentModificationError } from '~/model/errors'
  */
 const completeConsent: ConsentModel = {
   id: '1234',
-  status: 'VERIFIED',
+  status: 'ISSUED',
   participantId: 'dfsp-3333-2123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -49,7 +49,7 @@ const completeConsent: ConsentModel = {
 
 const expectedCompleteConsent = {
   id: '1234',
-  status: 'VERIFIED',
+  status: 'ISSUED',
   participantId: 'dfsp-3333-2123',
   createdAt: expect.any(Date),
   credentialType: 'FIDO',
@@ -124,7 +124,7 @@ describe('src/model/consent', (): void => {
       async (): Promise<void> => {
         const consentWithoutId: ConsentModel = {
           id: null as unknown as string,
-          status: 'VERIFIED',
+          status: 'ISSUED',
           participantId: 'dfsp-3333-2123',
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',

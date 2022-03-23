@@ -165,23 +165,34 @@ export class VerifyTransactionModel
 
       // TODO: for greater security, store the updated counter result
       // out of scope for now.
-      await f2l.assertionResult(assertionResult, assertionExpectations)
-      this.data.verificationResponse = {
-        authenticationResponse: 'VERIFIED'
+      try {
+        await f2l.assertionResult(assertionResult, assertionExpectations)
+        this.data.verificationResponse = {
+          authenticationResponse: 'VERIFIED'
+        }
+      } catch (error) {
+        // planned error so we throw the appropriate code
+        this.logger.push({ error }).info('consentRetrieved -> transactionVerified f2l.assertionResult')
+        throw Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID
       }
     } catch (error) {
       this.logger.push({ error }).error('consentRetrieved -> transactionVerified')
-
-      const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
-        this.logger
-      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+      let mojaloopError
+      // if error is planned and is a MojaloopApiErrorCode we send back that code
+      if ((error as Errors.MojaloopApiErrorCode).code) {
+        mojaloopError = reformatError(error as Errors.MojaloopApiErrorCode, this.logger)
+      } else {
+        // if error is not planned send back a generalized error
+        mojaloopError = reformatError(
+          Errors.MojaloopApiErrorCodes.INTERNAL_SERVER_ERROR,
+          this.logger
+        ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+      }
 
       mojaloopError.errorInformation.extensionList = {
         extension: [
           { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
-          { key: 'transitionFailure', value: 'VerifyTransactionModel: consentRetrieved -> transactionVerified' },
-          { key: 'rawError', value: JSON.stringify(error) }
+          { key: 'transitionFailure', value: 'VerifyTransactionModel: consentRetrieved -> transactionVerified' }
         ]
       }
 
