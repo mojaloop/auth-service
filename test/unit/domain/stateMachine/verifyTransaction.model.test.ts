@@ -309,7 +309,7 @@ describe('VerifyTransactionModel', () => {
         shouldNotBeExecuted()
       } catch (error: any) {
         // Assert
-        expect(error.message).toEqual('signature validation failed')
+        expect(error.message).toEqual('Authorization received from PISP failed DFSP validation')
         expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
       }
     })
@@ -332,7 +332,7 @@ describe('VerifyTransactionModel', () => {
         shouldNotBeExecuted()
       } catch (error: any) {
         // Assert
-        expect(error.message).toEqual('clientData challenge was not a string')
+        expect(error.message).toEqual('Authorization received from PISP failed DFSP validation')
         expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
       }
     })
