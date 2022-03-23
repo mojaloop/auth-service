@@ -29,7 +29,7 @@ export async function up (knex: Knex): Promise<void | Knex.SchemaBuilder> {
     .then((exists: boolean): Knex.SchemaBuilder | void => {
       if (exists) {
         return knex.schema.alterTable('Scope', function (table) {
-          table.renameColumn('address', 'address')
+          table.renameColumn('accountId', 'address')
         })
       }
     })
@@ -40,7 +40,7 @@ export function down (knex: Knex): Promise<void | Knex.SchemaBuilder> {
     .then((exists: boolean): Knex.SchemaBuilder | void => {
       if (exists) {
         return knex.schema.alterTable('Scope', function (table) {
-          table.renameColumn('address', 'address')
+          table.renameColumn('address', 'accountId')
         })
       }
     })
