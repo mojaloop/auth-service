@@ -1,4 +1,15 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [12.0.0](https://github.com/mojaloop/auth-service/compare/v11.13.1...v12.0.0) (2022-03-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* update auth-service to latest thirdparty api definition (#106)
+
+### Code Refactor
+
+* update auth-service to latest thirdparty api definition ([#106](https://github.com/mojaloop/auth-service/issues/106)) ([79edf15](https://github.com/mojaloop/auth-service/commit/79edf15541edbbe427f7ac1366f3cdfadba069e3))
+
 ### [11.13.1](https://github.com/mojaloop/auth-service/compare/v11.13.0...v11.13.1) (2022-02-25)
 
 
