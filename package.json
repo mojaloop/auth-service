@@ -78,6 +78,9 @@
     "url": "https://github.com/mojaloop/auth-service/issues"
   },
   "homepage": "https://github.com/mojaloop/auth-service#readme",
+  "@comment devDependencies": [
+    "Caution advised in upgrading redis-mock past 0.52.0. Investigation needed."
+  ],
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
@@ -121,7 +124,7 @@
     "nodemon": "^2.0.15",
     "npm-audit-resolver": "2.3.1",
     "npm-check-updates": "11.8.5",
-    "redis-mock": "0.56.3",
+    "redis-mock": "0.52.0",
     "source-map-support": "0.5.21",
     "sqlite3": "^5.0.2",
     "standard-version": "^9.3.2",

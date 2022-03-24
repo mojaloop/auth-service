@@ -249,7 +249,7 @@ describe('PersistentModel', () => {
       try {
         await loadFromKVS<TestStateMachine, TestData>(modelConfig, smConfig)
         shouldNotBeExecuted()
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).toEqual(`No data found in KVS for: ${modelConfig.key}`)
       }
     })

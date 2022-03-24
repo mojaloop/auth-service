@@ -161,6 +161,7 @@ export class RedisConnection {
   private async createClient (): Promise<RedisClient> {
     return new Promise((resolve, reject) => {
       // the newly created redis client
+      console.log(this.host)
       const client = createClient(this.port, this.host)
 
       // flags to protect against multiple reject/resolve
