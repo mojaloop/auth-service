@@ -44,13 +44,9 @@ jest.mock('~/domain/stateMachine/verifyTransaction.model', () => ({
 }))
 
 const PostThirdpartyRequestsVerificationsRequest = {
-  headers: {
-
-  },
+  headers: {},
   params: {},
-  payload: {
-    // TODO:
-  }
+  payload: {}
 }
 
 describe('POST /thirdpartyRequests/verifications', (): void => {

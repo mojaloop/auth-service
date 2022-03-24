@@ -31,10 +31,9 @@ optionally within square brackets <email>.
    `consentId` and `scopes` ever change form you will need to derivie and resign the challenges,
    update the `credential` object and update this PSA.
    You will also need to update the public keys found in every verify transaction flow.
-   Use https://github.com/mojaloop/contrib-fido-test-ui to retrieve data used to update
-   the response bodies.
+   Use https://github.com/mojaloop/contrib-fido-test-ui#creating-a-test-credential
+   to retrieve data used to update the response bodies.
 */
-
 
 import { KVS } from '~/shared/kvs'
 import {

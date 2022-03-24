@@ -80,7 +80,5 @@ export function deriveChallenge (consentsPostRequest: tpAPI.Schemas.ConsentsPost
   }))
 
   const RFC8785String = canonicalize(rawChallenge)
-  console.log(RFC8785String)
-  console.log(sha256(RFC8785String).toString())
   return encodeBase64String(sha256(RFC8785String).toString())
 }
