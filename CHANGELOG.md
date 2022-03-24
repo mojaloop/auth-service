@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [12.0.1](https://github.com/mojaloop/auth-service/compare/v12.0.0...v12.0.1) (2022-03-24)
+
+
+### Maintenance
+
+* **deps:** bump minimist from 1.2.5 to 1.2.6 ([#107](https://github.com/mojaloop/auth-service/issues/107)) ([90cac80](https://github.com/mojaloop/auth-service/commit/90cac8050cef91697ea749ac1c50f46442332ac5))
+* **deps:** bump ws from 5.2.2 to 5.2.3 ([#101](https://github.com/mojaloop/auth-service/issues/101)) ([c13c3c0](https://github.com/mojaloop/auth-service/commit/c13c3c086fa0127d346e85e05607841b0b2007b9))
+
 ## [12.0.0](https://github.com/mojaloop/auth-service/compare/v11.13.1...v12.0.0) (2022-03-24)
 
 
