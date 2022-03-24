@@ -3,17 +3,17 @@
     "consentId": "7b24ea42-6fdd-45f5-999e-0a6981c4198b",
     "scopes": [
       {
-        "accountId": "dfspa.username.1234",
+        "address": "dfspa.username.1234",
         "actions": [
-          "accounts.transfer",
-          "accounts.getBalance"
+          "ACCOUNTS_TRANSFER",
+          "ACCOUNTS_GET_BALANCE"
         ]
       }
     ],
     "credential": {
       "credentialType": "FIDO",
       "status": "PENDING",
-      "payload": {
+      "fidoPayload": {
         "id": "credential id: identifier of pair of keys, base64 encoded, min length 59",
         "rawId": "raw credential id: identifier of pair of keys, base64 encoded, min length 59",
         "response": {

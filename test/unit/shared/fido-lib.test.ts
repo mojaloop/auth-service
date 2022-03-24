@@ -7,7 +7,7 @@
  except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop
- files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  Contributors
@@ -30,8 +30,17 @@ import str2ab from 'string-to-arraybuffer'
 import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '~/domain/buffer'
 import FidoUtils from '~/shared/fido-utils'
-
 import btoa from 'btoa'
+
+/* IMPORTANT
+   The fido challenges found in `auth-service` are signed with
+   Kevin Leyow's <kevin.leyow@modusbox.com> Yubikey. If the POST /consent
+   `consentId` and `scopes` ever change form you will need to derivie and resign the challenges,
+   update the `credential` object and update this PSA.
+   You will also need to update the public keys found in every verify transaction flow.
+   Use https://github.com/mojaloop/contrib-fido-test-ui#creating-a-test-credential
+   to retrieve data used to update the response bodies.
+*/
 
 /*
   Example attestation result
@@ -174,32 +183,35 @@ function ab2str (buf: ArrayBuffer) {
   return str
 }
 
+const consentsPostRequestAUTHPayload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
+  status: 'ISSUED',
+  consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
+  scopes: [
+    { actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER'], address: '412ddd18-07a0-490d-814d-27d0e9af9982' },
+    { actions: ['ACCOUNTS_GET_BALANCE'], address: '10e88508-e542-4630-be7f-bc0076029ea7' }
+  ],
+  credential: {
+    credentialType: 'FIDO',
+    status: 'PENDING',
+    fidoPayload: {
+      id: 'N_L4HWcqQH0uDSGl6nwYtKfWsuWY_0f1_CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q',
+      rawId: 'N/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q==',
+      response: {
+        attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAMewwET/ekF0fFwBKHEiKr6bIyEuJb3GlS1QT/oJKBLcAiAPukDS55G7pKV358QrL4t0IuBbsGtru+iiR51OdhlsAWN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAN/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9aUBAgMmIAEhWCCaDbxvbxlV6hLykMmKAzqYVLctaUtm6XIY8yUkDW7d5CJYIDykWJ0Sw3P0pxecZuZSSj93m1Q1M+W7mMtZE5SnkjF4',
+        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiWVdKaVltWXlOR0psWlRNek5qUmhNR0ZoWTJOak0yTXdOemhqWTJGaE1USTVOekExTVRBNU1EbGxNV0ppTVRZMk5XTXpZVEpqWVRsbVkyWTVOV1E0T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
+      },
+      type: 'public-key'
+    }
+  }
+}
+
 const consentsPostRequestAUTH = {
   headers: {
     'fspiop-source': 'dfspA',
     'fspiop-destination': 'centralAuth'
   },
   params: {},
-  payload: {
-    consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
-    scopes: [
-      { actions: ['accounts.getBalance', 'accounts.transfer'], accountId: '412ddd18-07a0-490d-814d-27d0e9af9982' },
-      { actions: ['accounts.getBalance'], accountId: '10e88508-e542-4630-be7f-bc0076029ea7' }
-    ],
-    credential: {
-      credentialType: 'FIDO',
-      status: 'VERIFIED',
-      payload: {
-        id: atob('vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ'),
-        rawId: atob('vwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ=='),
-        response: {
-          clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTXpnd056QTFZMkU1TlRaaFlUZzBOMlE0T1dVMFlUUTBOR1JoT1dKbFpXUmpOR1EzTlRZNU1XSTBNV0l3WldNeE9EVTJZalJoWW1Sa05EbGhORE0yTUEiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjQyMTgxIiwiY3Jvc3NPcmlnaW4iOmZhbHNlfQ==',
-          attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIhAJEFVHrzmq90fdBVy4nOPc48vtvJVAyQleGVcp+nQ8lUAiB67XFnGhC7q7WI3NdcrCdqnewSjCfhqEvO+sbWKC60c2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAABFJogIY72QTOWuIH41bfx9QBAvwWPva1iiTJIk/c7n9a49spEtJZBqrn4SECerci0b+Ue+6Jv9/DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWaUBAgMmIAEhWCAITUwire20kCqzl0A3Fbpwx2cnSqwFfTgbA2b8+a/aUiJYIHRMWJlb4Lud02oWTdQ+fejwkVo17qD0KvrwwrZZxWIg'
-        },
-        type: 'public-key'
-      }
-    }
-  }
+  payload: consentsPostRequestAUTHPayload
 }
 
 const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
@@ -209,22 +221,13 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
   challenge: btoa('unimplemented123'),
   consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
   signedPayloadType: 'FIDO',
-  signedPayload: {
-    id: atob('vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ'),
-    rawId: 'vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ',
+  fidoSignedPayload: {
+    id: 'N_L4HWcqQH0uDSGl6nwYtKfWsuWY_0f1_CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q',
+    rawId: 'N/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q==',
     response: {
-      authenticatorData: Buffer.from([73, 150, 13, 229, 136, 14, 140, 104, 116, 52, 23,
-        15, 100, 118, 96, 91, 143, 228, 174, 185, 162, 134, 50, 199, 153, 92, 243, 186, 131, 29, 151, 99, 1, 0, 0, 0, 18]).toString('base64'),
-      clientDataJSON: Buffer.from([123, 34, 116, 121, 112, 101, 34, 58,
-        34, 119, 101, 98, 97, 117, 116, 104, 110, 46, 103, 101, 116, 34, 44, 34, 99, 104, 97, 108, 108, 101, 110, 103, 101, 34, 58, 34, 100, 87, 53, 112, 98, 88, 66, 115, 90, 87,
-        49, 108, 98, 110, 82, 108, 90, 68, 69, 121, 77, 119, 34, 44, 34, 111, 114, 105, 103, 105, 110, 34, 58, 34, 104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104,
-        111, 115, 116, 58, 52, 50, 49, 56, 49, 34, 44, 34, 99, 114, 111, 115, 115, 79, 114, 105, 103, 105, 110, 34, 58, 102, 97, 108, 115, 101, 44, 34, 111, 116, 104, 101, 114,
-        95, 107, 101, 121, 115, 95, 99, 97, 110, 95, 98, 101, 95, 97, 100, 100, 101, 100, 95, 104, 101, 114, 101, 34, 58, 34, 100, 111, 32, 110, 111, 116, 32, 99, 111, 109, 112,
-        97, 114, 101, 32, 99, 108, 105, 101, 110, 116, 68, 97, 116, 97, 74, 83, 79, 78, 32, 97, 103, 97, 105, 110, 115, 116, 32, 97, 32, 116, 101, 109, 112, 108, 97, 116, 101,
-        46, 32, 83, 101, 101, 32, 104, 116, 116, 112, 115, 58, 47, 47, 103, 111, 111, 46, 103, 108, 47, 121, 97, 98, 80, 101, 120, 34, 125]).toString('base64'),
-      signature: Buffer.from([48, 68, 2, 32, 104, 17,
-        39, 167, 189, 118, 136, 100, 84, 72, 120, 29, 255, 74, 131, 59, 254, 132, 36, 19, 184, 24, 93, 103, 67, 195, 25, 252, 6, 224, 120, 69, 2, 32, 56, 251, 234, 96, 138, 6,
-        158, 231, 246, 168, 254, 147, 129, 142, 100, 145, 234, 99, 91, 152, 199, 15, 72, 19, 176, 237, 209, 176, 131, 243, 70, 167]).toString('base64')
+      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACw==',
+      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiZFc1cGJYQnNaVzFsYm5SbFpERXlNdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImNyb3NzT3JpZ2luIjpmYWxzZX0=',
+      signature: 'MEUCIFAVNRa300tOD1qdki66w8wHXRDuXtJxUKyLlyHdDp25AiEA4uYOUdzTI7vNtAv76CcZKzIvw9O8melbxfTBIVa16B0='
     },
     type: 'public-key'
   }
@@ -232,113 +235,122 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
 
 // test the fido2-lib for peace of mind
 describe('fido-lib', (): void => {
-  it('should derive the challenge correctly', () => {
-    // Arrange
-    const expected = 'MzgwNzA1Y2E5NTZhYTg0N2Q4OWU0YTQ0NGRhOWJlZWRjNGQ3NTY5MWI0MWIwZWMxODU2YjRhYmRkNDlhNDM2MA=='
+  describe.only('peace of mind', (): void => {
+    it('should derive the challenge correctly', () => {
+      // Arrange
+      const expected = 'YWJiYmYyNGJlZTMzNjRhMGFhY2NjM2MwNzhjY2FhMTI5NzA1MTA5MDllMWJiMTY2NWMzYTJjYTlmY2Y5NWQ4OQ=='
 
-    // Act
-    const challenge = deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH)
+      // Act
+      const challenge = deriveChallenge(consentsPostRequestAUTH.payload as tpAPI.Schemas.ConsentsPostRequestAUTH)
 
-    // Assert
-    expect(challenge).toStrictEqual(expected)
-  })
+      // Assert
+      expect(challenge).toStrictEqual(expected)
+    })
 
-  it('should decode the clientDataJSON', () => {
-    // Arrange
-    const expected = {
-      type: 'webauthn.create',
-      challenge: 'MzgwNzA1Y2E5NTZhYTg0N2Q4OWU0YTQ0NGRhOWJlZWRjNGQ3NTY5MWI0MWIwZWMxODU2YjRhYmRkNDlhNDM2MA',
-      origin: 'http://localhost:42181',
-      crossOrigin: false
-    }
-
-    // Act
-
-    // We have to do a bit of fussing around here - convert from a base64 encoded string to a JSON string...
-    const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.payload.credential.payload.response.clientDataJSON)
-    const parsedClientData = JSON.parse(decodedJsonString)
-
-    // Assert
-    expect(parsedClientData).toStrictEqual(expected)
-  })
-
-  it('attestation should succeed', async (): Promise<void> => {
-    // The base challenge that was derived
-    const challenge = 'MzgwNzA1Y2E5NTZhYTg0N2Q4OWU0YTQ0NGRhOWJlZWRjNGQ3NTY5MWI0MWIwZWMxODU2YjRhYmRkNDlhNDM2MA=='
-    const attestationExpectations: ExpectedAttestationResult = {
-      challenge,
-      origin: 'http://localhost:42181',
-      factor: 'either'
-    }
-
-    const f2l = new Fido2Lib()
-    const clientAttestationResponse: AttestationResult = {
-      id: str2ab(consentsPostRequestAUTH.payload.credential.payload.id),
-      rawId: str2ab(consentsPostRequestAUTH.payload.credential.payload.rawId),
-      response: {
-        clientDataJSON: consentsPostRequestAUTH.payload.credential.payload.response.clientDataJSON,
-        attestationObject: consentsPostRequestAUTH.payload.credential.payload.response.attestationObject
+    it('should decode the clientDataJSON', () => {
+      // Arrange
+      const expected = {
+        type: 'webauthn.create',
+        challenge: 'YWJiYmYyNGJlZTMzNjRhMGFhY2NjM2MwNzhjY2FhMTI5NzA1MTA5MDllMWJiMTY2NWMzYTJjYTlmY2Y5NWQ4OQ',
+        origin: 'http://localhost:8080',
+        crossOrigin: false
       }
-    }
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const result = await f2l.attestationResult(
-        clientAttestationResponse,
-        attestationExpectations
-      )
-      console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
 
-      const credIdAB = result.authnrData.get('credId')
-      const credId = btoa(ab2str(credIdAB))
-      console.log('credId:', credId)
-    } catch (error) {
-      throw error
-    }
-  })
+      // Act
 
-  it('assertion should succeed', async () => {
-    // Arrange
-    const f2l = new Fido2Lib()
-    const assertionExpectations: ExpectedAssertionResult = {
-      challenge: verificationRequest.challenge,
-      origin: 'http://localhost:42181',
-      // fido2lib infers this from origin, so we don't need to set it
-      // rpId: 'localhost',
-      factor: 'either',
-      // Get this from the log statement in the previous request
-      publicKey: `-----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECE1MIq3ttJAqs5dANxW6cMdnJ0qs
-BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
+      // We have to do a bit of fussing around here - convert from a base64 encoded string to a JSON string...
+      const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.payload.credential.fidoPayload!.response.clientDataJSON)
+      const parsedClientData = JSON.parse(decodedJsonString)
+
+      // Assert
+      expect(parsedClientData).toStrictEqual(expected)
+    })
+
+    it('attestation should succeed', async (): Promise<void> => {
+      // The base challenge that was derived
+      const challenge = 'YWJiYmYyNGJlZTMzNjRhMGFhY2NjM2MwNzhjY2FhMTI5NzA1MTA5MDllMWJiMTY2NWMzYTJjYTlmY2Y5NWQ4OQ=='
+      const attestationExpectations: ExpectedAttestationResult = {
+        challenge,
+        origin: 'http://localhost:8080',
+        factor: 'either'
+      }
+
+      const f2l = new Fido2Lib()
+      const clientAttestationResponse: AttestationResult = {
+        id: str2ab(consentsPostRequestAUTH.payload.credential.fidoPayload!.id),
+        rawId: str2ab(consentsPostRequestAUTH.payload.credential.fidoPayload!.rawId),
+        response: {
+          clientDataJSON: consentsPostRequestAUTH.payload.credential.fidoPayload!.response.clientDataJSON,
+          attestationObject: consentsPostRequestAUTH.payload.credential.fidoPayload!.response.attestationObject
+        }
+      }
+      // eslint-disable-next-line no-useless-catch
+      try {
+        const result = await f2l.attestationResult(
+          clientAttestationResponse,
+          attestationExpectations
+        )
+        console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
+
+        const credIdAB = result.authnrData.get('credId')
+        const credId = btoa(ab2str(credIdAB))
+        console.log('credId:', credId)
+      } catch (error) {
+        throw error
+      }
+    })
+
+    it('assertion should succeed', async () => {
+      console.log(btoa('unimplemented123'))
+      console.log(atob(verificationRequest.fidoSignedPayload.response.clientDataJSON))
+      // Arrange
+      const f2l = new Fido2Lib()
+      const assertionExpectations: ExpectedAssertionResult = {
+        challenge: verificationRequest.challenge,
+        origin: 'http://localhost:8080',
+        // fido2lib infers this from origin, so we don't need to set it
+        // rpId: 'localhost',
+        factor: 'either',
+        // Get this from the log statement in the previous request
+        publicKey: `-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEmg28b28ZVeoS8pDJigM6mFS3LWlL
+ZulyGPMlJA1u3eQ8pFidEsNz9KcXnGbmUko/d5tUNTPlu5jLWROUp5IxeA==
 -----END PUBLIC KEY-----`,
-      prevCounter: 0,
-      userHandle: null
-    }
-    const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
-    console.log('authenticatorData.length', authenticatorData.byteLength)
-    const assertionResult: AssertionResult = {
-      // fido2lib requires an ArrayBuffer, not just any old Buffer!
-      id: FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.id),
-      response: {
-        clientDataJSON: verificationRequest.signedPayload.response.clientDataJSON,
-        authenticatorData,
-        signature: verificationRequest.signedPayload.response.signature,
-        userHandle: verificationRequest.signedPayload.response.userHandle
+        prevCounter: 0,
+        userHandle: null
       }
-    }
+      const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.fidoSignedPayload.response.authenticatorData)
+      console.log('authenticatorData.length', authenticatorData.byteLength)
+      const assertionResult: AssertionResult = {
+        // fido2lib requires an ArrayBuffer, not just any old Buffer!
+        id: FidoUtils.stringToArrayBuffer(verificationRequest.fidoSignedPayload.id),
+        response: {
+          clientDataJSON: verificationRequest.fidoSignedPayload.response.clientDataJSON,
+          authenticatorData,
+          signature: verificationRequest.fidoSignedPayload.response.signature,
+          userHandle: verificationRequest.fidoSignedPayload.response.userHandle
+        }
+      }
 
-    // Act
-    await f2l.assertionResult(assertionResult, assertionExpectations) // will throw on error
+      // Act
+      await f2l.assertionResult(assertionResult, assertionExpectations) // will throw on error
 
-    // Assert
+      // Assert
+    })
   })
 
-  describe('custom site based attestation and assertion', () => {
-    const consent = { consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7', consentRequestId: 'c51ec534-ee48-4575-b6a9-ead2955b8069', scopes: [{ accountId: 'dfspa.username.5678', actions: ['accounts.transfer'] }] }
+  // TODO: Update these tests when we have the demo app updated and running
+  describe.skip('custom site based attestation and assertion', () => {
+    const consent = {
+      consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7',
+      consentRequestId: 'c51ec534-ee48-4575-b6a9-ead2955b8069',
+      scopes: [{ address: 'dfspa.username.5678', actions: ['ACCOUNTS_TRANSFER'] }]
+    }
     const challenge = deriveChallenge(consent as unknown as tpAPI.Schemas.ConsentsPostRequestAUTH)
     const credential: tpAPI.Schemas.VerifiedCredential = {
       credentialType: 'FIDO',
       status: 'VERIFIED',
-      payload: {
+      fidoPayload: {
         id: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw',
         rawId: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==',
         response: {
@@ -355,7 +367,7 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
       challenge: 'OWZhYjAxZTcwYjU4YzRhMzRmOWQwNzBmZjllZDFiNjc2NWVhMzA1NGI1MWZjZThjZGFjNDEyZDBmNmM2MWFhMQ',
       consentId: 'be433b9e-9473-4b7d-bdd5-ac5b42463afb',
       signedPayloadType: 'FIDO',
-      signedPayload: {
+      fidoSignedPayload: {
         id: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw',
         rawId: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==',
         response: {
@@ -377,11 +389,11 @@ BX04GwNm/Pmv2lJ0TFiZW+C7ndNqFk3UPn3o8JFaNe6g9Cr68MK2WcViIA==
 
       const f2l = new Fido2Lib()
       const clientAttestationResponse: AttestationResult = {
-        id: str2ab(credential.payload.id),
-        rawId: str2ab(credential.payload.rawId),
+        id: str2ab(credential.fidoPayload!.id),
+        rawId: str2ab(credential.fidoPayload!.rawId),
         response: {
-          clientDataJSON: credential.payload.response.clientDataJSON,
-          attestationObject: credential.payload.response.attestationObject
+          clientDataJSON: credential.fidoPayload!.response.clientDataJSON,
+          attestationObject: credential.fidoPayload!.response.attestationObject
         }
       }
 
@@ -413,16 +425,16 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
         prevCounter: 0,
         userHandle: null
       }
-      const authenticatorData = FidoUtils.stringToArrayBuffer(customSiteVR.signedPayload.response.authenticatorData)
+      const authenticatorData = FidoUtils.stringToArrayBuffer(customSiteVR.fidoSignedPayload.response.authenticatorData)
       console.log('authenticatorData.length', authenticatorData.byteLength)
       const assertionResult: AssertionResult = {
         // fido2lib requires an ArrayBuffer, not just any old Buffer!
-        id: FidoUtils.stringToArrayBuffer(customSiteVR.signedPayload.id),
+        id: FidoUtils.stringToArrayBuffer(customSiteVR.fidoSignedPayload.id),
         response: {
-          clientDataJSON: customSiteVR.signedPayload.response.clientDataJSON,
+          clientDataJSON: customSiteVR.fidoSignedPayload.response.clientDataJSON,
           authenticatorData,
-          signature: customSiteVR.signedPayload.response.signature,
-          userHandle: customSiteVR.signedPayload.response.userHandle
+          signature: customSiteVR.fidoSignedPayload.response.signature,
+          userHandle: customSiteVR.fidoSignedPayload.response.userHandle
         }
       }
 
@@ -437,7 +449,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
     const credential: tpAPI.Schemas.VerifiedCredential = {
       credentialType: 'FIDO',
       status: 'VERIFIED',
-      payload: {
+      fidoPayload: {
         id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
         rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=='),
         response: {
@@ -462,7 +474,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
       challenge: 'quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU=',
       consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
       signedPayloadType: 'FIDO',
-      signedPayload: {
+      fidoSignedPayload: {
         id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
         rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
         response: {
@@ -487,11 +499,11 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
 
       const f2l = new Fido2Lib()
       const clientAttestationResponse: AttestationResult = {
-        id: str2ab(credential.payload.id),
-        rawId: str2ab(credential.payload.rawId),
+        id: str2ab(credential.fidoPayload!.id),
+        rawId: str2ab(credential.fidoPayload!.rawId),
         response: {
-          clientDataJSON: credential.payload.response.clientDataJSON,
-          attestationObject: credential.payload.response.attestationObject
+          clientDataJSON: credential.fidoPayload!.response.clientDataJSON,
+          attestationObject: credential.fidoPayload!.response.attestationObject
         }
       }
 
@@ -521,16 +533,16 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl
         prevCounter: 0,
         userHandle: null
       }
-      const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.response.authenticatorData)
+      const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.fidoSignedPayload.response.authenticatorData)
       console.log('authenticatorData.length', authenticatorData.byteLength)
       const assertionResult: AssertionResult = {
         // fido2lib requires an ArrayBuffer, not just any old Buffer!
-        id: FidoUtils.stringToArrayBuffer(verificationRequest.signedPayload.id),
+        id: FidoUtils.stringToArrayBuffer(verificationRequest.fidoSignedPayload.id),
         response: {
-          clientDataJSON: verificationRequest.signedPayload.response.clientDataJSON,
+          clientDataJSON: verificationRequest.fidoSignedPayload.response.clientDataJSON,
           authenticatorData,
-          signature: verificationRequest.signedPayload.response.signature,
-          userHandle: verificationRequest.signedPayload.response.userHandle
+          signature: verificationRequest.fidoSignedPayload.response.signature,
+          userHandle: verificationRequest.fidoSignedPayload.response.userHandle
         }
       }
 

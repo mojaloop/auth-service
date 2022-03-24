@@ -42,7 +42,6 @@ jest.mock('~/domain/stateMachine/registerConsent.model', () => ({
   }))
 }))
 
-
 const consentsPostRequestAUTH = {
   headers: {
     'fspiop-source': 'dfspA',
@@ -53,10 +52,10 @@ const consentsPostRequestAUTH = {
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     scopes: [
       {
-        accountId: 'dfsp.username.5678',
+        address: 'dfsp.username.5678',
         actions: [
-          'accounts.transfer',
-          'accounts.getBalance'
+          'ACCOUNTS_TRANSFER',
+          'ACCOUNTS_GET_BALANCE'
         ]
       }
     ],

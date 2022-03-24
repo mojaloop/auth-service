@@ -39,7 +39,7 @@ import { NotFoundError } from '~/model/errors'
 const consents: ConsentModel[] = [
   {
     id: '1234',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
     credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -49,7 +49,7 @@ const consents: ConsentModel[] = [
   },
   {
     id: '948',
-    status: 'VERIFIED',
+    status: 'ISSUED',
     participantId: 'dfsp-3333-2123',
     credentialType: 'FIDO',
     credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -66,17 +66,17 @@ const tempScopes: ScopeModel[] = [
   {
     consentId: consents[0].id,
     action: 'transfer',
-    accountId: 'sjdn-3333-2123'
+    address: 'sjdn-3333-2123'
   },
   {
     consentId: consents[0].id,
     action: 'balance',
-    accountId: 'sjdn-q333-2123'
+    address: 'sjdn-q333-2123'
   },
   {
     consentId: consents[0].id,
     action: 'saving',
-    accountId: 'sjdn-q333-2123'
+    address: 'sjdn-q333-2123'
   }
 ]
 

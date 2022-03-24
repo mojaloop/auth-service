@@ -7,7 +7,7 @@
  except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop
- files are distributed onan 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  Contributors
@@ -45,20 +45,21 @@ describe('POST /consents - AUTH case', (): void => {
     // https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
     // in nodejs we use only Buffer.from([...]).toString('base64')
     const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
+      status: 'ISSUED',
       consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
       scopes: [
         {
-          accountId: 'dfsp.username.5678',
+          address: 'dfsp.username.5678',
           actions: [
-            'accounts.transfer',
-            'accounts.getBalance'
+            'ACCOUNTS_TRANSFER',
+            'ACCOUNTS_GET_BALANCE'
           ]
         }
       ],
       credential: {
         credentialType: 'FIDO',
         status: 'PENDING',
-        payload: {
+        fidoPayload: {
           id: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ_8zo3ZiIL3Rvh_ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q',
           rawId: Buffer.from([
             95, 198, 144, 115, 197, 160, 32, 232, 152, 206, 132, 72, 41, 180, 216, 37, 217, 115, 49, 159, 252, 206,
@@ -152,12 +153,13 @@ describe('POST /consents - AUTH case', (): void => {
     // https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
     // in nodejs we use only Buffer.from([...]).toString('base64')
     const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
+      status: 'ISSUED',
       consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7',
-      scopes: [{ accountId: 'dfspa.username.5678', actions: ['accounts.transfer'] }],
+      scopes: [{ address: 'dfspa.username.5678', actions: ['ACCOUNTS_TRANSFER'] }],
       credential: {
         credentialType: 'FIDO',
         status: 'PENDING',
-        payload: {
+        fidoPayload: {
           id: 'MNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1A',
           rawId: 'MNSJ9C29Mhz9mMyG3ZFSeP3yZCvEeMHPXc7WcHQTi1WNKAdRhQG5GhFC0KWCDuljDGjVsffx1rqzxRWpzj8J1A==',
           response: {

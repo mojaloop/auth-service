@@ -38,8 +38,7 @@
 import { Knex, knex } from 'knex'
 import Config from '~/shared/config'
 import { ConsentDB, ConsentModel } from '~/model/consent'
-import { NotFoundError } from '~/model/errors'
-import { RevokedConsentModificationError } from '../../../src/model/errors';
+import { NotFoundError, RevokedConsentModificationError } from '~/model/errors'
 
 /*
  * Mock Consent Resources
@@ -47,7 +46,7 @@ import { RevokedConsentModificationError } from '../../../src/model/errors';
 const completeConsent: ConsentModel = {
   id: '1234',
   participantId: 'dfsp-3333-2123',
-  status: 'VERIFIED',
+  status: 'ISSUED',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs',
   credentialPayload: 'dwuduwd&e2idjoj0w',
@@ -96,7 +95,7 @@ describe('src/model/consent', (): void => {
       expect(consents[0]).toEqual({
         id: '1234',
         participantId: 'dfsp-3333-2123',
-        status: 'VERIFIED',
+        status: 'ISSUED',
         credentialType: 'FIDO',
         credentialChallenge: 'xyhdushsoa82w92mzs',
         credentialPayload: 'dwuduwd&e2idjoj0w',
@@ -125,7 +124,7 @@ describe('src/model/consent', (): void => {
         expect(consents[0]).toEqual({
           id: '1234',
           participantId: 'dfsp-3333-2123',
-          status: 'VERIFIED',
+          status: 'ISSUED',
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',
           credentialPayload: 'dwuduwd&e2idjoj0w',
@@ -146,7 +145,7 @@ describe('src/model/consent', (): void => {
         await expect(consentDB.insert({
           id: null as unknown as string,
           participantId: 'dfsp-3333-2123',
-          status: 'VERIFIED',
+          status: 'ISSUED',
           createdAt: expect.any(String),
           credentialType: 'FIDO',
           credentialChallenge: 'xyhdushsoa82w92mzs',
@@ -205,7 +204,7 @@ describe('src/model/consent', (): void => {
         credentialCounter: 4,
         originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' }),
         createdAt: expect.any(String),
-        revokedAt: expect.any(String),
+        revokedAt: expect.any(String)
       })
     })
 
@@ -240,14 +239,13 @@ describe('src/model/consent', (): void => {
         originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' }),
         // sqllite stores timestamps as strings
         createdAt: expect.any(String),
-        revokedAt: expect.any(String),
+        revokedAt: expect.any(String)
       })
 
       await expect(consentDB.revoke(completeConsent.id))
         .rejects.toThrowError(RevokedConsentModificationError)
     })
   })
-
 
   describe('delete', (): void => {
     it('deletes an existing consent', async (): Promise<void> => {
@@ -296,15 +294,15 @@ describe('src/model/consent', (): void => {
         await Db('Scope')
           .insert({
             consentId: '1234',
-            action: 'accounts.transfer',
-            accountId: '78901-12345'
+            action: 'ACCOUNTS_TRANSFER',
+            address: '78901-12345'
           })
 
         await Db('Scope')
           .insert({
             consentId: '1234',
             action: 'accounts.balance',
-            accountId: '38383-22992'
+            address: '38383-22992'
           })
 
         let scopes = await Db('Scope')

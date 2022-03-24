@@ -35,18 +35,18 @@ import { Knex } from 'knex'
 const scopes = [
   {
     consentId: '123',
-    action: 'accounts.getBalance',
-    accountId: '12345-67890'
+    action: 'ACCOUNTS_GET_BALANCE',
+    address: '12345-67890'
   },
   {
     consentId: '123',
-    action: 'accounts.transfer',
-    accountId: '12345-67890'
+    action: 'ACCOUNTS_TRANSFER',
+    address: '12345-67890'
   },
   {
     consentId: '124',
-    action: 'accounts.transfer',
-    accountId: '21345-67890'
+    action: 'ACCOUNTS_TRANSFER',
+    address: '21345-67890'
   }
 ]
 

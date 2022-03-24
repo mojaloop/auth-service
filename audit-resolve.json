@@ -187,6 +187,183 @@
       "decision": "ignore",
       "madeAt": 1645585487352,
       "expiresAt": 1648177016953
+    },
+    "1064587|@mojaloop/central-services-shared>widdershins>urijs": {
+      "decision": "ignore",
+      "madeAt": 1647976153567,
+      "expiresAt": 1650568149045
+    },
+    "1064606|@mojaloop/central-services-shared>widdershins>urijs": {
+      "decision": "ignore",
+      "madeAt": 1647976153567,
+      "expiresAt": 1650568149045
+    },
+    "1067233|@mojaloop/central-services-shared>widdershins>urijs": {
+      "decision": "ignore",
+      "madeAt": 1647976153567,
+      "expiresAt": 1650568149045
+    },
+    "1064611|@mojaloop/central-services-shared>axios>follow-redirects": {
+      "decision": "ignore",
+      "madeAt": 1647976155770,
+      "expiresAt": 1650568149045
+    },
+    "1064664|@mojaloop/central-services-shared>axios>follow-redirects": {
+      "decision": "ignore",
+      "madeAt": 1647976155770,
+      "expiresAt": 1650568149045
+    },
+    "1064843|@mojaloop/event-sdk>@grpc/proto-loader>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1647976156994,
+      "expiresAt": 1650568149045
+    },
+    "1064843|@mojaloop/event-sdk>@grpc/proto-loader>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1647976156994,
+      "expiresAt": 1650568149045
+    },
+    "1067269|fido2-lib>node-jose>node-forge": {
+      "decision": "ignore",
+      "madeAt": 1647976158087,
+      "expiresAt": 1650568149045
+    },
+    "1067270|fido2-lib>node-jose>node-forge": {
+      "decision": "ignore",
+      "madeAt": 1647976158087,
+      "expiresAt": 1650568149045
+    },
+    "1067271|fido2-lib>node-jose>node-forge": {
+      "decision": "ignore",
+      "madeAt": 1647976158087,
+      "expiresAt": 1650568149045
+    },
+    "1064661|@mojaloop/central-services-shared>shins>markdown-it": {
+      "decision": "ignore",
+      "madeAt": 1647976160045,
+      "expiresAt": 1650568149045
+    },
+    "1064744|@mojaloop/central-services-shared>widdershins>openapi-sampler>json-pointer": {
+      "decision": "ignore",
+      "madeAt": 1647976161409,
+      "expiresAt": 1650568149045
+    },
+    "1064761|@mojaloop/central-services-shared>widdershins>swagger2openapi>better-ajv-errors>jsonpointer": {
+      "decision": "ignore",
+      "madeAt": 1647976163079,
+      "expiresAt": 1650568149045
+    },
+    "1064761|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>better-ajv-errors>jsonpointer": {
+      "decision": "ignore",
+      "madeAt": 1647976163079,
+      "expiresAt": 1650568149045
+    },
+    "1064768|hapi-swagger>swagger-parser>z-schema>validator": {
+      "decision": "ignore",
+      "madeAt": 1647976164415,
+      "expiresAt": 1650568149045
+    },
+    "1064843|@mojaloop/central-services-shared>widdershins>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1647976165634,
+      "expiresAt": 1650568149045
+    },
+    "1064843|@mojaloop/central-services-shared>widdershins>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1647976165634,
+      "expiresAt": 1650568149045
+    },
+    "1065159|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>ajv": {
+      "decision": "ignore",
+      "madeAt": 1647976166729,
+      "expiresAt": 1650568149045
+    },
+    "1065367|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1647976168524,
+      "expiresAt": 1650568149045
+    },
+    "1065368|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1647976168524,
+      "expiresAt": 1650568149045
+    },
+    "1065523|@mojaloop/central-services-shared>widdershins>yargs>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1647976169952,
+      "expiresAt": 1650568149045
+    },
+    "1067259|rc>minimist": {
+      "decision": "ignore",
+      "madeAt": 1647976171040,
+      "expiresAt": 1650568149045
+    },
+    "1067259|@mojaloop/central-services-logger>rc>minimist": {
+      "decision": "ignore",
+      "madeAt": 1647976171040,
+      "expiresAt": 1650568149045
+    },
+    "1067259|@mojaloop/event-sdk>@mojaloop/central-services-logger>rc>minimist": {
+      "decision": "ignore",
+      "madeAt": 1647976171040,
+      "expiresAt": 1650568149045
+    },
+    "1067259|babel-jest>@jest/transform>@babel/core>json5>minimist": {
+      "decision": "ignore",
+      "madeAt": 1647976171040,
+      "expiresAt": 1650568149045
+    },
+    "1067259|babel-jest>babel-plugin-istanbul>istanbul-lib-instrument>@babel/core>json5>minimist": {
+      "decision": "ignore",
+      "madeAt": 1647976171040,
+      "expiresAt": 1650568149045
+    },
+    "1067259|babel-jest>@jest/transform>babel-plugin-istanbul>istanbul-lib-instrument>@babel/core>json5>minimist": {
+      "decision": "ignore",
+      "madeAt": 1647976171040,
+      "expiresAt": 1650568149045
+    },
+    "1067278|fido2-lib>node-jose>node-forge": {
+      "decision": "fix",
+      "madeAt": 1648006793180
+    },
+    "1067279|fido2-lib>node-jose>node-forge": {
+      "decision": "fix",
+      "madeAt": 1648006793180
+    },
+    "1067280|fido2-lib>node-jose>node-forge": {
+      "decision": "fix",
+      "madeAt": 1648006793180
+    },
+    "1067285|rc>minimist": {
+      "decision": "ignore",
+      "madeAt": 1648097544080,
+      "expiresAt": 1650689537503
+    },
+    "1067285|@mojaloop/central-services-logger>rc>minimist": {
+      "decision": "ignore",
+      "madeAt": 1648097544080,
+      "expiresAt": 1650689537503
+    },
+    "1067285|@mojaloop/event-sdk>@mojaloop/central-services-logger>rc>minimist": {
+      "decision": "ignore",
+      "madeAt": 1648097544080,
+      "expiresAt": 1650689537503
+    },
+    "1067285|babel-jest>@jest/transform>@babel/core>json5>minimist": {
+      "decision": "ignore",
+      "madeAt": 1648097544080,
+      "expiresAt": 1650689537503
+    },
+    "1067285|babel-jest>babel-plugin-istanbul>istanbul-lib-instrument>@babel/core>json5>minimist": {
+      "decision": "ignore",
+      "madeAt": 1648097544080,
+      "expiresAt": 1650689537503
+    },
+    "1067285|babel-jest>@jest/transform>babel-plugin-istanbul>istanbul-lib-instrument>@babel/core>json5>minimist": {
+      "decision": "ignore",
+      "madeAt": 1648097544080,
+      "expiresAt": 1650689537503
     }
   },
   "rules": {},

@@ -39,26 +39,26 @@ describe('server/domain/consents', (): void => {
   const consentId = requestWithPayloadScopes.params.ID
   const participantId = requestWithPayloadScopes.headers['fspiop-destination']
   const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
+    status: 'ISSUED',
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     scopes: [
       {
-        accountId: 'dfsp.username.5678',
+        address: 'dfspa.username.5678',
         actions: [
-          'accounts.transfer',
-          'accounts.getBalance'
+          'ACCOUNTS_TRANSFER',
+          'ACCOUNTS_GET_BALANCE'
         ]
       }
     ],
     credential: {
       credentialType: 'FIDO',
       status: 'PENDING',
-      payload: {
-        id: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ_8zo3ZiIL3Rvh_ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q',
-        rawId: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ/8zo3ZiIL3Rvh/ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q==',
+      fidoPayload: {
+        id: '0bxBqxgf0iV62tNEXnM22nkXybhsRHM2VrR7n-iGP4J6PcZr_dsL7NtjrBqReTXNsQXHIhJlYZ7qz8VCsf4qXw',
+        rawId: '0bxBqxgf0iV62tNEXnM22nkXybhsRHM2VrR7n+iGP4J6PcZr/dsL7NtjrBqReTXNsQXHIhJlYZ7qz8VCsf4qXw==',
         response: {
-          // clientDataJSON needs to be utf-8 not base64
-          clientDataJSON: '{"type":"webauthn.create","challenge":"MgA3ADgANQBjADIAZAA5ADkAYQA0AGMAMQA5AGQAMQBhADgANwBkADMANABmAGQAMABjADEAMABhAGQAMABiADUAMgA3ADIAMQBjAGYAMwBjADgAMAAyADgAOABjADIAOQBkAGEANQBiADAAZQBiAGUAZgA2ADcAOAAzADQAMAA","origin":"http://localhost:5000","crossOrigin":false}',
-          attestationObject: 'o2NmbXRmcGFja2VkZ2F0dFN0bXSjY2FsZyZjc2lnWEcwRQIgHq9JKpi/bFnnu0uVV+k6JjHfBcFwWRRCXJWlejgzJLUCIQD2iOONGXebOCxq37UqvumxC/dJz1a3U9F1DaxVMFnzf2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAEFJogIY72QTOWuIH41bfx9QBAX8aQc8WgIOiYzoRIKbTYJdlzMZ/8zo3ZiIL3Rvh/ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3aUBAgMmIAEhWCB0Zo9xAj7V50Tu7Hj8F5Wo0A3AloIpsVDSY2icW9eSwiJYIH79t0O2hnPDguuloYn2eSdR7caaZd/Ffnmk4vyOATab'
+          attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhALQ8cff27oNd/pmIlLg+8LjoIngh/e6A2w5VAtDNgGa2AiEArZvywfWPjc0/YBWO1o4dweyV9Ye6Vg/4le6r0lN7y4ZjeDVjgVkC3DCCAtgwggHAoAMCAQICCQCwOSo3Xzii6zANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgOTI1NTE0MTYwMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwVMw28cO1cij64vzXAeaMv3lVgZMJF30DVNYC3Ppy0eRD+8XFfd5eWhw6atcF4zrmQOYwSaFqW+p24YVjiPZwqOBgTB/MBMGCisGAQQBgsQKDQEEBQQDBQQDMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS43MBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEC/AV5+BE0fqsRa7Wo25ICowDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAAWkxZOSY9oijO0kPqyEvWCxI+McciZSfXxjqInQ5Zc4+M+1KXQtiUPrnDgT2PNSTuoSU8HBJCHcKED0WTuWQEnJgQzbiIsycaokHLe7xeCekiR8BHsVqReF87SB7VhJnfCW55bzMNZTMMflLg9OpddS8ZH4Svyzetd0vdRQAXH/1Yh+q6pkqR7viCNuo1nmBJbZNFn+47zrURSpEThQZdlj3Ng4NXkUWDikiTKkIUJ9gbnfN7jxcU9R+ck9vTCrY8ugycsz+P1EI4S5rsvTQ7frZW7b36126yIrVTEROqEXq7dI7rzPDzzG+rb1WEH4jNiGmCygoZ+chQssL0fV2vmhhdXRoRGF0YVjESZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2NBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQNG8QasYH9IletrTRF5zNtp5F8m4bERzNla0e5/ohj+Cej3Ga/3bC+zbY6wakXk1zbEFxyISZWGe6s/FQrH+Kl+lAQIDJiABIVggiE7qZLU2eP0J44rHBHk+VBjM2zRdMiGh8unZi5mr+m0iWCBl+iwg3Vix6omFdl+x8S1RC5SGSuoUWe9/B1DzOEDIeA==',
+          clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTnpaa1kySXhabUZoWW1Ka1ltSmtNRGRpTkRRNVkySXpOekk0WlRNNE9EUTVaakprT0dVMFpXSTFaVGt6TWpWa056SXdOV0ZrTm1ZelkyTXpaakkzTXciLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
         },
         type: 'public-key'
       }

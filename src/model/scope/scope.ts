@@ -38,7 +38,7 @@ export interface ScopeModel {
   id?: number;
   consentId: string;
   action: string;
-  accountId: string;
+  address: string;
 }
 
 /*

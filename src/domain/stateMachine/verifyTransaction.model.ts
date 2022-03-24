@@ -139,7 +139,7 @@ export class VerifyTransactionModel
         throw new Error('Auth-Service currently only supports verifying FIDO-based credentials')
       }
 
-      const clientDataObj = FidoUtils.parseClientDataBase64(request.signedPayload.response.clientDataJSON)
+      const clientDataObj = FidoUtils.parseClientDataBase64(request.fidoSignedPayload.response.clientDataJSON)
       const origin = clientDataObj.origin
 
       const assertionExpectations: ExpectedAssertionResult = {
@@ -150,51 +150,49 @@ export class VerifyTransactionModel
         factor: 'either',
         publicKey: consent.credentialPayload,
         prevCounter: consent.credentialCounter,
-        userHandle: request.signedPayload.response.userHandle || null
+        userHandle: request.fidoSignedPayload.response.userHandle || null
       }
       const assertionResult: AssertionResult = {
         // fido2lib requires an ArrayBuffer, not just any old Buffer!
-        id: FidoUtils.stringToArrayBuffer(request.signedPayload.id),
+        id: FidoUtils.stringToArrayBuffer(request.fidoSignedPayload.id),
         response: {
-          clientDataJSON: request.signedPayload.response.clientDataJSON,
-          authenticatorData: FidoUtils.stringToArrayBuffer(request.signedPayload.response.authenticatorData),
-          signature: request.signedPayload.response.signature,
-          userHandle: request.signedPayload.response.userHandle
+          clientDataJSON: request.fidoSignedPayload.response.clientDataJSON,
+          authenticatorData: FidoUtils.stringToArrayBuffer(request.fidoSignedPayload.response.authenticatorData),
+          signature: request.fidoSignedPayload.response.signature,
+          userHandle: request.fidoSignedPayload.response.userHandle
         }
       }
 
       // TODO: for greater security, store the updated counter result
       // out of scope for now.
-
-      // the fido2lib throws an error if the challenge is not signed correctly
-      // the library doesn't have error types so we can't distinguish what
-      // exactly caused the error. this needs further investigation.
-      // for now we will assume that if it errors the challenge was signed
-      // incorrectly and inform the participant that the authentication was
-      // rejected
       try {
         await f2l.assertionResult(assertionResult, assertionExpectations)
         this.data.verificationResponse = {
           authenticationResponse: 'VERIFIED'
         }
       } catch (error) {
-        this.data.verificationResponse = {
-          authenticationResponse: 'REJECTED'
-        }
+        // planned error so we throw the appropriate code
+        this.logger.push({ error }).info('consentRetrieved -> transactionVerified f2l.assertionResult')
+        throw Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID
       }
     } catch (error) {
       this.logger.push({ error }).error('consentRetrieved -> transactionVerified')
-
-      const mojaloopError = reformatError(
-        Errors.MojaloopApiErrorCodes.SERVER_ERROR,
-        this.logger
-      ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+      let mojaloopError
+      // if error is planned and is a MojaloopApiErrorCode we send back that code
+      if ((error as Errors.MojaloopApiErrorCode).code) {
+        mojaloopError = reformatError(error as Errors.MojaloopApiErrorCode, this.logger)
+      } else {
+        // if error is not planned send back a generalized error
+        mojaloopError = reformatError(
+          Errors.MojaloopApiErrorCodes.INTERNAL_SERVER_ERROR,
+          this.logger
+        ) as unknown as fspiopAPI.Schemas.ErrorInformationObject
+      }
 
       mojaloopError.errorInformation.extensionList = {
         extension: [
           { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
-          { key: 'transitionFailure', value: 'VerifyTransactionModel: consentRetrieved -> transactionVerified' },
-          { key: 'rawError', value: JSON.stringify(error) }
+          { key: 'transitionFailure', value: 'VerifyTransactionModel: consentRetrieved -> transactionVerified' }
         ]
       }
 

@@ -32,12 +32,12 @@ export const requestWithPayloadScopes: Request = {
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
     consentRequestId: 'dfsp-3333-2123',
     scopes: [{
-      accountId: 'as2342',
-      actions: ['accounts.getBalance', 'accounts.transfer']
+      address: 'as2342',
+      actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
     },
     {
-      accountId: 'as22',
-      actions: ['accounts.getBalance']
+      address: 'as22',
+      actions: ['ACCOUNTS_GET_BALANCE']
     }
     ]
   }
@@ -60,11 +60,11 @@ export const requestWithPayloadCredentialAndScope: Request = {
     participantId: 'sfsfdf23',
     scopes: [
       {
-        accountId: '3423',
+        address: '3423',
         actions: ['acc.getMoney', 'acc.sendMoney']
       },
       {
-        accountId: '232345',
+        address: '232345',
         actions: ['acc.accessSaving']
       }
     ],
@@ -106,7 +106,7 @@ export const h: ResponseToolkit = {
 const credential: tpAPI.Schemas.SignedCredential = {
   credentialType: 'FIDO',
   status: 'PENDING',
-  payload: {
+  fidoPayload: {
     id: 'X8aQc8WgIOiYzoRIKbTYJdlzMZ_8zo3ZiIL3Rvh_ONfr9kZtudCwYO49tWVkjgJGyJSpoo6anRBVJGda0Lri3Q',
     rawId: Buffer.from([
       95, 198, 144, 115, 197, 160, 32, 232, 152, 206, 132, 72, 41, 180, 216, 37, 217, 115, 49, 159, 252, 206,
@@ -201,7 +201,7 @@ export const completeConsentRevoked: ConsentModel = {
 
 export const completeConsentActive: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  status: 'VERIFIED',
+  status: 'ISSUED',
   participantId: 'dfsp-3333-2123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs=',
@@ -217,49 +217,49 @@ export const completeConsentActive: ConsentModel = {
  * Mock Scope Resources
 */
 export const externalScopes: tpAPI.Schemas.Scope[] = [{
-  accountId: 'as2342',
-  actions: ['accounts.getBalance', 'accounts.transfer']
+  address: 'as2342',
+  actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
 },
 {
-  accountId: 'as22',
-  actions: ['accounts.getBalance']
+  address: 'as22',
+  actions: ['ACCOUNTS_GET_BALANCE']
 }
 ]
 
 export const scopes: ScopeModel[] = [{
   id: 123234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  accountId: 'as2342',
-  action: 'accounts.getBalance'
+  address: 'as2342',
+  action: 'ACCOUNTS_GET_BALANCE'
 },
 {
   id: 232234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  accountId: 'as2342',
-  action: 'accounts.transfer'
+  address: 'as2342',
+  action: 'ACCOUNTS_TRANSFER'
 },
 {
   id: 234,
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  accountId: 'as22',
-  action: 'accounts.getBalance'
+  address: 'as22',
+  action: 'ACCOUNTS_GET_BALANCE'
 }
 ]
 
 export const scopesWithoutIds: ScopeModel[] = [{
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  accountId: 'as2342',
-  action: 'accounts.getBalance'
+  address: 'as2342',
+  action: 'ACCOUNTS_GET_BALANCE'
 },
 {
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  accountId: 'as2342',
-  action: 'accounts.transfer'
+  address: 'as2342',
+  action: 'ACCOUNTS_TRANSFER'
 },
 {
   consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  accountId: 'as22',
-  action: 'accounts.getBalance'
+  address: 'as22',
+  action: 'ACCOUNTS_GET_BALANCE'
 }
 ]
 
@@ -270,7 +270,7 @@ export const challenge = 'xyhdushsoa82w92mzs='
 
 export const completeConsentActiveCredential: ConsentModel = {
   id: 'b51ec534-ee48-4575-b6a9-ead2955b8069',
-  status: 'VERIFIED',
+  status: 'ISSUED',
   participantId: 'dfsp-3333-2123',
   credentialType: 'FIDO',
   credentialChallenge: 'xyhdushsoa82w92mzs=',
@@ -288,7 +288,7 @@ export const validVerificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificat
   challenge: 'some challenge base64 encoded',
   consentId: 'c6163a7a-dade-4732-843d-2c6a0e7580bf',
   signedPayloadType: 'FIDO',
-  signedPayload: {
+  fidoSignedPayload: {
     id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
     rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
     response: {

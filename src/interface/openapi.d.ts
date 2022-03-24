@@ -13,7 +13,7 @@ export interface paths {
     get: operations['MetricsGet'];
   };
   '/consents': {
-    /** DFSP sends this request to the PISP after granting consent. DFSP sends this request to an Auth service to validate a signed consent. */
+    /** The **POST /consents** request is used to request the creation of a consent for interactions between a PISP and the DFSP who owns the account which a PISP’s customer wants to allow the PISP access to. */
     post: operations['PostConsents'];
     parameters: {
       header: {
@@ -169,7 +169,7 @@ export interface components {
     /** Data model for the complex type Extension. */
     Extension: {
       key: components['schemas']['ExtensionKey'];
-      signedPayload: components['schemas']['ExtensionValue'];
+      value: components['schemas']['ExtensionValue'];
     };
     /** Data model for the complex type ExtensionList. An optional list of extensions, specific to deployment. */
     ExtensionList: {
@@ -189,33 +189,59 @@ export interface components {
     /** Identifier that correlates all messages of the same sequence. The API data type UUID (Universally Unique Identifier) is a JSON String in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122), that is restricted by a regular expression for interoperability reasons. A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘). */
     CorrelationId: string;
     /**
-     * A long-lived unique account identifier provided by the DFSP. This MUST NOT
-     * be Bank Account Number or anything that may expose a User's private bank
-     * account information.
+     * The AccountAddress data type is a variable length string with a maximum size of 1023 characters and consists of:
+     * Alphanumeric characters, upper or lower case. (Addresses are case-sensitive so that they can contain data encoded in formats such as base64url.)
+     * - Underscore (_) - Tilde (~) - Hyphen (-) - Period (.) Addresses MUST NOT end in a period (.) character
+     * An entity providing accounts to parties (i.e. a participant) can provide any value for an AccountAddress that is meaningful to that entity. It does not need to provide an address that makes the account identifiable outside the entity's domain.
+     * IMPORTANT: The policy for defining addresses and the life-cycle of these is at the discretion of the address space owner (the payer DFSP in this case).
+     * https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3212-accountaddress
      */
-    AccountId: string;
+    AccountAddress: string;
     /**
-     * The scopes requested for a ConsentRequest.
-     * - "accounts.getBalance" - Get the balance of a given account.
-     * - "accounts.transfer" - Initiate a transfer from an account.
+     * The ScopeAction element contains an access type which a PISP can request
+     * from a DFSP, or which a DFSP can grant to a PISP.
+     * It must be a member of the appropriate enumeration.
+     *
+     * - ACCOUNTS_GET_BALANCE: PISP can request a balance for the linked account
+     * - ACCOUNTS_TRANSFER: PISP can request a transfer of funds from the linked account in the DFSP
+     * - ACCOUNTS_STATEMENT: PISP can request a statement of individual transactions on a user's account
      */
-    ConsentScopeType: 'accounts.getBalance' | 'accounts.transfer';
-    /** Scope + Account Identifier mapping for a Consent. */
+    ScopeAction:
+    | 'ACCOUNTS_GET_BALANCE'
+    | 'ACCOUNTS_TRANSFER'
+    | 'ACCOUNTS_STATEMENT';
+    /**
+     * The Scope element contains an identifier defining, in the terms of a DFSP, an account on which access types can be requested or granted. It also defines the access types which are requested or granted.
+     * https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
+     */
     Scope: {
-      accountId: components['schemas']['AccountId'];
-      actions: components['schemas']['ConsentScopeType'][];
+      address: components['schemas']['AccountAddress'];
+      actions: components['schemas']['ScopeAction'][];
     };
     /**
-     * The type of the Credential.
-     * - "FIDO" - A FIDO public/private keypair
+     * The type of the Credential. - "FIDO" - The credential is based on a FIDO challenge. Its payload is a FIDOPublicKeyCredentialAttestation object. - "GENERIC" - The credential is based on a simple public key validation. Its payload is a GenericCredential object.
+     * https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
      */
-    CredentialType: 'FIDO';
+    CredentialType: 'FIDO' | 'GENERIC';
     /**
-     * An object sent in a `PUT /consents/{ID}` request.
-     * Based on https://w3c.github.io/webauthn/#iface-pkcredential
-     * and mostly on: https://webauthn.guide/#registration
-     * AuthenticatorAttestationResponse
-     * https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject
+     * The status of the Credential.
+     * - "PENDING" - The credential has been created, but has not been verified
+     */
+    CredentialStatusPending: 'PENDING';
+    /** The API data type BinaryString is a JSON String. The string is a base64url  encoding of a string of raw bytes, where padding (character ‘=’) is added at the end of the data if needed to ensure that the string is a multiple of 4 characters. The length restriction indicates the allowed number of characters. */
+    BinaryString: string;
+    /** A publicKey + signature of a challenge for a generic public/private keypair. */
+    GenericCredential: {
+      publicKey: components['schemas']['BinaryString'];
+      signature: components['schemas']['BinaryString'];
+    };
+    /**
+     * A data model representing a FIDO Attestation result. Derived from
+     * [`PublicKeyCredential` Interface](https://w3c.github.io/webauthn/#iface-pkcredential).
+     *
+     * The `PublicKeyCredential` interface represents the below fields with
+     * a Type of Javascript [ArrayBuffer](https://heycam.github.io/webidl/#idl-ArrayBuffer).
+     * For this API, we represent ArrayBuffers as base64 encoded utf-8 strings.
      */
     FIDOPublicKeyCredentialAttestation: {
       /**
@@ -224,7 +250,7 @@ export interface components {
        */
       id: string;
       /** raw credential id: identifier of pair of keys, base64 encoded */
-      rawId: string;
+      rawId?: string;
       /** AuthenticatorAttestationResponse */
       response: {
         /** JSON string with client data */
@@ -245,39 +271,45 @@ export interface components {
      */
     SignedCredential: {
       credentialType: components['schemas']['CredentialType'];
-      /** The challenge has signed but not yet verified. */
-      status: 'PENDING';
-      payload: components['schemas']['FIDOPublicKeyCredentialAttestation'];
+      status: components['schemas']['CredentialStatusPending'];
+      genericPayload?: components['schemas']['GenericCredential'];
+      fidoPayload?: components['schemas']['FIDOPublicKeyCredentialAttestation'];
     };
     /**
-     * The object sent in a `POST /consents` request to AUTH-SERVICE by DFSP to store registered consent with PublicKey
-     * and whatever needed to perform authorization validation later
+     * Allowed values for the enumeration ConsentStatus
+     * - ISSUED - The consent has been issued by the DFSP
+     * - REVOKED - The consent has been revoked
+     */
+    ConsentStatus: 'ISSUED' | 'REVOKED';
+    /**
+     * The object sent in a `POST /consents` request to the Auth-Service
+     * by a DFSP to store registered Consent and credential
      */
     ConsentsPostRequestAUTH: {
       /**
        * Common ID between the PISP and FSP for the Consent object
-       * decided by the DFSP who creates the Consent
-       * This field is REQUIRED for POST /consent.
-       * creation of this Consent.
+       * determined by the DFSP who creates the Consent.
        */
       consentId: components['schemas']['CorrelationId'];
+      consentRequestId?: components['schemas']['CorrelationId'];
       scopes: components['schemas']['Scope'][];
       credential: components['schemas']['SignedCredential'];
+      status: components['schemas']['ConsentStatus'];
+      extensionList?: components['schemas']['ExtensionList'];
     };
-    /** The object sent in a `POST /consents` request to PISP by DFSP to ask for delivering the credential object. */
+    /** The provisional Consent object sent by the DFSP in `POST /consents`. */
     ConsentsPostRequestPISP: {
       /**
-       * Common ID between the PISP and FSP for the Consent object
-       * decided by the DFSP who creates the Consent
-       * This field is REQUIRED for POST /consent.
+       * Common ID between the PISP and the Payer DFSP for the consent object. The ID
+       * should be reused for re-sends of the same consent. A new ID should be generated
+       * for each new consent.
        */
       consentId: components['schemas']['CorrelationId'];
-      /**
-       * The id of the ConsentRequest that was used to initiate the
-       * creation of this Consent.
-       */
+      /** The ID given to the original consent request on which this consent is based. */
       consentRequestId: components['schemas']['CorrelationId'];
       scopes: components['schemas']['Scope'][];
+      status: components['schemas']['ConsentStatus'];
+      extensionList?: components['schemas']['ExtensionList'];
     };
     /** FSP identifier. */
     FspId: string;
@@ -445,6 +477,8 @@ export interface components {
     | 'XDR'
     | 'XOF'
     | 'XPF'
+    | 'XTS'
+    | 'XXX'
     | 'YER'
     | 'ZAR'
     | 'ZMW'
@@ -462,9 +496,14 @@ export interface components {
     /** Describes a challenge that has been signed with FIDO Attestation flows */
     SignedPayloadTypeFIDO: 'FIDO';
     /**
-     * An object sent in a `PUT /thirdpartyRequests/authorization/{ID}` request.
-     * based mostly on: https://webauthn.guide/#authentication
-     * AuthenticatorAssertionResponse
+     * A data model representing a FIDO Assertion result.
+     * Derived from PublicKeyCredential Interface in WebAuthN.
+     *
+     * The PublicKeyCredential interface represents the below fields with a Type of
+     * Javascript ArrayBuffer.
+     * For this API, we represent ArrayBuffers as base64 encoded utf-8 strings.
+     *
+     * https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32128-fidopublickeycredentialassertion
      */
     FIDOPublicKeyCredentialAssertion: {
       /**
@@ -502,12 +541,11 @@ export interface components {
        */
       consentId: components['schemas']['CorrelationId'];
       signedPayloadType: components['schemas']['SignedPayloadTypeFIDO'];
-      signedPayload: components['schemas']['FIDOPublicKeyCredentialAssertion'];
+      fidoSignedPayload: components['schemas']['FIDOPublicKeyCredentialAssertion'];
+      extensionList?: components['schemas']['ExtensionList'];
     };
     /** Describes a challenge that has been signed with a private key */
     SignedPayloadTypeGeneric: 'GENERIC';
-    /** The API data type BinaryString is a JSON String. The string is a base64url  encoding of a string of raw bytes, where padding (character ‘=’) is added at the end of the data if needed to ensure that the string is a multiple of 4 characters. The length restriction indicates the allowed number of characters. */
-    BinaryString: string;
     /** The object sent in the POST /thirdpartyRequests/verifications request. */
     ThirdpartyRequestsVerificationsPostRequestGeneric: {
       verificationRequestId: components['schemas']['CorrelationId'];
@@ -519,7 +557,8 @@ export interface components {
        */
       consentId: components['schemas']['CorrelationId'];
       signedPayloadType: components['schemas']['SignedPayloadTypeGeneric'];
-      signedPayload: components['schemas']['BinaryString'];
+      genericSignedPayload: components['schemas']['BinaryString'];
+      extensionList?: components['schemas']['ExtensionList'];
     };
   };
   responses: {
@@ -661,7 +700,7 @@ export interface operations {
       503: components['responses']['503'];
     };
   };
-  /** DFSP sends this request to the PISP after granting consent. DFSP sends this request to an Auth service to validate a signed consent. */
+  /** The **POST /consents** request is used to request the creation of a consent for interactions between a PISP and the DFSP who owns the account which a PISP’s customer wants to allow the PISP access to. */
   PostConsents: {
     parameters: {
       header: {

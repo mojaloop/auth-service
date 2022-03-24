@@ -74,6 +74,11 @@ export function deriveChallenge (consentsPostRequest: tpAPI.Schemas.ConsentsPost
     scopes: consentsPostRequest.scopes
   }
 
+  rawChallenge.scopes = rawChallenge.scopes.map((s) => ({
+    address: s.address,
+    actions: s.actions
+  }))
+
   const RFC8785String = canonicalize(rawChallenge)
   return encodeBase64String(sha256(RFC8785String).toString())
 }

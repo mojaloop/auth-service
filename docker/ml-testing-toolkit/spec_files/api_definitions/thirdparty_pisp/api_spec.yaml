@@ -25,10 +25,10 @@ paths:
       - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     get:
       description: >
-        The HTTP request `GET /consents/{ID}` is used to get information
-        regarding a consent object created or requested earlier. The `{ID}` in
-        the URI should contain the `{ID}` that was used in the `POST /consents`.
-        summary: GetConsent
+        The **GET /consents/**_{ID}_ resource allows a party to enquire after
+        the status of a consent. The *{ID}* used in the URI of the request
+        should be the consent request ID which was used to identify the consent
+        when it was created.
       tags:
         - consents
       operationId: GetConsent
@@ -153,11 +153,19 @@ paths:
           $ref: '#/components/responses/503'
     delete:
       description: >
-        The HTTP request `DELETE /consents/{ID}` is used to mark as deleted a
-        previously created consent.
+        Used by PISP, DFSP
 
 
-        - Called by a PISP when a user wants to remove their consent.
+        The **DELETE /consents/**_{ID}_ request is used to request the
+        revocation of a previously agreed consent.
+
+        For tracing and auditing purposes, the switch should be sure not to
+        delete the consent physically;
+
+        instead, information relating to the consent should be marked as deleted
+        and requests relating to the
+
+        consent should not be honoured.
       operationId: DeleteConsentByID
       parameters:
         - $ref: '#/components/parameters/Accept'
@@ -411,6 +419,40 @@ paths:
       - $ref: '#/components/parameters/FSPIOP-Signature'
       - $ref: '#/components/parameters/FSPIOP-URI'
       - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
+    get:
+      tags:
+        - thirdpartyRequests
+        - sampled
+      operationId: GetThirdpartyRequestsVerificationsById
+      summary: GetThirdpartyRequestsVerificationsById
+      description: >
+        The HTTP request `/thirdpartyRequests/verifications/{ID}` is used to get
+
+        information regarding a previously created or requested authorization.
+        The *{ID}*
+
+        in the URI should contain the verification request ID
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '406':
+          $ref: '#/components/responses/406'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
     put:
       tags:
         - thirdpartyRequests
@@ -845,69 +887,146 @@ components:
       properties:
         errorInformation:
           $ref: '#/components/schemas/ErrorInformation'
-    AccountId:
-      title: AccountId
+    ConsentStatusIssued:
+      title: ConsentStatusIssued
       type: string
-      description: >
-        A long-lived unique account identifier provided by the DFSP. This MUST
-        NOT
+      enum:
+        - ISSUED
+      description: |-
+        Allowed values for the enumeration ConsentStatus
+        - ISSUED - The consent has been issued by the DFSP
+    AccountAddress:
+      title: AccountAddress
+      type: string
+      description: >-
+        The AccountAddress data type is a variable length string with a maximum
+        size of 1023 characters and consists of:
 
-        be Bank Account Number or anything that may expose a User's private bank
+        Alphanumeric characters, upper or lower case. (Addresses are
+        case-sensitive so that they can contain data encoded in formats such as
+        base64url.)
 
-        account information.
+        - Underscore (_) - Tilde (~) - Hyphen (-) - Period (.) Addresses MUST
+        NOT end in a period (.) character
+
+        An entity providing accounts to parties (i.e. a participant) can provide
+        any value for an AccountAddress that is meaningful to that entity. It
+        does not need to provide an address that makes the account identifiable
+        outside the entity's domain.
+
+        IMPORTANT: The policy for defining addresses and the life-cycle of these
+        is at the discretion of the address space owner (the payer DFSP in this
+        case).
+
+        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3212-accountaddress
       pattern: ^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$
       minLength: 1
       maxLength: 1023
-    ConsentScopeType:
-      title: ConsentScopeType
+    ScopeAction:
+      title: ScopeAction
       type: string
+      description: >
+        The ScopeAction element contains an access type which a PISP can request
+
+        from a DFSP, or which a DFSP can grant to a PISP.
+
+        It must be a member of the appropriate enumeration.
+
+
+        - ACCOUNTS_GET_BALANCE: PISP can request a balance for the linked
+        account
+
+        - ACCOUNTS_TRANSFER: PISP can request a transfer of funds from the
+        linked account in the DFSP
+
+        - ACCOUNTS_STATEMENT: PISP can request a statement of individual
+        transactions on a user's account
       enum:
-        - accounts.getBalance
-        - accounts.transfer
-      description: |
-        The scopes requested for a ConsentRequest.
-        - "accounts.getBalance" - Get the balance of a given account.
-        - "accounts.transfer" - Initiate a transfer from an account.
+        - ACCOUNTS_GET_BALANCE
+        - ACCOUNTS_TRANSFER
+        - ACCOUNTS_STATEMENT
     Scope:
       title: Scope
       type: object
-      description: Scope + Account Identifier mapping for a Consent.
-      example: |
-        {
-          accountId: "dfsp.username.5678",
-          actions: [ "accounts.transfer", "accounts.getBalance" ]
-        }
+      description: >-
+        The Scope element contains an identifier defining, in the terms of a
+        DFSP, an account on which access types can be requested or granted. It
+        also defines the access types which are requested or granted.
+
+        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
       properties:
-        accountId:
-          $ref: '#/components/schemas/AccountId'
+        address:
+          $ref: '#/components/schemas/AccountAddress'
         actions:
           type: array
+          minItems: 1
+          maxItems: 32
           items:
-            $ref: '#/components/schemas/ConsentScopeType'
+            $ref: '#/components/schemas/ScopeAction'
       required:
-        - accountId
+        - address
         - actions
     CredentialType:
       title: CredentialType
       type: string
       enum:
         - FIDO
+        - GENERIC
+      description: >-
+        The type of the Credential. - "FIDO" - The credential is based on a FIDO
+        challenge. Its payload is a FIDOPublicKeyCredentialAttestation object. -
+        "GENERIC" - The credential is based on a simple public key validation.
+        Its payload is a GenericCredential object.
+
+        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
+    CredentialStatusPending:
+      title: CredentialStatusPending
+      type: string
+      enum:
+        - PENDING
       description: |
-        The type of the Credential.
-        - "FIDO" - A FIDO public/private keypair
+        The status of the Credential.
+        - "PENDING" - The credential has been created, but has not been verified
+    BinaryString:
+      type: string
+      pattern: ^[A-Za-z0-9-_]+[=]{0,2}$
+      description: >-
+        The API data type BinaryString is a JSON String. The string is a
+        base64url  encoding of a string of raw bytes, where padding (character
+        ‘=’) is added at the end of the data if needed to ensure that the string
+        is a multiple of 4 characters. The length restriction indicates the
+        allowed number of characters.
+    GenericCredential:
+      title: GenericCredential
+      type: object
+      description: >
+        A publicKey + signature of a challenge for a generic public/private
+        keypair.
+      properties:
+        publicKey:
+          $ref: '#/components/schemas/BinaryString'
+        signature:
+          $ref: '#/components/schemas/BinaryString'
+      required:
+        - publicKey
+        - signature
+      additionalProperties: false
     FIDOPublicKeyCredentialAttestation:
       title: FIDOPublicKeyCredentialAttestation
       type: object
       description: >
-        An object sent in a `PUT /consents/{ID}` request.
+        A data model representing a FIDO Attestation result. Derived from 
 
-        Based on https://w3c.github.io/webauthn/#iface-pkcredential
+        [`PublicKeyCredential`
+        Interface](https://w3c.github.io/webauthn/#iface-pkcredential).
 
-        and mostly on: https://webauthn.guide/#registration
 
-        AuthenticatorAttestationResponse
+        The `PublicKeyCredential` interface represents the below fields with
 
-        https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject
+        a Type of Javascript
+        [ArrayBuffer](https://heycam.github.io/webidl/#idl-ArrayBuffer).
+
+        For this API, we represent ArrayBuffers as base64 encoded utf-8 strings.
       properties:
         id:
           type: string
@@ -950,7 +1069,6 @@ components:
             - public-key
       required:
         - id
-        - rawId
         - response
         - type
       additionalProperties: false
@@ -974,16 +1092,14 @@ components:
         credentialType:
           $ref: '#/components/schemas/CredentialType'
         status:
-          type: string
-          enum:
-            - PENDING
-          description: The challenge has signed but not yet verified.
-        payload:
+          $ref: '#/components/schemas/CredentialStatusPending'
+        genericPayload:
+          $ref: '#/components/schemas/GenericCredential'
+        fidoPayload:
           $ref: '#/components/schemas/FIDOPublicKeyCredentialAttestation'
       required:
         - credentialType
         - status
-        - payload
       additionalProperties: false
     ConsentsIDPutResponseSigned:
       title: ConsentsIDPutResponseSigned
@@ -995,16 +1111,28 @@ components:
         Called by a `PISP` to after signing a challenge. Sent to a DFSP for
         verification.
       properties:
+        status:
+          $ref: '#/components/schemas/ConsentStatusIssued'
         scopes:
           type: array
           items:
             $ref: '#/components/schemas/Scope'
         credential:
           $ref: '#/components/schemas/SignedCredential'
+        extensionList:
+          $ref: '#/components/schemas/ExtensionList'
       required:
         - scopes
         - credential
       additionalProperties: false
+    CredentialStatusVerified:
+      title: CredentialStatusVerified
+      type: string
+      enum:
+        - VERIFIED
+      description: |
+        The status of the Credential.
+        - "VERIFIED" - The Credential is valid and verified.
     VerifiedCredential:
       title: VerifiedCredential
       type: object
@@ -1014,8 +1142,8 @@ components:
         to an account with a DFSP.
 
 
-        VerifiedCredential is a special formatting of the credential to allow us
-        to be
+        VerifiedCredential is a special formatting of Credential to allow us to
+        be
 
         more explicit about the `status` field - it should only ever be VERIFIED
         when
@@ -1025,16 +1153,14 @@ components:
         credentialType:
           $ref: '#/components/schemas/CredentialType'
         status:
-          type: string
-          enum:
-            - VERIFIED
-          description: The Credential is valid, and ready to be used by the PISP.
-        payload:
+          $ref: '#/components/schemas/CredentialStatusVerified'
+        genericPayload:
+          $ref: '#/components/schemas/GenericCredential'
+        fidoPayload:
           $ref: '#/components/schemas/FIDOPublicKeyCredentialAttestation'
       required:
         - credentialType
         - status
-        - payload
       additionalProperties: false
     ConsentsIDPutResponseVerified:
       title: ConsentsIDPutResponseVerified
@@ -1046,30 +1172,26 @@ components:
         Called by a `auth-service` to notify a DFSP that a credential has been
         verified and registered.
       properties:
+        status:
+          $ref: '#/components/schemas/ConsentStatusIssued'
         scopes:
           type: array
           items:
             $ref: '#/components/schemas/Scope'
         credential:
           $ref: '#/components/schemas/VerifiedCredential'
+        extensionList:
+          $ref: '#/components/schemas/ExtensionList'
       required:
         - scopes
         - credential
       additionalProperties: false
-    ConsentStatusTypeVerified:
-      title: ConsentStatusType
-      type: string
-      enum:
-        - VERIFIED
-      description: |
-        The status of the Consent.
-        - "VERIFIED" - The Consent is valid and verified.
     ConsentsIDPatchResponseVerified:
       title: ConsentsIDPatchResponseVerified
       description: |
         PATCH /consents/{ID} request object.
 
-        Sent by the DFSP to the PISP when a consent is verified.
+        Sent by the DFSP to the PISP when a consent is issued and verified.
         Used in the "Register Credential" part of the Account linking flow.
       type: object
       properties:
@@ -1077,19 +1199,21 @@ components:
           type: object
           properties:
             status:
-              $ref: '#/components/schemas/ConsentStatusTypeVerified'
+              $ref: '#/components/schemas/CredentialStatusVerified'
           required:
             - status
+        extensionList:
+          $ref: '#/components/schemas/ExtensionList'
       required:
         - credential
-    ConsentStatusTypeRevoked:
-      title: ConsentStatusType
+    ConsentStatusRevoked:
+      title: ConsentStatusRevoked
       type: string
       enum:
         - REVOKED
-      description: |
-        The status of the Consent.
-        - "REVOKED" - The Consent is no longer valid and has been revoked.
+      description: |-
+        Allowed values for the enumeration ConsentStatus
+        - REVOKED - The consent has been revoked
     DateTime:
       title: DateTime
       type: string
@@ -1115,9 +1239,11 @@ components:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/ConsentStatusTypeRevoked'
+          $ref: '#/components/schemas/ConsentStatusRevoked'
         revokedAt:
           $ref: '#/components/schemas/DateTime'
+        extensionList:
+          $ref: '#/components/schemas/ExtensionList'
       required:
         - status
         - revokedAt
@@ -1314,6 +1440,8 @@ components:
         - XDR
         - XOF
         - XPF
+        - XTS
+        - XXX
         - YER
         - ZAR
         - ZMW
@@ -1339,19 +1467,29 @@ components:
       type: string
       enum:
         - VERIFIED
-        - REJECTED
-      description: |-
+      description: >-
+        The AuthenticationResponse enumeration describes the result of
+        authenticating verification request.
+
         Below are the allowed values for the enumeration AuthenticationResponse.
         - VERIFIED - The challenge was correctly signed.
-        - REJECTED - The challenge was not correctly signed.
     ThirdpartyRequestsVerificationsIDPutResponse:
       title: ThirdpartyRequestsVerificationsIDPutResponse
       type: object
       description: >-
-        The object sent in the PUT /thirdpartyRequests/verifications/{ID}
-        request.
+        Used by: Auth Service
+
+        The callback PUT /thirdpartyRequests/verifications/{ID} is used to
+        inform the client of the result of an authorization check. The {ID} in
+        the URI should contain the authorizationRequestId which was used to
+        request the check, or the {ID} that was used in the GET
+        /thirdpartyRequests/verifications/{ID}.
+
+        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#31821-put-thirdpartyrequestsverificationsid
       properties:
         authenticationResponse:
           $ref: '#/components/schemas/AuthenticationResponse'
+        extensionList:
+          $ref: '#/components/schemas/ExtensionList'
       required:
         - authenticationResponse

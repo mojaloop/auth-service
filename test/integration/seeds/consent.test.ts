@@ -45,7 +45,7 @@ describe('testing Consent table', (): void => {
     expect(users.length).toEqual(2)
     expect(users[0]).toMatchObject({
       id: '123',
-      status: 'VERIFIED',
+      status: 'ISSUED',
       participantId: 'DFSPA',
       credentialType: 'FIDO',
       credentialPayload: 'string_representing_public_key_a',
@@ -82,7 +82,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       id: '123',
       initiatorId: 'PISPA',
       participantId: 'DFSPA',
-      status: 'VERIFIED',
+      status: 'ISSUED',
       credentialType: null,
       credentialPayload: null,
       credentialChallenge: null,
@@ -95,7 +95,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
       id: null,
       initiatorId: 'PISPA',
       participantId: 'DFSPA',
-      status: 'VERIFIED',
+      status: 'ISSUED',
       credentialType: null,
       credentialPayload: null,
       credentialChallenge: null,
@@ -137,7 +137,7 @@ describe('testing that constraints are enforced in the consent table', (): void 
     await expect(db.from('Consent').insert({
       id: '126',
       initiatorId: 'PISPA',
-      status: 'VERIFIED',
+      status: 'ISSUED',
       participantId: null,
       credentialType: null,
       credentialPayload: null,

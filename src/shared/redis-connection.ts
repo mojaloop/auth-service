@@ -174,7 +174,6 @@ export class RedisConnection {
         if (rejectCalled || resolveCalled) {
           return
         }
-
         this.logger.info(`createClient: Connected to REDIS at: ${this.host}:${this.port}`)
 
         // remember we resolve the promise

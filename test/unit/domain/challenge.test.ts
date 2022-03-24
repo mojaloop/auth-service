@@ -34,7 +34,6 @@ import { deriveChallenge, verifySignature } from '~/domain/challenge'
 import { canonicalize } from 'json-canonicalize'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
-
 /*
  * Signature Verification Unit Tests
  *
@@ -42,28 +41,27 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
  * Support for additional keys can be extended further.
  */
 describe('challenge', (): void => {
-
   describe('deriveChallenge', () => {
     it('canonicalizes a consent the same as the flutter library', () => {
       // Arrange
       const rawChallenge = {
-        consentId: "d194d840-97e5-44e7-84cc-bc54a51a7771",
+        consentId: 'd194d840-97e5-44e7-84cc-bc54a51a7771',
         scopes: [
           {
-            accountId: "ba32b791-27af-4fe5-987f-f1a055031389",
-            actions: ["accounts.getBalance", "accounts.transfer"]
+            address: 'ba32b791-27af-4fe5-987f-f1a055031389',
+            actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
           },
           {
-            accountId: "232b396c-edba-4d10-b83e-b2d8e938d0e9",
-            actions: ["accounts.getBalance"]
+            address: '232b396c-edba-4d10-b83e-b2d8e938d0e9',
+            actions: ['ACCOUNTS_GET_BALANCE']
           }
         ]
       }
-      const expected = '{"consentId":"d194d840-97e5-44e7-84cc-bc54a51a7771","scopes":[{"accountId":"ba32b791-27af-4fe5-987f-f1a055031389","actions":["accounts.getBalance","accounts.transfer"]},{"accountId":"232b396c-edba-4d10-b83e-b2d8e938d0e9","actions":["accounts.getBalance"]}]}'
-      
+      const expected = '{"consentId":"d194d840-97e5-44e7-84cc-bc54a51a7771","scopes":[{"actions":["ACCOUNTS_GET_BALANCE","ACCOUNTS_TRANSFER"],"address":"ba32b791-27af-4fe5-987f-f1a055031389"},{"actions":["ACCOUNTS_GET_BALANCE"],"address":"232b396c-edba-4d10-b83e-b2d8e938d0e9"}]}'
+
       // Act
       const canonicalString = canonicalize(rawChallenge)
-      
+
       // Assert
       console.log('canonicalString is', canonicalString)
       expect(canonicalString).toStrictEqual(expected)
@@ -71,12 +69,12 @@ describe('challenge', (): void => {
 
     it('parses the same hash', () => {
       // Arrange
-      const consent = { "consentId": "11a91835-cdda-418b-9c0a-e8de62fbc84c", "scopes": [{ "accountId": "a84cd5b8-5883-4deb-9dec-2e86a9603922", "actions": ["accounts.getBalance", "accounts.transfer"] }, { "accountId": "b7b40dd7-ae6b-4904-9654-82d02544b327", "actions": ["accounts.getBalance"] }] }
-      const expected = 'MWVhZWJlNTAzNmEyYWE4NjJkN2UxNmM3ODkzYjc4ZjNjOGRiOWFjOGNhOTY1ZDhjMGQ5OTRlMDcxODU3YjVjZQ=='
-      
+      const consent = { consentId: '11a91835-cdda-418b-9c0a-e8de62fbc84c', scopes: [{ address: 'a84cd5b8-5883-4deb-9dec-2e86a9603922', actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER'] }, { address: 'b7b40dd7-ae6b-4904-9654-82d02544b327', actions: ['ACCOUNTS_GET_BALANCE'] }] }
+      const expected = 'YzhmYzM5NDFkNjA3MGQzYmMzZmIzYTk5ZjgyZWVkMWUwNjdhOWQ2ZDU2YzcxYzI0ODUxZWM4YTc2NDljN2RhMA=='
+
       // Act
       const result = deriveChallenge(consent as unknown as tpAPI.Schemas.ConsentsPostRequestAUTH)
-      
+
       // Assert
       console.log('result is', result)
       expect(result).toStrictEqual(expected)
@@ -84,12 +82,12 @@ describe('challenge', (): void => {
 
     it('parses the same hash for a different consent', () => {
       // Arrange
-      const consent = {"consentId":"46876aac-5db8-4353-bb3c-a6a905843ce7","consentRequestId":"c51ec534-ee48-4575-b6a9-ead2955b8069","scopes":[{"accountId":"dfspa.username.5678","actions":["accounts.transfer"]}]}
-      const expected = 'NDljOTcxYmYwYTQ1ZmJkZTkzNzMwNmRjZTk3YTYzMDc3MGJkYjc3YmEzYjZmNzg0ZDI1NGY2OGE0NmRkNDBhMg=='
-      
+      const consent = { consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7', consentRequestId: 'c51ec534-ee48-4575-b6a9-ead2955b8069', scopes: [{ address: 'dfspa.username.5678', actions: ['ACCOUNTS_TRANSFER'] }] }
+      const expected = 'ODNkN2RkMzlkMTA5NGFmZDUzNWU1N2I5ODk5ZmNlM2JlODJlMGFkNDk3M2I1MmE1MzcxZmQ3ZGYzZmEyNjY5MQ=='
+
       // Act
       const result = deriveChallenge(consent as unknown as tpAPI.Schemas.ConsentsPostRequestAUTH)
-      
+
       // Assert
       console.log('result is', result)
       expect(result).toStrictEqual(expected)

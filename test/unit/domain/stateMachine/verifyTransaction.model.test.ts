@@ -25,6 +25,16 @@ optionally within square brackets <email>.
 --------------
 ******/
 
+/* IMPORTANT
+   The fido challenges found in `auth-service` are signed with
+   Kevin Leyow's <kevin.leyow@modusbox.com> Yubikey. If the POST /consent
+   `consentId` and `scopes` ever change form you will need to derivie and resign the challenges,
+   update the `credential` object and update this PSA.
+   You will also need to update the public keys found in every verify transaction flow.
+   Use https://github.com/mojaloop/contrib-fido-test-ui#creating-a-test-credential
+   to retrieve data used to update the response bodies.
+*/
+
 import { KVS } from '~/shared/kvs'
 import {
   Message,
@@ -66,7 +76,7 @@ const mockGetConsent = jest.spyOn(ConsentDomain, 'getConsent')
 const credential: tpAPI.Schemas.VerifiedCredential = {
   credentialType: 'FIDO',
   status: 'VERIFIED',
-  payload: {
+  fidoPayload: {
     id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
     rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=='),
     response: {
@@ -83,16 +93,16 @@ const validConsent: ConsentDomain.Consent = {
   participantId: 'dfspa',
   scopes: [
     {
-      accountId: 'as2342',
-      actions: ['accounts.getBalance', 'accounts.transfer']
+      address: 'as2342',
+      actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
     },
     {
-      accountId: 'as22',
-      actions: ['accounts.getBalance']
+      address: 'as22',
+      actions: ['ACCOUNTS_GET_BALANCE']
     }
   ],
   credential: credential,
-  status: 'VERIFIED',
+  status: 'ISSUED',
   credentialCounter: 0,
   credentialPayload: '-----BEGIN PUBLIC KEY-----\n' +
     'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl\n' +
@@ -111,7 +121,7 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
   challenge: atob('quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU='),
   consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
   signedPayloadType: 'FIDO',
-  signedPayload: {
+  fidoSignedPayload: {
     id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
     rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
     response: {
@@ -292,11 +302,15 @@ describe('VerifyTransactionModel', () => {
         '-----END PUBLIC KEY-----'
       const model = await create(invalidTransactionData, modelConfig)
 
-      await model.fsm.verifyTransaction()
-
-      expect(model.data.verificationResponse).toEqual({
-        authenticationResponse: 'REJECTED'
-      })
+      // Act
+      try {
+        await model.fsm.verifyTransaction()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toEqual('Authorization received from PISP failed DFSP validation')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
     })
 
     it('responds with an error if clientDataJSON cannot be parsed', async () => {
@@ -306,16 +320,20 @@ describe('VerifyTransactionModel', () => {
       if (invalidTransactionData.verificationRequest.signedPayloadType !== 'FIDO') {
         throw new Error('test data error')
       }
-      invalidTransactionData.verificationRequest.signedPayload.response.clientDataJSON =
+      invalidTransactionData.verificationRequest.fidoSignedPayload.response.clientDataJSON =
         btoa('{"notChallenge":"quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU","clientExtensions":{},"hashAlgorithm":"SHA-256","origin":"https://demo.yubico.com","type":"webauthn.get"}')
 
       const model = await create(invalidTransactionData, modelConfig)
 
-      await model.fsm.verifyTransaction()
-
-      expect(model.data.verificationResponse).toEqual({
-        authenticationResponse: 'REJECTED'
-      })
+      // Act
+      try {
+        await model.fsm.verifyTransaction()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(error.message).toEqual('Authorization received from PISP failed DFSP validation')
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+      }
     })
 
     it('responds with an error if the consent status is REVOKED', async () => {
@@ -345,7 +363,7 @@ describe('VerifyTransactionModel', () => {
         challenge: 'quFYNCTWwfM6VDKmrxTT12zbSOhWJyWglzKoqF0PjMU=',
         consentId: '8d34f91d-d078-4077-8263-2c0498dhbjr',
         signedPayloadType: 'GENERIC',
-        signedPayload: '12345678'
+        genericSignedPayload: '12345678'
       }
 
       const model = await create(invalidTransactionData, modelConfig)

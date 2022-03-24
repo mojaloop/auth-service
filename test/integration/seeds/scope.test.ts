@@ -45,20 +45,20 @@ describe('testing scope table', (): void => {
     expect(users[0]).toEqual({
       id: expect.any(Number),
       consentId: '123',
-      action: 'accounts.getBalance',
-      accountId: '12345-67890'
+      action: 'ACCOUNTS_GET_BALANCE',
+      address: '12345-67890'
     })
     expect(users[1]).toEqual({
       id: expect.any(Number),
       consentId: '123',
-      action: 'accounts.transfer',
-      accountId: '12345-67890'
+      action: 'ACCOUNTS_TRANSFER',
+      address: '12345-67890'
     })
     expect(users[2]).toEqual({
       id: expect.any(Number),
       consentId: '124',
-      action: 'accounts.transfer',
-      accountId: '21345-67890'
+      action: 'ACCOUNTS_TRANSFER',
+      address: '21345-67890'
     })
   })
 })
@@ -87,8 +87,8 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
     await expect(db.from('Scope').insert({
       id: existingId,
       consentId: '125',
-      action: 'accounts.transfer',
-      accountId: '78901-12345'
+      action: 'ACCOUNTS_TRANSFER',
+      address: '78901-12345'
     })).rejects.toThrow()
     /* Test for non-nullability is not possible since column is set to increment and will thus be populated by a value if null. */
   })
@@ -97,8 +97,8 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
     await expect(db.from('Scope').insert({
       id: 4,
       consentId: null,
-      action: 'accounts.transfer',
-      accountId: '78901-12345'
+      action: 'ACCOUNTS_TRANSFER',
+      address: '78901-12345'
     })).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for action', async (): Promise<void> => {
@@ -107,16 +107,16 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
       id: 4,
       consentId: '124',
       action: null,
-      accountId: '78901-12345'
+      address: '78901-12345'
     })).rejects.toThrow()
   })
-  it('should properly enforce the non-nullable constraint for accountId', async (): Promise<void> => {
+  it('should properly enforce the non-nullable constraint for address', async (): Promise<void> => {
     expect(db).toBeDefined()
     await expect(db.from('Scope').insert({
       id: 4,
       consentId: '124',
-      action: 'accounts.transfer',
-      accountId: null
+      action: 'ACCOUNTS_TRANSFER',
+      address: null
     })).rejects.toThrow()
   })
 })

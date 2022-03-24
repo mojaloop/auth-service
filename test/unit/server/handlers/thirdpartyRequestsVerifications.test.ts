@@ -30,7 +30,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import thirdpartyRequestsVerificationsHandler from '~/server/handlers/thirdpartyRequestsVerifications'
 import { StateResponseToolkit } from '~/server/plugins/state'
 
-const flushPromises = () => new Promise(setImmediate);
+const flushPromises = () => new Promise(setImmediate)
 const mockRun = jest.fn()
 
 jest.mock('~/domain/stateMachine/verifyTransaction.model', () => ({
@@ -44,18 +44,14 @@ jest.mock('~/domain/stateMachine/verifyTransaction.model', () => ({
 }))
 
 const PostThirdpartyRequestsVerificationsRequest = {
-  headers: {
-
-  },
+  headers: {},
   params: {},
-  payload: {
-    //TODO:
-  }
+  payload: {}
 }
 
 describe('POST /thirdpartyRequests/verifications', (): void => {
   it('should return 202 synchronously', async () => {
-    //Arrange
+    // Arrange
     // jest.useFakeTimers()
     const pubSubMock = {
       subscribe: jest.fn()
@@ -77,14 +73,14 @@ describe('POST /thirdpartyRequests/verifications', (): void => {
         set: jest.fn()
       }))
     }
-    
+
     // Act
     const response = await thirdpartyRequestsVerificationsHandler.post(
       null,
       PostThirdpartyRequestsVerificationsRequest as unknown as Request,
       toolkit as unknown as StateResponseToolkit
     )
-    
+
     // Assert
     expect(response.statusCode).toBe(Enum.Http.ReturnCodes.ACCEPTED.CODE)
     // Wait out any other promises
