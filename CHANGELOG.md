@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [12.0.2](https://github.com/mojaloop/auth-service/compare/v12.0.1...v12.0.2) (2022-03-28)
+
+
+### Maintenance
+
+* bump packages with ncu -u -t minor ([#108](https://github.com/mojaloop/auth-service/issues/108)) ([49f6ea2](https://github.com/mojaloop/auth-service/commit/49f6ea2286fdcdca3271188313b65060329c1287))
+* resolve vulnerbilities ([#109](https://github.com/mojaloop/auth-service/issues/109)) ([ecb5ecf](https://github.com/mojaloop/auth-service/commit/ecb5ecf80def95d54beac918c5a6186379b8976f))
+
 ### [12.0.1](https://github.com/mojaloop/auth-service/compare/v12.0.0...v12.0.1) (2022-03-24)
 
 
