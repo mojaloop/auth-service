@@ -384,6 +384,26 @@
       "decision": "ignore",
       "madeAt": 1648440908767,
       "expiresAt": 1651032872926
+    },
+    "1067302|@mojaloop/event-sdk>@grpc/proto-loader>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1648584963061,
+      "expiresAt": 1651176959250
+    },
+    "1067302|@mojaloop/event-sdk>@grpc/proto-loader>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1648584963061,
+      "expiresAt": 1651176959250
+    },
+    "1067300|@mojaloop/central-services-shared>widdershins>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1648584956434,
+      "expiresAt": 1651176901319
+    },
+    "1067300|@mojaloop/central-services-shared>widdershins>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1648584956434,
+      "expiresAt": 1651176901319
     }
   },
   "rules": {},
