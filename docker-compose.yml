@@ -8,10 +8,12 @@ services:
   auth-service:
     container_name: as_auth-service
     image: mojaloop/auth-service:local
+    command: sh -c "npm run migrate && npm run start"
     build:
       context: .
       cache_from:
         - mojaloop/auth-service:local
+
     ports:
       - "4004:4004"
     networks:

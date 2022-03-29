@@ -3,3 +3,4 @@ coverage/*
 .circleci/*
 ambient.d.ts
 commitlint.config.js
+knexfile.ts
