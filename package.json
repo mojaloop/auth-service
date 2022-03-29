@@ -16,7 +16,7 @@
   "@comment scripts": [
     "knex cli doesn't support 'esnext' code so we use a workaround for knex",
     "https://github.com/knex/knex/issues/3849#issuecomment-643411244"
-  ]
+  ],
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit --production",
     "audit:check": "SHELL=sh check-audit --production",
