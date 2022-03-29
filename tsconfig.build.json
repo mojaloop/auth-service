@@ -6,6 +6,7 @@
     "migrations",
     "seeds",
     "ambient.d.ts",
+    "knexfile.ts"
   ],
   "exclude": [
     "coverage",
