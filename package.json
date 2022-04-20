@@ -156,7 +156,7 @@
     "btoa": "^1.2.1",
     "cbor": "^7.0.6",
     "commander": "5.1.0",
-    "convict": "^6.2.1",
+    "convict": "^6.2.2",
     "crypto-js": "4.1.1",
     "dot-prop": "^6.0.1",
     "fido2-lib": "2.8.1",
