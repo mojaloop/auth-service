@@ -28,7 +28,7 @@ RUN ln -sf /dev/stdout ./logs/combined.log
 # Create a non-root user: app-user
 RUN adduser -D app-user
 USER app-user
-COPY --chown=app-user --from=builder WORKDIR /opt/app .
+COPY --chown=app-user --from=builder /opt/app .
 
 EXPOSE 4004
 CMD ["npm", "run", "start"]
