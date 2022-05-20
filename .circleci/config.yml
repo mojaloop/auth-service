@@ -179,7 +179,6 @@ jobs:
       - run:
           name: Run mysql and migrate
           command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             docker-compose build
             docker-compose up -d mysql
             ./scripts/wait4.js mysql
