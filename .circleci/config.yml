@@ -168,9 +168,6 @@ jobs:
   test-integration:
     executor: default-machine
     steps:
-      - run:
-          name: Install general dependencies
-          command: *defaults_Dependencies
       - checkout
       - run:
           <<: *defaults_configure_nvm
@@ -179,6 +176,10 @@ jobs:
       - run:
           name: Create dir for test results
           command: mkdir -p ./test/results
+      - run:
+          name: Install MySQL CLI for debugging
+          command: |
+                  apt-get update && apt-get install -y mysql-client
       - run:
           name: Run mysql and migrate
           command: |
