@@ -198,7 +198,7 @@ jobs:
       - run:
           name: Execute integration tests
           command: |
-            npm -s run test:integration
+            NODE_ENV=development npm -s run test:integration
           # use development env since we are connecting to db outside of docker
           environment:
             NODE_ENV: "development"
