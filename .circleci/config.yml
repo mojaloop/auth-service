@@ -179,7 +179,7 @@ jobs:
       - run:
           name: Install MySQL CLI for debugging
           command: |
-                  apt-get update && apt-get install -y mysql-client
+                  sudo apt-get install default-mysql-client
       - run:
           name: Run mysql and migrate
           command: |
