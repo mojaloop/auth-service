@@ -139,16 +139,11 @@
     "@hapi/hapi": "^20.2.1",
     "@hapi/inert": "^6.0.5",
     "@hapi/vision": "^6.1.0",
-    "@mojaloop/api-snippets": "^13.0.9",
-    "@mojaloop/central-services-error-handling": "11.3.0",
-    "@mojaloop/central-services-health": "^13.0.0",
-    "@mojaloop/central-services-logger": "10.6.2",
-    "@mojaloop/central-services-metrics": "11.0.0",
-    "@mojaloop/central-services-shared": "^15.3.0",
-    "@mojaloop/event-sdk": "10.7.1",
-    "@mojaloop/sdk-standard-components": "^16.0.0",
-    "ajv": "8.11.0",
-    "ajv-keywords": "5.1.0",
+    "@mojaloop/api-snippets": "13.0.11",
+    "@mojaloop/central-services-health": "14.0.1",
+    "@mojaloop/central-services-shared": "17.0.2",
+    "@mojaloop/event-sdk": "11.0.2",
+    "@mojaloop/sdk-standard-components": "17.0.2",
     "atob": "^2.1.2",
     "axios": "^0.26.1",
     "babel-jest": "^27.5.1",
@@ -179,12 +174,12 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "@mojaloop/central-services-error-handling": "11.3.0",
-    "@mojaloop/central-services-logger": "10.6.2",
-    "@mojaloop/central-services-metrics": "11.0.0",
-    "@mojaloop/event-sdk": "10.7.1",
-    "ajv": "8.11.0",
-    "ajv-keywords": "5.1.0"
+    "@mojaloop/central-services-error-handling": "12.x.x",
+    "@mojaloop/central-services-logger": "11.x.x",
+    "@mojaloop/central-services-metrics": "12.x.x",
+    "@mojaloop/event-sdk": "11.x.x",
+    "ajv": "8.x.x",
+    "ajv-keywords": "5.x.x"
   },
   "peerDependenciesMeta": {
     "@mojaloop/central-services-error-handling": {
