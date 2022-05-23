@@ -384,6 +384,66 @@
       "decision": "ignore",
       "madeAt": 1648440908767,
       "expiresAt": 1651032872926
+    },
+    "1070030|@mojaloop/central-services-shared>widdershins>markdown-it": {
+      "decision": "ignore",
+      "madeAt": 1653078627812,
+      "expiresAt": 1655670624547
+    },
+    "1070030|shins>markdown-it": {
+      "decision": "ignore",
+      "madeAt": 1653078627812,
+      "expiresAt": 1655670624547
+    },
+    "1068310|@mojaloop/central-services-shared>widdershins>markdown-it>yargs>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1653078628789,
+      "expiresAt": 1655670624547
+    },
+    "1070273|ansi-regex": {
+      "decision": "ignore",
+      "madeAt": 1653078629642,
+      "expiresAt": 1655670624547
+    },
+    "1070345|convict": {
+      "decision": "ignore",
+      "madeAt": 1653078630595,
+      "expiresAt": 1655670624547
+    },
+    "1070256|ejs": {
+      "decision": "ignore",
+      "madeAt": 1653078631696,
+      "expiresAt": 1655670624547
+    },
+    "1067560|hapi-swagger>swagger-parser>z-schema>validator": {
+      "decision": "ignore",
+      "madeAt": 1653078633405,
+      "expiresAt": 1655670624547
+    },
+    "1068155|shins>markdown-it>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1653078634432,
+      "expiresAt": 1655670624547
+    },
+    "1070260|shins>markdown-it>sanitize-html": {
+      "decision": "ignore",
+      "madeAt": 1653078635346,
+      "expiresAt": 1655670624547
+    },
+    "1067553|swagger2openapi>better-ajv-errors>jsonpointer": {
+      "decision": "ignore",
+      "madeAt": 1653078637015,
+      "expiresAt": 1655670624547
+    },
+    "1067946|swagger2openapi>better-ajv-errors>jsonpointer>oas-validator>ajv": {
+      "decision": "ignore",
+      "madeAt": 1653078638022,
+      "expiresAt": 1655670624547
+    },
+    "1069987|urijs": {
+      "decision": "ignore",
+      "madeAt": 1653078639410,
+      "expiresAt": 1655670624547
     }
   },
   "rules": {},

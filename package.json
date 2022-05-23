@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "engines": {
-    "node": ">=12.0.0"
+    "node": "=16.x"
   },
   "files": [
     "dist"
@@ -27,6 +27,7 @@
     "lint:fix": "eslint --fix ./src/**/*.ts *.js",
     "pretest": "echo \"pretest - TODO...\"",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
+    "snapshot": "standard-version --no-verify --skip.changelog --prerelease snapshot --releaseCommitMessageFormat 'chore(snapshot): {{currentTag}}'",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
     "start:ts": "ts-node -r tsconfig-paths/register -P ./tsconfig.build.json ./src/cli.ts",
     "start": "node ./dist/src/cli.js",
@@ -122,11 +123,11 @@
     "lint-staged": "^11.2.6",
     "multi-file-swagger": "^2.3.0",
     "nodemon": "^2.0.15",
-    "npm-audit-resolver": "2.3.1",
+    "npm-audit-resolver": "^3.0.0-7",
     "npm-check-updates": "11.8.5",
     "redis-mock": "0.52.0",
     "source-map-support": "0.5.21",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "5.0.2",
     "standard-version": "^9.3.2",
     "swagger-cli": "^4.0.4",
     "ts-jest": "^27.1.3",
@@ -139,16 +140,11 @@
     "@hapi/hapi": "^20.2.1",
     "@hapi/inert": "^6.0.5",
     "@hapi/vision": "^6.1.0",
-    "@mojaloop/api-snippets": "^13.0.9",
-    "@mojaloop/central-services-error-handling": "11.3.0",
-    "@mojaloop/central-services-health": "^13.0.0",
-    "@mojaloop/central-services-logger": "10.6.2",
-    "@mojaloop/central-services-metrics": "11.0.0",
-    "@mojaloop/central-services-shared": "^15.3.0",
-    "@mojaloop/event-sdk": "10.7.1",
-    "@mojaloop/sdk-standard-components": "^16.0.0",
-    "ajv": "8.11.0",
-    "ajv-keywords": "5.1.0",
+    "@mojaloop/api-snippets": "13.0.11",
+    "@mojaloop/central-services-health": "14.0.1",
+    "@mojaloop/central-services-shared": "17.0.2",
+    "@mojaloop/event-sdk": "11.x.x",
+    "@mojaloop/sdk-standard-components": "17.0.2",
     "atob": "^2.1.2",
     "axios": "^0.26.1",
     "babel-jest": "^27.5.1",
@@ -164,7 +160,7 @@
     "hapi-swagger": "^14.2.5",
     "javascript-state-machine": "^3.1.0",
     "json-canonicalize": "^1.0.4",
-    "knex": "^0.95.15",
+    "knex": "0.95.15",
     "module-alias": "^2.2.2",
     "mysql": "^2.18.1",
     "openapi-response-validator": "^9.3.1",
@@ -179,12 +175,12 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "@mojaloop/central-services-error-handling": "11.3.0",
-    "@mojaloop/central-services-logger": "10.6.2",
-    "@mojaloop/central-services-metrics": "11.0.0",
-    "@mojaloop/event-sdk": "10.7.1",
-    "ajv": "8.11.0",
-    "ajv-keywords": "5.1.0"
+    "@mojaloop/central-services-error-handling": "12.x.x",
+    "@mojaloop/central-services-logger": "11.x.x",
+    "@mojaloop/central-services-metrics": "12.x.x",
+    "@mojaloop/event-sdk": "11.x.x",
+    "ajv": "8.x.x",
+    "ajv-keywords": "5.x.x"
   },
   "peerDependenciesMeta": {
     "@mojaloop/central-services-error-handling": {
