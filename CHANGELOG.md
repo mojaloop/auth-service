@@ -1,4 +1,15 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [13.0.0](https://github.com/mojaloop/auth-service/compare/v12.0.2...v13.0.0) (2022-05-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* update nodejs to lts (#115)
+
+### Features
+
+* update nodejs to lts ([#115](https://github.com/mojaloop/auth-service/issues/115)) ([889e8e0](https://github.com/mojaloop/auth-service/commit/889e8e0cbaba1b1ade96db0348823a81752726b0))
+
 ### [12.0.2](https://github.com/mojaloop/auth-service/compare/v12.0.1...v12.0.2) (2022-03-28)
 
 
