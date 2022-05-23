@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "engines": {
-    "node": ">=12.0.0"
+    "node": "=16.x"
   },
   "files": [
     "dist"
@@ -27,6 +27,7 @@
     "lint:fix": "eslint --fix ./src/**/*.ts *.js",
     "pretest": "echo \"pretest - TODO...\"",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
+    "snapshot": "standard-version --no-verify --skip.changelog --prerelease snapshot --releaseCommitMessageFormat 'chore(snapshot): {{currentTag}}'",
     "standard": "echo '\\033[1;33m  This project uses eslint instead of standard. Use `npm run lint` instead.'",
     "start:ts": "ts-node -r tsconfig-paths/register -P ./tsconfig.build.json ./src/cli.ts",
     "start": "node ./dist/src/cli.js",
