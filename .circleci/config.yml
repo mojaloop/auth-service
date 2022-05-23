@@ -182,7 +182,7 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install mysql-client -y
       - run:
-          name: Run mysql and migrate
+          name: Run integration test harness
           command: |
             docker-compose build
             docker-compose up -d
