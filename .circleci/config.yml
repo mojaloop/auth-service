@@ -185,19 +185,12 @@ jobs:
           name: Run mysql and migrate
           command: |
             docker-compose build
-            docker-compose up -d mysql
+            docker-compose up -d
             ./scripts/wait4.js mysql
+            ./scripts/wait4.js cicd-integration-tests
             docker run --network mojaloop-net \
               --rm mojaloop/auth-service:local \
               sh -c "NODE_ENV=integration npm run migrate"
-          environment:
-            NODE_ENV: "development"
-      - run:
-          name: run other containers
-          command: |
-            docker-compose up -d
-            ./scripts/wait4.js cicd-integration-tests
-          # use development env since we are connecting to db outside of docker
           environment:
             NODE_ENV: "development"
       - run:
