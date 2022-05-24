@@ -158,38 +158,68 @@ export interface paths {
 
 export interface components {
   schemas: {
-    /** The API data type ErrorCode is a JSON String of four characters, consisting of digits only. Negative numbers are not allowed. A leading zero is not allowed. Each error code in the API is a four-digit number, for example, 1234, where the first number (1 in the example) represents the high-level error category, the second number (2 in the example) represents the low-level error category, and the last two numbers (34 in the example) represent the specific error. */
+    /**
+     * ErrorCode
+     * @description The API data type ErrorCode is a JSON String of four characters, consisting of digits only. Negative numbers are not allowed. A leading zero is not allowed. Each error code in the API is a four-digit number, for example, 1234, where the first number (1 in the example) represents the high-level error category, the second number (2 in the example) represents the low-level error category, and the last two numbers (34 in the example) represent the specific error.
+     * @example 5100
+     */
     ErrorCode: string
-    /** Error description string. */
+    /**
+     * ErrorDescription
+     * @description Error description string.
+     */
     ErrorDescription: string
-    /** Extension key. */
+    /**
+     * ExtensionKey
+     * @description Extension key.
+     */
     ExtensionKey: string
-    /** Extension value. */
+    /**
+     * ExtensionValue
+     * @description Extension value.
+     */
     ExtensionValue: string
-    /** Data model for the complex type Extension. */
+    /**
+     * Extension
+     * @description Data model for the complex type Extension.
+     */
     Extension: {
       key: components['schemas']['ExtensionKey']
       value: components['schemas']['ExtensionValue']
     }
-    /** Data model for the complex type ExtensionList. An optional list of extensions, specific to deployment. */
+    /**
+     * ExtensionList
+     * @description Data model for the complex type ExtensionList. An optional list of extensions, specific to deployment.
+     */
     ExtensionList: {
-      /** Number of Extension elements. */
+      /** @description Number of Extension elements. */
       extension: components['schemas']['Extension'][]
     }
-    /** Data model for the complex type ErrorInformation. */
+    /**
+     * ErrorInformation
+     * @description Data model for the complex type ErrorInformation.
+     */
     ErrorInformation: {
       errorCode: components['schemas']['ErrorCode']
       errorDescription: components['schemas']['ErrorDescription']
       extensionList?: components['schemas']['ExtensionList']
     }
-    /** Data model for the complex type object that contains an optional element ErrorInformation used along with 4xx and 5xx responses. */
+    /**
+     * ErrorInformationResponse
+     * @description Data model for the complex type object that contains an optional element ErrorInformation used along with 4xx and 5xx responses.
+     */
     ErrorInformationResponse: {
       errorInformation?: components['schemas']['ErrorInformation']
     }
-    /** Identifier that correlates all messages of the same sequence. The API data type UUID (Universally Unique Identifier) is a JSON String in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122), that is restricted by a regular expression for interoperability reasons. A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘). */
+    /**
+     * CorrelationId
+     * @description Identifier that correlates all messages of the same sequence. The API data type UUID (Universally Unique Identifier) is a JSON String in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122), that is restricted by a regular expression for interoperability reasons. A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘).
+     * @example b51ec534-ee48-4575-b6a9-ead2955b8069
+     */
     CorrelationId: string
     /**
-     * The AccountAddress data type is a variable length string with a maximum size of 1023 characters and consists of:
+     * AccountAddress
+     * @description The AccountAddress data type is a variable length string with a maximum size of 1023 characters and consists of:
      * Alphanumeric characters, upper or lower case. (Addresses are case-sensitive so that they can contain data encoded in formats such as base64url.)
      * - Underscore (_) - Tilde (~) - Hyphen (-) - Period (.) Addresses MUST NOT end in a period (.) character
      * An entity providing accounts to parties (i.e. a participant) can provide any value for an AccountAddress that is meaningful to that entity. It does not need to provide an address that makes the account identifiable outside the entity's domain.
@@ -198,17 +228,21 @@ export interface components {
      */
     AccountAddress: string
     /**
-     * The ScopeAction element contains an access type which a PISP can request
+     * ScopeAction
+     * @description The ScopeAction element contains an access type which a PISP can request
      * from a DFSP, or which a DFSP can grant to a PISP.
      * It must be a member of the appropriate enumeration.
      *
      * - ACCOUNTS_GET_BALANCE: PISP can request a balance for the linked account
      * - ACCOUNTS_TRANSFER: PISP can request a transfer of funds from the linked account in the DFSP
      * - ACCOUNTS_STATEMENT: PISP can request a statement of individual transactions on a user's account
+     *
+     * @enum {string}
      */
     ScopeAction: 'ACCOUNTS_GET_BALANCE' | 'ACCOUNTS_TRANSFER' | 'ACCOUNTS_STATEMENT'
     /**
-     * The Scope element contains an identifier defining, in the terms of a DFSP, an account on which access types can be requested or granted. It also defines the access types which are requested or granted.
+     * Scope
+     * @description The Scope element contains an identifier defining, in the terms of a DFSP, an account on which access types can be requested or granted. It also defines the access types which are requested or granted.
      * https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
      */
     Scope: {
@@ -216,24 +250,33 @@ export interface components {
       actions: components['schemas']['ScopeAction'][]
     }
     /**
-     * The type of the Credential. - "FIDO" - The credential is based on a FIDO challenge. Its payload is a FIDOPublicKeyCredentialAttestation object. - "GENERIC" - The credential is based on a simple public key validation. Its payload is a GenericCredential object.
+     * CredentialType
+     * @description The type of the Credential. - "FIDO" - The credential is based on a FIDO challenge. Its payload is a FIDOPublicKeyCredentialAttestation object. - "GENERIC" - The credential is based on a simple public key validation. Its payload is a GenericCredential object.
      * https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
+     * @enum {string}
      */
     CredentialType: 'FIDO' | 'GENERIC'
     /**
-     * The status of the Credential.
+     * CredentialStatusPending
+     * @description The status of the Credential.
      * - "PENDING" - The credential has been created, but has not been verified
+     *
+     * @enum {string}
      */
     CredentialStatusPending: 'PENDING'
-    /** The API data type BinaryString is a JSON String. The string is a base64url  encoding of a string of raw bytes, where padding (character ‘=’) is added at the end of the data if needed to ensure that the string is a multiple of 4 characters. The length restriction indicates the allowed number of characters. */
+    /** @description The API data type BinaryString is a JSON String. The string is a base64url  encoding of a string of raw bytes, where padding (character ‘=’) is added at the end of the data if needed to ensure that the string is a multiple of 4 characters. The length restriction indicates the allowed number of characters. */
     BinaryString: string
-    /** A publicKey + signature of a challenge for a generic public/private keypair. */
+    /**
+     * GenericCredential
+     * @description A publicKey + signature of a challenge for a generic public/private keypair.
+     */
     GenericCredential: {
       publicKey: components['schemas']['BinaryString']
       signature: components['schemas']['BinaryString']
     }
     /**
-     * A data model representing a FIDO Attestation result. Derived from
+     * FIDOPublicKeyCredentialAttestation
+     * @description A data model representing a FIDO Attestation result. Derived from
      * [`PublicKeyCredential` Interface](https://w3c.github.io/webauthn/#iface-pkcredential).
      *
      * The `PublicKeyCredential` interface represents the below fields with
@@ -242,24 +285,28 @@ export interface components {
      */
     FIDOPublicKeyCredentialAttestation: {
       /**
-       * credential id: identifier of pair of keys, base64 encoded
+       * @description credential id: identifier of pair of keys, base64 encoded
        * https://w3c.github.io/webauthn/#ref-for-dom-credential-id
        */
       id: string
-      /** raw credential id: identifier of pair of keys, base64 encoded */
+      /** @description raw credential id: identifier of pair of keys, base64 encoded */
       rawId?: string
-      /** AuthenticatorAttestationResponse */
+      /** @description AuthenticatorAttestationResponse */
       response: {
-        /** JSON string with client data */
+        /** @description JSON string with client data */
         clientDataJSON: string
-        /** CBOR.encoded attestation object */
+        /** @description CBOR.encoded attestation object */
         attestationObject: string
       }
-      /** response type, we need only the type of public-key */
+      /**
+       * @description response type, we need only the type of public-key
+       * @enum {string}
+       */
       type: 'public-key'
     }
     /**
-     * A credential used to allow a user to prove their identity and access
+     * SignedCredential
+     * @description A credential used to allow a user to prove their identity and access
      * to an account with a DFSP.
      *
      * SignedCredential is a special formatting of the credential to allow us to be
@@ -273,18 +320,21 @@ export interface components {
       fidoPayload?: components['schemas']['FIDOPublicKeyCredentialAttestation']
     }
     /**
-     * Allowed values for the enumeration ConsentStatus
+     * ConsentStatus
+     * @description Allowed values for the enumeration ConsentStatus
      * - ISSUED - The consent has been issued by the DFSP
      * - REVOKED - The consent has been revoked
+     * @enum {string}
      */
     ConsentStatus: 'ISSUED' | 'REVOKED'
     /**
-     * The object sent in a `POST /consents` request to the Auth-Service
+     * ConsentPostRequestAUTH
+     * @description The object sent in a `POST /consents` request to the Auth-Service
      * by a DFSP to store registered Consent and credential
      */
     ConsentsPostRequestAUTH: {
       /**
-       * Common ID between the PISP and FSP for the Consent object
+       * @description Common ID between the PISP and FSP for the Consent object
        * determined by the DFSP who creates the Consent.
        */
       consentId: components['schemas']['CorrelationId']
@@ -294,27 +344,40 @@ export interface components {
       status: components['schemas']['ConsentStatus']
       extensionList?: components['schemas']['ExtensionList']
     }
-    /** The provisional Consent object sent by the DFSP in `POST /consents`. */
+    /**
+     * ConsentPostRequestPISP
+     * @description The provisional Consent object sent by the DFSP in `POST /consents`.
+     */
     ConsentsPostRequestPISP: {
       /**
-       * Common ID between the PISP and the Payer DFSP for the consent object. The ID
+       * @description Common ID between the PISP and the Payer DFSP for the consent object. The ID
        * should be reused for re-sends of the same consent. A new ID should be generated
        * for each new consent.
        */
       consentId: components['schemas']['CorrelationId']
-      /** The ID given to the original consent request on which this consent is based. */
+      /** @description The ID given to the original consent request on which this consent is based. */
       consentRequestId: components['schemas']['CorrelationId']
       scopes: components['schemas']['Scope'][]
       status: components['schemas']['ConsentStatus']
       extensionList?: components['schemas']['ExtensionList']
     }
-    /** FSP identifier. */
+    /**
+     * FspId
+     * @description FSP identifier.
+     */
     FspId: string
-    /** The object sent in the PUT /participants/{Type}/{ID}/{SubId} and /participants/{Type}/{ID} callbacks. */
+    /**
+     * ParticipantsTypeIDPutResponse
+     * @description The object sent in the PUT /participants/{Type}/{ID}/{SubId} and /participants/{Type}/{ID} callbacks.
+     */
     ParticipantsTypeIDPutResponse: {
       fspId?: components['schemas']['FspId']
     }
-    /** The currency codes defined in [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html) as three-letter alphabetic codes are used as the standard naming representation for currencies. */
+    /**
+     * Currency
+     * @description The currency codes defined in [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html) as three-letter alphabetic codes are used as the standard naming representation for currencies.
+     * @enum {string}
+     */
     Currency:
       | 'AED'
       | 'AFN'
@@ -480,20 +543,31 @@ export interface components {
       | 'ZAR'
       | 'ZMW'
       | 'ZWD'
-    /** The object sent in the POST /participants/{Type}/{ID}/{SubId} and /participants/{Type}/{ID} requests. An additional optional ExtensionList element has been added as part of v1.1 changes. */
+    /**
+     * ParticipantsTypeIDSubIDPostRequest
+     * @description The object sent in the POST /participants/{Type}/{ID}/{SubId} and /participants/{Type}/{ID} requests. An additional optional ExtensionList element has been added as part of v1.1 changes.
+     */
     ParticipantsTypeIDSubIDPostRequest: {
       fspId: components['schemas']['FspId']
       currency?: components['schemas']['Currency']
       extensionList?: components['schemas']['ExtensionList']
     }
-    /** Data model for the complex type object that contains ErrorInformation. */
+    /**
+     * ErrorInformationObject
+     * @description Data model for the complex type object that contains ErrorInformation.
+     */
     ErrorInformationObject: {
       errorInformation: components['schemas']['ErrorInformation']
     }
-    /** Describes a challenge that has been signed with FIDO Attestation flows */
+    /**
+     * SignedPayloadTypeFIDO
+     * @description Describes a challenge that has been signed with FIDO Attestation flows
+     * @enum {string}
+     */
     SignedPayloadTypeFIDO: 'FIDO'
     /**
-     * A data model representing a FIDO Assertion result.
+     * FIDOPublicKeyCredentialAssertion
+     * @description A data model representing a FIDO Assertion result.
      * Derived from PublicKeyCredential Interface in WebAuthN.
      *
      * The PublicKeyCredential interface represents the below fields with a Type of
@@ -504,36 +578,42 @@ export interface components {
      */
     FIDOPublicKeyCredentialAssertion: {
       /**
-       * credential id: identifier of pair of keys, base64 encoded
+       * @description credential id: identifier of pair of keys, base64 encoded
        * https://w3c.github.io/webauthn/#ref-for-dom-credential-id
        */
       id: string
-      /** raw credential id: identifier of pair of keys, base64 encoded. */
+      /** @description raw credential id: identifier of pair of keys, base64 encoded. */
       rawId: string
-      /** AuthenticatorAssertionResponse */
+      /** @description AuthenticatorAssertionResponse */
       response: {
-        /** Authenticator data object. */
+        /** @description Authenticator data object. */
         authenticatorData: string
-        /** JSON string with client data. */
+        /** @description JSON string with client data. */
         clientDataJSON: string
-        /** The signature generated by the private key associated with this credential. */
+        /** @description The signature generated by the private key associated with this credential. */
         signature: string
         /**
-         * This field is optionally provided by the authenticator, and
+         * @description This field is optionally provided by the authenticator, and
          * represents the user.id that was supplied during registration.
          */
         userHandle?: string
       }
-      /** response type, we need only the type of public-key */
+      /**
+       * @description response type, we need only the type of public-key
+       * @enum {string}
+       */
       type: 'public-key'
     }
-    /** The object sent in the POST /thirdpartyRequests/verifications request. */
+    /**
+     * ThirdpartyRequestsVerificationsPostRequestFIDO
+     * @description The object sent in the POST /thirdpartyRequests/verifications request.
+     */
     ThirdpartyRequestsVerificationsPostRequestFIDO: {
       verificationRequestId: components['schemas']['CorrelationId']
-      /** Base64 encoded bytes - The challenge generated by the DFSP. */
+      /** @description Base64 encoded bytes - The challenge generated by the DFSP. */
       challenge: string
       /**
-       * The id of the stored consent object that contains the credential with which to verify
+       * @description The id of the stored consent object that contains the credential with which to verify
        * the signed challenge against.
        */
       consentId: components['schemas']['CorrelationId']
@@ -541,15 +621,22 @@ export interface components {
       fidoSignedPayload: components['schemas']['FIDOPublicKeyCredentialAssertion']
       extensionList?: components['schemas']['ExtensionList']
     }
-    /** Describes a challenge that has been signed with a private key */
+    /**
+     * SignedPayloadTypeGeneric
+     * @description Describes a challenge that has been signed with a private key
+     * @enum {string}
+     */
     SignedPayloadTypeGeneric: 'GENERIC'
-    /** The object sent in the POST /thirdpartyRequests/verifications request. */
+    /**
+     * ThirdpartyRequestsVerificationsPostRequestGeneric
+     * @description The object sent in the POST /thirdpartyRequests/verifications request.
+     */
     ThirdpartyRequestsVerificationsPostRequestGeneric: {
       verificationRequestId: components['schemas']['CorrelationId']
-      /** Base64 encoded bytes - The challenge generated by the DFSP. */
+      /** @description Base64 encoded bytes - The challenge generated by the DFSP. */
       challenge: string
       /**
-       * The id of the stored consent object that contains the credential with which to verify
+       * @description The id of the stored consent object that contains the credential with which to verify
        * the signed challenge against.
        */
       consentId: components['schemas']['CorrelationId']
@@ -621,39 +708,39 @@ export interface components {
     }
   }
   parameters: {
-    /** The `Content-Type` header indicates the specific version of the API used to send the payload body. */
+    /** @description The `Content-Type` header indicates the specific version of the API used to send the payload body. */
     'Content-Type': string
-    /** The `Date` header field indicates the date when the request was sent. */
+    /** @description The `Date` header field indicates the date when the request was sent. */
     Date: string
     /**
-     * The `X-Forwarded-For` header field is an unofficially accepted standard used for informational purposes of the originating client IP address, as a request might pass multiple proxies, firewalls, and so on. Multiple `X-Forwarded-For` values should be expected and supported by implementers of the API.
+     * @description The `X-Forwarded-For` header field is an unofficially accepted standard used for informational purposes of the originating client IP address, as a request might pass multiple proxies, firewalls, and so on. Multiple `X-Forwarded-For` values should be expected and supported by implementers of the API.
      *
      * **Note:** An alternative to `X-Forwarded-For` is defined in [RFC 7239](https://tools.ietf.org/html/rfc7239). However, to this point RFC 7239 is less-used and supported than `X-Forwarded-For`.
      */
     'X-Forwarded-For': string
-    /** The `FSPIOP-Source` header field is a non-HTTP standard field used by the API for identifying the sender of the HTTP request. The field should be set by the original sender of the request. Required for routing and signature verification (see header field `FSPIOP-Signature`). */
+    /** @description The `FSPIOP-Source` header field is a non-HTTP standard field used by the API for identifying the sender of the HTTP request. The field should be set by the original sender of the request. Required for routing and signature verification (see header field `FSPIOP-Signature`). */
     'FSPIOP-Source': string
-    /** The `FSPIOP-Destination` header field is a non-HTTP standard field used by the API for HTTP header based routing of requests and responses to the destination. The field must be set by the original sender of the request if the destination is known (valid for all services except GET /parties) so that any entities between the client and the server do not need to parse the payload for routing purposes. If the destination is not known (valid for service GET /parties), the field should be left empty. */
+    /** @description The `FSPIOP-Destination` header field is a non-HTTP standard field used by the API for HTTP header based routing of requests and responses to the destination. The field must be set by the original sender of the request if the destination is known (valid for all services except GET /parties) so that any entities between the client and the server do not need to parse the payload for routing purposes. If the destination is not known (valid for service GET /parties), the field should be left empty. */
     'FSPIOP-Destination': string
-    /** The `FSPIOP-Encryption` header field is a non-HTTP standard field used by the API for applying end-to-end encryption of the request. */
+    /** @description The `FSPIOP-Encryption` header field is a non-HTTP standard field used by the API for applying end-to-end encryption of the request. */
     'FSPIOP-Encryption': string
-    /** The `FSPIOP-Signature` header field is a non-HTTP standard field used by the API for applying an end-to-end request signature. */
+    /** @description The `FSPIOP-Signature` header field is a non-HTTP standard field used by the API for applying an end-to-end request signature. */
     'FSPIOP-Signature': string
-    /** The `FSPIOP-URI` header field is a non-HTTP standard field used by the API for signature verification, should contain the service URI. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set). */
+    /** @description The `FSPIOP-URI` header field is a non-HTTP standard field used by the API for signature verification, should contain the service URI. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set). */
     'FSPIOP-URI': string
-    /** The `FSPIOP-HTTP-Method` header field is a non-HTTP standard field used by the API for signature verification, should contain the service HTTP method. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set). */
+    /** @description The `FSPIOP-HTTP-Method` header field is a non-HTTP standard field used by the API for signature verification, should contain the service HTTP method. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set). */
     'FSPIOP-HTTP-Method': string
-    /** The `Accept` header field indicates the version of the API the client would like the server to use. */
+    /** @description The `Accept` header field indicates the version of the API the client would like the server to use. */
     Accept: string
     /**
-     * The `Content-Length` header field indicates the anticipated size of the payload body. Only sent if there is a body.
+     * @description The `Content-Length` header field indicates the anticipated size of the payload body. Only sent if there is a body.
      *
      * **Note:** The API supports a maximum size of 5242880 bytes (5 Megabytes).
      */
     'Content-Length': number
-    /** The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`. */
+    /** @description The type of the party identifier. For example, `MSISDN`, `PERSONAL_ID`. */
     Type: string
-    /** The identifier value. */
+    /** @description The identifier value. */
     ID: string
   }
   headers: {

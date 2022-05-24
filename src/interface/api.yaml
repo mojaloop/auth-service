@@ -141,6 +141,7 @@ paths:
       summary: Create participant information
       tags:
         - participants
+        - sampled
       operationId: ParticipantsByIDAndType
       parameters:
         - $ref: '#/components/parameters/Accept'
@@ -308,6 +309,7 @@ paths:
       summary: Return participant information error
       tags:
         - participants
+        - sampled
       operationId: ParticipantsErrorByTypeAndID
       parameters:
         - $ref: '#/components/parameters/Content-Length'
