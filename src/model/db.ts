@@ -41,7 +41,7 @@ const scopeDB: ScopeDB = new ScopeDB(Db)
 
 const closeKnexConnection = async (): Promise<void> => Db.destroy()
 
-async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeModel[]): Promise<void> {
+async function insertConsentWithScopes(consent: ConsentModel, scopes: ScopeModel[]): Promise<void> {
   const trxProvider = Db.transactionProvider()
   const trx = await trxProvider()
   try {
@@ -55,18 +55,20 @@ async function insertConsentWithScopes (consent: ConsentModel, scopes: ScopeMode
   }
 }
 
-async function getConsent (consentId: string): Promise<ConsentModel> {
+async function getConsent(consentId: string): Promise<ConsentModel> {
   return consentDB.retrieve(consentId)
 }
 
-async function getScopesForConsentId (consentId: string): Promise<Array<ScopeModel>> {
+async function getScopesForConsentId(consentId: string): Promise<Array<ScopeModel>> {
   return scopeDB.getForConsentId(consentId)
 }
 
-async function testCleanupConsents (consentIds: Array<string>): Promise<void> {
-  await Promise.all(consentIds.map(async id => {
-    return consentDB.delete(id)
-  }))
+async function testCleanupConsents(consentIds: Array<string>): Promise<void> {
+  await Promise.all(
+    consentIds.map(async (id) => {
+      return consentDB.delete(id)
+    })
+  )
 }
 
 export {
@@ -77,7 +79,6 @@ export {
   insertConsentWithScopes,
   getConsent,
   getScopesForConsentId,
-
   // Test utils
   testCleanupConsents
 }

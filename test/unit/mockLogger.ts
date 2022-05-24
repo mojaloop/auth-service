@@ -27,7 +27,7 @@
 
 import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
-export default function mockLogger (keepQuiet = true): SDKLogger.Logger {
+export default function mockLogger(keepQuiet = true): SDKLogger.Logger {
   if (keepQuiet) {
     const methods = {
       // log methods

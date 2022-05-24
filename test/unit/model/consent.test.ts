@@ -86,11 +86,9 @@ describe('src/model/consent', (): void => {
       expect(inserted).toEqual(true)
 
       // Assertion
-      const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+      const consents: ConsentModel[] = await Db<ConsentModel>('Consent').select('*').where({
+        id: completeConsent.id
+      })
 
       expect(consents[0]).toEqual({
         id: '1234',
@@ -106,43 +104,39 @@ describe('src/model/consent', (): void => {
       })
     })
 
-    it('throws an error on adding a consent with existing consentId',
-      async (): Promise<void> => {
-        // Action
-        const inserted: boolean = await consentDB.insert(completeConsent)
+    it('throws an error on adding a consent with existing consentId', async (): Promise<void> => {
+      // Action
+      const inserted: boolean = await consentDB.insert(completeConsent)
 
-        expect(inserted).toEqual(true)
+      expect(inserted).toEqual(true)
 
-        // Assertion
-        const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
-          .select('*')
-          .where({
-            id: completeConsent.id
-          })
-
-        // Consent has been added
-        expect(consents[0]).toEqual({
-          id: '1234',
-          participantId: 'dfsp-3333-2123',
-          status: 'ISSUED',
-          credentialType: 'FIDO',
-          credentialChallenge: 'xyhdushsoa82w92mzs',
-          credentialPayload: 'dwuduwd&e2idjoj0w',
-          credentialCounter: 4,
-          originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' }),
-          createdAt: expect.any(String),
-          revokedAt: null
-        })
-
-        // Fail primary key constraint
-        await expect(consentDB.insert(completeConsent))
-          .rejects.toThrow()
+      // Assertion
+      const consents: ConsentModel[] = await Db<ConsentModel>('Consent').select('*').where({
+        id: completeConsent.id
       })
 
-    it('throws an error on adding consent without an id',
-      async (): Promise<void> => {
-        // Action
-        await expect(consentDB.insert({
+      // Consent has been added
+      expect(consents[0]).toEqual({
+        id: '1234',
+        participantId: 'dfsp-3333-2123',
+        status: 'ISSUED',
+        credentialType: 'FIDO',
+        credentialChallenge: 'xyhdushsoa82w92mzs',
+        credentialPayload: 'dwuduwd&e2idjoj0w',
+        credentialCounter: 4,
+        originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' }),
+        createdAt: expect.any(String),
+        revokedAt: null
+      })
+
+      // Fail primary key constraint
+      await expect(consentDB.insert(completeConsent)).rejects.toThrow()
+    })
+
+    it('throws an error on adding consent without an id', async (): Promise<void> => {
+      // Action
+      await expect(
+        consentDB.insert({
           id: null as unknown as string,
           participantId: 'dfsp-3333-2123',
           status: 'ISSUED',
@@ -152,15 +146,15 @@ describe('src/model/consent', (): void => {
           credentialPayload: 'dwuduwd&e2idjoj0w',
           credentialCounter: 4,
           originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
-        })).rejects.toThrow()
-      })
+        })
+      ).rejects.toThrow()
+    })
   })
 
   describe('retrieve', (): void => {
     it('retrieves an existing consent', async (): Promise<void> => {
       // Setup
-      await Db<ConsentModel>('Consent')
-        .insert(completeConsent)
+      await Db<ConsentModel>('Consent').insert(completeConsent)
 
       // Action
       const consent: ConsentModel = await consentDB.retrieve(completeConsent.id)
@@ -170,12 +164,10 @@ describe('src/model/consent', (): void => {
       expect(consent).toEqual(expect.objectContaining(completeConsent))
     })
 
-    it('throws an error for a non-existent consent',
-      async (): Promise<void> => {
-        // Action
-        await expect(consentDB.retrieve(completeConsent.id))
-          .rejects.toThrowError(NotFoundError)
-      })
+    it('throws an error for a non-existent consent', async (): Promise<void> => {
+      // Action
+      await expect(consentDB.retrieve(completeConsent.id)).rejects.toThrowError(NotFoundError)
+    })
   })
 
   describe('revoke', (): void => {
@@ -188,11 +180,9 @@ describe('src/model/consent', (): void => {
       await consentDB.revoke(completeConsent.id)
 
       // Assertion
-      const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+      const consents: ConsentModel[] = await Db<ConsentModel>('Consent').select('*').where({
+        id: completeConsent.id
+      })
 
       expect(consents[0]).toEqual({
         id: '1234',
@@ -209,8 +199,7 @@ describe('src/model/consent', (): void => {
     })
 
     it('throws an error on revoking non-existent consent', async (): Promise<void> => {
-      await expect(consentDB.revoke(completeConsent.id))
-        .rejects.toThrowError(NotFoundError)
+      await expect(consentDB.revoke(completeConsent.id)).rejects.toThrowError(NotFoundError)
     })
 
     it('does not revoke a revoked consent again in the database', async (): Promise<void> => {
@@ -222,11 +211,9 @@ describe('src/model/consent', (): void => {
       await consentDB.revoke(completeConsent.id)
 
       // Assertion
-      const consents: ConsentModel[] = await Db<ConsentModel>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+      const consents: ConsentModel[] = await Db<ConsentModel>('Consent').select('*').where({
+        id: completeConsent.id
+      })
 
       expect(consents[0]).toEqual({
         id: '1234',
@@ -242,23 +229,19 @@ describe('src/model/consent', (): void => {
         revokedAt: expect.any(String)
       })
 
-      await expect(consentDB.revoke(completeConsent.id))
-        .rejects.toThrowError(RevokedConsentModificationError)
+      await expect(consentDB.revoke(completeConsent.id)).rejects.toThrowError(RevokedConsentModificationError)
     })
   })
 
   describe('delete', (): void => {
     it('deletes an existing consent', async (): Promise<void> => {
       // Setup
-      await Db<ConsentModel>('Consent')
-        .insert(completeConsent)
+      await Db<ConsentModel>('Consent').insert(completeConsent)
 
       // Pre action Assertion
-      let consents: ConsentModel[] = await Db<ConsentModel>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+      let consents: ConsentModel[] = await Db<ConsentModel>('Consent').select('*').where({
+        id: completeConsent.id
+      })
 
       expect(consents.length).toEqual(1)
 
@@ -268,64 +251,50 @@ describe('src/model/consent', (): void => {
       expect(deleteCount).toEqual(1)
 
       // Assertion
-      consents = await Db<ConsentModel>('Consent')
-        .select('*')
-        .where({
-          id: completeConsent.id
-        })
+      consents = await Db<ConsentModel>('Consent').select('*').where({
+        id: completeConsent.id
+      })
 
       expect(consents.length).toEqual(0)
     })
 
-    it('throws an error for a non-existent consent',
-      async (): Promise<void> => {
-        // Action
-        await expect(consentDB.delete(completeConsent.id))
-          .rejects.toThrowError(NotFoundError)
+    it('throws an error for a non-existent consent', async (): Promise<void> => {
+      // Action
+      await expect(consentDB.delete(completeConsent.id)).rejects.toThrowError(NotFoundError)
+    })
+
+    it('deletes associated scopes on deleting a consent', async (): Promise<void> => {
+      // Setup
+      await Db<ConsentModel>('Consent').insert(completeConsent)
+
+      // Pre action Assertion
+      await Db('Scope').insert({
+        consentId: '1234',
+        action: 'ACCOUNTS_TRANSFER',
+        address: '78901-12345'
       })
 
-    it('deletes associated scopes on deleting a consent',
-      async (): Promise<void> => {
-        // Setup
-        await Db<ConsentModel>('Consent')
-          .insert(completeConsent)
-
-        // Pre action Assertion
-        await Db('Scope')
-          .insert({
-            consentId: '1234',
-            action: 'ACCOUNTS_TRANSFER',
-            address: '78901-12345'
-          })
-
-        await Db('Scope')
-          .insert({
-            consentId: '1234',
-            action: 'accounts.balance',
-            address: '38383-22992'
-          })
-
-        let scopes = await Db('Scope')
-          .select('*')
-          .where({ consentId: completeConsent.id })
-
-        expect(scopes.length).toEqual(2)
-
-        // Action
-        const deleteCount: number = await consentDB.delete(completeConsent.id)
-
-        expect(deleteCount).toEqual(1)
-
-        scopes = await Db('Scope')
-          .select('*')
-          .where({ consentId: completeConsent.id })
-
-        const consents = await Db('Consent')
-          .select('*')
-          .where({ id: completeConsent.id })
-
-        expect(consents.length).toEqual(0)
-        expect(scopes.length).toEqual(0)
+      await Db('Scope').insert({
+        consentId: '1234',
+        action: 'accounts.balance',
+        address: '38383-22992'
       })
+
+      let scopes = await Db('Scope').select('*').where({ consentId: completeConsent.id })
+
+      expect(scopes.length).toEqual(2)
+
+      // Action
+      const deleteCount: number = await consentDB.delete(completeConsent.id)
+
+      expect(deleteCount).toEqual(1)
+
+      scopes = await Db('Scope').select('*').where({ consentId: completeConsent.id })
+
+      const consents = await Db('Consent').select('*').where({ id: completeConsent.id })
+
+      expect(consents.length).toEqual(0)
+      expect(scopes.length).toEqual(0)
+    })
   })
 })

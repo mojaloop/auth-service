@@ -33,7 +33,8 @@ import inspect from '~/shared/inspect'
 // import SDK from '@mojaloop/sdk-standard-components'
 // import { mocked } from 'ts-jest/utils'
 
-jest.mock('@mojaloop/sdk-standard-components',
+jest.mock(
+  '@mojaloop/sdk-standard-components',
   jest.fn(() => ({
     Logger: {
       Logger: jest.fn(() => ({
@@ -78,9 +79,9 @@ describe('shared/logger', (): void => {
     jest.mock('~/shared/inspect', () => jest.fn())
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(
-      () => { throw new Error('parse-error') }
-    )
+    const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => {
+      throw new Error('parse-error')
+    })
 
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
@@ -92,9 +93,7 @@ describe('shared/logger', (): void => {
 
   it('should log if there is no request.response', (): void => {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(
-      () => null as unknown as string
-    )
+    const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => null as unknown as string)
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
     expect(spyStringify).toBeCalled()

@@ -30,25 +30,21 @@ import { Enum } from '@mojaloop/central-services-shared'
 
 import { logger } from '~/shared/logger'
 import inspect from '~/shared/inspect'
-import { create } from '~/domain/stateMachine/verifyTransaction.model'
+import { create, VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model'
 import { StateResponseToolkit } from '../plugins/state'
 import config from '~/shared/config'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { VerifyTransactionData, VerifyTransactionModelConfig } from '~/domain/stateMachine/verifyTransaction.interface'
-import { VerifyTransactionModel } from '~/domain/stateMachine/verifyTransaction.model'
 
 // shortcut
 type VerificationsPostRequest = tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
 
-/** 
- * The HTTP request `POST /thirdpartyRequests/verifications` is used by the DFSP to verify a 
+/**
+ * The HTTP request `POST /thirdpartyRequests/verifications` is used by the DFSP to verify a
  * signed 3rd party transaction
- * 
+ *
  */
-export async function post(
-  _context: unknown,
-  request: Request,
-  h: StateResponseToolkit): Promise<ResponseObject> {
+export async function post(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   const payload: VerificationsPostRequest = request.payload as VerificationsPostRequest
   const consentId = payload.consentId
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -57,7 +53,7 @@ export async function post(
     participantDFSPId: initiatorId,
     dfspId: h.getDFSPId(),
     currentState: 'start',
-    verificationRequest: payload,
+    verificationRequest: payload
   }
 
   // if the request is valid then DFSP returns response via PUT /thirdpartyRequests/verifications/{ID} call.

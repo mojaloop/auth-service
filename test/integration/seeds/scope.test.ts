@@ -84,39 +84,47 @@ describe('testing that constraints are enforced in the Scope table', (): void =>
     const existingId: string = existingEntry.id
 
     /* Tests for duplication */
-    await expect(db.from('Scope').insert({
-      id: existingId,
-      consentId: '125',
-      action: 'ACCOUNTS_TRANSFER',
-      address: '78901-12345'
-    })).rejects.toThrow()
+    await expect(
+      db.from('Scope').insert({
+        id: existingId,
+        consentId: '125',
+        action: 'ACCOUNTS_TRANSFER',
+        address: '78901-12345'
+      })
+    ).rejects.toThrow()
     /* Test for non-nullability is not possible since column is set to increment and will thus be populated by a value if null. */
   })
   it('should properly enforce the non-nullable constraint for consentId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Scope').insert({
-      id: 4,
-      consentId: null,
-      action: 'ACCOUNTS_TRANSFER',
-      address: '78901-12345'
-    })).rejects.toThrow()
+    await expect(
+      db.from('Scope').insert({
+        id: 4,
+        consentId: null,
+        action: 'ACCOUNTS_TRANSFER',
+        address: '78901-12345'
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for action', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Scope').insert({
-      id: 4,
-      consentId: '124',
-      action: null,
-      address: '78901-12345'
-    })).rejects.toThrow()
+    await expect(
+      db.from('Scope').insert({
+        id: 4,
+        consentId: '124',
+        action: null,
+        address: '78901-12345'
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for address', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Scope').insert({
-      id: 4,
-      consentId: '124',
-      action: 'ACCOUNTS_TRANSFER',
-      address: null
-    })).rejects.toThrow()
+    await expect(
+      db.from('Scope').insert({
+        id: 4,
+        consentId: '124',
+        action: 'ACCOUNTS_TRANSFER',
+        address: null
+      })
+    ).rejects.toThrow()
   })
 })

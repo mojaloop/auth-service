@@ -31,7 +31,7 @@ import { Server } from '@hapi/hapi'
 import { ServiceConfig } from '../shared/config'
 import onValidateFail from './handlers/onValidateFail'
 
-export default async function create (config: ServiceConfig): Promise<Server> {
+export default async function create(config: ServiceConfig): Promise<Server> {
   const server: Server = await new Server({
     host: config.HOST,
     port: config.PORT,

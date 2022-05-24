@@ -33,19 +33,19 @@ import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
 // default SDKLogger instance
 export const logger = new SDKLogger.Logger()
-export function createLogger (params?: SDKLogger.LoggerConstructorParams): SDKLogger.Logger {
+export function createLogger(params?: SDKLogger.LoggerConstructorParams): SDKLogger.Logger {
   return new SDKLogger.Logger(params)
 }
 
 export interface ResponseLogged extends ResponseObject {
-  source: string;
-  statusCode: number;
+  source: string
+  statusCode: number
 }
 export interface RequestLogged extends Request {
-  response: ResponseLogged;
+  response: ResponseLogged
 }
 
-export function logResponse (request: RequestLogged): void {
+export function logResponse(request: RequestLogged): void {
   if (request && request.response) {
     let response
     try {

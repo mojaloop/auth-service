@@ -92,8 +92,7 @@ describe('src/model/scope', (): void => {
   beforeEach(async (): Promise<void> => {
     await Db<ConsentModel>('Consent').del()
     await Db<ScopeModel>('Scope').del()
-    await Db<ConsentModel>('Consent')
-      .insert([testConsentObject])
+    await Db<ConsentModel>('Consent').insert([testConsentObject])
   })
 
   describe('insert', (): void => {
@@ -104,11 +103,9 @@ describe('src/model/scope', (): void => {
       expect(inserted).toEqual(true)
 
       // Assertion
-      const scopes: ScopeModel[] = await Db<ScopeModel>('Scope')
-        .select('*')
-        .where({
-          consentId: testConsentObject.id
-        })
+      const scopes: ScopeModel[] = await Db<ScopeModel>('Scope').select('*').where({
+        consentId: testConsentObject.id
+      })
 
       expect(scopes.length).toEqual(1)
       expect(scopes[0].id).toEqual(expect.any(Number))
@@ -122,11 +119,9 @@ describe('src/model/scope', (): void => {
       expect(inserted).toEqual(true)
 
       // Assertion
-      const scopes: ScopeModel[] = await Db<ScopeModel>('Scope')
-        .select('*')
-        .where({
-          consentId: testConsentObject.id
-        })
+      const scopes: ScopeModel[] = await Db<ScopeModel>('Scope').select('*').where({
+        consentId: testConsentObject.id
+      })
 
       expect(scopes.length).toEqual(3)
       // Ensure scopes belong to the same consent
@@ -144,13 +139,11 @@ describe('src/model/scope', (): void => {
 
     it('returns without affecting the DB on inserting empty scopes array', async (): Promise<void> => {
       // Assertion
-      const scopesInitial: ScopeModel[] = await Db<ScopeModel>('Scope')
-        .select('*')
+      const scopesInitial: ScopeModel[] = await Db<ScopeModel>('Scope').select('*')
 
       const inserted: boolean = await scopeDB.insert([])
 
-      const scopesAfter: ScopeModel[] = await Db<ScopeModel>('Scope')
-        .select('*')
+      const scopesAfter: ScopeModel[] = await Db<ScopeModel>('Scope').select('*')
 
       expect(inserted).toEqual(true)
       // No effect on the DB
@@ -161,8 +154,7 @@ describe('src/model/scope', (): void => {
   describe('retrieveAll', (): void => {
     it('retrieves only existing scopes from the database', async (): Promise<void> => {
       // Setup
-      await Db<ScopeModel>('Scope')
-        .insert([tempScope1, tempScope2, tempScope3])
+      await Db<ScopeModel>('Scope').insert([tempScope1, tempScope2, tempScope3])
 
       // Action
       const scopes: ScopeModel[] = await scopeDB.getForConsentId(tempScope1.consentId)
@@ -182,14 +174,12 @@ describe('src/model/scope', (): void => {
     })
 
     it('throws an error on retrieving non-existent scopes for an existing consent', async (): Promise<void> => {
-      await expect(scopeDB.getForConsentId(testConsentObject.id))
-        .rejects.toThrowError(NotFoundError)
+      await expect(scopeDB.getForConsentId(testConsentObject.id)).rejects.toThrowError(NotFoundError)
     })
 
     it('throws an error on retrieving non-existent scopes for a non-existent consent', async (): Promise<void> => {
       await Db<ConsentModel>('Consent').del()
-      await expect(scopeDB.getForConsentId(testConsentObject.id))
-        .rejects.toThrowError(NotFoundError)
+      await expect(scopeDB.getForConsentId(testConsentObject.id)).rejects.toThrowError(NotFoundError)
     })
   })
 })

@@ -39,9 +39,7 @@ import { ScopeModel } from '../model/scope'
 import { ConsentModel } from '../model/consent'
 import { logger } from '~/shared/logger'
 import { convertScopeModelsToThirdpartyScopes, convertThirdpartyScopesToDatabaseScope } from './scopes'
-import {
-  DatabaseError
-} from './errors'
+import { DatabaseError } from './errors'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /**
@@ -49,19 +47,19 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
  * auth-service.
  */
 export interface Consent {
-  consentId: string,
-  participantId: string,
+  consentId: string
+  participantId: string
   // being lazy here - technically we shouldn't borrow this def from the API
-  scopes: Array<tpAPI.Schemas.Scope>,
+  scopes: Array<tpAPI.Schemas.Scope>
   // being lazy here - technically we shouldn't borrow this def from the API
-  credential: tpAPI.Schemas.VerifiedCredential,
+  credential: tpAPI.Schemas.VerifiedCredential
   // being lazy here - technically we shouldn't borrow this def from the API
-  status: tpAPI.Schemas.ConsentStatusIssued | tpAPI.Schemas.ConsentStatusRevoked;
-  credentialCounter: number,
+  status: tpAPI.Schemas.ConsentStatusIssued | tpAPI.Schemas.ConsentStatusRevoked
+  credentialCounter: number
   // Parsed public key
   credentialPayload: string
-  createdAt: Date;
-  revokedAt?: Date;
+  createdAt: Date
+  revokedAt?: Date
 }
 
 /**
@@ -69,7 +67,7 @@ export interface Consent {
  * Stores the objects in the database
  * @param request request received from switch
  */
-export async function createAndStoreConsent (
+export async function createAndStoreConsent(
   consentId: string,
   participantId: string,
   thirdpartyScopes: tpAPI.Schemas.Scope[],
@@ -77,7 +75,6 @@ export async function createAndStoreConsent (
   publicKey: string,
   credentialChallenge: string,
   credentialCounter: number
-
 ): Promise<void> {
   const consent: ConsentModel = {
     id: consentId,
@@ -100,7 +97,7 @@ export async function createAndStoreConsent (
   }
 }
 
-export async function getConsent (consentId: string): Promise<Consent> {
+export async function getConsent(consentId: string): Promise<Consent> {
   const consentModel = await DB.getConsent(consentId)
   const scopesModel = await DB.getScopesForConsentId(consentId)
 

@@ -31,10 +31,12 @@ import { StateMachineConfig } from 'javascript-state-machine'
 import { ThirdpartyRequests, MojaloopRequests, Errors } from '@mojaloop/sdk-standard-components'
 import inspect from '~/shared/inspect'
 import { reformatError } from '~/shared/api-error'
-import { VerifyTransactionModelConfig, VerifyTransactionData, VerifyTransactionStateMachine } from './verifyTransaction.interface'
 import {
-  v1_1 as fspiopAPI
-} from '@mojaloop/api-snippets'
+  VerifyTransactionModelConfig,
+  VerifyTransactionData,
+  VerifyTransactionStateMachine
+} from './verifyTransaction.interface'
+import { v1_1 as fspiopAPI } from '@mojaloop/api-snippets'
 import * as ConsentDomain from '../consents'
 import { IncorrectConsentStatusError } from '../errors'
 import { InvalidDataError } from '~/shared/invalidDataError'
@@ -42,14 +44,10 @@ import { AssertionResult, ExpectedAssertionResult, Fido2Lib } from 'fido2-lib'
 import FidoUtils from '~/shared/fido-utils'
 
 import btoa from 'btoa'
-export class VerifyTransactionModel
-  extends PersistentModel<VerifyTransactionStateMachine, VerifyTransactionData> {
+export class VerifyTransactionModel extends PersistentModel<VerifyTransactionStateMachine, VerifyTransactionData> {
   protected config: VerifyTransactionModelConfig
 
-  constructor (
-    data: VerifyTransactionData,
-    config: VerifyTransactionModelConfig
-  ) {
+  constructor(data: VerifyTransactionData, config: VerifyTransactionModelConfig) {
     const spec: StateMachineConfig = {
       init: 'start',
       transitions: [
@@ -69,27 +67,27 @@ export class VerifyTransactionModel
   }
 
   // getters
-  get subscriber (): PubSub {
+  get subscriber(): PubSub {
     return this.config.subscriber
   }
 
-  get mojaloopRequests (): MojaloopRequests {
+  get mojaloopRequests(): MojaloopRequests {
     return this.config.mojaloopRequests
   }
 
-  get thirdpartyRequests (): ThirdpartyRequests {
+  get thirdpartyRequests(): ThirdpartyRequests {
     return this.config.thirdpartyRequests
   }
 
   // utility function to check if an error after a transition which
   // pub/subs for a response that can return a mojaloop error
-  async checkModelDataForErrorInformation (): Promise<void> {
+  async checkModelDataForErrorInformation(): Promise<void> {
     if (this.data.errorInformation) {
       await this.fsm.error(this.data.errorInformation)
     }
   }
 
-  async onRetrieveConsent (): Promise<void> {
+  async onRetrieveConsent(): Promise<void> {
     try {
       const consentId = this.data.verificationRequest.consentId
       const consent = await ConsentDomain.getConsent(consentId)
@@ -121,7 +119,7 @@ export class VerifyTransactionModel
     }
   }
 
-  async onVerifyTransaction (): Promise<void> {
+  async onVerifyTransaction(): Promise<void> {
     const { verificationRequest, participantDFSPId } = this.data
 
     try {
@@ -207,12 +205,14 @@ export class VerifyTransactionModel
     }
   }
 
-  async onSendCallbackToDFSP (): Promise<void> {
+  async onSendCallbackToDFSP(): Promise<void> {
     const { verificationRequest, participantDFSPId, verificationResponse } = this.data
 
     try {
       await this.thirdpartyRequests.putThirdpartyRequestsVerifications(
-        verificationResponse!, verificationRequest.verificationRequestId, participantDFSPId
+        verificationResponse!,
+        verificationRequest.verificationRequestId,
+        participantDFSPId
       )
     } catch (error) {
       this.logger.push({ error }).error('onSendCallbackToDFSP -> callbackSent')
@@ -240,7 +240,7 @@ export class VerifyTransactionModel
     }
   }
 
-  async run (): Promise<void> {
+  async run(): Promise<void> {
     const data = this.data
     try {
       // run transitions based on incoming state
@@ -281,7 +281,7 @@ export class VerifyTransactionModel
   }
 }
 
-export async function create (
+export async function create(
   data: VerifyTransactionData,
   config: VerifyTransactionModelConfig
 ): Promise<VerifyTransactionModel> {

@@ -23,7 +23,7 @@
 import { Server } from '@hapi/hapi'
 import { logger } from '~/shared/logger'
 
-export default async function start (server: Server): Promise<Server> {
+export default async function start(server: Server): Promise<Server> {
   await server.start()
   logger.info(`auth-service is running @ ${server.info.uri}`)
   return server

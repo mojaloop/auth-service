@@ -1,4 +1,3 @@
-
 import index from '~/index'
 import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
@@ -15,10 +14,10 @@ describe('/health', () => {
 
   it('should work', async (): Promise<void> => {
     interface HealthResponse {
-      status: string;
-      uptime: number;
-      startTime: string;
-      versionNumber: string;
+      status: string
+      uptime: number
+      startTime: string
+      versionNumber: string
     }
 
     const request = {

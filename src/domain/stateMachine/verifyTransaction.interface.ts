@@ -24,15 +24,10 @@
  - Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
-import {
-  ControlledStateMachine,
-  PersistentModelConfig, StateData
-} from './persistent.model'
+import { ControlledStateMachine, PersistentModelConfig, StateData } from './persistent.model'
 import { Method } from 'javascript-state-machine'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
-import {
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { PubSub } from '~/shared/pub-sub'
 import { Consent } from '../consents'
 
@@ -64,7 +59,7 @@ export interface VerifyTransactionData extends StateData {
   // // metadata related to the verification request (for now just the origin)
   // verificationRequestMetadata: { origin: string }
 
-  errorInformation?: tpAPI.Schemas.ErrorInformation,
+  errorInformation?: tpAPI.Schemas.ErrorInformation
 
   consent?: Consent
 }

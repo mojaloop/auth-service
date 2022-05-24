@@ -24,19 +24,14 @@
  - Kevin Leyow - kevin.leyow@modusbox.com
  --------------
  ******/
-import {
-  ControlledStateMachine,
-  PersistentModelConfig, StateData
-} from './persistent.model'
+import { ControlledStateMachine, PersistentModelConfig, StateData } from './persistent.model'
 import { Method } from 'javascript-state-machine'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
-import {
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { PubSub } from '~/shared/pub-sub'
 
 export enum RegisterConsentPhase {
-  waitOnParticipantResponseFromALS = 'waitOnParticipantResponseFromALS',
+  waitOnParticipantResponseFromALS = 'waitOnParticipantResponseFromALS'
 }
 
 export interface RegisterConsentStateMachine extends ControlledStateMachine {
@@ -56,7 +51,7 @@ export interface RegisterConsentModelConfig extends PersistentModelConfig {
   mojaloopRequests: MojaloopRequests
   requestProcessingTimeoutSeconds: number
   authServiceParticipantFSPId: string
-  alsEndpoint: string,
+  alsEndpoint: string
   demoSkipValidationForCredentialIds: Array<string>
 }
 

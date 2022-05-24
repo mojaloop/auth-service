@@ -34,65 +34,64 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 const consentId = '1234'
 
-const scopes: ScopeModel[] = [{
-  id: 123234,
-  consentId: '1234',
-  address: 'as2342',
-  action: 'ACCOUNTS_GET_BALANCE'
-},
-{
-  id: 232234,
-  consentId: '1234',
-  address: 'as2342',
-  action: 'ACCOUNTS_TRANSFER'
-},
-{
-  id: 234,
-  consentId: '1234',
-  address: 'as22',
-  action: 'ACCOUNTS_GET_BALANCE'
-}
+const scopes: ScopeModel[] = [
+  {
+    id: 123234,
+    consentId: '1234',
+    address: 'as2342',
+    action: 'ACCOUNTS_GET_BALANCE'
+  },
+  {
+    id: 232234,
+    consentId: '1234',
+    address: 'as2342',
+    action: 'ACCOUNTS_TRANSFER'
+  },
+  {
+    id: 234,
+    consentId: '1234',
+    address: 'as22',
+    action: 'ACCOUNTS_GET_BALANCE'
+  }
 ]
 
-const scopesNoId: ScopeModel[] = [{
-  consentId: '1234',
-  address: 'as2342',
-  action: 'ACCOUNTS_GET_BALANCE'
-},
-{
-  consentId: '1234',
-  address: 'as2342',
-  action: 'ACCOUNTS_TRANSFER'
-},
-{
-  consentId: '1234',
-  address: 'as22',
-  action: 'ACCOUNTS_GET_BALANCE'
-}
+const scopesNoId: ScopeModel[] = [
+  {
+    consentId: '1234',
+    address: 'as2342',
+    action: 'ACCOUNTS_GET_BALANCE'
+  },
+  {
+    consentId: '1234',
+    address: 'as2342',
+    action: 'ACCOUNTS_TRANSFER'
+  },
+  {
+    consentId: '1234',
+    address: 'as22',
+    action: 'ACCOUNTS_GET_BALANCE'
+  }
 ]
 
-const externalScope: tpAPI.Schemas.Scope[] = [{
-  address: 'as2342',
-  actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
-},
-{
-  address: 'as22',
-  actions: ['ACCOUNTS_GET_BALANCE']
-}
+const externalScope: tpAPI.Schemas.Scope[] = [
+  {
+    address: 'as2342',
+    actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER']
+  },
+  {
+    address: 'as22',
+    actions: ['ACCOUNTS_GET_BALANCE']
+  }
 ]
 
 describe('Scope Convert Scopes to ExternalScopes', (): void => {
   it('Should return Scope array when input ExternalScope array', (): void => {
-    expect(ScopeFunctions.convertScopeModelsToThirdpartyScopes(scopes))
-      .toStrictEqual(externalScope)
+    expect(ScopeFunctions.convertScopeModelsToThirdpartyScopes(scopes)).toStrictEqual(externalScope)
   })
 })
 
 describe('Scope Convert ExternalScope to Scope', (): void => {
-  it('Should return Scope array when input ExternalScope array',
-    (): void => {
-      expect(ScopeFunctions.convertThirdpartyScopesToDatabaseScope(externalScope, consentId))
-        .toStrictEqual(scopesNoId)
-    }
-  )
+  it('Should return Scope array when input ExternalScope array', (): void => {
+    expect(ScopeFunctions.convertThirdpartyScopesToDatabaseScope(externalScope, consentId)).toStrictEqual(scopesNoId)
+  })
 })

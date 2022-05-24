@@ -5,26 +5,28 @@ const Credential = {
   EC: {
     // Secp256k1 openSSL key pair in pem (base64) format
     keyPair: {
-      public: '-----BEGIN PUBLIC KEY-----\n' +
+      public:
+        '-----BEGIN PUBLIC KEY-----\n' +
         'MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEgAxzw4HxmDWmxJ8dWuzV/DR6+N1diG3U\n' +
         'rPwJWdQbUAvDtQ+mRKPl8lD6WrN6PajHwxyeBE77QyOrOCGWn16xzQ==\n' +
         '-----END PUBLIC KEY-----',
-      private: '-----BEGIN EC PRIVATE KEY-----\n' +
+      private:
+        '-----BEGIN EC PRIVATE KEY-----\n' +
         'MHQCAQEEIFFd2lZMG6GtgjrLANA721fVAmgzP4lRZqVFI5OOf/zaoAcGBSuBBAAK\n' +
         'oUQDQgAEgAxzw4HxmDWmxJ8dWuzV/DR6+N1diG3UrPwJWdQbUAvDtQ+mRKPl8lD6\n' +
         'WrN6PajHwxyeBE77QyOrOCGWn16xzQ==\n' +
         '-----END EC PRIVATE KEY-----'
     },
     // Base64 sign digested through SHA256 and signed using private key
-    signature: 'MEYCIQC7d3TECMWdWU2bgoUWBv4q6XoOUtRZE5Fgom+seTqT/QIhAK6r3UG+' +
-      'xTaSoD9Ef9IfovmPzHqXtuGi5j8oY9IHQq9U',
+    signature: 'MEYCIQC7d3TECMWdWU2bgoUWBv4q6XoOUtRZE5Fgom+seTqT/QIhAK6r3UG+' + 'xTaSoD9Ef9IfovmPzHqXtuGi5j8oY9IHQq9U',
     // UTF-8 original message
     message: 'Hello I am trying to test this!'
   },
   RSA: {
     // RSA 2048 openSSL key pair in pem (base64) format
     keyPair: {
-      public: '-----BEGIN PUBLIC KEY-----\n' +
+      public:
+        '-----BEGIN PUBLIC KEY-----\n' +
         'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoMUEWn+F1nocD5EJBk4N\n' +
         'vk1oGtAr6yFN7e7vlPWEJ2fY7dB/YtXMi5bjZcUhWj9Qoc+mqa38vL4q8hpZTkR1\n' +
         'JQ443bFAJz090sSeG5jT657C8+WpWCQvx97gtl+lh3gEG5312LjVkGqQmVFjRKlj\n' +
@@ -33,7 +35,8 @@ const Credential = {
         'rK26NyG9PPy6jl0huQ2UM8APIvZAulqHh5M6gptNV0s9l9smd5LJK87GERARrIqw\n' +
         'QwIDAQAB\n' +
         '-----END PUBLIC KEY-----',
-      private: '-----BEGIN RSA PRIVATE KEY-----\n' +
+      private:
+        '-----BEGIN RSA PRIVATE KEY-----\n' +
         'MIIEowIBAAKCAQEAoMUEWn+F1nocD5EJBk4Nvk1oGtAr6yFN7e7vlPWEJ2fY7dB/\n' +
         'YtXMi5bjZcUhWj9Qoc+mqa38vL4q8hpZTkR1JQ443bFAJz090sSeG5jT657C8+Wp\n' +
         'WCQvx97gtl+lh3gEG5312LjVkGqQmVFjRKljvOoHEij0AEcRtc4DjV+PHIsV1kQi\n' +
@@ -62,7 +65,8 @@ const Credential = {
         '-----END RSA PRIVATE KEY-----'
     },
     // Base64 sign digested through SHA256 and signed using private key
-    signature: 'dhX6AGncg6kxnXAwsZlBotrqjDsHVAm9Fz8NaAwdwDkfhDNDJY9nXhTMQcDclM74' +
+    signature:
+      'dhX6AGncg6kxnXAwsZlBotrqjDsHVAm9Fz8NaAwdwDkfhDNDJY9nXhTMQcDclM74' +
       'Vpib9yhLDj4UkGG3dZv0gC67fPSOGtjQkgn0NdbJ066g+TBJfPhdR2RB9nh02kgC' +
       'W1PQ5MWmszN0QC1aG/emOqqfFHsAqkl2n7aSgIhgyHVSVTU5sPLohvw16hmlJ4s+' +
       '9pzT8xvS7me8b949hmBokSwOSPMteUcR/L6WtxRvNDAnwM9EJw4UR7Tr9wdNPi59' +

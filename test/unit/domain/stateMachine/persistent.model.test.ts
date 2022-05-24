@@ -46,17 +46,17 @@ jest.mock('~/shared/kvs')
 
 describe('PersistentModel', () => {
   interface TestStateMachine extends ControlledStateMachine {
-    start2End: Method;
-    start2Middle: Method;
-    middle2End: Method;
+    start2End: Method
+    start2Middle: Method
+    middle2End: Method
 
-    onStart2End: Method;
-    onStart2Middle: Method;
-    onMiddle2End: Method;
+    onStart2End: Method
+    onStart2Middle: Method
+    onMiddle2End: Method
   }
 
   interface TestData extends StateData {
-    the: string;
+    the: string
   }
 
   const KVSConfig: RedisConnectionConfig = {
@@ -69,7 +69,7 @@ describe('PersistentModel', () => {
 
   let data: TestData
 
-  function checkPSMLayout (pm: PersistentModel<TestStateMachine, TestData>, optData?: TestData) {
+  function checkPSMLayout(pm: PersistentModel<TestStateMachine, TestData>, optData?: TestData) {
     expect(pm).toBeTruthy()
     expect(pm.fsm.state).toEqual(optData?.currentState || smConfig.init || 'none')
 
@@ -163,7 +163,7 @@ describe('PersistentModel', () => {
     withoutInitialStateAuto.transitions.push({ name: 'init', from: 'none', to: 'start' })
     const pm = await create<TestStateMachine, TestData>(data, modelConfig, withoutInitialStateAuto)
     checkPSMLayout(pm, { currentState: 'start' } as TestData)
-    expect(KVSConfig.logger.info).toHaveBeenCalledWith('State machine transitioned \'init\': none -> start')
+    expect(KVSConfig.logger.info).toHaveBeenCalledWith("State machine transitioned 'init': none -> start")
   })
 
   it('create always with auto transition to default state when auto transition defined', async () => {
@@ -174,23 +174,21 @@ describe('PersistentModel', () => {
     // and there is initial auto transition which should transist to start
     withInitialStateAutoOverload.transitions.push({ name: 'init', from: 'none', to: 'start' })
 
-    const pm = await create<TestStateMachine, TestData>(
-      data, modelConfig, withInitialStateAutoOverload
-    )
+    const pm = await create<TestStateMachine, TestData>(data, modelConfig, withInitialStateAutoOverload)
 
     // check auto transition ended at 'start' not 'end'
     checkPSMLayout(pm, { currentState: 'start' } as TestData)
-    expect(KVSConfig.logger.info).toHaveBeenCalledWith('State machine transitioned \'init\': none -> start')
+    expect(KVSConfig.logger.info).toHaveBeenCalledWith("State machine transitioned 'init': none -> start")
   })
-  it('create with initial state \'end\' specified', async () => {
+  it("create with initial state 'end' specified", async () => {
     const endConfig = { ...smConfig }
     endConfig.init = 'end'
     const pm = await create<TestStateMachine, TestData>(data, modelConfig, endConfig)
     checkPSMLayout(pm, { currentState: 'end' } as TestData)
-    expect(KVSConfig.logger.info).toHaveBeenCalledWith('State machine transitioned \'init\': none -> end')
+    expect(KVSConfig.logger.info).toHaveBeenCalledWith("State machine transitioned 'init': none -> end")
   })
 
-  it('create with initial state \'start\' specified', async () => {
+  it("create with initial state 'start' specified", async () => {
     const pm = await create<TestStateMachine, TestData>(data, modelConfig, smConfig)
     checkPSMLayout(pm, { currentState: 'start' } as TestData)
   })
@@ -209,9 +207,9 @@ describe('PersistentModel', () => {
     it('should throw error if not `error` transition', async () => {
       const pm = new PersistentModel<TestStateMachine, TestData>(data, modelConfig, smConfig)
       checkPSMLayout(pm, { currentState: 'start' } as TestData)
-      expect(
-        () => pm.fsm.start2Middle()
-      ).toThrowError('Transition \'start2Middle\' requested while another transition is in progress')
+      expect(() => pm.fsm.start2Middle()).toThrowError(
+        "Transition 'start2Middle' requested while another transition is in progress"
+      )
     })
 
     it('should not throw error if `error` transition called when any transition is pending', async () => {
@@ -255,14 +253,21 @@ describe('PersistentModel', () => {
     })
 
     it('should propagate error received from `KVS.get`', async () => {
-      mocked(modelConfig.kvs.get).mockImplementationOnce(jest.fn(async () => { throw new Error('error from KVS.get') }))
-      expect(() => loadFromKVS<TestStateMachine, TestData>(modelConfig, smConfig))
-        .rejects.toEqual(new Error('error from KVS.get'))
+      mocked(modelConfig.kvs.get).mockImplementationOnce(
+        jest.fn(async () => {
+          throw new Error('error from KVS.get')
+        })
+      )
+      expect(() => loadFromKVS<TestStateMachine, TestData>(modelConfig, smConfig)).rejects.toEqual(
+        new Error('error from KVS.get')
+      )
     })
   })
   describe('saveToKVS', () => {
     it('should store using KVS.set', async () => {
-      mocked(modelConfig.kvs.set).mockImplementationOnce(() => { throw new Error('error from KVS.set') })
+      mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
+        throw new Error('error from KVS.set')
+      })
 
       const pm = await create<TestStateMachine, TestData>(data, modelConfig, smConfig)
       checkPSMLayout(pm)
@@ -272,7 +277,9 @@ describe('PersistentModel', () => {
       expect(mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
     })
     it('should propagate error from KVS.set', async () => {
-      mocked(modelConfig.kvs.set).mockImplementationOnce(() => { throw new Error('error from KVS.set') })
+      mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
+        throw new Error('error from KVS.set')
+      })
 
       const pm = await create<TestStateMachine, TestData>(data, modelConfig, smConfig)
       checkPSMLayout(pm)

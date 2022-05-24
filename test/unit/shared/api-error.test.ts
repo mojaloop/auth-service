@@ -24,9 +24,7 @@ describe('api-error', () => {
     })
 
     it('should reformat HTTPResponseError', () => {
-      const err = new HTTPResponseError<ResponseErrorData>(
-        { msg: 'some-message', res: { data: { statusCode: 7200 } } }
-      )
+      const err = new HTTPResponseError<ResponseErrorData>({ msg: 'some-message', res: { data: { statusCode: 7200 } } })
       const result = reformatError(err, logger)
       expect(result).toEqual({
         errorInformation: {
@@ -37,9 +35,7 @@ describe('api-error', () => {
     })
 
     it('should report json parsing errors', () => {
-      const err = new HTTPResponseError<ResponseErrorData>(
-        { msg: 'some-message', res: { body: '[' } }
-      )
+      const err = new HTTPResponseError<ResponseErrorData>({ msg: 'some-message', res: { body: '[' } })
       const result = reformatError(err, logger)
       expect(result).toEqual({
         errorInformation: {
@@ -70,11 +66,12 @@ describe('api-error', () => {
         }
       })
     })
-    
+
     it('should handle MojaloopApiErrorCode in res.body', () => {
-      const err = new HTTPResponseError<ResponseErrorData>(
-        { msg: 'some-message', res: { body: '{ "statusCode":7200 }' } }
-      )
+      const err = new HTTPResponseError<ResponseErrorData>({
+        msg: 'some-message',
+        res: { body: '{ "statusCode":7200 }' }
+      })
 
       const getDataResult = err.getData()
       console.log('getDataResult', getDataResult)

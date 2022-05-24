@@ -31,10 +31,6 @@
 import { boomify } from '@hapi/boom'
 import { Request, Lifecycle, ResponseToolkit } from '@hapi/hapi'
 
-export default function onValidateFail (
-  _request: Request,
-  _h: ResponseToolkit,
-  err?: Error
-): Lifecycle.ReturnValue {
+export default function onValidateFail(_request: Request, _h: ResponseToolkit, err?: Error): Lifecycle.ReturnValue {
   throw boomify(err as Error)
 }

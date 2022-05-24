@@ -3,12 +3,13 @@ import { Errors, Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
 export interface MojaloopApiErrorCode {
   code: string
-  message: string,
+  message: string
   httpStatusCode?: number
 }
 
-export function reformatError (
-  err: Error | MojaloopApiErrorCode, logger: SDKLogger.Logger
+export function reformatError(
+  err: Error | MojaloopApiErrorCode,
+  logger: SDKLogger.Logger
 ): Errors.MojaloopApiErrorObject {
   // default 500 error
   let mojaloopErrorCode: MojaloopApiErrorCode = Errors.MojaloopApiErrorCodes.INTERNAL_SERVER_ERROR
@@ -29,13 +30,13 @@ export function reformatError (
         mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${e.res.data.statusCode}`)
       }
     }
-  // check are we having valid MojaloopApiErrorCodes object thrown
+    // check are we having valid MojaloopApiErrorCodes object thrown
   } else {
     // error is valid when it is defined on the common list
     const code = (err as MojaloopApiErrorCode).code
     const exist = typeof Errors.MojaloopApiErrorCodeFromCode(code) !== 'undefined'
     if (exist) {
-      mojaloopErrorCode = (err as MojaloopApiErrorCode)
+      mojaloopErrorCode = err as MojaloopApiErrorCode
     }
   }
 

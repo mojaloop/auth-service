@@ -55,12 +55,7 @@ describe('KVS', () => {
   })
 
   it('should GET what was SET', async (): Promise<void> => {
-    const values = [
-      { a: 1, b: true, c: 'C', d: {} },
-      true,
-      123,
-      'the-string'
-    ]
+    const values = [{ a: 1, b: true, c: 'C', d: {} }, true, 123, 'the-string']
 
     for (const value of values) {
       await kvs.set('key', value)
@@ -70,18 +65,13 @@ describe('KVS', () => {
     }
   })
 
-  it('GET should give \'unknown\' for not stored value', async (): Promise<void> => {
+  it("GET should give 'unknown' for not stored value", async (): Promise<void> => {
     const value = await kvs.get('key-for-never-stored-value')
     expect(value).toBeUndefined()
   })
 
   it('should DEL was SET and next GET after should give unknown', async (): Promise<void> => {
-    const values = [
-      { a: 1, b: true, c: 'C', d: {} },
-      true,
-      123,
-      'the-string'
-    ]
+    const values = [{ a: 1, b: true, c: 'C', d: {} }, true, 123, 'the-string']
 
     for (const value of values) {
       await kvs.set('key-del', value)

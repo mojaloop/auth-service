@@ -1,5 +1,5 @@
-import { InvalidDataError } from "~/shared/invalidDataError"
-import shouldNotBeExecuted from "../shouldNotBeExecuted"
+import { InvalidDataError } from '~/shared/invalidDataError'
+import shouldNotBeExecuted from '../shouldNotBeExecuted'
 
 describe('invalidDataError', () => {
   describe('throwIfInvalidProperty', () => {
@@ -10,7 +10,7 @@ describe('invalidDataError', () => {
         b: '2',
         c: '3'
       }
-      
+
       // Act
       try {
         InvalidDataError.throwIfInvalidProperty(record, 'd')

@@ -25,16 +25,8 @@
 --------------
 ******/
 
-import {
-  InvalidCallbackIdError,
-  InvalidChannelNameError,
-  InvalidMessageError,
-  Message,
-  PubSub
-} from '~/shared/pub-sub'
-import {
-  RedisConnectionConfig
-} from '~/shared/redis-connection'
+import { InvalidCallbackIdError, InvalidChannelNameError, InvalidMessageError, Message, PubSub } from '~/shared/pub-sub'
+import { RedisConnectionConfig } from '~/shared/redis-connection'
 // import Redis from 'redis'
 import mockLogger from '../mockLogger'
 jest.mock('redis')
@@ -64,20 +56,19 @@ describe('PubSub', () => {
 
   it('should broadcast message to subscribed notification callbacks', (done): void => {
     const ps = new PubSub(config)
-    ps.connect()
-      .then(() => {
-        const notificationCallback = jest.fn()
-        const id = ps.subscribe('first-channel', notificationCallback)
-        expect(id).toBe(1)
+    ps.connect().then(() => {
+      const notificationCallback = jest.fn()
+      const id = ps.subscribe('first-channel', notificationCallback)
+      expect(id).toBe(1)
 
-        // no need to await for this promise
-        ps.publish('first-channel', { Iam: 'the-message' })
+      // no need to await for this promise
+      ps.publish('first-channel', { Iam: 'the-message' })
 
-        setTimeout(() => {
-          expect(notificationCallback).toBeCalledWith('first-channel', { Iam: 'the-message' }, id)
-          done()
-        }, 10)
-      })
+      setTimeout(() => {
+        expect(notificationCallback).toBeCalledWith('first-channel', { Iam: 'the-message' }, id)
+        done()
+      }, 10)
+    })
   })
 
   it('subscribe should do channel validation', async (): Promise<void> => {
@@ -156,7 +147,7 @@ describe('PubSub', () => {
 
     ps.client.emit('message', 'not-existing')
     await new Promise((resolve) => {
-      expect(ps.logger.info).toBeCalledWith('broadcastMessage: no callbacks for \'not-existing\' channel')
+      expect(ps.logger.info).toBeCalledWith("broadcastMessage: no callbacks for 'not-existing' channel")
       setTimeout(resolve, 10, {})
     })
   })

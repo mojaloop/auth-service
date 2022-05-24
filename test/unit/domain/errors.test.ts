@@ -43,7 +43,7 @@ import {
 import { v4 } from 'uuid'
 
 interface Case {
-  error: ConsentError,
+  error: ConsentError
   code: string
 }
 describe('errors', () => {

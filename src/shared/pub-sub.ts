@@ -31,12 +31,12 @@ import { RedisConnection } from './redis-connection'
 import { promisify } from 'util'
 
 export class InvalidCallbackIdError extends Error {
-  constructor () {
+  constructor() {
     super('valid callbackId must be positive number')
   }
 
   // validation logic for callbackId parameter
-  static throwIfInvalid (callbackId: number): void {
+  static throwIfInvalid(callbackId: number): void {
     if (!(callbackId > 0)) {
       throw new InvalidCallbackIdError()
     }
@@ -44,13 +44,13 @@ export class InvalidCallbackIdError extends Error {
 }
 
 export class InvalidChannelNameError extends Error {
-  constructor () {
+  constructor() {
     super('channel name must be non empty string')
   }
 
   // validation logic for channel name parameter
-  static throwIfInvalid (channel: string): void {
-    if (!(channel?.length)) {
+  static throwIfInvalid(channel: string): void {
+    if (!channel?.length) {
       throw new InvalidChannelNameError()
     }
   }
@@ -63,12 +63,12 @@ export type Message = string | number | boolean | Record<string, unknown>
 export class InvalidMessageError extends Error {
   public channel: string
 
-  constructor (channel: string) {
+  constructor(channel: string) {
     super(`message received on channel: '${channel}' is invalid`)
     this.channel = channel
   }
 
-  static throwIfInvalid (message: Message, channel: string): void {
+  static throwIfInvalid(message: Message, channel: string): void {
     if (typeof message === 'undefined' || (typeof message === 'object' && !message)) {
       throw new InvalidMessageError(channel)
     }
@@ -86,13 +86,13 @@ export class PubSub extends RedisConnection {
   private callbackId = 0
 
   // overload RedisConnection.connect to add listener on messages
-  async connect (): Promise<void> {
+  async connect(): Promise<void> {
     await super.connect()
     this.client.on('message', this.broadcastMessage.bind(this))
   }
 
   // realize message broadcast over the channel to all registered notification callbacks
-  protected broadcastMessage (channel: string, stringified: string): void {
+  protected broadcastMessage(channel: string, stringified: string): void {
     const callbacksForChannel = this.callbacks.get(channel)
 
     // do nothing if channel doesn't exist
@@ -109,18 +109,16 @@ export class PubSub extends RedisConnection {
     InvalidMessageError.throwIfInvalid(message, channel)
 
     // broadcast message by calling all callbacks
-    callbacksForChannel.forEach(
-      (callback: NotificationCallback, id: number): void => callback(channel, message, id)
-    )
+    callbacksForChannel.forEach((callback: NotificationCallback, id: number): void => callback(channel, message, id))
   }
 
   // generate next callback id to be used as reference for unregister
-  protected get nextCallbackId (): number {
+  protected get nextCallbackId(): number {
     return ++this.callbackId
   }
 
   // subscribe notification callback to message channel
-  subscribe (channel: string, callback: NotificationCallback): number {
+  subscribe(channel: string, callback: NotificationCallback): number {
     InvalidChannelNameError.throwIfInvalid(channel)
 
     // is callbacks map for channel present
@@ -145,7 +143,7 @@ export class PubSub extends RedisConnection {
   }
 
   // unsubscribe from channel the notification callback for given callbackId reference
-  unsubscribe (channel: string, callbackId: number): boolean {
+  unsubscribe(channel: string, callbackId: number): boolean {
     // input parameters validation
     InvalidChannelNameError.throwIfInvalid(channel)
     InvalidCallbackIdError.throwIfInvalid(callbackId)
@@ -168,7 +166,7 @@ export class PubSub extends RedisConnection {
 
   // publish a message to the given channel
   // Message should fully survive the JSON stringify/parse cycle
-  async publish (channel: string, message: Message): Promise<void> {
+  async publish(channel: string, message: Message): Promise<void> {
     InvalidChannelNameError.throwIfInvalid(channel)
 
     // protect against publishing invalid Messages

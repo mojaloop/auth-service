@@ -35,11 +35,11 @@ describe('http-scheme', () => {
     expect(Scheme.https).toEqual('https')
   })
 
-  it('should append \'http\'', () => {
+  it("should append 'http'", () => {
     expect(prependHttp2Uri('uri')).toEqual('http://uri')
   })
 
-  it('should append \'https\'', () => {
+  it("should append 'https'", () => {
     expect(prependHttps2Uri('uri')).toEqual('https://uri')
   })
 })

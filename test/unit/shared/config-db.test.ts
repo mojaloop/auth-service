@@ -94,44 +94,59 @@ describe('config-db', () => {
         expect(() => DbPoolFormat.validate({ min: 10, max: 10 })).toThrow()
       })
       it('should validate createTimeoutMillis', () => {
-        expect(() => DbPoolFormat.validate({
-          min: 10, max: 10, acquireTimeoutMillis: 30000
-        })).toThrow()
+        expect(() =>
+          DbPoolFormat.validate({
+            min: 10,
+            max: 10,
+            acquireTimeoutMillis: 30000
+          })
+        ).toThrow()
       })
       it('should validate createRetryIntervalMillis', () => {
-        expect(() => DbPoolFormat.validate({
-          min: 10, max: 10, acquireTimeoutMillis: 30000, createTimeoutMillis: 30000
-        })).toThrow()
+        expect(() =>
+          DbPoolFormat.validate({
+            min: 10,
+            max: 10,
+            acquireTimeoutMillis: 30000,
+            createTimeoutMillis: 30000
+          })
+        ).toThrow()
       })
       it('should validate reapIntervalMillis', () => {
-        expect(() => DbPoolFormat.validate({
-          min: 10,
-          max: 10,
-          acquireTimeoutMillis: 30000,
-          createTimeoutMillis: 30000,
-          createRetryIntervalMillis: 200
-        })).toThrow()
+        expect(() =>
+          DbPoolFormat.validate({
+            min: 10,
+            max: 10,
+            acquireTimeoutMillis: 30000,
+            createTimeoutMillis: 30000,
+            createRetryIntervalMillis: 200
+          })
+        ).toThrow()
       })
       it('should validate destroyTimeoutMillis', () => {
-        expect(() => DbPoolFormat.validate({
-          min: 10,
-          max: 10,
-          acquireTimeoutMillis: 30000,
-          createTimeoutMillis: 30000,
-          createRetryIntervalMillis: 200,
-          reapIntervalMillis: 1000
-        })).toThrow()
+        expect(() =>
+          DbPoolFormat.validate({
+            min: 10,
+            max: 10,
+            acquireTimeoutMillis: 30000,
+            createTimeoutMillis: 30000,
+            createRetryIntervalMillis: 200,
+            reapIntervalMillis: 1000
+          })
+        ).toThrow()
       })
       it('should validate idleTimeoutMillis', () => {
-        expect(() => DbPoolFormat.validate({
-          min: 10,
-          max: 10,
-          acquireTimeoutMillis: 30000,
-          createTimeoutMillis: 30000,
-          createRetryIntervalMillis: 200,
-          reapIntervalMillis: 1000,
-          destroyTimeoutMillis: 5000
-        })).toThrow()
+        expect(() =>
+          DbPoolFormat.validate({
+            min: 10,
+            max: 10,
+            acquireTimeoutMillis: 30000,
+            createTimeoutMillis: 30000,
+            createRetryIntervalMillis: 200,
+            reapIntervalMillis: 1000,
+            destroyTimeoutMillis: 5000
+          })
+        ).toThrow()
       })
       it('should allow allow only null or object', () => {
         expect(() => DbPoolFormat.validate(123)).toThrow()

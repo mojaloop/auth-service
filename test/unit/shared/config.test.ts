@@ -25,13 +25,12 @@
  --------------
  ******/
 
-import { getFileContent } from '~/shared/config'
+import config, { getFileContent } from '~/shared/config'
 import { PathLike } from 'fs'
-import config from '~/shared/config'
 
 describe('config', () => {
   it('getFileContent should throw when not existing path', () => {
-    expect(() => getFileContent(undefined as unknown as PathLike)).toThrowError('File doesn\'t exist')
+    expect(() => getFileContent(undefined as unknown as PathLike)).toThrowError("File doesn't exist")
   })
 
   it('DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS should load from test.json config file', () => {

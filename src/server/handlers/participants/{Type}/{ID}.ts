@@ -32,7 +32,7 @@ import { Message } from '~/shared/pub-sub'
 /**
  * Handles a inbound PUT /participants/{Type}/{ID} request
  */
-async function put (_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
+async function put(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   // PUT /participants/{Type}/{ID} is a response to POST /participants/{Type}/{ID}
   // when the ALS is able to register the auth-service as the authoritative
   // owner of a Consent object

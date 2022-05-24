@@ -57,7 +57,8 @@ describe('challenge', (): void => {
           }
         ]
       }
-      const expected = '{"consentId":"d194d840-97e5-44e7-84cc-bc54a51a7771","scopes":[{"actions":["ACCOUNTS_GET_BALANCE","ACCOUNTS_TRANSFER"],"address":"ba32b791-27af-4fe5-987f-f1a055031389"},{"actions":["ACCOUNTS_GET_BALANCE"],"address":"232b396c-edba-4d10-b83e-b2d8e938d0e9"}]}'
+      const expected =
+        '{"consentId":"d194d840-97e5-44e7-84cc-bc54a51a7771","scopes":[{"actions":["ACCOUNTS_GET_BALANCE","ACCOUNTS_TRANSFER"],"address":"ba32b791-27af-4fe5-987f-f1a055031389"},{"actions":["ACCOUNTS_GET_BALANCE"],"address":"232b396c-edba-4d10-b83e-b2d8e938d0e9"}]}'
 
       // Act
       const canonicalString = canonicalize(rawChallenge)
@@ -69,7 +70,13 @@ describe('challenge', (): void => {
 
     it('parses the same hash', () => {
       // Arrange
-      const consent = { consentId: '11a91835-cdda-418b-9c0a-e8de62fbc84c', scopes: [{ address: 'a84cd5b8-5883-4deb-9dec-2e86a9603922', actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER'] }, { address: 'b7b40dd7-ae6b-4904-9654-82d02544b327', actions: ['ACCOUNTS_GET_BALANCE'] }] }
+      const consent = {
+        consentId: '11a91835-cdda-418b-9c0a-e8de62fbc84c',
+        scopes: [
+          { address: 'a84cd5b8-5883-4deb-9dec-2e86a9603922', actions: ['ACCOUNTS_GET_BALANCE', 'ACCOUNTS_TRANSFER'] },
+          { address: 'b7b40dd7-ae6b-4904-9654-82d02544b327', actions: ['ACCOUNTS_GET_BALANCE'] }
+        ]
+      }
       const expected = 'YzhmYzM5NDFkNjA3MGQzYmMzZmIzYTk5ZjgyZWVkMWUwNjdhOWQ2ZDU2YzcxYzI0ODUxZWM4YTc2NDljN2RhMA=='
 
       // Act
@@ -82,7 +89,11 @@ describe('challenge', (): void => {
 
     it('parses the same hash for a different consent', () => {
       // Arrange
-      const consent = { consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7', consentRequestId: 'c51ec534-ee48-4575-b6a9-ead2955b8069', scopes: [{ address: 'dfspa.username.5678', actions: ['ACCOUNTS_TRANSFER'] }] }
+      const consent = {
+        consentId: '46876aac-5db8-4353-bb3c-a6a905843ce7',
+        consentRequestId: 'c51ec534-ee48-4575-b6a9-ead2955b8069',
+        scopes: [{ address: 'dfspa.username.5678', actions: ['ACCOUNTS_TRANSFER'] }]
+      }
       const expected = 'ODNkN2RkMzlkMTA5NGFmZDUzNWU1N2I5ODk5ZmNlM2JlODJlMGFkNDk3M2I1MmE1MzcxZmQ3ZGYzZmEyNjY5MQ=='
 
       // Act
@@ -97,7 +108,7 @@ describe('challenge', (): void => {
   describe('verifySignature', () => {
     // Each test generates a random key pair
     let challenge: string
-    let signer: crypto.Signer
+    let signer: crypto.Sign
 
     beforeEach((): void => {
       challenge = 'Crypto Auth service Yay!'
@@ -136,97 +147,92 @@ describe('challenge', (): void => {
       expect(verified).toEqual(true)
     })
 
-    it('returns false on signature with wrong key - EC Key (secp256k1)',
-      (): void => {
-        const realKeyPair = crypto.generateKeyPairSync('ec', {
-          namedCurve: 'secp256k1', // Allowed by FIDO spec
-          publicKeyEncoding: {
-            type: 'spki', // Key infrasructure
-            format: 'pem' // Encoding format
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
-          }
-        })
-
-        const fakeKeyPair = crypto.generateKeyPairSync('ec', {
-          namedCurve: 'secp256k1', // Allowed by FIDO spec
-          publicKeyEncoding: {
-            type: 'spki', // Key infrasructure
-            format: 'pem' // Encoding format
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
-          }
-        })
-
-        const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
-        const verified = verifySignature(
-          challenge, signature, realKeyPair.publicKey)
-
-        expect(verified).toEqual(false)
+    it('returns false on signature with wrong key - EC Key (secp256k1)', (): void => {
+      const realKeyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
       })
 
-    it('returns false for signature based on wrong challenge- EC Key (secp256k1)',
-      (): void => {
-        const realKeyPair = crypto.generateKeyPairSync('ec', {
-          namedCurve: 'secp256k1', // Allowed by FIDO spec
-          publicKeyEncoding: {
-            type: 'spki', // Key infrasructure
-            format: 'pem' // Encoding format
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
-          }
-        })
-
-        const fakeKeyPair = crypto.generateKeyPairSync('ec', {
-          namedCurve: 'secp256k1', // Allowed by FIDO spec
-          publicKeyEncoding: {
-            type: 'spki', // Key infrasructure
-            format: 'pem' // Encoding format
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
-          }
-        })
-
-        // Need another Sign object instead of updating the outer one
-        // because of parallel test runs
-        const anotherChallenge = 'This is a different message'
-        const anotherSigner = crypto.createSign('SHA256')
-
-        anotherSigner.update(anotherChallenge)
-
-        const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
-        const verified = verifySignature(
-          challenge, signature, realKeyPair.publicKey)
-
-        expect(verified).toEqual(false)
+      const fakeKeyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
       })
+
+      const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
+      const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
+
+      expect(verified).toEqual(false)
+    })
+
+    it('returns false for signature based on wrong challenge- EC Key (secp256k1)', (): void => {
+      const realKeyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
+      })
+
+      const fakeKeyPair = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'secp256k1', // Allowed by FIDO spec
+        publicKeyEncoding: {
+          type: 'spki', // Key infrasructure
+          format: 'pem' // Encoding format
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
+      })
+
+      // Need another Sign object instead of updating the outer one
+      // because of parallel test runs
+      const anotherChallenge = 'This is a different message'
+      const anotherSigner = crypto.createSign('SHA256')
+
+      anotherSigner.update(anotherChallenge)
+
+      const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
+      const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
+
+      expect(verified).toEqual(false)
+    })
 
     // Using a hardcoded key, challenge and signature triplet
     // eslint-disable-next-line max-len
-    it('returns false for signature based on wrong challenge - hardcoded EC Key (secp256k1)',
-      (): void => {
-        const { message, keyPair } = Credential.EC
+    it('returns false for signature based on wrong challenge - hardcoded EC Key (secp256k1)', (): void => {
+      const { message, keyPair } = Credential.EC
 
-        // Need another Sign object instead of updating the outer one
-        // because of parallel test runs
-        const anotherChallenge = 'This is a different message'
-        const anotherSigner = crypto.createSign('SHA256')
+      // Need another Sign object instead of updating the outer one
+      // because of parallel test runs
+      const anotherChallenge = 'This is a different message'
+      const anotherSigner = crypto.createSign('SHA256')
 
-        anotherSigner.update(anotherChallenge)
+      anotherSigner.update(anotherChallenge)
 
-        const signature = signer.sign(keyPair.private, 'base64')
-        const verified = verifySignature(message, signature, keyPair.public)
+      const signature = signer.sign(keyPair.private, 'base64')
+      const verified = verifySignature(message, signature, keyPair.public)
 
-        expect(verified).toEqual(false)
-      })
+      expect(verified).toEqual(false)
+    })
 
     it('verifies correct signature - RSA 2048 Key', (): void => {
       const realKeyPair = crypto.generateKeyPairSync('rsa', {
@@ -234,8 +240,7 @@ describe('challenge', (): void => {
       })
 
       const signature = signer.sign(realKeyPair.privateKey, 'base64')
-      const verified = verifySignature(
-        challenge, signature, realKeyPair.publicKey)
+      const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
 
       expect(verified).toEqual(true)
     })
@@ -249,75 +254,70 @@ describe('challenge', (): void => {
       expect(verified).toEqual(true)
     })
 
-    it('returns false on signature based on wrong key - RSA 2048 Key',
-      (): void => {
-        const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
-          modulusLength: 2048 // Key length in bits
-        })
-
-        const realKeyPair = crypto.generateKeyPairSync('rsa', {
-          modulusLength: 2048 // Key length in bits
-        })
-
-        const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
-        const verified = verifySignature(
-          challenge, signature, realKeyPair.publicKey)
-
-        expect(verified).toEqual(false)
+    it('returns false on signature based on wrong key - RSA 2048 Key', (): void => {
+      const fakeKeyPair = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048 // Key length in bits
       })
+
+      const realKeyPair = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048 // Key length in bits
+      })
+
+      const signature = signer.sign(fakeKeyPair.privateKey, 'base64')
+      const verified = verifySignature(challenge, signature, realKeyPair.publicKey)
+
+      expect(verified).toEqual(false)
+    })
 
     // Using a hardcoded key, challenge and signature triplet
     // eslint-disable-next-line max-len
-    it('returns false for signature based on wrong challenge - hardcoded RSA 2048 key',
-      (): void => {
-        const { message, keyPair } = Credential.RSA
+    it('returns false for signature based on wrong challenge - hardcoded RSA 2048 key', (): void => {
+      const { message, keyPair } = Credential.RSA
 
-        // Need another Sign object instead of updating the outer one
-        // because of parallel test runs
-        const anotherChallenge = 'This is a different message'
-        const anotherSigner = crypto.createSign('SHA256')
+      // Need another Sign object instead of updating the outer one
+      // because of parallel test runs
+      const anotherChallenge = 'This is a different message'
+      const anotherSigner = crypto.createSign('SHA256')
 
-        anotherSigner.update(anotherChallenge)
+      anotherSigner.update(anotherChallenge)
 
-        const signature = signer.sign(keyPair.private, 'base64')
-        const verified = verifySignature(message, signature, keyPair.public)
+      const signature = signer.sign(keyPair.private, 'base64')
+      const verified = verifySignature(message, signature, keyPair.public)
 
-        expect(verified).toEqual(false)
+      expect(verified).toEqual(false)
+    })
+
+    it('properly uses crypto.createVerify function and handles exceptions', (): void => {
+      const { message, keyPair } = Credential.RSA
+
+      // Setting up mocks
+      const createVerifySpy = jest.spyOn(crypto, 'createVerify').mockImplementationOnce((): crypto.Verify => {
+        throw new Error('Unable to create Verify in mock')
       })
 
-    it('properly uses crypto.createVerify function and handles exceptions',
-      (): void => {
-        const { message, keyPair } = Credential.RSA
+      // Setting up the signature
+      const anotherChallenge = 'This is a different message'
+      const anotherSigner = crypto.createSign('SHA256')
 
-        // Setting up mocks
-        const createVerifySpy = jest.spyOn(crypto, 'createVerify')
-          .mockImplementationOnce((): crypto.Verify => {
-            throw new Error('Unable to create Verify in mock')
-          })
+      anotherSigner.update(anotherChallenge)
 
-        // Setting up the signature
-        const anotherChallenge = 'This is a different message'
-        const anotherSigner = crypto.createSign('SHA256')
+      const signature = signer.sign(keyPair.private, 'base64')
 
-        anotherSigner.update(anotherChallenge)
+      // Assertions
+      expect((): void => {
+        verifySignature(message, signature, keyPair.public)
+      }).toThrowError('Unable to create Verify in mock')
 
-        const signature = signer.sign(keyPair.private, 'base64')
+      // Verify that crypto function is called correctly
+      expect(createVerifySpy).toHaveBeenCalledWith('SHA256')
+      expect(createVerifySpy).toHaveBeenCalledTimes(1)
+      // Verify that logger functions are called correctly
+      // expect(mocked(logger.push))
+      //   .toHaveBeenCalledWith({ error: new Error('Unable to create Verify in mock') })
+      // expect(mocked(logger.push)).toHaveBeenCalledTimes(1)
 
-        // Assertions
-        expect((): void => {
-          verifySignature(message, signature, keyPair.public)
-        }).toThrowError('Unable to create Verify in mock')
-
-        // Verify that crypto function is called correctly
-        expect(createVerifySpy).toHaveBeenCalledWith('SHA256')
-        expect(createVerifySpy).toHaveBeenCalledTimes(1)
-        // Verify that logger functions are called correctly
-        // expect(mocked(logger.push))
-        //   .toHaveBeenCalledWith({ error: new Error('Unable to create Verify in mock') })
-        // expect(mocked(logger.push)).toHaveBeenCalledTimes(1)
-
-        // expect(mocked(logger.error)).toHaveBeenCalledTimes(1)
-        // expect(mocked(logger.error)).toHaveBeenCalledWith('Unable to verify signature')
-      })
+      // expect(mocked(logger.error)).toHaveBeenCalledTimes(1)
+      // expect(mocked(logger.error)).toHaveBeenCalledWith('Unable to verify signature')
+    })
   })
 })

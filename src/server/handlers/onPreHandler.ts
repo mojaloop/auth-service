@@ -25,7 +25,7 @@
 import { logResponse, RequestLogged } from '../../shared/logger'
 import { ResponseToolkit, Request } from '@hapi/hapi'
 
-export default async function onPreHandler (request: Request, h: ResponseToolkit): Promise<symbol> {
+export default async function onPreHandler(request: Request, h: ResponseToolkit): Promise<symbol> {
   logResponse(request as RequestLogged)
   return h.continue
 }

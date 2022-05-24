@@ -44,7 +44,7 @@ Convict.addFormat({
       throw new Error('must be of type Array')
     }
 
-    sources.forEach(source => {
+    sources.forEach((source) => {
       if (typeof source !== 'string') {
         throw new Error('Expected a string in array!')
       }
@@ -53,53 +53,53 @@ Convict.addFormat({
 })
 
 interface ServiceConfig {
-  PORT: number;
-  HOST: string;
-  PARTICIPANT_ID: string;
-  DATABASE: DatabaseConfig;
-  ENV: string;
-  REQUEST_PROCESSING_TIMEOUT_SECONDS: number;
+  PORT: number
+  HOST: string
+  PARTICIPANT_ID: string
+  DATABASE: DatabaseConfig
+  ENV: string
+  REQUEST_PROCESSING_TIMEOUT_SECONDS: number
   REDIS: {
-    HOST: string;
-    PORT: number;
-    TIMEOUT: number;
-  };
+    HOST: string
+    PORT: number
+    TIMEOUT: number
+  }
   INSPECT: {
-    DEPTH: number;
-    SHOW_HIDDEN: boolean;
-    COLOR: boolean;
-  };
+    DEPTH: number
+    SHOW_HIDDEN: boolean
+    COLOR: boolean
+  }
   SHARED: {
-    PEER_ENDPOINT: string;
-    ALS_ENDPOINT: string;
-    QUOTES_ENDPOINT?: string;
-    TRANSFERS_ENDPOINT?: string;
-    SERVICES_ENDPOINT?: string;
-    BULK_TRANSFERS_ENDPOINT?: string;
-    THIRDPARTY_REQUESTS_ENDPOINT?: string;
-    TRANSACTION_REQUEST_ENDPOINT?: string;
-    JWS_SIGN: boolean;
-    JWS_SIGNING_KEY: Buffer | string;
+    PEER_ENDPOINT: string
+    ALS_ENDPOINT: string
+    QUOTES_ENDPOINT?: string
+    TRANSFERS_ENDPOINT?: string
+    SERVICES_ENDPOINT?: string
+    BULK_TRANSFERS_ENDPOINT?: string
+    THIRDPARTY_REQUESTS_ENDPOINT?: string
+    TRANSACTION_REQUEST_ENDPOINT?: string
+    JWS_SIGN: boolean
+    JWS_SIGNING_KEY: Buffer | string
     WSO2_AUTH: {
-      staticToken: string;
-      tokenEndpoint: string;
-      clientKey: string;
-      clientSecret: string;
-      refreshSeconds: number;
-    };
-    TLS: BaseRequestTLSConfig;
-  };
+      staticToken: string
+      tokenEndpoint: string
+      clientKey: string
+      clientSecret: string
+      refreshSeconds: number
+    }
+    TLS: BaseRequestTLSConfig
+  }
   DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS: Array<string>
 }
 
-export function getFileContent (path: PathLike): Buffer {
+export function getFileContent(path: PathLike): Buffer {
   if (!fs.existsSync(path)) {
-    throw new Error('File doesn\'t exist')
+    throw new Error("File doesn't exist")
   }
   return fs.readFileSync(path)
 }
 
-function getFileListContent (pathList: string): Buffer[] {
+function getFileListContent(pathList: string): Buffer[] {
   return pathList.split(',').map((path): Buffer => getFileContent(path))
 }
 
@@ -221,20 +221,24 @@ ConvictConfig.validate({ allowed: 'strict' })
 
 // Load file contents for keys and secrets
 if (ConvictConfig.get('SHARED.JWS_SIGN')) {
-  ConvictConfig.set('SHARED.JWS_SIGNING_KEY',
+  ConvictConfig.set(
+    'SHARED.JWS_SIGNING_KEY',
     getFileContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').JWS_SIGNING_KEY as string))
   )
 }
 
 // Note: Have not seen these be comma seperated value strings. mimicking sdk-scheme-adapter for now
 if (ConvictConfig.get('SHARED.TLS.mutualTLS.enabled')) {
-  ConvictConfig.set('SHARED.TLS.creds.ca',
+  ConvictConfig.set(
+    'SHARED.TLS.creds.ca',
     getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.ca as string))
   )
-  ConvictConfig.set('SHARED.TLS.creds.cert',
+  ConvictConfig.set(
+    'SHARED.TLS.creds.cert',
     getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.cert as string))
   )
-  ConvictConfig.set('SHARED.TLS.creds.key',
+  ConvictConfig.set(
+    'SHARED.TLS.creds.key',
     getFileListContent(path.resolve(__dirname, '../../', ConvictConfig.get('SHARED').TLS.creds.key as string))
   )
 }
@@ -243,11 +247,10 @@ if (ConvictConfig.get('SHARED.TLS.mutualTLS.enabled')) {
 const config: ServiceConfig = ConvictConfig.getProperties()
 
 if (config.DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS.length > 0) {
-  console.warn('DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS set. This is for testing purposes only and should not be used in production.')
+  console.warn(
+    'DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS set. This is for testing purposes only and should not be used in production.'
+  )
 }
 
 export default config
-export {
-  PACKAGE,
-  ServiceConfig
-}
+export { PACKAGE, ServiceConfig }

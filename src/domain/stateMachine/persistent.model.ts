@@ -58,15 +58,15 @@ export interface ControlledStateMachine extends StateMachineInterface {
    * @method onAfterTransition
    * @description callback called after every transition
    */
-  onAfterTransition: Method;
+  onAfterTransition: Method
 
   /**
    * @method onPendingTransition
    * @description callback called when transition is pending,
    *              before calling specialized transition handler
    */
-  onPendingTransition: Method;
-  onError: Method;
+  onPendingTransition: Method
+  onError: Method
 }
 
 /**
@@ -84,25 +84,25 @@ export interface StateData<StateType extends string = string> extends Record<str
 /**
  * @interface PersistentModelConfig
  * @description config dependencies needed to deliver persistent model features
-*/
+ */
 export interface PersistentModelConfig {
   /**
    * @property {string} key
    * @description the key at which the model instance will be persisted
    */
-  key: string;
+  key: string
 
   /**
    * @property {KVS} kvs
    * @description Key-Value storage used to persist model
    */
-  kvs: KVS;
+  kvs: KVS
 
   /**
    * @property {SDKLogger.Logger} logger
    * @description used to send log events
    */
-  logger: SDKLogger.Logger;
+  logger: SDKLogger.Logger
 }
 
 /**
@@ -116,7 +116,7 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
    * @property {PersistentModelConfig} config
    * @description specified model's dependencies
    *              declared readonly, because it should be only setup at construction
-  */
+   */
   protected readonly config: PersistentModelConfig
 
   /**
@@ -136,11 +136,7 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
    * @param {PersistentModelConfig} config - dependencies
    * @param {StateMachineConfig} specOrig - state machine configuration which describes the model's workflow
    */
-  constructor (
-    data: Data,
-    config: PersistentModelConfig,
-    specOrig: StateMachineConfig
-  ) {
+  constructor(data: Data, config: PersistentModelConfig, specOrig: StateMachineConfig) {
     // flat copy of parameters
     this.data = { ...data }
     this.config = { ...config }
@@ -173,15 +169,15 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
   }
 
   // accessors to config properties
-  get logger (): SDKLogger.Logger {
+  get logger(): SDKLogger.Logger {
     return this.config.logger
   }
 
-  get key (): string {
+  get key(): string {
     return this.config.key
   }
 
-  get kvs (): KVS {
+  get kvs(): KVS {
     return this.config.kvs
   }
 
@@ -190,7 +186,7 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
    * @description called after every transition and updates data.currentState
    * @param {TransitionEvent<JSM>)} event - transition's event description
    */
-  async onAfterTransition (event: TransitionEvent<JSM>): Promise<void> {
+  async onAfterTransition(event: TransitionEvent<JSM>): Promise<void> {
     this.logger.info(`State machine transitioned '${event.transition}': ${event.from} -> ${event.to}`)
     // update internal state data
     this.data.currentState = event.to
@@ -203,7 +199,7 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
    *              if there is a pending transition
    * @param {string} transition - the name of the pending transition
    */
-  onPendingTransition (transition: string): void {
+  onPendingTransition(transition: string): void {
     // allow transitions to 'error' state while other transitions are in progress
     if (transition !== 'error') {
       throw new Error(`Transition '${transition}' requested while another transition is in progress.`)
@@ -214,7 +210,7 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
    * @method saveToKVS
    * @description stores model's state data in Key-Value Store
    */
-  async saveToKVS (): Promise<void> {
+  async saveToKVS(): Promise<void> {
     try {
       const res = await this.kvs.set(this.key, this.data)
       this.logger.info({ res })
@@ -235,11 +231,11 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
  * @param {<StateMachineConfig>} spec - state machine configuration
  * @returns {Promise<PersistenModel<JSM, Data>>} persistent model instance
  */
-export async function create<JSM extends ControlledStateMachine, Data extends StateData> (
+export async function create<JSM extends ControlledStateMachine, Data extends StateData>(
   data: Data,
   config: PersistentModelConfig,
   spec: StateMachineConfig
-): Promise <PersistentModel<JSM, Data>> {
+): Promise<PersistentModel<JSM, Data>> {
   // create a new model
   const model = new PersistentModel<JSM, Data>(data, config, spec)
 
@@ -255,10 +251,10 @@ export async function create<JSM extends ControlledStateMachine, Data extends St
  * @param {StateMachineConfig} spec - state machine configuration - should be the same used with `create`
  * @returns {Promise <PersistentModel<JSM, Data>>} persistent model instance loaded from KVS
  */
-export async function loadFromKVS<JSM extends ControlledStateMachine, Data extends StateData> (
+export async function loadFromKVS<JSM extends ControlledStateMachine, Data extends StateData>(
   config: PersistentModelConfig,
   spec: StateMachineConfig
-): Promise <PersistentModel<JSM, Data>> {
+): Promise<PersistentModel<JSM, Data>> {
   try {
     const data = await config.kvs.get<Data>(config.key)
     if (!data) {

@@ -1,4 +1,3 @@
-
 /*****
  License
  --------------
@@ -31,7 +30,7 @@ import start from './start'
 import extensions from './extensions'
 import plugins from './plugins'
 
-export default async function run (config: ServiceConfig): Promise<Server> {
+export default async function run(config: ServiceConfig): Promise<Server> {
   const server = await create(config)
   await plugins.register(server)
   await extensions.register(server)

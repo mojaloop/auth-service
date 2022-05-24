@@ -1,4 +1,3 @@
-
 import index from '~/index'
 import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'

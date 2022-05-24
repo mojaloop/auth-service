@@ -25,11 +25,7 @@
 
  --------------
  ******/
- import {
-  MojaloopRequests,
-  ThirdpartyRequests,
-  Logger as SDKLogger
-} from '@mojaloop/sdk-standard-components'
+import { MojaloopRequests, ThirdpartyRequests, Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 import { KVS } from '~/shared/kvs'
 import { PubSub } from '~/shared/pub-sub'
 import { ResponseToolkit, Server } from '@hapi/hapi'
@@ -104,7 +100,6 @@ export const StatePlugin = {
       jwsSign: config.SHARED.JWS_SIGN,
       jwsSigningKey: <Buffer>config.SHARED.JWS_SIGNING_KEY
     })
-
 
     try {
       // connect them all to Redis instance

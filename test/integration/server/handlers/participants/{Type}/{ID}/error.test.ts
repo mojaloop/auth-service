@@ -33,18 +33,12 @@ import mockParticipantsTypeIDErrorResponse from '~/../test/data/mockParticipants
 // TODO: once model is implemented set up TTK so we can test assertions on
 //       on outgoing responses
 describe('server/handlers/participants/{Type}/{ID}/error', (): void => {
-  it('Should return 200 (OK) status code',
-    async (): Promise<void> => {
-      // Endpoint
-      const scenariosURI = 'http://localhost:4004/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe/error'
+  it('Should return 200 (OK) status code', async (): Promise<void> => {
+    // Endpoint
+    const scenariosURI = 'http://localhost:4004/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe/error'
 
-      const response = await axios.put(
-        scenariosURI,
-        mockParticipantsTypeIDErrorResponse.payload,
-        { headers: headers }
-      )
+    const response = await axios.put(scenariosURI, mockParticipantsTypeIDErrorResponse.payload, { headers: headers })
 
-      expect(response.status).toEqual(200)
-    }
-  )
+    expect(response.status).toEqual(200)
+  })
 })

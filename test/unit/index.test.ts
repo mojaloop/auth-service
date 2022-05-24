@@ -38,30 +38,20 @@ import PutParticipantsHeaders from '../data/putParticipantsHeaders.json'
 
 jest.mock('~/shared/logger')
 jest.mock('~/server/handlers', () => ({
-  HealthGet: jest.fn(
-    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
-      h.response({ status: 'OK', uptime: 1.23 }).code(200)
-    )
+  HealthGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) =>
+    Promise.resolve(h.response({ status: 'OK', uptime: 1.23 }).code(200))
   ),
-  MetricsGet: jest.fn(
-    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
-      h.response().code(200)
-    )
+  MetricsGet: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) =>
+    Promise.resolve(h.response().code(200))
   ),
-  PostConsents: jest.fn(
-    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
-      h.response().code(202)
-    )
+  PostConsents: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) =>
+    Promise.resolve(h.response().code(202))
   ),
-  ParticipantsByTypeAndID3: jest.fn(
-    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
-      h.response().code(200)
-    )
+  ParticipantsByTypeAndID3: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) =>
+    Promise.resolve(h.response().code(200))
   ),
-  ParticipantsErrorByTypeAndID: jest.fn(
-    (_context: Context, _req: Request, h: ResponseToolkit) => Promise.resolve(
-      h.response().code(200)
-    )
+  ParticipantsErrorByTypeAndID: jest.fn((_context: Context, _req: Request, h: ResponseToolkit) =>
+    Promise.resolve(h.response().code(200))
   )
 }))
 
@@ -86,9 +76,11 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /consents', (): void => {
     it('POST /consents/', async (): Promise<void> => {
-      const mockPostConsents = jest.spyOn(Handlers, 'PostConsents').mockImplementationOnce(
-        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
-      )
+      const mockPostConsents = jest
+        .spyOn(Handlers, 'PostConsents')
+        .mockImplementationOnce((_context: unknown, _req: Request, h: ResponseToolkit) =>
+          Promise.resolve(h.response().code(202))
+        )
 
       const request = {
         method: 'POST',
@@ -113,9 +105,11 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /participants/{Type}/{ID}', (): void => {
     it('PUT /participants/{Type}/{ID}', async (): Promise<void> => {
-      const mockParticipantsByTypeAndID = jest.spyOn(Handlers, 'ParticipantsByTypeAndID3').mockImplementationOnce(
-        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
-      )
+      const mockParticipantsByTypeAndID = jest
+        .spyOn(Handlers, 'ParticipantsByTypeAndID3')
+        .mockImplementationOnce((_context: unknown, _req: Request, h: ResponseToolkit) =>
+          Promise.resolve(h.response().code(200))
+        )
 
       const request = {
         method: 'PUT',
@@ -140,9 +134,11 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /participants/{Type}/{ID}/error', (): void => {
     it('PUT /participants/{Type}/{ID}/error', async (): Promise<void> => {
-      const mockParticipantsErrorByTypeAndID = jest.spyOn(Handlers, 'ParticipantsErrorByTypeAndID').mockImplementationOnce(
-        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
-      )
+      const mockParticipantsErrorByTypeAndID = jest
+        .spyOn(Handlers, 'ParticipantsErrorByTypeAndID')
+        .mockImplementationOnce((_context: unknown, _req: Request, h: ResponseToolkit) =>
+          Promise.resolve(h.response().code(200))
+        )
 
       const request = {
         method: 'PUT',

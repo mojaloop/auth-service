@@ -33,7 +33,7 @@ export class RedisConnectionError extends Error {
   public readonly host: string
   public readonly port: number
 
-  constructor (port: number, host: string) {
+  constructor(port: number, host: string) {
     super(`can not connect to ${host}:${port}`)
     this.host = host
     this.port = port
@@ -41,11 +41,11 @@ export class RedisConnectionError extends Error {
 }
 
 export class InvalidPortError extends Error {
-  constructor () {
+  constructor() {
     super('port should be non negative number')
   }
 
-  static throwIfInvalid (port: number): void {
+  static throwIfInvalid(port: number): void {
     if (!(port > 0)) {
       throw new InvalidPortError()
     }
@@ -53,23 +53,23 @@ export class InvalidPortError extends Error {
 }
 
 export class InvalidLoggerError extends Error {
-  constructor () {
+  constructor() {
     super('logger should be valid')
   }
 
-  static throwIfInvalid (logger: SDKLogger.Logger): void {
-    if (!(logger)) {
+  static throwIfInvalid(logger: SDKLogger.Logger): void {
+    if (!logger) {
       throw new InvalidLoggerError()
     }
   }
 }
 
 export class InvalidHostError extends Error {
-  constructor () {
+  constructor() {
     super('host should be non empty string')
   }
 
-  static throwIfInvalid (host: string): void {
+  static throwIfInvalid(host: string): void {
     if (!(host?.length > 0)) {
       throw new InvalidHostError()
     }
@@ -77,9 +77,9 @@ export class InvalidHostError extends Error {
 }
 
 export interface RedisConnectionConfig {
-  host: string;
-  port: number;
-  logger: SDKLogger.Logger;
+  host: string
+  port: number
+  logger: SDKLogger.Logger
   timeout?: number
 }
 
@@ -90,7 +90,7 @@ export class RedisConnection {
 
   static readonly defaultTimeout = 3000
 
-  constructor (config: RedisConnectionConfig) {
+  constructor(config: RedisConnectionConfig) {
     // input validation
     InvalidHostError.throwIfInvalid(config.host)
     InvalidPortError.throwIfInvalid(config.port)
@@ -100,7 +100,7 @@ export class RedisConnection {
     this.config = { timeout: RedisConnection.defaultTimeout, ...config }
   }
 
-  get client (): RedisClient {
+  get client(): RedisClient {
     // protect against any attempt to work with not connected redis client
     if (!this.isConnected) {
       throw new RedisConnectionError(this.port, this.host)
@@ -108,27 +108,27 @@ export class RedisConnection {
     return this.redisClient
   }
 
-  get host (): string {
+  get host(): string {
     return this.config.host
   }
 
-  get port (): number {
+  get port(): number {
     return this.config.port
   }
 
-  get logger (): SDKLogger.Logger {
+  get logger(): SDKLogger.Logger {
     return this.config.logger
   }
 
-  get timeout (): number {
+  get timeout(): number {
     return this.config.timeout || RedisConnection.defaultTimeout
   }
 
-  get isConnected (): boolean {
+  get isConnected(): boolean {
     return this.redisClient && this.redisClient.connected
   }
 
-  async connect (): Promise<void> {
+  async connect(): Promise<void> {
     // do nothing if already connected
     if (this.isConnected) {
       return
@@ -138,9 +138,9 @@ export class RedisConnection {
     this.redisClient = await this.createClient()
   }
 
-  async disconnect (): Promise<void> {
+  async disconnect(): Promise<void> {
     // do nothing if already disconnected
-    if (!(this.isConnected)) {
+    if (!this.isConnected) {
       return
     }
 
@@ -152,13 +152,13 @@ export class RedisConnection {
     this.redisClient = null as unknown as RedisClient
   }
 
-  async ping (): Promise<boolean> {
+  async ping(): Promise<boolean> {
     const asyncPing = promisify(this.client.ping)
-    const response: string = await asyncPing.call(this.client) as string
+    const response: string = (await asyncPing.call(this.client)) as string
     return response === 'PONG'
   }
 
-  private async createClient (): Promise<RedisClient> {
+  private async createClient(): Promise<RedisClient> {
     return new Promise((resolve, reject) => {
       // the newly created redis client
       const client = createClient(this.port, this.host)

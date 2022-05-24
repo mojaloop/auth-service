@@ -43,8 +43,7 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
  * scope & consent ids, and returns array of formatted scopes
  * @param scopes Scopes retrieved from database
  */
-export function convertScopeModelsToThirdpartyScopes (
-  scopes: ScopeModel[]): tpAPI.Schemas.Scope[] {
+export function convertScopeModelsToThirdpartyScopes(scopes: ScopeModel[]): tpAPI.Schemas.Scope[] {
   // Dictionary of address' to Thirdparty Scope object
   const scopeDictionary = {}
 
@@ -72,17 +71,21 @@ export function convertScopeModelsToThirdpartyScopes (
  * @param thirdpartyScopes Array of Thirdparty Scope objects received
  * @param consentId Id of Consent to which scopes belong
  */
-export function convertThirdpartyScopesToDatabaseScope (
-  thirdpartyScopes: tpAPI.Schemas.Scope[], consentId: string): ScopeModel[] {
-  const scopes: ScopeModel[] = thirdpartyScopes.map(
-    (element: tpAPI.Schemas.Scope): ScopeModel[] =>
-      element.actions.map((action: string): ScopeModel => ({
-        consentId,
-        address: element.address,
-        action
-      })
+export function convertThirdpartyScopesToDatabaseScope(
+  thirdpartyScopes: tpAPI.Schemas.Scope[],
+  consentId: string
+): ScopeModel[] {
+  const scopes: ScopeModel[] = thirdpartyScopes
+    .map((element: tpAPI.Schemas.Scope): ScopeModel[] =>
+      element.actions.map(
+        (action: string): ScopeModel => ({
+          consentId,
+          address: element.address,
+          action
+        })
       )
-  ).flat()
+    )
+    .flat()
 
   return scopes
 }
