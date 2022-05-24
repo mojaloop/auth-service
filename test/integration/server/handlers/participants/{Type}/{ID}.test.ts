@@ -34,17 +34,11 @@ import mockParticipantsTypeIDResponse from '~/../test/data/mockParticipantsTypeI
 // TODO: once model is implemented set up TTK so we can test assertions on
 //       on outgoing responses
 describe('server/handlers/participants/{Type}/{ID}', (): void => {
-  it('Should return 202 (Accepted) status code',
-    async (): Promise<void> => {
-      // Endpoint
-      const scenariosURI = 'http://localhost:4004/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  it('Should return 202 (Accepted) status code', async (): Promise<void> => {
+    // Endpoint
+    const scenariosURI = 'http://localhost:4004/participants/CONSENT/b82348b9-81f6-42ea-b5c4-80667d5740fe'
 
-      const response = await axios.put(
-        scenariosURI,
-        mockParticipantsTypeIDResponse.payload,
-        { headers: headers }
-      )
-      expect(response.status).toEqual(200)
-    }
-  )
+    const response = await axios.put(scenariosURI, mockParticipantsTypeIDResponse.payload, { headers: headers })
+    expect(response.status).toEqual(200)
+  })
 })

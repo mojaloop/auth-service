@@ -82,46 +82,54 @@ describe('testing that constraints are enforced in the consent table', (): void 
   it('should properly enforce the primary key constraint in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
     /* Tests for duplication */
-    await expect(db.from('Consent').insert({
-      id: '123',
-      participantId: 'DFSPA',
-      credentialType: 'FIDO',
-      credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '123',
+        participantId: 'DFSPA',
+        credentialType: 'FIDO',
+        credentialPayload: 'string_representing_public_key_a',
+        credentialChallenge: 'string_representing_challenge_b',
+        originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
+      })
+    ).rejects.toThrow()
     /* Tests for non-nullity */
-    await expect(db.from('Consent').insert({
-      id: null,
-      participantId: 'DFSPA',
-      credentialType: 'FIDO',
-      credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: null,
+        participantId: 'DFSPA',
+        credentialType: 'FIDO',
+        credentialPayload: 'string_representing_public_key_a',
+        credentialChallenge: 'string_representing_challenge_b',
+        originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({
-      id: '128',
-      status: 'ISSUED',
-      participantId: null,
-      credentialType: 'FIDO',
-      credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '128',
+        status: 'ISSUED',
+        participantId: null,
+        credentialType: 'FIDO',
+        credentialPayload: 'string_representing_public_key_a',
+        credentialChallenge: 'string_representing_challenge_b',
+        originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for status', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({
-      id: '128',
-      status: null,
-      initiatorId: 'PISPA',
-      credentialType: 'FIDO',
-      credentialPayload: 'string_representing_public_key_a',
-      credentialChallenge: 'string_representing_challenge_b',
-      originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '128',
+        status: null,
+        initiatorId: 'PISPA',
+        credentialType: 'FIDO',
+        credentialPayload: 'string_representing_public_key_a',
+        credentialChallenge: 'string_representing_challenge_b',
+        originalCredential: JSON.stringify({ status: 'PENDING', payload: {}, credentialType: 'test' })
+      })
+    ).rejects.toThrow()
   })
 })

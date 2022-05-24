@@ -44,9 +44,7 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   scopes: [
     {
       address: 'dfspa.username.5678',
-      actions: [
-        'ACCOUNTS_TRANSFER'
-      ]
+      actions: ['ACCOUNTS_TRANSFER']
     }
   ],
   // todo: make note in api that we are converting all array buffers to base64 encoded strings
@@ -57,8 +55,10 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       id: 'T4qTvVJfCTiuKAv05kW5uXrEV13Zr0q1ySpcnr0NgdWid6wdzXHelE0z6uvBlYGJxPApuWQiD6xbFwLBzO5SyA',
       rawId: 'T4qTvVJfCTiuKAv05kW5uXrEV13Zr0q1ySpcnr0NgdWid6wdzXHelE0z6uvBlYGJxPApuWQiD6xbFwLBzO5SyA==',
       response: {
-        attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhANS4oASh3C7nrbcGkHGRLiXaKqtZkfjTyxhf62df6Hz2AiA3Mb3iYyH09DxaedGYfZTrR+qNInNMCMbHzEXb/fMpgGN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAT4qTvVJfCTiuKAv05kW5uXrEV13Zr0q1ySpcnr0NgdWid6wdzXHelE0z6uvBlYGJxPApuWQiD6xbFwLBzO5SyKUBAgMmIAEhWCBtJtLrpagWe8sj5hlm+oaBCdgE72G929RfGuEq80jHwCJYIMbMNFfVh+8KdEAOixumW8kyaI2CF6M1TauFRc5Cd1xo',
-        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTWpobU1EVTBNemcxTnpNNU16SXlaRGxsWmpReU9HWXdOamxsTmpJek5qUTJZbUV4TmpVNVlURTVaamcwWlRGaU4yRm1NR001WW1KaU1UZGtPV016T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
+        attestationObject:
+          'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhANS4oASh3C7nrbcGkHGRLiXaKqtZkfjTyxhf62df6Hz2AiA3Mb3iYyH09DxaedGYfZTrR+qNInNMCMbHzEXb/fMpgGN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAT4qTvVJfCTiuKAv05kW5uXrEV13Zr0q1ySpcnr0NgdWid6wdzXHelE0z6uvBlYGJxPApuWQiD6xbFwLBzO5SyKUBAgMmIAEhWCBtJtLrpagWe8sj5hlm+oaBCdgE72G929RfGuEq80jHwCJYIMbMNFfVh+8KdEAOixumW8kyaI2CF6M1TauFRc5Cd1xo',
+        clientDataJSON:
+          'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTWpobU1EVTBNemcxTnpNNU16SXlaRGxsWmpReU9HWXdOamxsTmpJek5qUTJZbUV4TmpVNVlURTVaamcwWlRGaU4yRm1NR001WW1KaU1UZGtPV016T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
       },
       type: 'public-key'
     }
@@ -105,11 +105,11 @@ describe('Inbound POST /consents', (): void => {
 
         // wait a bit for the auth-service to process the request
         // takes a bit since attestation takes a bit of time
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // check that the auth-service has sent a POST /participants/{Type}/{ID} to the ALS (TTK)
         const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
-        const postParticipantsTypeIdToALS = requestsHistory.filter(req => {
+        const postParticipantsTypeIdToALS = requestsHistory.filter((req) => {
           return req.method === 'post' && req.path === '/participants/CONSENT/76059a0a-684f-4002-a880-b01159afe119'
         })
         expect(postParticipantsTypeIdToALS.length).toEqual(1)
@@ -139,16 +139,20 @@ describe('Inbound POST /consents', (): void => {
         }
         const putScenarioUri = 'http://localhost:4004/participants/CONSENT/76059a0a-684f-4002-a880-b01159afe119'
 
-        const responseToPutParticipantsTypeId = await axios.put(putScenarioUri, putParticipantsTypeIdFromALS, axiosConfig)
+        const responseToPutParticipantsTypeId = await axios.put(
+          putScenarioUri,
+          putParticipantsTypeIdFromALS,
+          axiosConfig
+        )
         expect(responseToPutParticipantsTypeId.status).toEqual(200)
 
         // wait a bit for the auth-service to process the request
         // takes a bit since attestation takes a bit of time
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // check that the auth-service has sent a PUT /consents/{ID} to the DFSP (TTK)
         const requestsHistory: MLTestingToolkitRequest[] = (await axios.get(ttkRequestsHistoryUri, axiosConfig)).data
-        const putConsentsIdToDFSP = requestsHistory.filter(req => {
+        const putConsentsIdToDFSP = requestsHistory.filter((req) => {
           return req.method === 'put' && req.path === '/consents/76059a0a-684f-4002-a880-b01159afe119'
         })
         expect(putConsentsIdToDFSP.length).toEqual(1)

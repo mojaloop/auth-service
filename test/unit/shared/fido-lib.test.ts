@@ -25,7 +25,13 @@
  --------------
  ******/
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import { AssertionResult, AttestationResult, ExpectedAssertionResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-lib'
+import {
+  AssertionResult,
+  AttestationResult,
+  ExpectedAssertionResult,
+  ExpectedAttestationResult,
+  Fido2Lib
+} from 'fido2-lib'
 import str2ab from 'string-to-arraybuffer'
 import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '~/domain/buffer'
@@ -175,7 +181,7 @@ import btoa from 'btoa'
 */
 import atob from 'atob'
 
-function ab2str (buf: ArrayBuffer) {
+function ab2str(buf: ArrayBuffer) {
   let str = ''
   new Uint8Array(buf).forEach((ch) => {
     str += String.fromCharCode(ch)
@@ -197,8 +203,10 @@ const consentsPostRequestAUTHPayload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       id: 'N_L4HWcqQH0uDSGl6nwYtKfWsuWY_0f1_CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q',
       rawId: 'N/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q==',
       response: {
-        attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAMewwET/ekF0fFwBKHEiKr6bIyEuJb3GlS1QT/oJKBLcAiAPukDS55G7pKV358QrL4t0IuBbsGtru+iiR51OdhlsAWN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAN/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9aUBAgMmIAEhWCCaDbxvbxlV6hLykMmKAzqYVLctaUtm6XIY8yUkDW7d5CJYIDykWJ0Sw3P0pxecZuZSSj93m1Q1M+W7mMtZE5SnkjF4',
-        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiWVdKaVltWXlOR0psWlRNek5qUmhNR0ZoWTJOak0yTXdOemhqWTJGaE1USTVOekExTVRBNU1EbGxNV0ppTVRZMk5XTXpZVEpqWVRsbVkyWTVOV1E0T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
+        attestationObject:
+          'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAMewwET/ekF0fFwBKHEiKr6bIyEuJb3GlS1QT/oJKBLcAiAPukDS55G7pKV358QrL4t0IuBbsGtru+iiR51OdhlsAWN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAN/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9aUBAgMmIAEhWCCaDbxvbxlV6hLykMmKAzqYVLctaUtm6XIY8yUkDW7d5CJYIDykWJ0Sw3P0pxecZuZSSj93m1Q1M+W7mMtZE5SnkjF4',
+        clientDataJSON:
+          'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiWVdKaVltWXlOR0psWlRNek5qUmhNR0ZoWTJOak0yTXdOemhqWTJGaE1USTVOekExTVRBNU1EbGxNV0ppTVRZMk5XTXpZVEpqWVRsbVkyWTVOV1E0T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
       },
       type: 'public-key'
     }
@@ -226,7 +234,8 @@ const verificationRequest: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequ
     rawId: 'N/L4HWcqQH0uDSGl6nwYtKfWsuWY/0f1/CbLwCoQchLgiCB866aXc7F08T69oQ6c10grLMaeVhXag4d8OdwA9Q==',
     response: {
       authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACw==',
-      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiZFc1cGJYQnNaVzFsYm5SbFpERXlNdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImNyb3NzT3JpZ2luIjpmYWxzZX0=',
+      clientDataJSON:
+        'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiZFc1cGJYQnNaVzFsYm5SbFpERXlNdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImNyb3NzT3JpZ2luIjpmYWxzZX0=',
       signature: 'MEUCIFAVNRa300tOD1qdki66w8wHXRDuXtJxUKyLlyHdDp25AiEA4uYOUdzTI7vNtAv76CcZKzIvw9O8melbxfTBIVa16B0='
     },
     type: 'public-key'
@@ -259,7 +268,9 @@ describe('fido-lib', (): void => {
       // Act
 
       // We have to do a bit of fussing around here - convert from a base64 encoded string to a JSON string...
-      const decodedJsonString = decodeBase64String(consentsPostRequestAUTH.payload.credential.fidoPayload!.response.clientDataJSON)
+      const decodedJsonString = decodeBase64String(
+        consentsPostRequestAUTH.payload.credential.fidoPayload!.response.clientDataJSON
+      )
       const parsedClientData = JSON.parse(decodedJsonString)
 
       // Assert
@@ -286,10 +297,7 @@ describe('fido-lib', (): void => {
       }
       // eslint-disable-next-line no-useless-catch
       try {
-        const result = await f2l.attestationResult(
-          clientAttestationResponse,
-          attestationExpectations
-        )
+        const result = await f2l.attestationResult(clientAttestationResponse, attestationExpectations)
         console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
 
         const credIdAB = result.authnrData.get('credId')
@@ -319,7 +327,9 @@ ZulyGPMlJA1u3eQ8pFidEsNz9KcXnGbmUko/d5tUNTPlu5jLWROUp5IxeA==
         prevCounter: 0,
         userHandle: null
       }
-      const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.fidoSignedPayload.response.authenticatorData)
+      const authenticatorData = FidoUtils.stringToArrayBuffer(
+        verificationRequest.fidoSignedPayload.response.authenticatorData
+      )
       console.log('authenticatorData.length', authenticatorData.byteLength)
       const assertionResult: AssertionResult = {
         // fido2lib requires an ArrayBuffer, not just any old Buffer!
@@ -354,8 +364,10 @@ ZulyGPMlJA1u3eQ8pFidEsNz9KcXnGbmUko/d5tUNTPlu5jLWROUp5IxeA==
         id: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6_U00NfDa_Wxyti0uVwPzragBrzw',
         rawId: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==',
         response: {
-          attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIgC8d5Y5Tfs4nNybpZT97j5ZVuTNFu1AWWwqpR8em4LJcCIQDDzayDA6lzgrbB3jDMM2/NI70TtZux2T3lIWMK8IGxr2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMTLX5kZhaUsGGUVJvPd6efRKHVvWMqnrf4u23AvlzDddEEAAAAAAAAAAAAAAAAAAAAAAAAAAABAiehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrz6UBAgMmIAEhWCDAVRRKKW4qj4bWykF+8L4FI49plPv1i7yD+ef0ATwwlyJYIO7sxbQE+9J1LAY6lLMMh+jiSU0/Rf9j0MXiqC2/b7Cq',
-          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHBzOi8vc2FuZGJveC5tb2phbG9vcC5pbyIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=='
+          attestationObject:
+            'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIgC8d5Y5Tfs4nNybpZT97j5ZVuTNFu1AWWwqpR8em4LJcCIQDDzayDA6lzgrbB3jDMM2/NI70TtZux2T3lIWMK8IGxr2N4NWOBWQLBMIICvTCCAaWgAwIBAgIECwXNUzANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowbjELMAkGA1UEBhMCU0UxEjAQBgNVBAoMCVl1YmljbyBBQjEiMCAGA1UECwwZQXV0aGVudGljYXRvciBBdHRlc3RhdGlvbjEnMCUGA1UEAwweWXViaWNvIFUyRiBFRSBTZXJpYWwgMTg0OTI5NjE5MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIRpvsbWJJcsKwRhffCrjqLSIEBR5sR7/9VXgfZdRvSsXaiUt7lns44WZIFuz6ii/j9f8fadcBUJyrkhY5ZH8WqNsMGowIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjEwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQFJogIY72QTOWuIH41bfx9TAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA+/qPfPSrgclePfgTQ3VpLaNsBr+hjLhi04LhzQxiRGWwYS+vB1TOiPXeLsQQIwbmqQU51doVbCTaXGLNIr1zvbLAwhnLWH7i9m4ahCqaCzowtTvCQ7VBUGP5T1M4eYnoo83IDCVjQj/pZG8QYgOGOigztGoWAf5CWcUF6C0UyFbONwUcqJEl2QLToa/7E8VRjm4W46IAUljYkODVZASv8h3wLROx9p5TSBlSymtwdulxQe/DKbfNSvM3edA0up+EIJKLOOU+QTR2ZQV46fEW1/ih6m8vcaY6L3NW0eYpc7TXeijUJAgoUtya/vzmnRAecuY9bncoJt8PrvL2ir2kDaGF1dGhEYXRhWMTLX5kZhaUsGGUVJvPd6efRKHVvWMqnrf4u23AvlzDddEEAAAAAAAAAAAAAAAAAAAAAAAAAAABAiehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrz6UBAgMmIAEhWCDAVRRKKW4qj4bWykF+8L4FI49plPv1i7yD+ef0ATwwlyJYIO7sxbQE+9J1LAY6lLMMh+jiSU0/Rf9j0MXiqC2/b7Cq',
+          clientDataJSON:
+            'eyJjaGFsbGVuZ2UiOiJORGxqT1RjeFltWXdZVFExWm1Ka1pUa3pOek13Tm1SalpUazNZVFl6TURjM01HSmtZamMzWW1FellqWm1OemcwWkRJMU5HWTJPR0UwTm1Sa05EQmhNZyIsImNsaWVudEV4dGVuc2lvbnMiOnt9LCJoYXNoQWxnb3JpdGhtIjoiU0hBLTI1NiIsIm9yaWdpbiI6Imh0dHBzOi8vc2FuZGJveC5tb2phbG9vcC5pbyIsInR5cGUiOiJ3ZWJhdXRobi5jcmVhdGUifQ=='
         },
         type: 'public-key'
       }
@@ -372,7 +384,8 @@ ZulyGPMlJA1u3eQ8pFidEsNz9KcXnGbmUko/d5tUNTPlu5jLWROUp5IxeA==
         rawId: 'iehRZTiFY7bRoBOKSAZDOgLkHKmLA3O90Aq1WZBlqjQjDmemdSjlFUvB2g6/U00NfDa/Wxyti0uVwPzragBrzw==',
         response: {
           authenticatorData: 'y1+ZGYWlLBhlFSbz3enn0Sh1b1jKp63+LttwL5cw3XQBAAAAAg==',
-          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJUMWRhYUZscVFYaGFWR04zV1dwVk5GbDZVbWhOZWxKdFQxZFJkMDU2UW0xYWFteHNXa1JHYVU1cVl6Sk9WMVpvVFhwQk1VNUhTVEZOVjFwcVdsUm9hbHBIUm1wT1JFVjVXa1JDYlU1dFRUSk5WMFpvVFZFIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9zYW5kYm94Lm1vamFsb29wLmlvIiwidHlwZSI6IndlYmF1dGhuLmdldCJ9',
+          clientDataJSON:
+            'eyJjaGFsbGVuZ2UiOiJUMWRhYUZscVFYaGFWR04zV1dwVk5GbDZVbWhOZWxKdFQxZFJkMDU2UW0xYWFteHNXa1JHYVU1cVl6Sk9WMVpvVFhwQk1VNUhTVEZOVjFwcVdsUm9hbHBIUm1wT1JFVjVXa1JDYlU1dFRUSk5WMFpvVFZFIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9zYW5kYm94Lm1vamFsb29wLmlvIiwidHlwZSI6IndlYmF1dGhuLmdldCJ9',
           signature: 'MEYCIQC3Igm0I4uFjJydEYIcDPn6Wq39fY0QyQdZu2pEwaaMoAIhAKb2B6XaVXKO+ORsUgP5Riw22rkvIhS6eb3KadyFfaos'
         },
         type: 'public-key'
@@ -398,10 +411,7 @@ ZulyGPMlJA1u3eQ8pFidEsNz9KcXnGbmUko/d5tUNTPlu5jLWROUp5IxeA==
       }
 
       // Act
-      const result = await f2l.attestationResult(
-        clientAttestationResponse,
-        attestationExpectations
-      )
+      const result = await f2l.attestationResult(clientAttestationResponse, attestationExpectations)
       console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
 
       // Assert
@@ -453,8 +463,10 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
         id: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
         rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA=='),
         response: {
-          attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
-          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
+          attestationObject:
+            'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
+          clientDataJSON:
+            'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
         },
         // // front end demo
         // id: atob('vwWPva1iiTJIk_c7n9a49spEtJZBqrn4SECerci0b-Ue-6Jv9_DZo3rNX02Lq5PU4N5kGlkEPAkIoZ3499AzWQ'),
@@ -479,7 +491,8 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
         rawId: atob('Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA'),
         response: {
           authenticatorData: 'xGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7cBAAAABA==',
-          clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=',
+          clientDataJSON:
+            'eyJjaGFsbGVuZ2UiOiJxdUZZTkNUV3dmTTZWREttcnhUVDEyemJTT2hXSnlXZ2x6S29xRjBQak1VIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uZ2V0In0=',
           signature: 'MEUCIQCb/nwG57/d8lWXfbBA7HtgIf8wM6A1XJ+LgZlEnClJBAIgKV8FAGkE9B8UXenmp589uTPgkDCJh5jiNMs+Tx2GQG8='
         },
         type: 'public-key'
@@ -508,10 +521,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFUUSiluKo+G1spBfvC+BSOPaZT7
       }
 
       // Act
-      const result = await f2l.attestationResult(
-        clientAttestationResponse,
-        attestationExpectations
-      )
+      const result = await f2l.attestationResult(clientAttestationResponse, attestationExpectations)
       console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))
 
       // Assert
@@ -533,7 +543,9 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiSfmVgOyesk2SDOaPhShPbnahfrl
         prevCounter: 0,
         userHandle: null
       }
-      const authenticatorData = FidoUtils.stringToArrayBuffer(verificationRequest.fidoSignedPayload.response.authenticatorData)
+      const authenticatorData = FidoUtils.stringToArrayBuffer(
+        verificationRequest.fidoSignedPayload.response.authenticatorData
+      )
       console.log('authenticatorData.length', authenticatorData.byteLength)
       const assertionResult: AssertionResult = {
         // fido2lib requires an ArrayBuffer, not just any old Buffer!

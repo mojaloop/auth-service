@@ -35,27 +35,21 @@ optionally within square brackets <email>.
    to retrieve data used to update the response bodies.
 */
 
-import {
-  v1_1 as fspiopAPI,
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+import { v1_1 as fspiopAPI, thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { KVS } from '~/shared/kvs'
-import {
-  Message,
-  NotificationCallback,
-  PubSub
-} from '~/shared/pub-sub'
+import { Message, NotificationCallback, PubSub } from '~/shared/pub-sub'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
-import {
-  RegisterConsentModel,
-  create
-} from '~/domain/stateMachine/registerConsent.model'
+import { RegisterConsentModel, create } from '~/domain/stateMachine/registerConsent.model'
 import { RedisConnectionConfig } from '~/shared/redis-connection'
 import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
-import { RegisterConsentModelConfig, RegisterConsentData, RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
+import {
+  RegisterConsentModelConfig,
+  RegisterConsentData,
+  RegisterConsentPhase
+} from '~/domain/stateMachine/registerConsent.interface'
 import config from '~/shared/config'
 import axios from 'axios'
 import shouldNotBeExecuted from '../../shouldNotBeExecuted'
@@ -86,9 +80,7 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   consentId: '76059a0a-684f-4002-a880-b01159afe119',
   scopes: [
     {
-      actions: [
-        'ACCOUNTS_TRANSFER'
-      ],
+      actions: ['ACCOUNTS_TRANSFER'],
       address: 'dfspa.username.5678'
     }
   ],
@@ -99,8 +91,10 @@ const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       id: 'yprZ16jRaI9OCbGp_afYJs2715cPe3SJPXAcuISI7PTU9i7_4hEBKd0mSqz-uYPm85DVL4VvaH9aRVuejwpVow',
       rawId: 'yprZ16jRaI9OCbGp/afYJs2715cPe3SJPXAcuISI7PTU9i7/4hEBKd0mSqz+uYPm85DVL4VvaH9aRVuejwpVow==',
       response: {
-        attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAIGw4y8XlGL098qLZ9BeAFopKc3hVUMj8LtcOD0J0p88AiB1nNKNpShrJwTwtQwTdhg9xBXQgsfFMy0up2OXdJEK4GN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAyprZ16jRaI9OCbGp/afYJs2715cPe3SJPXAcuISI7PTU9i7/4hEBKd0mSqz+uYPm85DVL4VvaH9aRVuejwpVo6UBAgMmIAEhWCC41o0jwHjxFDhbuQG7Rv101+U0DWWjU76bCV0zmLUuACJYILo9Dt2SDXLftbCfhUML1r4Wm3L6oDGETEJEaszyY9Vt',
-        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTWpobU1EVTBNemcxTnpNNU16SXlaRGxsWmpReU9HWXdOamxsTmpJek5qUTJZbUV4TmpVNVlURTVaamcwWlRGaU4yRm1NR001WW1KaU1UZGtPV016T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
+        attestationObject:
+          'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEcwRQIhAIGw4y8XlGL098qLZ9BeAFopKc3hVUMj8LtcOD0J0p88AiB1nNKNpShrJwTwtQwTdhg9xBXQgsfFMy0up2OXdJEK4GN4NWOBWQLcMIIC2DCCAcCgAwIBAgIJALA5KjdfOKLrMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9vdCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0MDAwMDAwWjBuMQswCQYDVQQGEwJTRTESMBAGA1UECgwJWXViaWNvIEFCMSIwIAYDVQQLDBlBdXRoZW50aWNhdG9yIEF0dGVzdGF0aW9uMScwJQYDVQQDDB5ZdWJpY28gVTJGIEVFIFNlcmlhbCA5MjU1MTQxNjAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATBUzDbxw7VyKPri/NcB5oy/eVWBkwkXfQNU1gLc+nLR5EP7xcV93l5aHDpq1wXjOuZA5jBJoWpb6nbhhWOI9nCo4GBMH8wEwYKKwYBBAGCxAoNAQQFBAMFBAMwIgYJKwYBBAGCxAoCBBUxLjMuNi4xLjQuMS40MTQ4Mi4xLjcwEwYLKwYBBAGC5RwCAQEEBAMCBDAwIQYLKwYBBAGC5RwBAQQEEgQQL8BXn4ETR+qxFrtajbkgKjAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQABaTFk5Jj2iKM7SQ+rIS9YLEj4xxyJlJ9fGOoidDllzj4z7UpdC2JQ+ucOBPY81JO6hJTwcEkIdwoQPRZO5ZAScmBDNuIizJxqiQct7vF4J6SJHwEexWpF4XztIHtWEmd8JbnlvMw1lMwx+UuD06l11LxkfhK/LN613S91FABcf/ViH6rqmSpHu+II26jWeYEltk0Wf7jvOtRFKkROFBl2WPc2Dg1eRRYOKSJMqQhQn2Bud83uPFxT1H5yT29MKtjy6DJyzP4/UQjhLmuy9NDt+tlbtvfrXbrIitVMRE6oRert0juvM8PPMb6tvVYQfiM2IaYLKChn5yFCywvR9Xa+aGF1dGhEYXRhWMRJlg3liA6MaHQ0Fw9kdmBbj+SuuaKGMseZXPO6gx2XY0EAAAAAAAAAAAAAAAAAAAAAAAAAAABAyprZ16jRaI9OCbGp/afYJs2715cPe3SJPXAcuISI7PTU9i7/4hEBKd0mSqz+uYPm85DVL4VvaH9aRVuejwpVo6UBAgMmIAEhWCC41o0jwHjxFDhbuQG7Rv101+U0DWWjU76bCV0zmLUuACJYILo9Dt2SDXLftbCfhUML1r4Wm3L6oDGETEJEaszyY9Vt',
+        clientDataJSON:
+          'eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiTWpobU1EVTBNemcxTnpNNU16SXlaRGxsWmpReU9HWXdOamxsTmpJek5qUTJZbUV4TmpVNVlURTVaamcwWlRGaU4yRm1NR001WW1KaU1UZGtPV016T1EiLCJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJjcm9zc09yaWdpbiI6ZmFsc2V9'
       },
       type: 'public-key'
     }
@@ -148,19 +142,15 @@ describe('RegisterConsentModel', () => {
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       alsEndpoint: config.SHARED.ALS_ENDPOINT!,
       requestProcessingTimeoutSeconds: 3,
-      demoSkipValidationForCredentialIds: [
-        '123456789'
-      ]
+      demoSkipValidationForCredentialIds: ['123456789']
     }
-    mocked(modelConfig.subscriber.subscribe).mockImplementationOnce(
-      (_channel: string, cb: NotificationCallback) => {
-        handler = cb
-        return ++subId
-      }
-    )
+    mocked(modelConfig.subscriber.subscribe).mockImplementationOnce((_channel: string, cb: NotificationCallback) => {
+      handler = cb
+      return ++subId
+    })
 
-    mocked(publisher.publish).mockImplementationOnce(
-      async (channel: string, message: Message) => handler(channel, message, subId)
+    mocked(publisher.publish).mockImplementationOnce(async (channel: string, message: Message) =>
+      handler(channel, message, subId)
     )
     await modelConfig.kvs.connect()
     await modelConfig.subscriber.connect()
@@ -172,7 +162,7 @@ describe('RegisterConsentModel', () => {
     await modelConfig.subscriber.disconnect()
   })
 
-  function checkRegisterConsentModelLayout (RegisterConsentModel: RegisterConsentModel, optData?: RegisterConsentData) {
+  function checkRegisterConsentModelLayout(RegisterConsentModel: RegisterConsentModel, optData?: RegisterConsentData) {
     expect(RegisterConsentModel).toBeTruthy()
     expect(RegisterConsentModel.data).toBeDefined()
     expect(RegisterConsentModel.fsm.state).toEqual(optData?.currentState || 'start')
@@ -220,14 +210,14 @@ describe('RegisterConsentModel', () => {
   describe('notificationChannel', () => {
     it('should generate proper channel name', () => {
       const id = '123'
-      expect(RegisterConsentModel.notificationChannel(
-        RegisterConsentPhase.waitOnParticipantResponseFromALS,
-        id)).toEqual('RegisterConsent_waitOnParticipantResponseFromALS_123')
+      expect(
+        RegisterConsentModel.notificationChannel(RegisterConsentPhase.waitOnParticipantResponseFromALS, id)
+      ).toEqual('RegisterConsent_waitOnParticipantResponseFromALS_123')
     })
 
     it('input validation', () => {
-      expect(
-        () => RegisterConsentModel.notificationChannel(
+      expect(() =>
+        RegisterConsentModel.notificationChannel(
           RegisterConsentPhase.waitOnParticipantResponseFromALS,
           null as unknown as string
         )
@@ -285,9 +275,7 @@ describe('RegisterConsentModel', () => {
         scopes: [
           {
             address: 'dfspa.username.5678',
-            actions: [
-              'ACCOUNTS_TRANSFER'
-            ]
+            actions: ['ACCOUNTS_TRANSFER']
           }
         ],
         credential: {
@@ -297,8 +285,10 @@ describe('RegisterConsentModel', () => {
             id: 'Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA',
             rawId: 'Pdm3TpHQxvmYMdNKcY3R6i8PHRcZqtvSSFssJp0OQawchMOYBnpPQ7E97CPy_caTxPNYVJL-E7cT_HBm4sIuNA==',
             response: {
-              attestationObject: 'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
-              clientDataJSON: 'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
+              attestationObject:
+                'o2NmbXRoZmlkby11MmZnYXR0U3RtdKJjc2lnWEgwRgIhAOrrUscl/GRHvjoAtJE6KbgQxUSj3vwp3Ztmh9nQEvuSAiEAgDjZEL8PKFvgJnX7JCk260lOeeht5Ffe/kmA9At17a9jeDVjgVkCwTCCAr0wggGloAMCAQICBAsFzVMwDQYJKoZIhvcNAQELBQAwLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG4xCzAJBgNVBAYTAlNFMRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0ZXN0YXRpb24xJzAlBgNVBAMMHll1YmljbyBVMkYgRUUgU2VyaWFsIDE4NDkyOTYxOTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCEab7G1iSXLCsEYX3wq46i0iBAUebEe//VV4H2XUb0rF2olLe5Z7OOFmSBbs+oov4/X/H2nXAVCcq5IWOWR/FqjbDBqMCIGCSsGAQQBgsQKAgQVMS4zLjYuMS40LjEuNDE0ODIuMS4xMBMGCysGAQQBguUcAgEBBAQDAgQwMCEGCysGAQQBguUcAQEEBBIEEBSaICGO9kEzlriB+NW38fUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAPv6j3z0q4HJXj34E0N1aS2jbAa/oYy4YtOC4c0MYkRlsGEvrwdUzoj13i7EECMG5qkFOdXaFWwk2lxizSK9c72ywMIZy1h+4vZuGoQqmgs6MLU7wkO1QVBj+U9TOHmJ6KPNyAwlY0I/6WRvEGIDhjooM7RqFgH+QlnFBegtFMhWzjcFHKiRJdkC06Gv+xPFUY5uFuOiAFJY2JDg1WQEr/Id8C0TsfaeU0gZUsprcHbpcUHvwym3zUrzN3nQNLqfhCCSizjlPkE0dmUFeOnxFtf4oepvL3GmOi9zVtHmKXO013oo1CQIKFLcmv785p0QHnLmPW53KCbfD67y9oq9pA2hhdXRoRGF0YVjExGzvgq0bVGR3WR0Aiwh1nsPm0uy085R0v+ppaZJdA7dBAAAAAAAAAAAAAAAAAAAAAAAAAAAAQD3Zt06R0Mb5mDHTSnGN0eovDx0XGarb0khbLCadDkGsHITDmAZ6T0OxPewj8v3Gk8TzWFSS/hO3E/xwZuLCLjSlAQIDJiABIVggiSfmVgOyesk2SDOaPhShPbnahfrl3Vs0iQUW6QF4IHUiWCDi6beycQU49cvsW32MNlAqXxGJ7uaXY06NOKGq1HraxQ==',
+              clientDataJSON:
+                'eyJjaGFsbGVuZ2UiOiJBcEZqVmZSVFF3NV9OUjRZNXBvVHo4a3RkM2dhNGpJNUx5NjJfZzk3b0ZrIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cHM6Ly9kZW1vLnl1Ymljby5jb20iLCJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIn0='
             },
             type: 'public-key'
           }
@@ -322,10 +312,9 @@ describe('RegisterConsentModel', () => {
 
     it('verifyConsent() should transition start to errored state when unsuccessful', async () => {
       const error = new Error('the-exception')
-      jest.spyOn(challenge, 'deriveChallenge')
-        .mockImplementationOnce(() => {
-          throw error
-        })
+      jest.spyOn(challenge, 'deriveChallenge').mockImplementationOnce(() => {
+        throw error
+      })
       const model = await create(registerConsentData, modelConfig)
 
       try {
@@ -370,10 +359,9 @@ describe('RegisterConsentModel', () => {
         message: 'Generic Thirdparty account linking error',
         httpStatusCode: 500
       }
-      jest.spyOn(challenge, 'deriveChallenge')
-        .mockImplementationOnce(() => {
-          throw error
-        })
+      jest.spyOn(challenge, 'deriveChallenge').mockImplementationOnce(() => {
+        throw error
+      })
       const model = await create(registerConsentData, modelConfig)
 
       try {
@@ -439,7 +427,8 @@ describe('RegisterConsentModel', () => {
       currentState: 'consentVerified',
       participantDFSPId: 'dfspA',
       consentsPostRequestAUTH,
-      credentialPublicKey: '-----BEGIN PUBLIC KEY-----\n' +
+      credentialPublicKey:
+        '-----BEGIN PUBLIC KEY-----\n' +
         'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
         'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
         '-----END PUBLIC KEY-----\n',
@@ -460,9 +449,9 @@ describe('RegisterConsentModel', () => {
         consentsPostRequestAUTH.scopes,
         consentsPostRequestAUTH.credential,
         '-----BEGIN PUBLIC KEY-----\n' +
-        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
-        'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
-        '-----END PUBLIC KEY-----\n',
+          'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWM/klen0su2Yxc3Y/klsWjG32sOG\n' +
+          'U/sGIApTd7/d5FVks2ONQzS64dY16eCed6gp6uPm/R2F7nf9FBLGarg3lQ==\n' +
+          '-----END PUBLIC KEY-----\n',
         'MjhmMDU0Mzg1NzM5MzIyZDllZjQyOGYwNjllNjIzNjQ2YmExNjU5YTE5Zjg0ZTFiN2FmMGM5YmJiMTdkOWMzOQ==',
         4
       )
@@ -472,10 +461,9 @@ describe('RegisterConsentModel', () => {
 
     it('storeConsent() should transition consentVerified to errored state when unsuccessful', async () => {
       const error = new Error('the-exception')
-      jest.spyOn(consents, 'createAndStoreConsent')
-        .mockImplementationOnce(() => {
-          throw error
-        })
+      jest.spyOn(consents, 'createAndStoreConsent').mockImplementationOnce(() => {
+        throw error
+      })
       const model = await create(registerConsentData, modelConfig)
 
       try {
@@ -615,11 +603,9 @@ describe('RegisterConsentModel', () => {
 
     it('sendConsentCallbackToDFSP() should transition registeredAsAuthoritativeSource to errored state when unsuccessful', async () => {
       const error = new Error('the-exception')
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
+      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
+        throw error
+      })
 
       const model = await create(registerConsentData, modelConfig)
 
@@ -706,26 +692,28 @@ describe('RegisterConsentModel', () => {
 
     it('exceptions - sendConsentCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
+      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
+        throw error
+      })
       mockDeferredJobWithCallbackMessage('test1', participantsTypeIDPutResponse)
-      const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
+      const model = await create(
+        { ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' },
+        modelConfig
+      )
 
       expect(async () => await model.run()).rejects.toEqual(error)
     })
 
     it('exceptions - Error - sendConsentCallbackToDFSP stage', async () => {
       const error = new Error('the-exception')
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
+      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
+        throw error
+      })
       mockDeferredJobWithCallbackMessage('test2', participantsTypeIDPutResponse)
-      const model = await create({ ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' }, modelConfig)
+      const model = await create(
+        { ...registerConsentData, currentState: 'registeredAsAuthoritativeSource' },
+        modelConfig
+      )
       expect(model.run()).rejects.toEqual(error)
     })
 
@@ -733,11 +721,9 @@ describe('RegisterConsentModel', () => {
       const error = { message: 'error from axios.post', consentReqState: 'broken' }
       mockDeferredJobWithCallbackMessage('test3', participantsTypeIDPutResponse)
 
-      mocked(axios.post).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
+      mocked(axios.post).mockImplementationOnce(() => {
+        throw error
+      })
       const model = await create({ ...registerConsentData, currentState: 'consentStoredAndVerified' }, modelConfig)
 
       expect(async () => await model.run()).rejects.toEqual(error)
@@ -747,11 +733,9 @@ describe('RegisterConsentModel', () => {
       const error = new Error('the-exception')
       mockDeferredJobWithCallbackMessage('test4', participantsTypeIDPutResponse)
 
-      mocked(axios.post).mockImplementationOnce(
-        () => {
-          throw error
-        }
-      )
+      mocked(axios.post).mockImplementationOnce(() => {
+        throw error
+      })
       const model = await create({ ...registerConsentData, currentState: 'consentStoredAndVerified' }, modelConfig)
       expect(model.run()).rejects.toEqual(error)
     })

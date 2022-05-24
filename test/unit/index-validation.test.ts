@@ -60,8 +60,8 @@ describe('api routes', (): void => {
   describe('Endpoint: /consents', (): void => {
     it('schema validation - missing fields', async (): Promise<void> => {
       const mockPostConsents = jest.spyOn(Handlers, 'PostConsents')
-      mockPostConsents.mockImplementationOnce(
-        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(202))
+      mockPostConsents.mockImplementationOnce((_context: unknown, _req: Request, h: ResponseToolkit) =>
+        Promise.resolve(h.response().code(202))
       )
 
       const payloadMissingId = Object.assign({}, MockConsentData.payload)
@@ -77,7 +77,7 @@ describe('api routes', (): void => {
       const expected = {
         errorInformation: {
           errorCode: '3102',
-          errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentId\''
+          errorDescription: "Missing mandatory element - /requestBody must have required property 'consentId'"
         }
       }
 
@@ -91,9 +91,11 @@ describe('api routes', (): void => {
     // TODO: /participants/{Type}/{ID} payload doesn't seem to have any required fields
     // double check api definition
     it('schema validation - missing fields', async (): Promise<void> => {
-      jest.spyOn(Handlers, 'ParticipantsByTypeAndID3').mockImplementationOnce(
-        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
-      )
+      jest
+        .spyOn(Handlers, 'ParticipantsByTypeAndID3')
+        .mockImplementationOnce((_context: unknown, _req: Request, h: ResponseToolkit) =>
+          Promise.resolve(h.response().code(200))
+        )
 
       const payloadMissingId = Object.assign({}, MockParticipantsTypeIDResponse.payload)
       delete (payloadMissingId as Record<string, unknown>).fspId
@@ -107,7 +109,7 @@ describe('api routes', (): void => {
       const expected = {
         errorInformation: {
           errorCode: '3102',
-          errorDescription: 'Missing mandatory element - /requestBody must have required property \'fspId\''
+          errorDescription: "Missing mandatory element - /requestBody must have required property 'fspId'"
         }
       }
 
@@ -119,9 +121,11 @@ describe('api routes', (): void => {
 
   describe('Endpoint: /participants/{Type}/{ID}/error', (): void => {
     it('schema validation - missing fields', async (): Promise<void> => {
-      jest.spyOn(Handlers, 'ParticipantsErrorByTypeAndID').mockImplementationOnce(
-        (_context: unknown, _req: Request, h: ResponseToolkit) => Promise.resolve(h.response().code(200))
-      )
+      jest
+        .spyOn(Handlers, 'ParticipantsErrorByTypeAndID')
+        .mockImplementationOnce((_context: unknown, _req: Request, h: ResponseToolkit) =>
+          Promise.resolve(h.response().code(200))
+        )
 
       const payloadMissingInfo = Object.assign({}, MockParticipantsTypeIDErrorResponse.payload)
       delete (payloadMissingInfo as Record<string, unknown>).errorInformation
@@ -136,7 +140,7 @@ describe('api routes', (): void => {
       const expected = {
         errorInformation: {
           errorCode: '3102',
-          errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+          errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
         }
       }
 

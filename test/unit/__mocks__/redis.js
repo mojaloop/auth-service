@@ -29,7 +29,7 @@ const redisMock = require('redis-mock')
 
 // redis-mock currently ignores callback argument, the following class fix this
 class RedisClient extends redisMock.RedisClient {
-  _executeCallback (...args) {
+  _executeCallback(...args) {
     if (typeof args[args.length - 1] === 'function') {
       const callback = args[args.length - 1]
       const argList = Array.prototype.slice.call(args, 0, args.length - 1)
@@ -37,17 +37,17 @@ class RedisClient extends redisMock.RedisClient {
     }
   }
 
-  subscribe (...args) {
+  subscribe(...args) {
     super.subscribe(...args)
     this._executeCallback(...args)
   }
 
-  publish (...args) {
+  publish(...args) {
     super.publish(...args)
     this._executeCallback(...args)
   }
 
-  set (...args) {
+  set(...args) {
     super.set(...args)
     this._executeCallback(...args)
   }

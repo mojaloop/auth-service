@@ -52,14 +52,14 @@ describe('KVS: Key Value Storage', () => {
     const kvs = new KVS(config)
     await kvs.connect()
 
-    const getSpy = jest.spyOn(kvs.client, 'get').mockImplementationOnce(
-      (_key: string, cb?: Callback<string>): boolean => {
+    const getSpy = jest
+      .spyOn(kvs.client, 'get')
+      .mockImplementationOnce((_key: string, cb?: Callback<string>): boolean => {
         if (cb) {
           cb(null, JSON.stringify({ am: 'the-value' }))
         }
         return true
-      }
-    )
+      })
     const result: Record<string, string> | undefined = await kvs.get('the-key')
     expect(result).toEqual({ am: 'the-value' })
     expect(getSpy).toBeCalledTimes(1)
@@ -105,20 +105,24 @@ describe('KVS: Key Value Storage', () => {
     const kvs = new KVS(config)
     await kvs.connect()
 
-    const setSpy = jest.spyOn(kvs.client, 'set').mockImplementationOnce((
-      _key: string,
-      _signedPayload: string,
-      flag: string,
-      _mode: string,
-      _duration: number,
-      _cb?: Callback<'OK' | undefined>
-    ): boolean => {
-      if (flag) {
-        const ccb = flag as unknown as Callback<'OK' | undefined>
-        ccb(null, 'OK')
-      }
-      return true
-    })
+    const setSpy = jest
+      .spyOn(kvs.client, 'set')
+      .mockImplementationOnce(
+        (
+          _key: string,
+          _signedPayload: string,
+          flag: string,
+          _mode: string,
+          _duration: number,
+          _cb?: Callback<'OK' | undefined>
+        ): boolean => {
+          if (flag) {
+            const ccb = flag as unknown as Callback<'OK' | undefined>
+            ccb(null, 'OK')
+          }
+          return true
+        }
+      )
     const result = await kvs.set('the-key', { am: 'the-value' })
     expect(result).toEqual('OK')
     expect(setSpy).toBeCalledTimes(1)
@@ -151,13 +155,13 @@ describe('KVS: Key Value Storage', () => {
     await kvs.connect()
     const key = 'the-key'
 
-    const delSpy = jest.spyOn(kvs.client, 'del').mockImplementationOnce((
-      ...args: (string | Callback<number>)[]
-    ): boolean => {
-      const cb = args[1] as Callback<number>
-      cb(null, 1)
-      return false
-    })
+    const delSpy = jest
+      .spyOn(kvs.client, 'del')
+      .mockImplementationOnce((...args: (string | Callback<number>)[]): boolean => {
+        const cb = args[1] as Callback<number>
+        cb(null, 1)
+        return false
+      })
 
     const result = await kvs.del(key)
     expect(result).toBeTruthy()
@@ -191,12 +195,13 @@ describe('KVS: Key Value Storage', () => {
     const kvs = new KVS(config)
     await kvs.connect()
 
-    const spyExists = jest.spyOn(kvs.client, 'exists').mockImplementationOnce((...args: (string | Callback<number>)[]
-    ): boolean => {
-      const cb = args[1] as Callback<number>
-      cb(new Error('mocked-error'), 0)
-      return false
-    })
+    const spyExists = jest
+      .spyOn(kvs.client, 'exists')
+      .mockImplementationOnce((...args: (string | Callback<number>)[]): boolean => {
+        const cb = args[1] as Callback<number>
+        cb(new Error('mocked-error'), 0)
+        return false
+      })
     try {
       await kvs.exists(key)
       shouldNotBeExecuted()

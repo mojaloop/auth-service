@@ -78,73 +78,83 @@ describe('testing that constraints are enforced in the consent table', (): void 
   it('should properly enforce the primary key constraint in the Consent table', async (): Promise<void> => {
     expect(db).toBeDefined()
     /* Tests for duplication */
-    await expect(db.from('Consent').insert({
-      id: '123',
-      initiatorId: 'PISPA',
-      participantId: 'DFSPA',
-      status: 'ISSUED',
-      credentialType: null,
-      credentialPayload: null,
-      credentialChallenge: null,
-      revokedAt: null,
-      attestationObject: null,
-      clientDataJSON: null
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '123',
+        initiatorId: 'PISPA',
+        participantId: 'DFSPA',
+        status: 'ISSUED',
+        credentialType: null,
+        credentialPayload: null,
+        credentialChallenge: null,
+        revokedAt: null,
+        attestationObject: null,
+        clientDataJSON: null
+      })
+    ).rejects.toThrow()
     /* Tests for non-nullity */
-    await expect(db.from('Consent').insert({
-      id: null,
-      initiatorId: 'PISPA',
-      participantId: 'DFSPA',
-      status: 'ISSUED',
-      credentialType: null,
-      credentialPayload: null,
-      credentialChallenge: null,
-      revokedAt: null,
-      attestationObject: null,
-      clientDataJSON: null
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: null,
+        initiatorId: 'PISPA',
+        participantId: 'DFSPA',
+        status: 'ISSUED',
+        credentialType: null,
+        credentialPayload: null,
+        credentialChallenge: null,
+        revokedAt: null,
+        attestationObject: null,
+        clientDataJSON: null
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for initiatorId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({
-      id: '126',
-      initiatorId: null,
-      participantId: 'DFSPA',
-      credentialType: null,
-      credentialPayload: null,
-      credentialChallenge: null,
-      attestationObject: null,
-      clientDataJSON: null
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '126',
+        initiatorId: null,
+        participantId: 'DFSPA',
+        credentialType: null,
+        credentialPayload: null,
+        credentialChallenge: null,
+        attestationObject: null,
+        clientDataJSON: null
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for status', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({
-      id: '126',
-      initiatorId: 'PISPA',
-      participantId: 'DFSPA',
-      status: null,
-      credentialType: null,
-      credentialPayload: null,
-      credentialChallenge: null,
-      revokedAt: null,
-      attestationObject: null,
-      clientDataJSON: null
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '126',
+        initiatorId: 'PISPA',
+        participantId: 'DFSPA',
+        status: null,
+        credentialType: null,
+        credentialPayload: null,
+        credentialChallenge: null,
+        revokedAt: null,
+        attestationObject: null,
+        clientDataJSON: null
+      })
+    ).rejects.toThrow()
   })
   it('should properly enforce the non-nullable constraint for participantId', async (): Promise<void> => {
     expect(db).toBeDefined()
-    await expect(db.from('Consent').insert({
-      id: '126',
-      initiatorId: 'PISPA',
-      status: 'ISSUED',
-      participantId: null,
-      credentialType: null,
-      credentialPayload: null,
-      credentialChallenge: null,
-      revokedAt: null,
-      attestationObject: null,
-      clientDataJSON: null
-    })).rejects.toThrow()
+    await expect(
+      db.from('Consent').insert({
+        id: '126',
+        initiatorId: 'PISPA',
+        status: 'ISSUED',
+        participantId: null,
+        credentialType: null,
+        credentialPayload: null,
+        credentialChallenge: null,
+        revokedAt: null,
+        attestationObject: null,
+        clientDataJSON: null
+      })
+    ).rejects.toThrow()
   })
 })

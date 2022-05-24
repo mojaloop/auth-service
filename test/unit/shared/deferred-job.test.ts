@@ -28,9 +28,7 @@
 import deferredJob, { JobInitiator, JobListener, PositiveTimeoutRequired, TimeoutError } from '~/shared/deferred-job'
 import mockLogger from '../mockLogger'
 import { Message, NotificationCallback, PubSub } from '~/shared/pub-sub'
-import {
-  RedisConnectionConfig
-} from '~/shared/redis-connection'
+import { RedisConnectionConfig } from '~/shared/redis-connection'
 import { v4 as uuidv4 } from 'uuid'
 jest.mock('redis')
 
@@ -55,20 +53,19 @@ describe('deferredJob', () => {
       pubSub = new PubSub(pubSubConfig)
       await pubSub.connect()
       let notifyCb: NotificationCallback
-      spySubscribe = jest.spyOn(pubSub, 'subscribe')
+      spySubscribe = jest
+        .spyOn(pubSub, 'subscribe')
         .mockImplementation((_channel: string, cb: NotificationCallback) => {
           // store callback to be used in `publish`
           notifyCb = cb
           return 1 // hardcoded sid
         })
-      spyUnsubscribe = jest.spyOn(pubSub, 'unsubscribe')
-        .mockImplementation(() => true) // true returned when unsubscribe done
-      spyPublish = jest.spyOn(pubSub, 'publish')
-        .mockImplementationOnce((channel: string, message: Message) => {
-          // invoke stored callback to simulate
-          setTimeout(() => notifyCb(channel, message, 1), publishTimeoutInMs)
-          return Promise.resolve()
-        })
+      spyUnsubscribe = jest.spyOn(pubSub, 'unsubscribe').mockImplementation(() => true) // true returned when unsubscribe done
+      spyPublish = jest.spyOn(pubSub, 'publish').mockImplementationOnce((channel: string, message: Message) => {
+        // invoke stored callback to simulate
+        setTimeout(() => notifyCb(channel, message, 1), publishTimeoutInMs)
+        return Promise.resolve()
+      })
     })
 
     afterEach(async () => {
@@ -104,9 +101,7 @@ describe('deferredJob', () => {
       const jobInitiator = jest.fn(() => Promise.resolve())
       const jobListener = jest.fn(() => Promise.resolve())
 
-      const dw = deferredJob(pubSub, channel)
-        .init(jobInitiator)
-        .job(jobListener)
+      const dw = deferredJob(pubSub, channel).init(jobInitiator).job(jobListener)
 
       // wait phase - set timeout before publish will happen
       dw.wait(publishTimeoutInMs - 10).catch((err) => {
@@ -120,12 +115,12 @@ describe('deferredJob', () => {
     })
 
     test('exception from jobInitiator', (done) => {
-      const jobInitiator = jest.fn(() => { throw new Error('job-initiator throws') })
+      const jobInitiator = jest.fn(() => {
+        throw new Error('job-initiator throws')
+      })
       const jobListener = jest.fn(() => Promise.resolve())
 
-      const dw = deferredJob(pubSub, channel)
-        .init(jobInitiator)
-        .job(jobListener)
+      const dw = deferredJob(pubSub, channel).init(jobInitiator).job(jobListener)
 
       // wait phase - set timeout before publish will happen
       dw.wait(publishTimeoutInMs + 10).catch((err) => {
@@ -139,11 +134,11 @@ describe('deferredJob', () => {
 
     test('exception from jobListener', (done) => {
       const jobInitiator = jest.fn(() => Promise.resolve())
-      const jobListener = jest.fn(() => { throw new Error('job-listener throws') })
+      const jobListener = jest.fn(() => {
+        throw new Error('job-listener throws')
+      })
 
-      const dw = deferredJob(pubSub, channel)
-        .init(jobInitiator)
-        .job(jobListener)
+      const dw = deferredJob(pubSub, channel).init(jobInitiator).job(jobListener)
 
       // wait phase - set timeout before publish will happen
       // testing default argument for wait
@@ -161,20 +156,17 @@ describe('deferredJob', () => {
       const jobInitiator = jest.fn(() => Promise.resolve())
       const jobListener = jest.fn(() => Promise.resolve())
 
-      expect(() => deferredJob(pubSub, channel)
-        .init(null as unknown as JobInitiator)
+      expect(() => deferredJob(pubSub, channel).init(null as unknown as JobInitiator)).toThrowError()
+
+      expect(() =>
+        deferredJob(pubSub, channel)
+          .init(jobInitiator)
+          .job(null as unknown as JobListener)
       ).toThrowError()
 
-      expect(() => deferredJob(pubSub, channel)
-        .init(jobInitiator)
-        .job(null as unknown as JobListener)
-      ).toThrowError()
-
-      expect(deferredJob(pubSub, channel)
-        .init(jobInitiator)
-        .job(jobListener)
-        .wait(-1)
-      ).rejects.toBeInstanceOf(PositiveTimeoutRequired)
+      expect(deferredJob(pubSub, channel).init(jobInitiator).job(jobListener).wait(-1)).rejects.toBeInstanceOf(
+        PositiveTimeoutRequired
+      )
     })
   })
 })

@@ -53,7 +53,7 @@ describe('RedisConnection', () => {
     expect(result).toEqual(true)
   })
 
-  it('should throw error if can\'t connect', async (): Promise<void> => {
+  it("should throw error if can't connect", async (): Promise<void> => {
     const invalidPort = { ...config, timeout: 200 }
     invalidPort.port = 8080
     const invalidRC = new RedisConnection(invalidPort)
