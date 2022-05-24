@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [13.0.1](https://github.com/mojaloop/auth-service/compare/v13.0.0...v13.0.1) (2022-05-24)
+
+
+### Maintenance
+
+* update ci, packages and linting ([#116](https://github.com/mojaloop/auth-service/issues/116)) ([b45d6f9](https://github.com/mojaloop/auth-service/commit/b45d6f9b53f8eb417b1b7a2746c21c79f38e077c))
+
 ## [13.0.0](https://github.com/mojaloop/auth-service/compare/v12.0.2...v13.0.0) (2022-05-23)
 
 
