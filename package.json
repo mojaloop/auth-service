@@ -122,7 +122,7 @@
     "jest-cucumber": "^3.0.1",
     "jest-junit": "13.2.0",
     "jest-mock-process": "^1.4.1",
-    "lint-staged": "^12.4.1",
+    "lint-staged": "^12.4.2",
     "multi-file-swagger": "^2.3.0",
     "nodemon": "^2.0.16",
     "npm-audit-resolver": "^3.0.0-7",

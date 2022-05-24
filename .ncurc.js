@@ -16,7 +16,7 @@ module.exports = {
     'commander',
     // Upgrading sqlite past 5.0.2 seems to introduce sh: 1: node-pre-gyp: not found.
     // Investigation needed.
-    'sqllite',
+    'sqlite3',
     // Upgrading fido2-lib past @2.8.3 seems to break tests with error message
     // `error parsing ASN.1`. Investigation needed.
     'fido2-lib'
