@@ -13,6 +13,12 @@ module.exports = {
     'ts-jest',
     '@types/jest',
     // Upgrading past commander@7 introduces a lot of breaking changes.
-    'commander'
+    'commander',
+    // Upgrading sqlite past 5.0.2 seems to introduce sh: 1: node-pre-gyp: not found.
+    // Investigation needed.
+    'sqllite',
+    // Upgrading fido2-lib past @2.8.3 seems to break tests with error message
+    // `error parsing ASN.1`. Investigation needed.
+    'fido2-lib'
   ]
 }
