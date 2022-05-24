@@ -33,8 +33,8 @@ import inspect from '~/shared/inspect'
 import {
   RegisterConsentData,
   RegisterConsentStateMachine,
-  RegisterConsentModelConfig
-  , RegisterConsentPhase
+  RegisterConsentModelConfig,
+  RegisterConsentPhase
 } from './registerConsent.interface'
 
 import deferredJob from '~/shared/deferred-job'
@@ -43,29 +43,26 @@ import { reformatError } from '~/shared/api-error'
 import axios from 'axios'
 import { deriveChallenge } from '~/domain/challenge'
 import { decodeBase64String } from '../buffer'
-import {
-  v1_1 as fspiopAPI,
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+import { v1_1 as fspiopAPI, thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { AttestationResult, ExpectedAttestationResult, Fido2Lib } from 'fido2-lib'
 import str2ab from 'string-to-arraybuffer'
 import { createAndStoreConsent } from '~/domain/consents'
 
 import atob from 'atob'
-export class RegisterConsentModel
-  extends PersistentModel<RegisterConsentStateMachine, RegisterConsentData> {
+export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMachine, RegisterConsentData> {
   protected config: RegisterConsentModelConfig
 
-  constructor (
-    data: RegisterConsentData,
-    config: RegisterConsentModelConfig
-  ) {
+  constructor(data: RegisterConsentData, config: RegisterConsentModelConfig) {
     const spec: StateMachineConfig = {
       init: 'start',
       transitions: [
         { name: 'verifyConsent', from: 'start', to: 'consentVerified' },
         { name: 'storeConsent', from: 'consentVerified', to: 'consentStoredAndVerified' },
-        { name: 'registerAuthoritativeSourceWithALS', from: 'consentStoredAndVerified', to: 'registeredAsAuthoritativeSource' },
+        {
+          name: 'registerAuthoritativeSourceWithALS',
+          from: 'consentStoredAndVerified',
+          to: 'registeredAsAuthoritativeSource'
+        },
         { name: 'sendConsentCallbackToDFSP', from: 'registeredAsAuthoritativeSource', to: 'callbackSent' }
       ],
       methods: {
@@ -81,35 +78,35 @@ export class RegisterConsentModel
   }
 
   // getters
-  get subscriber (): PubSub {
+  get subscriber(): PubSub {
     return this.config.subscriber
   }
 
-  get mojaloopRequests (): MojaloopRequests {
+  get mojaloopRequests(): MojaloopRequests {
     return this.config.mojaloopRequests
   }
 
-  get thirdpartyRequests (): ThirdpartyRequests {
+  get thirdpartyRequests(): ThirdpartyRequests {
     return this.config.thirdpartyRequests
   }
 
   // utility function to check if an error after a transition which
   // pub/subs for a response that can return a mojaloop error
-  async checkModelDataForErrorInformation (): Promise<void> {
+  async checkModelDataForErrorInformation(): Promise<void> {
     if (this.data.errorInformation) {
       await this.fsm.error(this.data.errorInformation)
     }
   }
 
-  static notificationChannel (phase: RegisterConsentPhase, id: string): string {
+  static notificationChannel(phase: RegisterConsentPhase, id: string): string {
     if (!id) {
-      throw new Error('RegisterConsentModel.notificationChannel: \'id\' parameter is required')
+      throw new Error("RegisterConsentModel.notificationChannel: 'id' parameter is required")
     }
     // channel name
     return `RegisterConsent_${phase}_${id}`
   }
 
-  static async triggerWorkflow (
+  static async triggerWorkflow(
     phase: RegisterConsentPhase,
     id: string,
     pubSub: PubSub,
@@ -119,9 +116,9 @@ export class RegisterConsentModel
     return deferredJob(pubSub, channel).trigger(message)
   }
 
-  async onVerifyConsent (): Promise<void> {
+  async onVerifyConsent(): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
-    const payload = (consentsPostRequestAUTH.credential.fidoPayload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation)
+    const payload = consentsPostRequestAUTH.credential.fidoPayload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation
 
     try {
       const challenge = deriveChallenge(consentsPostRequestAUTH)
@@ -153,8 +150,10 @@ export class RegisterConsentModel
 
       // if consentsPostRequestAUTH.credential.payload.id is in config.get('SKIP_VALIDATION_FOR_CREDENTIAL_IDS')
       // then skip this step, and make up a random public key
-      if (this.config.demoSkipValidationForCredentialIds.length > 0 &&
-        this.config.demoSkipValidationForCredentialIds.indexOf(payload.id) > -1) {
+      if (
+        this.config.demoSkipValidationForCredentialIds.length > 0 &&
+        this.config.demoSkipValidationForCredentialIds.indexOf(payload.id) > -1
+      ) {
         this.logger.warn(`found demo credentialId: ${payload.id}. Skipping FIDO attestation validation step.`)
 
         this.data.credentialCounter = 0
@@ -162,10 +161,7 @@ export class RegisterConsentModel
         return
       }
 
-      const attestationResult = await f2l.attestationResult(
-        clientAttestationResponse,
-        attestationExpectations
-      )
+      const attestationResult = await f2l.attestationResult(clientAttestationResponse, attestationExpectations)
 
       this.data.credentialPublicKey = attestationResult!.authnrData.get('credentialPublicKeyPem')
       this.data.credentialCounter = attestationResult!.authnrData.get('counter')
@@ -196,7 +192,7 @@ export class RegisterConsentModel
     }
   }
 
-  async onStoreConsent (): Promise<void> {
+  async onStoreConsent(): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId, credentialPublicKey, credentialCounter } = this.data
 
     try {
@@ -236,7 +232,7 @@ export class RegisterConsentModel
     }
   }
 
-  async onRegisterAuthoritativeSourceWithALS (): Promise<void> {
+  async onRegisterAuthoritativeSourceWithALS(): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
 
     // catch any unplanned errors and notify DFSP
@@ -256,20 +252,18 @@ export class RegisterConsentModel
               Accept: 'application/vnd.interoperability.participants+json;version=1.1',
               'Content-Type': 'application/vnd.interoperability.participants+json;version=1.1',
               'FSPIOP-Source': this.config.authServiceParticipantFSPId,
-              Date: (new Date()).toUTCString()
+              Date: new Date().toUTCString()
             }
           }
           const payload: fspiopAPI.Schemas.ParticipantsTypeIDSubIDPostRequest = {
             fspId: this.config.authServiceParticipantFSPId
           }
           await axios.post(alsParticipantURI, payload, axiosConfig)
-          this.logger.push({ channel })
-            .debug('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
+          this.logger.push({ channel }).debug('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
         })
         .job(async (message: Message): Promise<void> => {
           try {
-            type PutResponse =
-              fspiopAPI.Schemas.ParticipantsTypeIDPutResponse
+            type PutResponse = fspiopAPI.Schemas.ParticipantsTypeIDPutResponse
             type PutResponseOrError = PutResponse & fspiopAPI.Schemas.ErrorInformationObject
             const putResponse = message as unknown as PutResponseOrError
 
@@ -278,10 +272,7 @@ export class RegisterConsentModel
               // that the consent verification has failed
               // todo: more detailed error handling depending on ALS error response
               // todo: need to create auth-service specific errors
-              const mojaloopError = reformatError(
-                Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR,
-                this.logger
-              )
+              const mojaloopError = reformatError(Errors.MojaloopApiErrorCodes.TP_ACCOUNT_LINKING_ERROR, this.logger)
 
               await this.thirdpartyRequests.putConsentsError(
                 consentsPostRequestAUTH.consentId,
@@ -289,7 +280,8 @@ export class RegisterConsentModel
                 participantDFSPId
               )
               // store the error so we can transition to an errored state
-              this.data.errorInformation = mojaloopError.errorInformation as unknown as fspiopAPI.Schemas.ErrorInformation
+              this.data.errorInformation =
+                mojaloopError.errorInformation as unknown as fspiopAPI.Schemas.ErrorInformation
             }
           } catch (error) {
             return Promise.reject(error)
@@ -307,7 +299,10 @@ export class RegisterConsentModel
       mojaloopError.errorInformation.extensionList = {
         extension: [
           { key: 'authServiceParticipant', value: this.config.authServiceParticipantFSPId },
-          { key: 'transitionFailure', value: 'RegisterConsentModel: consentStoredAndVerified -> registeredAsAuthoritativeSource' },
+          {
+            key: 'transitionFailure',
+            value: 'RegisterConsentModel: consentStoredAndVerified -> registeredAsAuthoritativeSource'
+          },
           { key: 'rawError', value: JSON.stringify(error) }
         ]
       }
@@ -323,14 +318,14 @@ export class RegisterConsentModel
     }
   }
 
-  async onSendConsentCallbackToDFSP (): Promise<void> {
+  async onSendConsentCallbackToDFSP(): Promise<void> {
     const { consentsPostRequestAUTH, participantDFSPId } = this.data
 
     try {
       // copy credential and update status
       const verifiedCredential: tpAPI.Schemas.VerifiedCredential = {
         credentialType: 'FIDO',
-        fidoPayload: (consentsPostRequestAUTH.credential.fidoPayload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation),
+        fidoPayload: consentsPostRequestAUTH.credential.fidoPayload as tpAPI.Schemas.FIDOPublicKeyCredentialAttestation,
         status: 'VERIFIED'
       }
 
@@ -370,7 +365,7 @@ export class RegisterConsentModel
     }
   }
 
-  async run (): Promise<void> {
+  async run(): Promise<void> {
     const data = this.data
     try {
       // run transitions based on incoming state
@@ -417,7 +412,7 @@ export class RegisterConsentModel
   }
 }
 
-export async function create (
+export async function create(
   data: RegisterConsentData,
   config: RegisterConsentModelConfig
 ): Promise<RegisterConsentModel> {

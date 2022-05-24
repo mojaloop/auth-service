@@ -31,10 +31,7 @@
 // Testing will be covered in #354
 
 import Config from '~/shared/config'
-import {
-  ThirdpartyRequests,
-  BaseRequestConfigType
-} from '@mojaloop/sdk-standard-components'
+import { ThirdpartyRequests, BaseRequestConfigType } from '@mojaloop/sdk-standard-components'
 import { logger } from '~/shared/logger'
 
 // Config file to instantiate ThirdPartyRequest object
@@ -55,6 +52,4 @@ const configRequest: BaseRequestConfigType = {
 
 const thirdPartyRequest: ThirdpartyRequests = new ThirdpartyRequests(configRequest)
 
-export {
-  thirdPartyRequest
-}
+export { thirdPartyRequest }

@@ -32,8 +32,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 
 import { logger } from '~/shared/logger'
 import inspect from '~/shared/inspect'
-import { RegisterConsentModel } from '~/domain/stateMachine/registerConsent.model'
-import { create } from '~/domain/stateMachine/registerConsent.model'
+import { RegisterConsentModel, create } from '~/domain/stateMachine/registerConsent.model'
 import { RegisterConsentModelConfig, RegisterConsentData } from '~/domain/stateMachine/registerConsent.interface'
 import { StateResponseToolkit } from '../plugins/state'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
@@ -42,10 +41,7 @@ import config from '~/shared/config'
 /** The HTTP request `POST /consents` is used to create a consent object.
  *  Called by `DFSP` to register a Consent object.
  */
-export async function post (
-  _context: unknown,
-  request: Request,
-  h: StateResponseToolkit): Promise<ResponseObject> {
+export async function post(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
   const consentId = payload.consentId
   const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]

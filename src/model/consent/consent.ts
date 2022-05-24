@@ -51,27 +51,27 @@ import { logger } from '~/shared/logger'
  * Interface for Consent resource type as modelled in DB
  */
 export interface ConsentModel {
-  id: string;
+  id: string
   // participant DFSP that requested a Consent resource be made
-  participantId: string;
+  participantId: string
   /*
-  * status of a Consent
-  * a consent resource will be marked ISSUED on creation.
-  * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
-  */
-  status: tpAPI.Schemas.ConsentStatusIssued | tpAPI.Schemas.ConsentStatusRevoked;
+   * status of a Consent
+   * a consent resource will be marked ISSUED on creation.
+   * When a consent is "deleted" we mark it REVOKED instead of dropping the row.
+   */
+  status: tpAPI.Schemas.ConsentStatusIssued | tpAPI.Schemas.ConsentStatusRevoked
   // credential type - currently trying to support FIDO/Generic credentials
-  credentialType: 'FIDO' | 'GENERIC';
+  credentialType: 'FIDO' | 'GENERIC'
   // assuming this is the public key of the pair
-  credentialPayload: string;
+  credentialPayload: string
   // This is the original challenge sent by the DFSP to the PISP that is derived from the scopes + consentId
-  credentialChallenge: string;
+  credentialChallenge: string
   // a counter that gets incremented every time the credential is used
-  credentialCounter: number;
+  credentialCounter: number
   // the original credential used to register the consent
-  originalCredential: string;
-  createdAt?: Date;
-  revokedAt?: Date;
+  originalCredential: string
+  createdAt?: Date
+  revokedAt?: Date
 }
 
 const tableName = 'Consent'
@@ -83,13 +83,13 @@ export class ConsentDB {
   // Knex instance
   private Db: Knex
 
-  public constructor (dbInstance: Knex) {
+  public constructor(dbInstance: Knex) {
     this.Db = dbInstance
   }
 
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
-  public async insert (consent: ConsentModel, trx?: Knex.Transaction): Promise<boolean> {
+  public async insert(consent: ConsentModel, trx?: Knex.Transaction): Promise<boolean> {
     logger.debug(`ConsentDB.insert - ${JSON.stringify(consent)}`)
     // optionally insert in transaction
     const action = this.Db<ConsentModel>(tableName).insert(consent)
@@ -102,13 +102,9 @@ export class ConsentDB {
   }
 
   // Retrieve Consent by ID (unique)
-  public async retrieve (id: string): Promise<ConsentModel> {
+  public async retrieve(id: string): Promise<ConsentModel> {
     // Returns array containing consents
-    const consents: ConsentModel[] = await this
-      .Db<ConsentModel>(tableName)
-      .select('*')
-      .where({ id: id })
-      .limit(1)
+    const consents: ConsentModel[] = await this.Db<ConsentModel>(tableName).select('*').where({ id: id }).limit(1)
 
     if (consents.length === 0) {
       throw new NotFoundError(tableName, id)
@@ -119,12 +115,9 @@ export class ConsentDB {
 
   // Delete Consent by ID
   // Deleting Consent automatically deletes associates scopes
-  public async delete (id: string): Promise<number> {
+  public async delete(id: string): Promise<number> {
     // Returns number of deleted rows
-    const deleteCount: number = await this
-      .Db<ConsentModel>(tableName)
-      .where({ id: id })
-      .del()
+    const deleteCount: number = await this.Db<ConsentModel>(tableName).where({ id: id }).del()
 
     if (deleteCount === 0) {
       throw new NotFoundError(tableName, id)
@@ -134,12 +127,8 @@ export class ConsentDB {
   }
 
   // Revoke Consent
-  public async revoke (id: string): Promise<number> {
-    const consents: ConsentModel[] = await this
-      .Db<ConsentModel>(tableName)
-      .select('*')
-      .where({ id })
-      .limit(1)
+  public async revoke(id: string): Promise<number> {
+    const consents: ConsentModel[] = await this.Db<ConsentModel>(tableName).select('*').where({ id }).limit(1)
 
     if (consents.length === 0) {
       throw new NotFoundError(tableName, id)
@@ -149,11 +138,9 @@ export class ConsentDB {
       throw new RevokedConsentModificationError(tableName, id)
     }
 
-    return await this.Db<ConsentModel>(tableName)
-      .where({ id })
-      .update({
-        status: 'REVOKED',
-        revokedAt: this.Db.fn.now()
-      })
+    return await this.Db<ConsentModel>(tableName).where({ id }).update({
+      status: 'REVOKED',
+      revokedAt: this.Db.fn.now()
+    })
   }
 }

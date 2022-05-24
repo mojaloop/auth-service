@@ -32,44 +32,44 @@ import Convict from 'convict'
 import path from 'path'
 
 export interface DbConnection {
-  host: string;
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-  timezone: string;
+  host: string
+  port: number
+  user: string
+  password: string
+  database: string
+  timezone: string
 }
 
 export interface DbPool {
-  min: number;
-  max: number;
-  acquireTimeoutMillis: number;
-  createTimeoutMillis: number;
-  destroyTimeoutMillis: number;
-  idleTimeoutMillis: number;
-  reapIntervalMillis: number;
-  createRetryIntervalMillis: number;
+  min: number
+  max: number
+  acquireTimeoutMillis: number
+  createTimeoutMillis: number
+  destroyTimeoutMillis: number
+  idleTimeoutMillis: number
+  reapIntervalMillis: number
+  createRetryIntervalMillis: number
 }
 
 export interface DatabaseConfig {
-  ENV: string;
-  client: string;
-  version?: string;
-  useNullAsDefault?: boolean;
-  connection: DbConnection | string;
-  pool: DbPool;
+  ENV: string
+  client: string
+  version?: string
+  useNullAsDefault?: boolean
+  connection: DbConnection | string
+  pool: DbPool
 
   migrations: {
-    directory: string;
-    tableName: string;
-    stub?: string;
-    loadExtensions: string[];
-  };
+    directory: string
+    tableName: string
+    stub?: string
+    loadExtensions: string[]
+  }
 
   seeds: {
-    directory: string;
-    loadExtensions: string[];
-  };
+    directory: string
+    loadExtensions: string[]
+  }
 }
 
 export const DbConnectionFormat = {
@@ -86,19 +86,19 @@ export const DbConnectionFormat = {
       // i.e. PG and MySQL use a DbConnection object to configure
       // Verify that all fields are filled AND they are the right format - presence + format check
       if (typeof connection.host !== 'string') {
-        throw new Error('Mandatory field: \'host\' is missing or is in the wrong format')
+        throw new Error("Mandatory field: 'host' is missing or is in the wrong format")
       }
 
       if (typeof connection.port !== 'number') {
-        throw new Error('Mandatory field: \'port\' is missing or is in the wrong format')
+        throw new Error("Mandatory field: 'port' is missing or is in the wrong format")
       }
 
       if (typeof connection.database !== 'string') {
-        throw new Error('Mandatory field: \'database\' is missing or is in the wrong format')
+        throw new Error("Mandatory field: 'database' is missing or is in the wrong format")
       }
 
       if (typeof connection.user !== 'string') {
-        throw new Error('Mandatory field: \'user\' is missing or is in the wrong format')
+        throw new Error("Mandatory field: 'user' is missing or is in the wrong format")
       }
 
       return true

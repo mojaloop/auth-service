@@ -21,7 +21,7 @@
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
- 
+
 import { Request, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { RegisterConsentPhase } from '~/domain/stateMachine/registerConsent.interface'
@@ -31,9 +31,9 @@ import { StateResponseToolkit } from '~/server/plugins/state'
 import { Message } from '~/shared/pub-sub'
 
 /**
-* Handles a inbound PUT /participants/{Type}/{ID}/error request
-*/
-async function put (_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
+ * Handles a inbound PUT /participants/{Type}/{ID}/error request
+ */
+async function put(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   // PUT /participants/{Type}/{ID}/error  is a response to POST /participants/{Type}/{ID}
   // when some went wrong with the ALS
   const consentId = request.params.ID

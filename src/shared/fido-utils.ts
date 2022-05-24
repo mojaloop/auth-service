@@ -4,7 +4,7 @@ export interface ClientData {
   origin: string
 }
 
-function parseClientDataBase64 (clientDataBase64: string): ClientData {
+function parseClientDataBase64(clientDataBase64: string): ClientData {
   const clientDataJSONString = Buffer.from(clientDataBase64, 'base64').toString()
   const clientDataObj = JSON.parse(clientDataJSONString) as unknown as ClientData
 
@@ -16,7 +16,7 @@ function parseClientDataBase64 (clientDataBase64: string): ClientData {
   return clientDataObj
 }
 
-function stringToArrayBuffer (input: string): ArrayBuffer {
+function stringToArrayBuffer(input: string): ArrayBuffer {
   // base64url to base64
   input = input.replace(/-/g, '+').replace(/_/g, '/')
   // base64 to Buffer

@@ -51,10 +51,7 @@ import { encodeBase64String } from './buffer'
  * Currently, the implementation focuses on RSA 2048 and ECDSA:secp256k1 keys.
  * Support for additional keys can be extended further.
  */
-export function verifySignature (
-  challenge: string,
-  signature: string,
-  publicKey: string | crypto.KeyObject): boolean {
+export function verifySignature(challenge: string, signature: string, publicKey: string | crypto.KeyObject): boolean {
   try {
     // Digest Algorithm
     const verifier: crypto.Verify = crypto.createVerify('SHA256')
@@ -68,7 +65,7 @@ export function verifySignature (
   }
 }
 
-export function deriveChallenge (consentsPostRequest: tpAPI.Schemas.ConsentsPostRequestAUTH): string {
+export function deriveChallenge(consentsPostRequest: tpAPI.Schemas.ConsentsPostRequestAUTH): string {
   const rawChallenge = {
     consentId: consentsPostRequest.consentId,
     scopes: consentsPostRequest.scopes

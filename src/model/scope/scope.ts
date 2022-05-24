@@ -32,13 +32,13 @@ import { Knex } from 'knex'
 import { NotFoundError } from '../errors'
 
 /*
-* Interface for Scope resource type
-*/
+ * Interface for Scope resource type
+ */
 export interface ScopeModel {
-  id?: number;
-  consentId: string;
-  action: string;
-  address: string;
+  id?: number
+  consentId: string
+  action: string
+  address: string
 }
 
 /*
@@ -48,12 +48,12 @@ export class ScopeDB {
   // Knex instance
   private Db: Knex
 
-  public constructor (dbInstance: Knex) {
+  public constructor(dbInstance: Knex) {
     this.Db = dbInstance
   }
 
   // Add a single Scope or an array of Scopes
-  public async insert (scopes: ScopeModel | ScopeModel[], trx?: Knex.Transaction): Promise<boolean> {
+  public async insert(scopes: ScopeModel | ScopeModel[], trx?: Knex.Transaction): Promise<boolean> {
     // To avoid inconsistencies between DBs, we define a standard
     // way to deal with empty arrays.
     // We just return true because an empty array was anyways
@@ -72,11 +72,8 @@ export class ScopeDB {
   }
 
   // Retrieve Scopes by Consent ID
-  public async getForConsentId (consentId: string): Promise<ScopeModel[]> {
-    const scopes: ScopeModel[] = await this
-      .Db<ScopeModel>('Scope')
-      .select('*')
-      .where({ consentId })
+  public async getForConsentId(consentId: string): Promise<ScopeModel[]> {
+    const scopes: ScopeModel[] = await this.Db<ScopeModel>('Scope').select('*').where({ consentId })
 
     // Not distinguishing between a Consent that exists
     // with 0 scopes and a Consent that does not exist

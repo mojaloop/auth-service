@@ -24,7 +24,6 @@
  --------------
  ******/
 
-
 // This is required so that once we compile to js
 // the js `require()` can resolve the '~' paths
 require('module-alias/register')

@@ -42,23 +42,23 @@ export { TimeoutError } from 'promise-timeout'
 // function responsible for initiate the flow which should result, somewhere in the future,
 // in publishing message to the queue
 // parameter to deferredJob(...).init(jobInitiator)
-export type JobInitiator = (channel: string, sid: number) => Promise<void>;
+export type JobInitiator = (channel: string, sid: number) => Promise<void>
 
 // function responsible for consuming the message
 // parameter to deferredJob(...).init().job(jobListener)
-export type JobListener = (message: Message) => Promise<void>;
+export type JobListener = (message: Message) => Promise<void>
 
 // minimal mvp validation for JobInitiator
 export class InitiatorRequired extends Error {
   public channel: string
 
-  constructor (channel: string) {
+  constructor(channel: string) {
     super(`'init' expects JobInitiator value for channel: '${channel}'`)
     this.channel = channel
   }
 
   // validation logic
-  static throwIfInvalid (channel: string, jobInitiator: JobInitiator): void {
+  static throwIfInvalid(channel: string, jobInitiator: JobInitiator): void {
     if (typeof jobInitiator !== 'function') {
       throw new InitiatorRequired(channel)
     }
@@ -69,13 +69,13 @@ export class InitiatorRequired extends Error {
 export class ListenerRequired extends Error {
   public channel: string
 
-  constructor (channel: string) {
+  constructor(channel: string) {
     super(`'job' expects JobListener value for channel: '${channel}'`)
     this.channel = channel
   }
 
   // validation logic
-  static throwIfInvalid (channel: string, jobListener: JobListener): void {
+  static throwIfInvalid(channel: string, jobListener: JobListener): void {
     if (typeof jobListener !== 'function') {
       throw new ListenerRequired(channel)
     }
@@ -86,13 +86,13 @@ export class ListenerRequired extends Error {
 export class PositiveTimeoutRequired extends Error {
   public channel: string
 
-  constructor (channel: string) {
+  constructor(channel: string) {
     super(`'wait' expects to be positive number for channel: '${channel}'`)
     this.channel = channel
   }
 
   // validation logic
-  static throwIfInvalid (channel: string, timeout: number): void {
+  static throwIfInvalid(channel: string, timeout: number): void {
     if (timeout <= 0) {
       throw new PositiveTimeoutRequired(channel)
     }
@@ -125,9 +125,8 @@ export interface DeferredInitOrTrigger {
 }
 
 // deferredJob
-export default function deferredJob (cache: PubSub, channel: string): DeferredInitOrTrigger {
+export default function deferredJob(cache: PubSub, channel: string): DeferredInitOrTrigger {
   return {
-
     // initialize the deferred job
     init: (jobInitiator: JobInitiator) => {
       // mvp validation for jobInitiator
@@ -187,11 +186,10 @@ export default function deferredJob (cache: PubSub, channel: string): DeferredIn
 
               // ensure the whole process will finish in specified timeout
               // throws error if timeout happens
-              return prTimeout(promise, timeout)
-                .catch(async (err) => {
-                  await unsubscribe()
-                  throw err
-                })
+              return prTimeout(promise, timeout).catch(async (err) => {
+                await unsubscribe()
+                throw err
+              })
             }
           }
         }
