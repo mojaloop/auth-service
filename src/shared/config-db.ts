@@ -28,16 +28,16 @@
  --------------
  ******/
 
-import Convict from 'convict'
 import path from 'path'
 
 export interface DbConnection {
-  host: string
-  port: number
-  user: string
-  password: string
-  database: string
-  timezone: string
+  filename?: string
+  host?: string
+  port?: number
+  user?: string
+  password?: string
+  database?: string
+  timezone?: string
 }
 
 export interface DbPool {
@@ -56,14 +56,7 @@ export interface DatabaseConfig {
   client: string
   version?: string
   useNullAsDefault?: boolean
-  connection: {
-    host: string
-    port: number
-    user: string
-    password: string
-    database: string
-    timezone: string
-  }
+  connection: DbConnection
   pool: DbPool
 
   migrations: {
@@ -108,40 +101,46 @@ export const DatabaseConfigScheme = {
     env: 'DB_USE_NULL_AS_DEFAULT'
   },
   connection: {
+    filename: {
+      doc: 'Database host',
+      format: '*',
+      default: null,
+      env: 'DB_CONNECTION_HOST'
+    },
     host: {
       doc: 'Database host',
-      format: String,
-      default: 'localhost',
+      format: '*',
+      default: null,
       env: 'DB_CONNECTION_HOST'
     },
     port: {
       doc: 'Database port',
-      format: Number,
-      default: 3306,
+      format: '*',
+      default: null,
       env: 'DB_CONNECTION_PORT'
     },
     user: {
       doc: 'Database user',
-      format: String,
-      default: 'auth-service',
+      format: '*',
+      default: null,
       env: 'DB_CONNECTION_USER'
     },
     password: {
       doc: 'Database password',
-      format: String,
-      default: 'password',
+      format: '*',
+      default: null,
       env: 'DB_CONNECTION_PASSWORD'
     },
     database: {
       doc: 'Database name',
-      format: String,
-      default: 'auth-service',
+      format: '*',
+      default: null,
       env: 'DB_CONNECTION_NAME'
     },
     timezone: {
       doc: 'Database timezone',
-      format: String,
-      default: 'UTC',
+      format: '*',
+      default: null,
       env: 'DB_CONNECTION_TIMEZONE'
     }
   },
