@@ -103,6 +103,7 @@ function getFileListContent(pathList: string): Buffer[] {
   return pathList.split(',').map((path): Buffer => getFileContent(path))
 }
 
+// TODO: Finish setting documentation, formats and env variables for config options.
 const ConvictConfig = Convict<ServiceConfig>({
   ENV: {
     doc: 'The environment that the auth-service is running in',
@@ -166,12 +167,14 @@ const ConvictConfig = Convict<ServiceConfig>({
     SHOW_HIDDEN: {
       doc: 'Show hidden properties',
       format: 'Boolean',
-      default: false
+      default: false,
+      env: 'INSPECT_SHOW_HIDDEN'
     },
     COLOR: {
       doc: 'Show colors in output',
       format: 'Boolean',
-      default: true
+      default: true,
+      env: 'INSPECT_COLOR'
     }
   },
   SHARED: {
@@ -207,7 +210,8 @@ const ConvictConfig = Convict<ServiceConfig>({
   DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS: {
     doc: 'For demo purposes only. Set a list of credentialIds you want to skip validation for.',
     format: 'string-array',
-    default: []
+    default: [],
+    env: 'DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS'
   }
 })
 
