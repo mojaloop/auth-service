@@ -37,7 +37,7 @@ export default async function create(config: ServiceConfig): Promise<Server> {
     port: config.PORT,
     routes: {
       validate: {
-        options: validateRoutes()
+        options: validateRoutes(),
         failAction: onValidateFail
       }
     }
