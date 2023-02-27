@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/auth-service",
-  "version": "13.1.0-snapshot.0",
+  "version": "13.1.0-snapshot.1",
   "description": "Shared Authorization Service for the Third Party Transaction Verification",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
