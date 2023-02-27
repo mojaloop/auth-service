@@ -102,10 +102,10 @@ export const DatabaseConfigScheme = {
   },
   connection: {
     filename: {
-      doc: 'Database host',
+      doc: 'Database filename',
       format: '*',
       default: null,
-      env: 'DB_CONNECTION_HOST'
+      env: 'DB_CONNECTION_FILENAME'
     },
     host: {
       doc: 'Database host',
