@@ -28,7 +28,6 @@
  ******/
 
 import { Db, consentDB, scopeDB, closeKnexConnection } from '~/model/db'
-import { mocked } from 'ts-jest/utils'
 
 jest.mock('knex', () => {
   return {
@@ -54,7 +53,7 @@ describe('db', () => {
   describe('closeKnexConnection', () => {
     it('should properly call destroy', async () => {
       await closeKnexConnection()
-      expect(mocked(Db.destroy)).toBeCalledTimes(1)
+      expect(jest.mocked(Db.destroy)).toBeCalledTimes(1)
     })
   })
 })

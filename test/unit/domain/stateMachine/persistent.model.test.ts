@@ -36,7 +36,6 @@ import {
   create,
   loadFromKVS
 } from '~/domain/stateMachine/persistent.model'
-import { mocked } from 'ts-jest/utils'
 import mockLogger from 'test/unit/mockLogger'
 import shouldNotBeExecuted from 'test/unit/shouldNotBeExecuted'
 import sortedArray from 'test/unit/sortedArray'
@@ -231,19 +230,19 @@ describe('PersistentModel', () => {
   describe('loadFromKVS', () => {
     it('should properly call `KVS.get`, get expected data in `context.data` and setup state of machine', async () => {
       const dataFromCache: TestData = { the: 'data from cache', currentState: 'end' }
-      mocked(modelConfig.kvs.get).mockImplementationOnce(async () => dataFromCache)
+      jest.mocked(modelConfig.kvs.get).mockImplementationOnce(async () => dataFromCache)
       const pm = await loadFromKVS<TestStateMachine, TestData>(modelConfig, smConfig)
       checkPSMLayout(pm, dataFromCache)
 
       // to get value from cache proper key should be used
-      expect(mocked(modelConfig.kvs.get)).toHaveBeenCalledWith(modelConfig.key)
+      expect(jest.mocked(modelConfig.kvs.get)).toHaveBeenCalledWith(modelConfig.key)
 
       // check what has been stored in `data`
       expect(pm.data).toEqual(dataFromCache)
     })
 
     it('should throw when received invalid data from `KVS.get`', async () => {
-      mocked(modelConfig.kvs.get).mockImplementationOnce(async () => null)
+      jest.mocked(modelConfig.kvs.get).mockImplementationOnce(async () => null)
       try {
         await loadFromKVS<TestStateMachine, TestData>(modelConfig, smConfig)
         shouldNotBeExecuted()
@@ -253,7 +252,7 @@ describe('PersistentModel', () => {
     })
 
     it('should propagate error received from `KVS.get`', async () => {
-      mocked(modelConfig.kvs.get).mockImplementationOnce(
+      jest.mocked(modelConfig.kvs.get).mockImplementationOnce(
         jest.fn(async () => {
           throw new Error('error from KVS.get')
         })
@@ -265,7 +264,7 @@ describe('PersistentModel', () => {
   })
   describe('saveToKVS', () => {
     it('should store using KVS.set', async () => {
-      mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
         throw new Error('error from KVS.set')
       })
 
@@ -274,10 +273,10 @@ describe('PersistentModel', () => {
 
       // transition `init` should encounter exception when saving `context.data`
       expect(() => pm.saveToKVS()).rejects.toEqual(new Error('error from KVS.set'))
-      expect(mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
+      expect(jest.mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
     })
     it('should propagate error from KVS.set', async () => {
-      mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
         throw new Error('error from KVS.set')
       })
 
@@ -286,7 +285,7 @@ describe('PersistentModel', () => {
 
       // transition `init` should encounter exception when saving `context.data`
       expect(() => pm.saveToKVS()).rejects.toEqual(new Error('error from KVS.set'))
-      expect(mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
+      expect(jest.mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
     })
   })
 })

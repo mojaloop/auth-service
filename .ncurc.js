@@ -8,10 +8,6 @@ module.exports = {
     // Upgrading past redis@3 to the next major version introduces a lot of breaking changes.
     'redis',
     '@types/redis',
-    // Upgrading past jest|ts-jest|@types/jest@26 introduces a lot of breaking changes to current tests.
-    'jest',
-    'ts-jest',
-    '@types/jest',
     // Upgrading past commander@7 introduces a lot of breaking changes.
     'commander',
     // Upgrading sqlite past 5.0.2 seems to introduce sh: 1: node-pre-gyp: not found.
