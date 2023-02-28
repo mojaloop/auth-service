@@ -105,43 +105,50 @@ export const DatabaseConfigScheme = {
       doc: 'Database filename',
       format: String,
       default: null,
-      env: 'DB_CONNECTION_FILENAME'
+      env: 'DB_CONNECTION_FILENAME',
+      nullable: true
     },
     host: {
       doc: 'Database host',
       format: String,
       default: null,
-      env: 'DB_CONNECTION_HOST'
+      env: 'DB_CONNECTION_HOST',
+      nullable: true
     },
     port: {
       doc: 'Database port',
       format: Number,
       default: null,
-      env: 'DB_CONNECTION_PORT'
+      env: 'DB_CONNECTION_PORT',
+      nullable: true
     },
     user: {
       doc: 'Database user',
       format: String,
       default: null,
-      env: 'DB_CONNECTION_USER'
+      env: 'DB_CONNECTION_USER',
+      nullable: true
     },
     password: {
       doc: 'Database password',
       format: String,
       default: null,
-      env: 'DB_CONNECTION_PASSWORD'
+      env: 'DB_CONNECTION_PASSWORD',
+      nullable: true
     },
     database: {
       doc: 'Database name',
       format: String,
       default: null,
-      env: 'DB_CONNECTION_NAME'
+      env: 'DB_CONNECTION_NAME',
+      nullable: true
     },
     timezone: {
       doc: 'Database timezone',
       format: String,
       default: null,
-      env: 'DB_CONNECTION_TIMEZONE'
+      env: 'DB_CONNECTION_TIMEZONE',
+      nullable: true
     }
   },
   pool: {
