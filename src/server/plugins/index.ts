@@ -26,7 +26,7 @@
 import Inert from '@hapi/inert'
 import Vision from '@hapi/vision'
 import Blip from 'blipp'
-import { Server, ServerRoute, Util as HapiUtil, RequestQuery } from '@hapi/hapi'
+import { Server, ServerRoute, Utils as HapiUtil, RequestQuery } from '@hapi/hapi'
 import { Readable as StreamReadable } from 'stream'
 import ErrorHandling from '@mojaloop/central-services-error-handling'
 import { Util } from '@mojaloop/central-services-shared'

@@ -40,7 +40,9 @@
   },
   "DATABASE": {
     "client": "sqlite3",
-    "connection": ":memory:",
+    "connection": {
+      "filename": ":memory:"
+    },
     "useNullAsDefault": true,
     "migrations": {
       "tableName": "auth-service",

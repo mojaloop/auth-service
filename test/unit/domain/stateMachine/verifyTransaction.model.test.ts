@@ -40,7 +40,6 @@ import { Message, NotificationCallback, PubSub } from '~/shared/pub-sub'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 
 import { RedisConnectionConfig } from '~/shared/redis-connection'
-import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
@@ -163,14 +162,16 @@ describe('VerifyTransactionModel', () => {
       authServiceParticipantFSPId: config.PARTICIPANT_ID,
       requestProcessingTimeoutSeconds: 3
     }
-    mocked(modelConfig.subscriber.subscribe).mockImplementationOnce((_channel: string, cb: NotificationCallback) => {
-      handler = cb
-      return ++subId
-    })
+    jest
+      .mocked(modelConfig.subscriber.subscribe)
+      .mockImplementationOnce((_channel: string, cb: NotificationCallback) => {
+        handler = cb
+        return ++subId
+      })
 
-    mocked(publisher.publish).mockImplementationOnce(async (channel: string, message: Message) =>
-      handler(channel, message, subId)
-    )
+    jest
+      .mocked(publisher.publish)
+      .mockImplementationOnce(async (channel: string, message: Message) => handler(channel, message, subId))
     await modelConfig.kvs.connect()
     await modelConfig.subscriber.connect()
   })
@@ -411,7 +412,7 @@ describe('VerifyTransactionModel', () => {
       const model = await create(sendCallbackData, modelConfig)
       modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - mocked function
+        // @ts-ignore - jest.mocked function
         .mockRejectedValueOnce(new Error('Test Error'))
 
       // Act
@@ -467,7 +468,7 @@ describe('VerifyTransactionModel', () => {
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')
       expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).toHaveBeenCalledTimes(1)
-      mocked(modelConfig.logger.info).mockReset()
+      jest.mocked(modelConfig.logger.info).mockReset()
     })
 
     it('errored', async () => {
@@ -475,7 +476,7 @@ describe('VerifyTransactionModel', () => {
 
       const result = await model.run()
 
-      expect(mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })
@@ -485,14 +486,14 @@ describe('VerifyTransactionModel', () => {
 
       const result = await model.run()
 
-      expect(mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })
 
     it('exceptions - sendCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      mocked(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).mockImplementationOnce(() => {
         throw error
       })
       const model = await create({ ...registerConsentData, currentState: 'transactionVerified' }, modelConfig)
@@ -502,7 +503,7 @@ describe('VerifyTransactionModel', () => {
 
     it('exceptions - Error - sendCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      mocked(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerifications).mockImplementationOnce(() => {
         throw error
       })
       const model = await create({ ...registerConsentData, currentState: 'transactionVerified' }, modelConfig)

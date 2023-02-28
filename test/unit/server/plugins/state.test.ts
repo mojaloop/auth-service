@@ -29,7 +29,6 @@
 import { KVS } from '~/shared/kvs'
 import { PubSub } from '~/shared/pub-sub'
 import { StatePlugin } from '~/server/plugins/state'
-import { mocked } from 'ts-jest/utils'
 import { Server } from '@hapi/hapi'
 import { mockProcessExit } from 'jest-mock-process'
 
@@ -53,8 +52,8 @@ describe('StatePlugin', () => {
   })
 
   it('happy flow: should properly register', async () => {
-    mocked(KVS.prototype.connect).mockImplementationOnce(() => Promise.resolve())
-    mocked(PubSub.prototype.connect).mockImplementation(() => Promise.resolve())
+    jest.mocked(KVS.prototype.connect).mockImplementationOnce(() => Promise.resolve())
+    jest.mocked(PubSub.prototype.connect).mockImplementation(() => Promise.resolve())
 
     await StatePlugin.register(ServerMock as unknown as Server)
 
@@ -80,8 +79,8 @@ describe('StatePlugin', () => {
 
   it('exceptions: should properly register', async () => {
     // eslint-disable-next-line prefer-promise-reject-errors
-    mocked(KVS.prototype.connect).mockImplementationOnce(() => Promise.reject('can not connect'))
-    mocked(PubSub.prototype.connect).mockImplementation(() => Promise.resolve())
+    jest.mocked(KVS.prototype.connect).mockImplementationOnce(() => Promise.reject('can not connect'))
+    jest.mocked(PubSub.prototype.connect).mockImplementation(() => Promise.resolve())
 
     const mockExit = mockProcessExit()
     await StatePlugin.register(ServerMock as unknown as Server)

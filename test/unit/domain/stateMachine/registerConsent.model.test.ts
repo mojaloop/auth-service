@@ -41,7 +41,6 @@ import { Message, NotificationCallback, PubSub } from '~/shared/pub-sub'
 import { ThirdpartyRequests, MojaloopRequests } from '@mojaloop/sdk-standard-components'
 import { RegisterConsentModel, create } from '~/domain/stateMachine/registerConsent.model'
 import { RedisConnectionConfig } from '~/shared/redis-connection'
-import { mocked } from 'ts-jest/utils'
 
 import mockLogger from 'test/unit/mockLogger'
 import sortedArray from 'test/unit/sortedArray'
@@ -144,14 +143,16 @@ describe('RegisterConsentModel', () => {
       requestProcessingTimeoutSeconds: 3,
       demoSkipValidationForCredentialIds: ['123456789']
     }
-    mocked(modelConfig.subscriber.subscribe).mockImplementationOnce((_channel: string, cb: NotificationCallback) => {
-      handler = cb
-      return ++subId
-    })
+    jest
+      .mocked(modelConfig.subscriber.subscribe)
+      .mockImplementationOnce((_channel: string, cb: NotificationCallback) => {
+        handler = cb
+        return ++subId
+      })
 
-    mocked(publisher.publish).mockImplementationOnce(async (channel: string, message: Message) =>
-      handler(channel, message, subId)
-    )
+    jest
+      .mocked(publisher.publish)
+      .mockImplementationOnce(async (channel: string, message: Message) => handler(channel, message, subId))
     await modelConfig.kvs.connect()
     await modelConfig.subscriber.connect()
   })
@@ -603,7 +604,7 @@ describe('RegisterConsentModel', () => {
 
     it('sendConsentCallbackToDFSP() should transition registeredAsAuthoritativeSource to errored state when unsuccessful', async () => {
       const error = new Error('the-exception')
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
         throw error
       })
 
@@ -667,7 +668,7 @@ describe('RegisterConsentModel', () => {
       await model.run()
       // check that the fsm was able complete the workflow
       expect(model.data.currentState).toEqual('callbackSent')
-      mocked(modelConfig.logger.info).mockReset()
+      jest.mocked(modelConfig.logger.info).mockReset()
     })
 
     it('errored', async () => {
@@ -675,7 +676,7 @@ describe('RegisterConsentModel', () => {
 
       const result = await model.run()
 
-      expect(mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })
@@ -685,14 +686,14 @@ describe('RegisterConsentModel', () => {
 
       const result = await model.run()
 
-      expect(mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })
 
     it('exceptions - sendConsentCallbackToDFSP stage', async () => {
       const error = { message: 'error from modelConfig.thirdpartyRequests.putConsents', consentReqState: 'broken' }
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
         throw error
       })
       mockDeferredJobWithCallbackMessage('test1', participantsTypeIDPutResponse)
@@ -706,7 +707,7 @@ describe('RegisterConsentModel', () => {
 
     it('exceptions - Error - sendConsentCallbackToDFSP stage', async () => {
       const error = new Error('the-exception')
-      mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
+      jest.mocked(modelConfig.thirdpartyRequests.putConsents).mockImplementationOnce(() => {
         throw error
       })
       mockDeferredJobWithCallbackMessage('test2', participantsTypeIDPutResponse)
@@ -721,7 +722,7 @@ describe('RegisterConsentModel', () => {
       const error = { message: 'error from axios.post', consentReqState: 'broken' }
       mockDeferredJobWithCallbackMessage('test3', participantsTypeIDPutResponse)
 
-      mocked(axios.post).mockImplementationOnce(() => {
+      jest.mocked(axios.post).mockImplementationOnce(() => {
         throw error
       })
       const model = await create({ ...registerConsentData, currentState: 'consentStoredAndVerified' }, modelConfig)
@@ -733,7 +734,7 @@ describe('RegisterConsentModel', () => {
       const error = new Error('the-exception')
       mockDeferredJobWithCallbackMessage('test4', participantsTypeIDPutResponse)
 
-      mocked(axios.post).mockImplementationOnce(() => {
+      jest.mocked(axios.post).mockImplementationOnce(() => {
         throw error
       })
       const model = await create({ ...registerConsentData, currentState: 'consentStoredAndVerified' }, modelConfig)
