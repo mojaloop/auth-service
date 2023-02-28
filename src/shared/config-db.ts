@@ -115,7 +115,7 @@ export const DatabaseConfigScheme = {
     },
     port: {
       doc: 'Database port',
-      format: 'Number',
+      format: Number,
       default: null,
       env: 'DB_CONNECTION_PORT'
     },
