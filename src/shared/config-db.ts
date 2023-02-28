@@ -96,20 +96,20 @@ export const DatabaseConfigScheme = {
   },
   useNullAsDefault: {
     doc: 'whether or not to use null for everything not specified',
-    format: 'Boolean',
+    format: Boolean,
     default: false,
     env: 'DB_USE_NULL_AS_DEFAULT'
   },
   connection: {
     filename: {
       doc: 'Database filename',
-      format: 'String',
+      format: String,
       default: null,
       env: 'DB_CONNECTION_FILENAME'
     },
     host: {
       doc: 'Database host',
-      format: 'String',
+      format: String,
       default: null,
       env: 'DB_CONNECTION_HOST'
     },
@@ -121,25 +121,25 @@ export const DatabaseConfigScheme = {
     },
     user: {
       doc: 'Database user',
-      format: 'String',
+      format: String,
       default: null,
       env: 'DB_CONNECTION_USER'
     },
     password: {
       doc: 'Database password',
-      format: 'String',
+      format: String,
       default: null,
       env: 'DB_CONNECTION_PASSWORD'
     },
     database: {
       doc: 'Database name',
-      format: 'String',
+      format: String,
       default: null,
       env: 'DB_CONNECTION_NAME'
     },
     timezone: {
       doc: 'Database timezone',
-      format: 'String',
+      format: String,
       default: null,
       env: 'DB_CONNECTION_TIMEZONE'
     }
@@ -215,7 +215,7 @@ export const DatabaseConfigScheme = {
     },
     loadExtensions: {
       doc: 'Array of extensions to load',
-      format: 'Array',
+      format: Array,
       default: ['.js'],
       env: 'DB_MIGRATIONS_LOAD_EXTENSIONS'
     }
@@ -229,7 +229,7 @@ export const DatabaseConfigScheme = {
     },
     loadExtensions: {
       doc: 'Array of extensions to load',
-      format: 'Array',
+      format: Array,
       default: ['.js'],
       env: 'DB_SEEDS_LOAD_EXTENSIONS'
     }
