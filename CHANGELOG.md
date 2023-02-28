@@ -1,4 +1,15 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [14.0.0](https://github.com/mojaloop/auth-service/compare/v13.0.2...v14.0.0) (2023-02-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **mojaloop/#3139:** rework config to accept env variables for DB (#132)
+
+### Features
+
+* **mojaloop/#3139:** rework config to accept env variables for DB ([#132](https://github.com/mojaloop/auth-service/issues/132)) ([6e6d5b3](https://github.com/mojaloop/auth-service/commit/6e6d5b3c2522bb4dc5af5d3fa414085aa24900e4)), closes [mojaloop/#3139](https://github.com/mojaloop/auth-service/issues/3139) [mojaloop/#3139](https://github.com/mojaloop/auth-service/issues/3139)
+
 ### [13.0.2](https://github.com/mojaloop/auth-service/compare/v13.0.1...v13.0.2) (2022-06-22)
 
 
