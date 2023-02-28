@@ -153,49 +153,49 @@ export const DatabaseConfigScheme = {
   },
   pool: {
     min: {
-      doc: 'Database timezone',
+      doc: 'The minimum number of connections in the connection pool',
       format: Number,
       default: 10,
       env: 'DB_POOL_MIN'
     },
     max: {
-      doc: 'Database timezone',
+      doc: 'The maximum number of connections in the connection pool',
       format: Number,
       default: 10,
       env: 'DB_POOL_MAX'
     },
     acquireTimeoutMillis: {
-      doc: 'Database timezone',
+      doc: 'Tarn library config. Acquire promises are rejected after this many milliseconds if a resource cannot be acquired',
       format: Number,
       default: 30000,
       env: 'DB_POOL_ACQUIRE_TIMEOUT_MILLIS'
     },
     createTimeoutMillis: {
-      doc: 'Database timezone',
+      doc: 'Tarn library config. Create operations are cancelled after this many milliseconds if a resource cannot be acquired',
       format: Number,
       default: 30000,
       env: 'DB_POOL_CREATE_TIMEOUT_MILLIS'
     },
     destroyTimeoutMillis: {
-      doc: 'Database timezone',
+      doc: 'Tarn library config. Destroy operations are awaited for at most this many milliseconds new resources will be created after this timeout',
       format: Number,
       default: 5000,
       env: 'DB_POOL_DESTROY_TIMEOUT_MILLIS'
     },
     idleTimeoutMillis: {
-      doc: 'Database timezone',
+      doc: 'Tarn library config. Free resources are destroyed after this many milliseconds.',
       format: Number,
       default: 30000,
       env: 'DB_POOL_IDLE_TIMEOUT_MILLIS'
     },
     reapIntervalMillis: {
-      doc: 'Database timezone',
+      doc: 'Tarn library config. How often to check for idle resources to destroy',
       format: Number,
       default: 1000,
       env: 'DB_POOL_REAP_INTERVAL_MILLIS'
     },
     createRetryIntervalMillis: {
-      doc: 'Database timezone',
+      doc: 'Tarn library config. How long to idle after failed create before trying again',
       format: Number,
       default: 200,
       env: 'DB_POOL_CREATE_RETRY_INTERVAL_MILLIS'
