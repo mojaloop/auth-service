@@ -27,6 +27,7 @@
     "docker:run": "docker run -p 4004:4004 auth-service:local",
     "lint": "eslint --ext ts --ext js test src",
     "lint:fix": "eslint --fix --ext ts --ext js test src",
+    "prepare": "husky install",
     "pretest": "echo \"pretest - TODO...\"",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
     "snapshot": "standard-version --no-verify --skip.changelog --prerelease snapshot --releaseCommitMessageFormat 'chore(snapshot): {{currentTag}}'",
