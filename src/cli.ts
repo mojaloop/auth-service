@@ -47,8 +47,9 @@ try {
   console.error(err)
 }
 // overload Config with script parameters
-Config.PORT = program.port
-Config.HOST = program.host
+const options = program.opts()
+Config.PORT = options.port
+Config.HOST = options.host
 
 // setup & start @hapi server
 ServiceServer.run(Config)

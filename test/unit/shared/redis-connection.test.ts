@@ -150,7 +150,7 @@ describe('RedisConnection', () => {
               setImmediate(() => cb(new Error('emitted')))
             }
           })
-        } as unknown as Redis.RedisClient)
+        }) as unknown as Redis.RedisClient
     )
 
     const redis = new RedisConnection(config)
@@ -183,7 +183,7 @@ describe('RedisConnection', () => {
               setImmediate(() => cb(new Error('emitted')))
             }
           })
-        } as unknown as Redis.RedisClient)
+        }) as unknown as Redis.RedisClient
     )
     const redis = new RedisConnection(config)
     try {
@@ -227,7 +227,7 @@ describe('RedisConnection', () => {
               }, 10)
             }
           })
-        } as unknown as Redis.RedisClient)
+        }) as unknown as Redis.RedisClient
     )
     const redis = new RedisConnection(config)
     redis.connect().catch(() => {
