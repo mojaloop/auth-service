@@ -23,8 +23,13 @@
     "build:ttk-3p:api": "openapi bundle --output ./docker/ml-testing-toolkit/spec_files/api_definitions/thirdparty_pisp/api_spec.yaml --ext yaml ./docker/ml-testing-toolkit/spec_files/api_definitions/thirdparty_pisp/thirdparty-pisp-api-template.yaml",
     "build:dto": "openapi-typescript ./src/interface/api.yaml --output ./src/interface/openapi.d.ts; npm run lint -- --fix ./src/interface/openapi.d.ts",
     "validate:api": "swagger-cli validate ./src/interface/api.yaml",
-    "docker:build": "docker build -t auth-service:local -f ./Dockerfile ./",
+    "docker:build": "docker build --build-arg NODE_VERSION=\"$(cat .nvmrc)-alpine\" -t auth-service:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 4004:4004 auth-service:local",
+    "docker:up": "docker-compose -f docker-compose.yml up",
+    "docker:stop": "docker-compose -f docker-compose.yml stop",
+    "docker:rm": "docker-compose -f docker-compose.yml rm -f -v",
+    "docker:down": "docker-compose -f docker-compose.yml down -v",
+    "docker:clean": "docker-compose -f docker-compose.yml down --rmi local",
     "lint": "eslint --ext ts --ext js test src",
     "lint:fix": "eslint --fix --ext ts --ext js test src",
     "prepare": "husky install",
@@ -47,7 +52,7 @@
     "migrate:latest": "knex $npm_package_config_knex migrate:latest",
     "migrate:rollback": "knex $npm_package_config_knex migrate:rollback",
     "seed:run": "knex $npm_package_config_knex seed:run",
-    "wait-4-docker": "node ./scripts/wait4.js cicd-integration-tests"
+    "wait-4-docker": "node ./scripts/_wait4_all.js"
   },
   "lint-staged": {
     "*.{js,ts}": "eslint --cache --fix"

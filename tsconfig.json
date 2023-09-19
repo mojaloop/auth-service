@@ -2,6 +2,7 @@
   "include": [
     "src",
     "test",
+    "scripts",
     "migrations",
     "seeds",
     "ambient.d.ts",

@@ -544,7 +544,7 @@ components:
         - Underscore (_) - Tilde (~) - Hyphen (-) - Period (.) Addresses MUST NOT end in a period (.) character
         An entity providing accounts to parties (i.e. a participant) can provide any value for an AccountAddress that is meaningful to that entity. It does not need to provide an address that makes the account identifiable outside the entity's domain.
         IMPORTANT: The policy for defining addresses and the life-cycle of these is at the discretion of the address space owner (the payer DFSP in this case).
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3212-accountaddress
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3212-accountaddress
       pattern: ^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$
       minLength: 1
       maxLength: 1023
@@ -568,7 +568,7 @@ components:
       type: object
       description: |-
         The Scope element contains an identifier defining, in the terms of a DFSP, an account on which access types can be requested or granted. It also defines the access types which are requested or granted.
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
       properties:
         address:
           $ref: '#/components/schemas/AccountAddress'
@@ -589,7 +589,7 @@ components:
         - GENERIC
       description: |-
         The type of the Credential. - "FIDO" - The credential is based on a FIDO challenge. Its payload is a FIDOPublicKeyCredentialAttestation object. - "GENERIC" - The credential is based on a simple public key validation. Its payload is a GenericCredential object.
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
     CredentialStatusPending:
       title: CredentialStatusPending
       type: string
@@ -994,7 +994,7 @@ components:
         Javascript ArrayBuffer.
         For this API, we represent ArrayBuffers as base64 encoded utf-8 strings.
 
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32128-fidopublickeycredentialassertion
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32128-fidopublickeycredentialassertion
       properties:
         id:
           type: string
@@ -1178,14 +1178,14 @@ components:
       schema:
         type: string
       required: false
-      description: The `FSPIOP-URI` header field is a non-HTTP standard field used by the API for signature verification, should contain the service URI. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
+      description: The `FSPIOP-URI` header field is a non-HTTP standard field used by the API for signature verification, should contain the service URI. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/main/Specification%20Document%20Set).
     FSPIOP-HTTP-Method:
       name: FSPIOP-HTTP-Method
       in: header
       schema:
         type: string
       required: false
-      description: The `FSPIOP-HTTP-Method` header field is a non-HTTP standard field used by the API for signature verification, should contain the service HTTP method. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
+      description: The `FSPIOP-HTTP-Method` header field is a non-HTTP standard field used by the API for signature verification, should contain the service HTTP method. Required if signature verification is used, for more information, see [the API Signature document](https://github.com/mojaloop/docs/tree/main/Specification%20Document%20Set).
     Accept:
       name: Accept
       in: header
