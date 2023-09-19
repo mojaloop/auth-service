@@ -572,7 +572,8 @@ jobs:
       - slack/notify:
           event: fail
           template: SLACK_TEMP_RELEASE_FAILURE
-   publish-docker:
+  
+  publish-docker:
     executor: default-machine
     shell: "/bin/bash -eo pipefail"
     environment:
