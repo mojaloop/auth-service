@@ -16,7 +16,7 @@ USER root
 
 WORKDIR /opt/app
 
-RUN apk add --no-cache -t build-dependencies make gcc g++ python3 libtool libressl-dev openssl-dev autoconf automake \
+RUN apk add --no-cache -t build-dependencies make gcc g++ python3 libtool openssl-dev autoconf automake \
     && cd $(npm root -g)/npm
 
 COPY package.json package-lock.json* /opt/app/
