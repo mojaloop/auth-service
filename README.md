@@ -57,4 +57,20 @@ After making changes to the `.yaml` files in `./src/interface/`, update the `swa
 > Note: We will likely want to move to swagger 3.0 at some point, and once we do, we will be able to use the [common api snippets](https://github.com/mojaloop/api-snippets) library to factor out common Mojaloop snippets.
 > Keep track of [#352 - Update to OpenAPI v3](https://app.zenhub.com/workspaces/pisp-5e8457b05580fb04a7fd4878/issues/mojaloop/mojaloop/352)
 
+## Auditing Dependencies
 
+We use `audit-ci` along with `npm audit` to check dependencies for node vulnerabilities, and keep track of resolved dependencies with an `audit-ci.jsonc` file.
+
+To start a new resolution process, run:
+
+```bash
+npm run audit:fix
+```
+
+You can then check to see if the CI will pass based on the current dependencies with:
+
+```bash
+npm run audit:check
+```
+
+The [audit-ci.jsonc](./audit-ci.jsonc) contains any audit-exceptions that cannot be fixed to ensure that CircleCI will build correctly.
