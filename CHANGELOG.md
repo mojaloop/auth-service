@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [14.0.1](https://github.com/mojaloop/auth-service/compare/v14.0.0...v14.0.1) (2023-09-21)
+
+
+### Chore
+
+* **mojaloop/#3440:** nodejs upgrade ([#133](https://github.com/mojaloop/auth-service/issues/133)) ([c792172](https://github.com/mojaloop/auth-service/commit/c79217288a05018ee131828201e6b67981e6090d)), closes [mojaloop/#3440](https://github.com/mojaloop/auth-service/issues/3440) [mojaloop/#3440](https://github.com/mojaloop/auth-service/issues/3440)
+
 ## [14.0.0](https://github.com/mojaloop/auth-service/compare/v13.0.2...v14.0.0) (2023-02-28)
 
 
