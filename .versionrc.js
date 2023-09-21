@@ -1,14 +1,16 @@
 module.exports = {
   header: '# Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)',
   types: [
-    { type: 'feat', section: 'Features' },
-    { type: 'fix', section: 'Bug Fixes' },
-    { type: 'chore', section: 'Maintenance' },
-    { type: 'ci', section: 'CI/CD' },
-    { type: 'docs', section: 'Documentation' },
-    { type: 'style', section: 'Style Improvements' },
-    { type: 'refactor', section: 'Code Refactor' },
-    { type: 'perf', section: 'Performance' },
-    { type: 'test', section: 'Tests' }
+    {"type": "feat", "section": "Features"},
+    {"type": "fix", "section": "Bug Fixes"},
+    {"type": "docs", "section": "Documentation"},
+    {"type": "style", "section": "Styling"},
+    {"type": "refactor", "section": "Refactors"},
+    {"type": "perf", "section": "Performance"},
+    {"type": "test", "section": "Tests"},
+    {"type": "build", "section": "Build System"},
+    {"type": "ci", "section": "CI"},
+    {"type": "chore", "section": "Chore"},
+    {"type": "revert", "section": "Reverts"}
   ]
 }

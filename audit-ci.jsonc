@@ -6,23 +6,22 @@
   "allowlist": [
     // NOTE: Please add as much information as possible to any items added to the allowList
     // Currently no fixes available for the following
-    "GHSA-v88g-cgmw-v5xw", //widdershins>swagger2openapi>oas-validator>ajv
-    "GHSA-phwq-j96m-2c2q", //@mojaloop/central-services-shared>shins>ejs
-    "GHSA-282f-qqgm-c34q", //widdershins>swagger2openapi>better-ajv-errors>jsonpointer
-    "GHSA-qwph-4952-7xr6", //@mojaloop/central-services-health>@mojaloop/central-services-error-handling>@mojaloop/sdk-standard-components>jsonwebtoken
-    "GHSA-qwph-4952-7xr6", //@mojaloop/central-services-shared>@mojaloop/central-services-error-handling>@mojaloop/sdk-standard-components>jsonwebtoken
-    "GHSA-hjrf-2m68-5959", //@mojaloop/central-services-health>@mojaloop/central-services-error-handling>@mojaloop/sdk-standard-components>jsonwebtoken
-    "GHSA-hjrf-2m68-5959", //@mojaloop/central-services-shared>@mojaloop/central-services-error-handling>@mojaloop/sdk-standard-components>jsonwebtoken
-    "GHSA-6vfc-qv3f-vr6c", //widdershins>markdown-it
-    "GHSA-wc69-rhjr-hc9g", //@mojaloop/central-services-shared>@mojaloop/event-sdk>moment
-    "GHSA-g954-5hwp-pp24", //@mojaloop/central-services-shared>@mojaloop/event-sdk>protobufjs
-    "GHSA-rjqq-98f6-6j3r", //@mojaloop/central-services-shared>shins>sanitize-html
-    "GHSA-mjxr-4v3x-q3m4", //@mojaloop/central-services-shared>shins>sanitize-html
-    "GHSA-9qrh-qjmc-5w2p", //sqlite3
-    "GHSA-r628-mhmh-qjhw", //sqlite3>node-gyp>tar
-    "GHSA-9r2w-394v-53qc", //sqlite3>node-gyp>tar
-    "GHSA-5955-9wpr-37jh", //sqlite3>node-gyp>tar
-    "GHSA-3jfq-g458-7qm9", //sqlite3>node-gyp>tar
-    "GHSA-p9pc-299p-vxgp" //widdershins>yargs>yargs-parser
+    "GHSA-v88g-cgmw-v5xw", // https://github.com/advisories/GHSA-v88g-cgmw-v5xw
+    "GHSA-phwq-j96m-2c2q", // https://github.com/advisories/GHSA-phwq-j96m-2c2q
+    "GHSA-282f-qqgm-c34q", // https://github.com/advisories/GHSA-282f-qqgm-c34q
+    "GHSA-6vfc-qv3f-vr6c", // https://github.com/advisories/GHSA-6vfc-qv3f-vr6c
+    "GHSA-p8p7-x288-28g6", // https://github.com/advisories/GHSA-p8p7-x288-28g6
+    "GHSA-mjxr-4v3x-q3m4", // https://github.com/advisories/GHSA-mjxr-4v3x-q3m4
+    "GHSA-rjqq-98f6-6j3r", // https://github.com/advisories/GHSA-rjqq-98f6-6j3r
+    "GHSA-c2qf-rxjj-qqgw", // https://github.com/advisories/GHSA-c2qf-rxjj-qqgw
+    "GHSA-9qrh-qjmc-5w2p", // https://github.com/advisories/GHSA-9qrh-qjmc-5w2p
+    "GHSA-jqv5-7xpx-qj74", // https://github.com/advisories/GHSA-jqv5-7xpx-qj74
+    "GHSA-3jfq-g458-7qm9", // https://github.com/advisories/GHSA-3jfq-g458-7qm9
+    "GHSA-r628-mhmh-qjhw", // https://github.com/advisories/GHSA-r628-mhmh-qjhw
+    "GHSA-9r2w-394v-53qc", // https://github.com/advisories/GHSA-9r2w-394v-53qc
+    "GHSA-5955-9wpr-37jh", // https://github.com/advisories/GHSA-5955-9wpr-37jh
+    "GHSA-qq89-hq3f-393p", // https://github.com/advisories/GHSA-qq89-hq3f-393p
+    "GHSA-72xf-g2v4-qvf3", // https://github.com/advisories/GHSA-72xf-g2v4-qvf3
+    "GHSA-p9pc-299p-vxgp"  // https://github.com/advisories/GHSA-p9pc-299p-vxgp
   ]
 }

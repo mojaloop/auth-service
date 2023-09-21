@@ -650,7 +650,7 @@ components:
         API for signature verification, should contain the service URI. Required
         if signature verification is used, for more information, see [the API
         Signature
-        document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
+        document](https://github.com/mojaloop/docs/tree/main/Specification%20Document%20Set).
     FSPIOP-HTTP-Method:
       name: FSPIOP-HTTP-Method
       in: header
@@ -662,7 +662,7 @@ components:
         by the API for signature verification, should contain the service HTTP
         method. Required if signature verification is used, for more
         information, see [the API Signature
-        document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
+        document](https://github.com/mojaloop/docs/tree/main/Specification%20Document%20Set).
     Accept:
       name: Accept
       in: header
@@ -918,7 +918,7 @@ components:
         is at the discretion of the address space owner (the payer DFSP in this
         case).
 
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3212-accountaddress
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3212-accountaddress
       pattern: ^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$
       minLength: 1
       maxLength: 1023
@@ -953,7 +953,7 @@ components:
         DFSP, an account on which access types can be requested or granted. It
         also defines the access types which are requested or granted.
 
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#32121-scope
       properties:
         address:
           $ref: '#/components/schemas/AccountAddress'
@@ -978,7 +978,7 @@ components:
         "GENERIC" - The credential is based on a simple public key validation.
         Its payload is a GenericCredential object.
 
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#3226-credentialtype
     CredentialStatusPending:
       title: CredentialStatusPending
       type: string
@@ -1485,7 +1485,7 @@ components:
         request the check, or the {ID} that was used in the GET
         /thirdpartyRequests/verifications/{ID}.
 
-        https://github.com/mojaloop/documentation/blob/master/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#31821-put-thirdpartyrequestsverificationsid
+        https://github.com/mojaloop/documentation/blob/main/website/versioned_docs/v1.0.1/api/thirdparty/data-models.md#31821-put-thirdpartyrequestsverificationsid
       properties:
         authenticationResponse:
           $ref: '#/components/schemas/AuthenticationResponse'
