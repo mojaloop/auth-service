@@ -22,6 +22,7 @@
     "GHSA-5955-9wpr-37jh", // https://github.com/advisories/GHSA-5955-9wpr-37jh
     "GHSA-qq89-hq3f-393p", // https://github.com/advisories/GHSA-qq89-hq3f-393p
     "GHSA-72xf-g2v4-qvf3", // https://github.com/advisories/GHSA-72xf-g2v4-qvf3
-    "GHSA-p9pc-299p-vxgp"  // https://github.com/advisories/GHSA-p9pc-299p-vxgp
+    "GHSA-p9pc-299p-vxgp", // https://github.com/advisories/GHSA-p9pc-299p-vxgp
+    "GHSA-7fh5-64p2-3v2j"  // https://github.com/advisories/GHSA-7fh5-64p2-3v2j
   ]
 }
