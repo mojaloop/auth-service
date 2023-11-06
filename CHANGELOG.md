@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [15.0.0](https://github.com/mojaloop/auth-service/compare/v14.0.1...v15.0.0) (2023-11-06)
+
+
+### Bug Fixes
+
+* **mojaloop/3615:** update dependencies ([#134](https://github.com/mojaloop/auth-service/issues/134)) ([a24cb58](https://github.com/mojaloop/auth-service/commit/a24cb5871c111551147e19b21448b7efd18e6f25))
+
 ### [14.0.1](https://github.com/mojaloop/auth-service/compare/v14.0.0...v14.0.1) (2023-09-21)
 
 
