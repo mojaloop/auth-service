@@ -74,7 +74,7 @@ async function register(server: Server): Promise<Server> {
 
 // Context is required for OpenAPI
 export interface Context {
-  method: HapiUtil.HTTP_METHODS
+  method: HapiUtil.HTTP_METHODS_PARTIAL_LOWERCASE
   path: string
   body: StreamReadable | Buffer | string | object
   query: RequestQuery
