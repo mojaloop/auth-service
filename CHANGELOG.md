@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [15.1.0](https://github.com/mojaloop/auth-service/compare/v15.0.0...v15.1.0) (2024-06-28)
+
+
+### Features
+
+* **mojaloop/#3984:** update ci, deps and audit ([#135](https://github.com/mojaloop/auth-service/issues/135)) ([c5c4066](https://github.com/mojaloop/auth-service/commit/c5c4066793353088fbfb8c130c8e18e5fb49c8fe)), closes [mojaloop/#3984](https://github.com/mojaloop/auth-service/issues/3984) [mojaloop/#3984](https://github.com/mojaloop/auth-service/issues/3984)
+
 ## [15.0.0](https://github.com/mojaloop/auth-service/compare/v14.0.1...v15.0.0) (2023-11-06)
 
 
