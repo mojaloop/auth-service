@@ -144,7 +144,7 @@
     "@mojaloop/event-sdk": "14.x.x",
     "@mojaloop/sdk-standard-components": "18.2.1",
     "atob": "2.1.2",
-    "axios": "1.7.2",
+    "axios": "1.7.4",
     "babel-jest": "29.7.0",
     "blipp": "4.0.2",
     "btoa": "1.2.1",
