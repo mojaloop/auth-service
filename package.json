@@ -41,7 +41,7 @@
     "start": "node ./dist/src/cli.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register -P ./tsconfig.build.json ./src/cli.ts'",
     "test": "npm run test:unit",
-    "test:bdd": "jest --config './jest.bdd.config.js' --testMatch '**/test/step-definitions/**/*.step.ts'",
+    "test:bdd": "jest --config './jest.bdd.config.js' --testMatch '**/test/step-definitions/**/*.step.ts'  --runInBand",
     "test:coverage": "jest --coverage --coverageThreshold='{}' --runInBand",
     "test:coverage-check": "jest --config './jest.coverage.config.js' --coverage --runInBand",
     "test:integration": "jest --config './jest.integration.config.js' --runInBand --testMatch '**/test/integration/**/*.(test|spec).ts'",
