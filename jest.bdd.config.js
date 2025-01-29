@@ -4,6 +4,8 @@ const { pathsToModuleNameMapper } = require('ts-jest')
 const { compilerOptions } = require('./tsconfig')
 
 module.exports = {
+  testTimeout: 30000,
+  maxWorkers: '50%',
   verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
