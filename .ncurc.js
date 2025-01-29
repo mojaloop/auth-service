@@ -12,6 +12,9 @@ module.exports = {
     // can be upgrade when the dependent packages are updated
     "eslint",
     // @hapi/hapi past v21.3.2 introduces some type export errors
-    "@hapi/hapi"
+    "@hapi/hapi",
+    "@typescript-eslint/eslint-plugin",
+    "@typescript-eslint/parser",
+    "eslint-plugin-promise"
   ]
 }
