@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.1.1](https://github.com/mojaloop/auth-service/compare/v15.1.0...v15.1.1) (2025-01-29)
+
+
+### Chore
+
+* fix vulnerabilities pi26 ([#145](https://github.com/mojaloop/auth-service/issues/145)) ([bea4f86](https://github.com/mojaloop/auth-service/commit/bea4f86a053d7df57e36b98f62a4d92dd87ba69b))
+
 ## [15.1.0](https://github.com/mojaloop/auth-service/compare/v15.0.0...v15.1.0) (2024-06-28)
 
 
