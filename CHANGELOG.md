@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.1.2](https://github.com/mojaloop/auth-service/compare/v15.1.1...v15.1.2) (2025-02-24)
+
+
+### Chore
+
+* maintenance updates ([#147](https://github.com/mojaloop/auth-service/issues/147)) ([c4c06c8](https://github.com/mojaloop/auth-service/commit/c4c06c8a1691e7d8afcb47710d50d18e10285055))
+
 ### [15.1.1](https://github.com/mojaloop/auth-service/compare/v15.1.0...v15.1.1) (2025-01-29)
 
 
