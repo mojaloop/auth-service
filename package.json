@@ -143,7 +143,7 @@
     "@mojaloop/event-sdk": "14.1.5",
     "@mojaloop/sdk-standard-components": "19.6.7",
     "atob": "2.1.2",
-    "axios": "1.7.9",
+    "axios": "1.8.2",
     "babel-jest": "29.7.0",
     "blipp": "4.0.2",
     "btoa": "1.2.1",
