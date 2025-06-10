@@ -143,7 +143,7 @@ describe('src/model/consent', (): void => {
     })
 
     it('throws an error on retrieving non-existent consent', async (): Promise<void> => {
-      await expect(consentDB.retrieve(completeConsent.id)).rejects.toThrowError(NotFoundError)
+      await expect(consentDB.retrieve(completeConsent.id)).rejects.toThrow(NotFoundError)
     })
   })
 
@@ -171,7 +171,7 @@ describe('src/model/consent', (): void => {
     })
 
     it('throws an error on deleting non-existent consent', async (): Promise<void> => {
-      await expect(consentDB.delete(completeConsent.id)).rejects.toThrowError(NotFoundError)
+      await expect(consentDB.delete(completeConsent.id)).rejects.toThrow(NotFoundError)
     })
 
     it('deletes associated scopes on deleting a consent', async (): Promise<void> => {
@@ -250,7 +250,7 @@ describe('src/model/consent', (): void => {
     })
 
     it('throws an error on revoking non-existent consent', async (): Promise<void> => {
-      await expect(consentDB.revoke(completeConsent.id)).rejects.toThrowError(NotFoundError)
+      await expect(consentDB.revoke(completeConsent.id)).rejects.toThrow(NotFoundError)
     })
 
     it('does not revoke a revoked consent again in the database', async (): Promise<void> => {
@@ -285,7 +285,7 @@ describe('src/model/consent', (): void => {
         credentialType: 'test'
       })
 
-      await expect(consentDB.revoke(completeConsent.id)).rejects.toThrowError(RevokedConsentModificationError)
+      await expect(consentDB.revoke(completeConsent.id)).rejects.toThrow(RevokedConsentModificationError)
     })
   })
 })

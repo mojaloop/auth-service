@@ -157,13 +157,13 @@ describe('deferredJob', () => {
       const jobInitiator = jest.fn(() => Promise.resolve())
       const jobListener = jest.fn(() => Promise.resolve())
 
-      expect(() => deferredJob(pubSub, channel).init(null as unknown as JobInitiator)).toThrowError()
+      expect(() => deferredJob(pubSub, channel).init(null as unknown as JobInitiator)).toThrow()
 
       expect(() =>
         deferredJob(pubSub, channel)
           .init(jobInitiator)
           .job(null as unknown as JobListener)
-      ).toThrowError()
+      ).toThrow()
 
       expect(deferredJob(pubSub, channel).init(jobInitiator).job(jobListener).wait(-1)).rejects.toBeInstanceOf(
         PositiveTimeoutRequired

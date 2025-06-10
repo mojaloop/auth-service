@@ -167,7 +167,7 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
       this.data.credentialPublicKey = attestationResult!.authnrData.get('credentialPublicKeyPem')
       this.data.credentialCounter = attestationResult!.authnrData.get('counter')
     } catch (error) {
-      this.logger.push({ error }).error('start -> consentVerified')
+      this.logger.error(`start -> consentVerified ${error}`)
 
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
@@ -207,7 +207,7 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
         credentialCounter!
       )
     } catch (error) {
-      this.logger.push({ error }).error('consentVerified -> consentStoredAndVerified')
+      this.logger.error(`consentVerified -> consentStoredAndVerified ${error}`)
 
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
@@ -260,7 +260,7 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
             fspId: this.config.authServiceParticipantFSPId
           }
           await axios.post(alsParticipantURI, payload, axiosConfig)
-          this.logger.push({ channel }).debug('POST /participants/{Type}/{ID} call sent to ALS, listening on response')
+          this.logger.debug(`POST /participants/{Type}/{ID} call sent to ALS, listening on response : ${channel}`)
         })
         .job(async (message: Message): Promise<void> => {
           try {
@@ -291,7 +291,7 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
         .wait(this.config.requestProcessingTimeoutSeconds * 1000)
     } catch (error) {
       // unplanned error - inform participant
-      this.logger.push({ error }).error('consentStoredAndVerified -> registeredAsAuthoritativeSource')
+      this.logger.error(`consentStoredAndVerified -> registeredAsAuthoritativeSource ${error}`)
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
@@ -342,7 +342,7 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
       )
     } catch (error) {
       // unplanned error - inform participant
-      this.logger.push({ error }).error('registeredAsAuthoritativeSource -> callbackSent')
+      this.logger.error(`registeredAsAuthoritativeSource -> callbackSent ${error}`)
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger

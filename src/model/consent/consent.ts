@@ -89,7 +89,7 @@ export class ConsentDB {
   // Add initial Consent parameters
   // Error bubbles up in case of primary key violation
   public async insert(consent: ConsentModel, trx?: Knex.Transaction): Promise<boolean> {
-    logger.debug(`ConsentDB.insert - ${JSON.stringify(consent)}`)
+    logger.log(`ConsentDB.insert - ${JSON.stringify(consent)}`)
     // optionally insert in transaction
     const action = this.Db<ConsentModel>(tableName).insert(consent)
     if (trx) {

@@ -93,7 +93,8 @@ export async function createAndStoreConsent(
   try {
     await DB.insertConsentWithScopes(consent, scopes)
   } catch (error) {
-    logger.push({ error }).error('Error: Unable to store consent and scopes')
+    logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+    logger.error('Error: Unable to store consent and scopes')
     throw new DatabaseError(consent.id)
   }
 }

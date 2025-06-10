@@ -39,7 +39,7 @@ export interface StateResponseToolkit extends ResponseToolkit {
   getKVS: () => KVS
   getPublisher: () => PubSub
   getSubscriber: () => PubSub
-  getLogger: () => SDKLogger.Logger
+  getLogger: () => SDKLogger.SdkLogger
   getMojaloopRequests: () => MojaloopRequests
   getThirdpartyRequests: () => ThirdpartyRequests
   getDFSPId: () => string
@@ -112,7 +112,7 @@ export const StatePlugin = {
       server.decorate('toolkit', 'getKVS', (): KVS => kvs)
       server.decorate('toolkit', 'getPublisher', (): PubSub => publisher)
       server.decorate('toolkit', 'getSubscriber', (): PubSub => subscriber)
-      server.decorate('toolkit', 'getLogger', (): SDKLogger.Logger => logger)
+      server.decorate('toolkit', 'getLogger', (): SDKLogger.SdkLogger => logger)
       server.decorate('toolkit', 'getMojaloopRequests', (): MojaloopRequests => mojaloopRequests)
       server.decorate('toolkit', 'getThirdpartyRequests', (): ThirdpartyRequests => thirdpartyRequest)
       server.decorate('toolkit', 'getDFSPId', (): string => config.PARTICIPANT_ID)
@@ -123,7 +123,7 @@ export const StatePlugin = {
       })
     } catch (err) {
       logger.error('StatePlugin: unexpected exception during plugin registration')
-      logger.error(err)
+      logger.error(`${err}`)
       logger.error('StatePlugin: exiting process')
       process.exit(1)
     }

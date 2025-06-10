@@ -75,6 +75,136 @@ jest.mock('~/domain/consents')
 // Mock deferredJob to inject our async callbacks
 jest.mock('~/shared/deferred-job')
 
+jest.mock('@mojaloop/sdk-standard-components', () => {
+  // Define the MojaloopApiErrorCode type to match the structure
+  interface MojaloopApiErrorCode {
+    code: string
+    message: string
+    httpStatusCode: number
+  }
+
+  // Define the MojaloopApiErrorObject type to match the structure
+  interface MojaloopApiErrorObject {
+    errorInformation: {
+      errorCode: string
+      errorDescription: string
+      extensionList?: unknown[]
+    }
+  }
+
+  // Define the type for the errorCodes object
+  interface ErrorCodes {
+    [key: string]: MojaloopApiErrorCode
+    '2000': MojaloopApiErrorCode
+    '2001': MojaloopApiErrorCode
+  }
+
+  return {
+    Logger: {
+      loggerFactory: jest.fn(() => ({
+        log: jest.fn(),
+        configure: jest.fn(),
+        verbose: jest.fn(),
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+        trace: jest.fn(),
+        info: jest.fn(),
+        fatal: jest.fn(),
+        silly: jest.fn(),
+        audit: jest.fn(),
+        perf: jest.fn(),
+        push: jest.fn(),
+        child: jest.fn()
+      }))
+    },
+    Errors: {
+      MojaloopFSPIOPError: jest
+        .fn()
+        .mockImplementation(
+          (
+            cause: Error | undefined,
+            message: string,
+            replyTo: string,
+            apiErrorCode: MojaloopApiErrorCode,
+            extensions?: unknown
+          ) => ({
+            cause,
+            message,
+            replyTo,
+            apiErrorCode,
+            extensions,
+            toApiErrorObject: jest.fn().mockReturnValue({
+              errorInformation: {
+                errorCode: apiErrorCode.code,
+                errorDescription: apiErrorCode.message,
+                extensionList: extensions || undefined
+              }
+            } as MojaloopApiErrorObject)
+          })
+        ),
+      MojaloopApiErrorCodes: {
+        SERVER_ERROR: {
+          code: '2000',
+          message: 'Generic server error',
+          httpStatusCode: 500
+        },
+        INTERNAL_SERVER_ERROR: {
+          code: '2001',
+          message: 'Internal Server Error',
+          httpStatusCode: 500
+        },
+        TP_ACCOUNT_LINKING_ERROR: {
+          code: '7200',
+          message: 'Generic Thirdparty account linking error',
+          httpStatusCode: 500
+        }
+      },
+      MojaloopApiErrorCodeFromCode: jest.fn().mockImplementation((code: string): MojaloopApiErrorCode => {
+        const errorCodes: ErrorCodes = {
+          '2000': {
+            code: '2000',
+            message: 'Generic server error',
+            httpStatusCode: 500
+          },
+          '2001': {
+            code: '2001',
+            message: 'Internal Server Error',
+            httpStatusCode: 500
+          }
+        }
+        return (
+          errorCodes[code] || {
+            code: '9999',
+            message: 'Unknown Error',
+            httpStatusCode: 500
+          }
+        )
+      }),
+      MojaloopApiErrorObjectFromCode: jest
+        .fn()
+        .mockImplementation((errorCode: MojaloopApiErrorCode): MojaloopApiErrorObject => {
+          return {
+            errorInformation: {
+              errorCode: errorCode.code,
+              errorDescription: errorCode.message,
+              extensionList: undefined // or [] if an empty array is expected
+            }
+          }
+        })
+    },
+    ThirdpartyRequests: jest.fn().mockImplementation(() => ({
+      postAuthorizations: jest.fn(),
+      putConsentRequests: jest.fn()
+    })),
+    MojaloopRequests: jest.fn().mockImplementation(() => ({
+      getParties: jest.fn(),
+      postQuotes: jest.fn(),
+      putTransfers: jest.fn()
+    }))
+  }
+})
+
 const consentsPostRequestAUTH: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   status: 'ISSUED',
   consentId: '76059a0a-684f-4002-a880-b01159afe119',
@@ -327,7 +457,7 @@ describe('RegisterConsentModel', () => {
       }
 
       // check we send an error callback to DFSP
-      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+      expect(model.thirdpartyRequests.putConsentsError).toHaveBeenCalledWith(
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
@@ -374,7 +504,7 @@ describe('RegisterConsentModel', () => {
       }
 
       // check we send an error callback to DFSP
-      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+      expect(model.thirdpartyRequests.putConsentsError).toHaveBeenCalledWith(
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
@@ -445,7 +575,7 @@ describe('RegisterConsentModel', () => {
     it('storeConsent() should transition consentVerified to consentStoredAndVerified state when successful', async () => {
       const model = await create(registerConsentData, modelConfig)
       await model.fsm.storeConsent()
-      expect(createAndStoreConsent).toBeCalledWith(
+      expect(createAndStoreConsent).toHaveBeenCalledWith(
         consentsPostRequestAUTH.consentId,
         'dfspA',
         consentsPostRequestAUTH.scopes,
@@ -476,7 +606,7 @@ describe('RegisterConsentModel', () => {
       }
 
       // check we send an error callback to DFSP
-      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+      expect(model.thirdpartyRequests.putConsentsError).toHaveBeenCalledWith(
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
@@ -539,7 +669,7 @@ describe('RegisterConsentModel', () => {
       expect(model.data.currentState).toEqual('registeredAsAuthoritativeSource')
 
       // check we made a call to the als
-      expect(axios.post).toBeCalledWith(
+      expect(axios.post).toHaveBeenCalledWith(
         `http://${config.SHARED.ALS_ENDPOINT}/participants/CONSENT/${consentsPostRequestAUTH.consentId}`,
         { fspId: 'centralAuth' },
         expect.any(Object)
@@ -562,7 +692,7 @@ describe('RegisterConsentModel', () => {
       expect(model.data.currentState).toEqual('errored')
 
       // check it sends an error back to DFSP
-      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+      expect(model.thirdpartyRequests.putConsentsError).toHaveBeenCalledWith(
         '76059a0a-684f-4002-a880-b01159afe119',
         genericErrorResponse,
         'dfspA'
@@ -590,7 +720,7 @@ describe('RegisterConsentModel', () => {
       expect(model.data.currentState).toEqual('callbackSent')
 
       // check we made a call to thirdpartyRequests.putConsents
-      expect(model.thirdpartyRequests.putConsents).toBeCalledWith(
+      expect(model.thirdpartyRequests.putConsents).toHaveBeenCalledWith(
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           scopes: consentsPostRequestAUTH.scopes,
@@ -619,7 +749,7 @@ describe('RegisterConsentModel', () => {
       }
 
       // check we send an error callback to DFSP
-      expect(model.thirdpartyRequests.putConsentsError).toBeCalledWith(
+      expect(model.thirdpartyRequests.putConsentsError).toHaveBeenCalledWith(
         '76059a0a-684f-4002-a880-b01159afe119',
         {
           errorInformation: {
@@ -677,7 +807,7 @@ describe('RegisterConsentModel', () => {
 
       const result = await model.run()
 
-      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toHaveBeenCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })
@@ -687,7 +817,7 @@ describe('RegisterConsentModel', () => {
 
       const result = await model.run()
 
-      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toHaveBeenCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })

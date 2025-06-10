@@ -216,7 +216,7 @@ describe('challenge', (): void => {
     })
 
     // Using a hardcoded key, challenge and signature triplet
-    // eslint-disable-next-line max-len
+
     it('returns false for signature based on wrong challenge - hardcoded EC Key (secp256k1)', (): void => {
       const { message, keyPair } = Credential.EC
 
@@ -269,7 +269,7 @@ describe('challenge', (): void => {
     })
 
     // Using a hardcoded key, challenge and signature triplet
-    // eslint-disable-next-line max-len
+
     it('returns false for signature based on wrong challenge - hardcoded RSA 2048 key', (): void => {
       const { message, keyPair } = Credential.RSA
 
@@ -305,7 +305,7 @@ describe('challenge', (): void => {
       // Assertions
       expect((): void => {
         verifySignature(message, signature, keyPair.public)
-      }).toThrowError('Unable to create Verify in mock')
+      }).toThrow('Unable to create Verify in mock')
 
       // Verify that crypto function is called correctly
       expect(createVerifySpy).toHaveBeenCalledWith('SHA256')

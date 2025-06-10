@@ -32,9 +32,9 @@ import inspect from './inspect'
 import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
 // default SDKLogger instance
-export const logger = new SDKLogger.Logger()
-export function createLogger(params?: SDKLogger.LoggerConstructorParams): SDKLogger.Logger {
-  return new SDKLogger.Logger(params)
+export const logger = SDKLogger.loggerFactory()
+export function createLogger(params?: SDKLogger.CreateLoggerFactoryConfig): SDKLogger.SdkLogger {
+  return SDKLogger.loggerFactory(params)
 }
 
 export interface ResponseLogged extends ResponseObject {
@@ -50,7 +50,7 @@ export function logResponse(request: RequestLogged): void {
     let response
     try {
       response = JSON.stringify(request.response.source)
-    } catch (e) {
+    } catch {
       response = inspect(request.response.source)
     }
     if (!response) {

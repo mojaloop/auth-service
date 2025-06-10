@@ -90,7 +90,7 @@ describe('POST /thirdpartyRequests/verifications', () => {
 
     try {
       await testCleanupConsents([validConsentId])
-    } catch (err) {
+    } catch {
       // non-fatal, it's safe to ignore here.
     }
   })

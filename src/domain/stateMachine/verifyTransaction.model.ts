@@ -1,31 +1,3 @@
-/*****
- License
- --------------
- Copyright © 2020-2025 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
- Contributors
- --------------
- This is the official list of the Mojaloop project contributors for this file.
- Names of the original copyright holders (individuals or organizations)
- should be listed with a '*' in the first column. People who have
- contributed from an organization can be listed under the organization
- that actually holds the copyright for their contributions (see the
- Mojaloop Foundation for an example). Those individuals should have
- their names indented and be marked with a '-'. Email address can be added
- optionally within square brackets <email>.
-
- * Mojaloop Foundation
- - Name Surname <name.surname@mojaloop.io>
-
- - Kevin Leyow - kevin.leyow@modusbox.com
- --------------
- ******/
-
 import { PubSub } from '~/shared/pub-sub'
 import { PersistentModel } from '~/domain/stateMachine/persistent.model'
 import { StateMachineConfig } from 'javascript-state-machine'
@@ -94,8 +66,8 @@ export class VerifyTransactionModel extends PersistentModel<VerifyTransactionSta
       const consent = await ConsentDomain.getConsent(consentId)
       this.data.consent = consent
     } catch (error) {
-      this.logger.push({ error }).error('start -> consentRetrieved')
-
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('start -> consentRetrieved')
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
@@ -171,11 +143,13 @@ export class VerifyTransactionModel extends PersistentModel<VerifyTransactionSta
         }
       } catch (error) {
         // planned error so we throw the appropriate code
-        this.logger.push({ error }).info('consentRetrieved -> transactionVerified f2l.assertionResult')
+        this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+        this.logger.info('consentRetrieved -> transactionVerified f2l.assertionResult')
         throw Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID
       }
     } catch (error) {
-      this.logger.push({ error }).error('consentRetrieved -> transactionVerified')
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('consentRetrieved -> transactionVerified')
       let mojaloopError
       // if error is planned and is a MojaloopApiErrorCode we send back that code
       if ((error as Errors.MojaloopApiErrorCode).code) {
@@ -216,7 +190,8 @@ export class VerifyTransactionModel extends PersistentModel<VerifyTransactionSta
         participantDFSPId
       )
     } catch (error) {
-      this.logger.push({ error }).error('onSendCallbackToDFSP -> callbackSent')
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('onSendCallbackToDFSP -> callbackSent')
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger

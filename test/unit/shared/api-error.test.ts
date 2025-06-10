@@ -6,7 +6,7 @@ import mockLogger from '../mockLogger'
 
 describe('api-error', () => {
   describe('reformatError', () => {
-    let logger: SDKLogger.Logger
+    let logger: SDKLogger.SdkLogger
 
     beforeEach(() => {
       logger = mockLogger()

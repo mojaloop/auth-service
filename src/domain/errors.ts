@@ -49,7 +49,8 @@ export async function putConsentError(
   try {
     await thirdPartyRequest.putConsentsError(consentId, errorInfoObj, destParticipantId)
   } catch (error) {
-    logger.push({ error }).error('Could not make putConsentsError request')
+    logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+    logger.error('Could not make putConsentsError request')
   }
 }
 

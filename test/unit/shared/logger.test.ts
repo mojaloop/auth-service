@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /*****
  License
  --------------
@@ -35,71 +34,61 @@ import inspect from '~/shared/inspect'
 
 // import SDK from '@mojaloop/sdk-standard-components'
 
-jest.mock(
-  '@mojaloop/sdk-standard-components',
-  jest.fn(() => ({
-    Logger: {
-      Logger: jest.fn(() => ({
-        push: jest.fn(),
-        configure: jest.fn(),
-
-        // log methods
-        log: jest.fn(),
-
-        // generated methods from default levels
-        verbose: jest.fn(),
-        debug: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
-        trace: jest.fn(),
-        info: jest.fn(),
-        fatal: jest.fn()
-      })),
-      buildStringify: jest.fn()
-    }
-  }))
-)
+jest.mock('@mojaloop/sdk-standard-components', () => ({
+  Logger: {
+    loggerFactory: jest.fn(() => ({
+      push: jest.fn(),
+      log: jest.fn(),
+      silly: jest.fn(),
+      debug: jest.fn(),
+      verbose: jest.fn(),
+      perf: jest.fn(),
+      info: jest.fn(),
+      trace: jest.fn(),
+      audit: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn()
+    }))
+  }
+}))
 
 describe('shared/logger', (): void => {
   it('should do nothing if no request', (): void => {
     logResponse(null as unknown as RequestLogged)
-    expect(logger.info).not.toBeCalled()
+    expect(logger.info).not.toHaveBeenCalled()
   })
 
   it('should log response via JSON.stringify', (): void => {
     const spyStringify = jest.spyOn(JSON, 'stringify')
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
-    expect(spyStringify).toBeCalledWith('abc')
-    expect(logger.info).toBeCalledWith(
+    expect(spyStringify).toHaveBeenCalledWith('abc')
+    expect(logger.info).toHaveBeenCalledWith(
       `AS-Trace - Response: ${JSON.stringify(request.response.source)} Status: ${request.response.statusCode}`
     )
   })
 
   it('should log response via inspect', (): void => {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     jest.mock('~/shared/inspect', () => jest.fn())
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => {
       throw new Error('parse-error')
     })
 
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
-    expect(spyStringify).toBeCalled()
-    expect(logger.info).toBeCalledWith(
+    expect(spyStringify).toHaveBeenCalled()
+    expect(logger.info).toHaveBeenCalledWith(
       `AS-Trace - Response: ${inspect(request.response.source)} Status: ${request.response.statusCode}`
     )
   })
 
   it('should log if there is no request.response', (): void => {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => null as unknown as string)
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
-    expect(spyStringify).toBeCalled()
-    expect(logger.info).toBeCalledWith(`AS-Trace - Response: ${request.response.toString()}`)
+    expect(spyStringify).toHaveBeenCalled()
+    expect(logger.info).toHaveBeenCalledWith(`AS-Trace - Response: ${request.response.toString()}`)
   })
 
   describe('Logger class', () => {
@@ -107,39 +96,37 @@ describe('shared/logger', (): void => {
       const log = createLogger()
       // basic methods
       expect(typeof log.push).toEqual('function')
-      expect(typeof log.configure).toEqual('function')
-
       // log methods
       expect(typeof log.log).toEqual('function')
-
       // generated methods from default levels
-      expect(typeof log.verbose).toEqual('function')
+      expect(typeof log.silly).toEqual('function')
       expect(typeof log.debug).toEqual('function')
+      expect(typeof log.verbose).toEqual('function')
+      expect(typeof log.perf).toEqual('function')
+      expect(typeof log.info).toEqual('function')
+      expect(typeof log.trace).toEqual('function')
+      expect(typeof log.audit).toEqual('function')
       expect(typeof log.warn).toEqual('function')
       expect(typeof log.error).toEqual('function')
-      expect(typeof log.trace).toEqual('function')
-      expect(typeof log.info).toEqual('function')
-      expect(typeof log.fatal).toEqual('function')
     })
   })
 
   describe('logger default instance', () => {
     it('should have proper layout', () => {
-      // basic methods
+      //InboundContextLogger methods
       expect(typeof logger.push).toEqual('function')
-      expect(typeof logger.configure).toEqual('function')
-
       // log methods
       expect(typeof logger.log).toEqual('function')
-
       // generated methods from default levels
-      expect(typeof logger.verbose).toEqual('function')
+      expect(typeof logger.silly).toEqual('function')
       expect(typeof logger.debug).toEqual('function')
+      expect(typeof logger.verbose).toEqual('function')
+      expect(typeof logger.perf).toEqual('function')
+      expect(typeof logger.info).toEqual('function')
+      expect(typeof logger.trace).toEqual('function')
+      expect(typeof logger.audit).toEqual('function')
       expect(typeof logger.warn).toEqual('function')
       expect(typeof logger.error).toEqual('function')
-      expect(typeof logger.trace).toEqual('function')
-      expect(typeof logger.info).toEqual('function')
-      expect(typeof logger.fatal).toEqual('function')
     })
   })
 })

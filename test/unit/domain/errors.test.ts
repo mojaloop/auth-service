@@ -37,9 +37,27 @@ import {
   PayloadNotPendingError,
   MissingScopeError,
   InactiveOrMissingCredentialError,
-  ConsentError
+  ConsentError,
+  putConsentError
 } from '~/domain/errors'
 import { v4 } from 'uuid'
+import { logger } from '~/shared/logger'
+import { v1_1 as fspiopAPI } from '@mojaloop/api-snippets'
+
+// Mock the logger
+jest.mock('~/shared/logger', () => ({
+  logger: {
+    push: jest.fn(),
+    error: jest.fn()
+  }
+}))
+
+// Mock the thirdPartyRequest instance from ~/domain/requests
+jest.mock('~/domain/requests', () => ({
+  thirdPartyRequest: {
+    putConsentsError: jest.fn()
+  }
+}))
 
 interface Case {
   error: ConsentError
@@ -47,6 +65,16 @@ interface Case {
 }
 describe('errors', () => {
   const consentId: string = v4()
+  const destParticipantId = 'participant-123'
+  const errorInfo: ConsentError = new IncorrectCredentialStatusError(consentId)
+  const errorInfoObj: fspiopAPI.Schemas.ErrorInformationObject = {
+    errorInformation: {
+      errorCode: errorInfo.errorCode,
+      errorDescription: errorInfo.errorDescription
+    }
+  }
+  const mockPutConsentsError = jest.requireMock('~/domain/requests').thirdPartyRequest.putConsentsError
+
   const cases: Case[] = [
     {
       error: new IncorrectCredentialStatusError(consentId),
@@ -92,6 +120,53 @@ describe('errors', () => {
   cases.forEach((c: Case) => {
     it(c.error.message, () => {
       expect(c.error.errorCode).toEqual(c.code)
+    })
+  })
+
+  describe('putConsentError', () => {
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('should successfully call putConsentsError when no error occurs', async () => {
+      // Arrange
+      mockPutConsentsError.mockResolvedValue(undefined)
+
+      // Act
+      await putConsentError(consentId, errorInfo, destParticipantId)
+
+      // Assert
+      expect(mockPutConsentsError).toHaveBeenCalledWith(consentId, errorInfoObj, destParticipantId)
+      expect(logger.push).not.toHaveBeenCalled()
+      expect(logger.error).not.toHaveBeenCalled()
+    })
+
+    it('should handle error and log when putConsentsError throws', async () => {
+      // Arrange
+      const testError = new Error('Request failed')
+      mockPutConsentsError.mockRejectedValue(testError)
+
+      // Act
+      await putConsentError(consentId, errorInfo, destParticipantId)
+
+      // Assert
+      expect(mockPutConsentsError).toHaveBeenCalledWith(consentId, errorInfoObj, destParticipantId)
+      expect(logger.push).toHaveBeenCalledWith({ exception: { message: testError.message } })
+      expect(logger.error).toHaveBeenCalledWith('Could not make putConsentsError request')
+    })
+
+    it('should handle non-Error objects thrown by putConsentsError', async () => {
+      // Arrange
+      const testError = 'Non-Error failure'
+      mockPutConsentsError.mockRejectedValue(testError)
+
+      // Act
+      await putConsentError(consentId, errorInfo, destParticipantId)
+
+      // Assert
+      expect(mockPutConsentsError).toHaveBeenCalledWith(consentId, errorInfoObj, destParticipantId)
+      expect(logger.push).toHaveBeenCalledWith({ exception: String(testError) })
+      expect(logger.error).toHaveBeenCalledWith('Could not make putConsentsError request')
     })
   })
 })

@@ -66,7 +66,7 @@ describe('PubSub', () => {
       ps.publish('first-channel', { Iam: 'the-message' })
 
       setTimeout(() => {
-        expect(notificationCallback).toBeCalledWith('first-channel', { Iam: 'the-message' }, id)
+        expect(notificationCallback).toHaveBeenCalledWith('first-channel', { Iam: 'the-message' }, id)
         done()
       }, 10)
     })
@@ -76,7 +76,7 @@ describe('PubSub', () => {
     const ps = new PubSub(config)
     await ps.connect()
 
-    expect(() => ps.subscribe('', jest.fn())).toThrowError(new InvalidChannelNameError())
+    expect(() => ps.subscribe('', jest.fn())).toThrow(new InvalidChannelNameError())
   })
 
   it('should unsubscribe', async (): Promise<void> => {
@@ -116,14 +116,14 @@ describe('PubSub', () => {
     const ps = new PubSub(config)
     await ps.connect()
 
-    expect(() => ps.unsubscribe('', 1)).toThrowError(new InvalidChannelNameError())
+    expect(() => ps.unsubscribe('', 1)).toThrow(new InvalidChannelNameError())
   })
 
   it('unsubscribe should do callbackId validation', async (): Promise<void> => {
     const ps = new PubSub(config)
     await ps.connect()
 
-    expect(() => ps.unsubscribe('the-channel', -1)).toThrowError(new InvalidCallbackIdError())
+    expect(() => ps.unsubscribe('the-channel', -1)).toThrow(new InvalidCallbackIdError())
   })
 
   it('publish should do channel validation', async (): Promise<void> => {
@@ -148,7 +148,7 @@ describe('PubSub', () => {
 
     ps.client.emit('message', 'not-existing')
     await new Promise((resolve) => {
-      expect(ps.logger.info).toBeCalledWith("broadcastMessage: no callbacks for 'not-existing' channel")
+      expect(ps.logger.info).toHaveBeenCalledWith("broadcastMessage: no callbacks for 'not-existing' channel")
       setTimeout(resolve, 10, {})
     })
   })

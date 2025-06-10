@@ -9,7 +9,7 @@ export interface MojaloopApiErrorCode {
 
 export function reformatError(
   err: Error | MojaloopApiErrorCode,
-  logger: SDKLogger.Logger
+  logger: SDKLogger.SdkLogger
 ): Errors.MojaloopApiErrorObject {
   // default 500 error
   let mojaloopErrorCode: MojaloopApiErrorCode = Errors.MojaloopApiErrorCodes.INTERNAL_SERVER_ERROR
@@ -24,7 +24,8 @@ export function reformatError(
           mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${bodyObj.statusCode}`)
         } catch (ex) {
           // do nothing, only log problems
-          logger.push({ exception: ex }).error('Error parsing error message body as JSON')
+          logger.push({ exception: ex instanceof Error ? { message: ex.message } : String(ex) })
+          logger.error('Error parsing error message body as JSON')
         }
       } else if (e.res.data) {
         mojaloopErrorCode = Errors.MojaloopApiErrorCodeFromCode(`${e.res.data.statusCode}`)

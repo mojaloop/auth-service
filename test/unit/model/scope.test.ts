@@ -173,12 +173,12 @@ describe('src/model/scope', (): void => {
     })
 
     it('throws an error on retrieving non-existent scopes for an existing consent', async (): Promise<void> => {
-      await expect(scopeDB.getForConsentId(testConsentObject.id)).rejects.toThrowError(NotFoundError)
+      await expect(scopeDB.getForConsentId(testConsentObject.id)).rejects.toThrow(NotFoundError)
     })
 
     it('throws an error on retrieving non-existent scopes for a non-existent consent', async (): Promise<void> => {
       await Db<ConsentModel>('Consent').del()
-      await expect(scopeDB.getForConsentId(testConsentObject.id)).rejects.toThrowError(NotFoundError)
+      await expect(scopeDB.getForConsentId(testConsentObject.id)).rejects.toThrow(NotFoundError)
     })
   })
 })

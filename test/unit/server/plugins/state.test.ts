@@ -74,18 +74,17 @@ describe('StatePlugin', () => {
     expect(ServerMock.decorate.mock.calls[5][1]).toEqual('getThirdpartyRequests')
 
     // check listener registration on 'stop' event
-    expect(ServerMock.events.on).toBeCalledTimes(1)
+    expect(ServerMock.events.on).toHaveBeenCalledTimes(1)
     expect(ServerMock.events.on.mock.calls[0][0]).toEqual('stop')
   })
 
   it('exceptions: should properly register', async () => {
-    // eslint-disable-next-line prefer-promise-reject-errors
     jest.mocked(KVS.prototype.connect).mockImplementationOnce(() => Promise.reject('can not connect'))
     jest.mocked(PubSub.prototype.connect).mockImplementation(() => Promise.resolve())
 
     const mockExit = mockProcessExit()
     await StatePlugin.register(ServerMock as unknown as Server)
-    expect(mockExit).toBeCalledWith(1)
+    expect(mockExit).toHaveBeenCalledWith(1)
     mockExit.mockRestore()
   })
 })
