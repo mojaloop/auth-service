@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+## [15.2.0](https://github.com/mojaloop/auth-service/compare/v15.1.2...v15.2.0) (2025-06-11)
+
+
+### Features
+
+* bump up the node version to v22.15.1 and fix unit tests ([#150](https://github.com/mojaloop/auth-service/issues/150)) ([44364cc](https://github.com/mojaloop/auth-service/commit/44364cc54c16157a86339b009b38a70f97090fd1))
+
 ### [15.1.2](https://github.com/mojaloop/auth-service/compare/v15.1.1...v15.1.2) (2025-02-24)
 
 
