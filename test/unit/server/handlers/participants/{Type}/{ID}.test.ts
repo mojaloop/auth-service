@@ -72,12 +72,12 @@ describe('server/handlers/consents', (): void => {
 
     expect(response.statusCode).toBe(Enum.Http.ReturnCodes.OK.CODE)
     jest.runAllImmediates()
-    expect(toolkit.getPublisher).toBeCalledTimes(1)
+    expect(toolkit.getPublisher).toHaveBeenCalledTimes(1)
 
     const channel = RegisterConsentModel.notificationChannel(
       RegisterConsentPhase.waitOnParticipantResponseFromALS,
       request.params.ID
     )
-    expect(pubSubMock.publish).toBeCalledWith(channel, request.payload)
+    expect(pubSubMock.publish).toHaveBeenCalledWith(channel, request.payload)
   })
 })

@@ -26,7 +26,6 @@
  --------------
  ******/
 
-// eslint-disable-next-line import/no-named-as-default
 import StateMachine, {
   Method,
   StateMachineConfig,
@@ -100,10 +99,10 @@ export interface PersistentModelConfig {
   kvs: KVS
 
   /**
-   * @property {SDKLogger.Logger} logger
+   * @property {SDKLogger.SdkLogger} logger
    * @description used to send log events
    */
-  logger: SDKLogger.Logger
+  logger: SDKLogger.SdkLogger
 }
 
 /**
@@ -170,7 +169,7 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
   }
 
   // accessors to config properties
-  get logger(): SDKLogger.Logger {
+  get logger(): SDKLogger.SdkLogger {
     return this.config.logger
   }
 
@@ -214,10 +213,10 @@ export class PersistentModel<JSM extends ControlledStateMachine, Data extends St
   async saveToKVS(): Promise<void> {
     try {
       const res = await this.kvs.set(this.key, this.data)
-      this.logger.info({ res })
+      this.logger.info(`${res}`)
       this.logger.info(`Persisted model in cache: ${this.key}`)
     } catch (err) {
-      this.logger.push({ err })
+      this.logger.error(`${err}`)
       this.logger.info(`Error saving model: ${this.key}`)
       throw err
     }
@@ -261,11 +260,11 @@ export async function loadFromKVS<JSM extends ControlledStateMachine, Data exten
     if (!data) {
       throw new Error(`No data found in KVS for: ${config.key}`)
     }
-    config.logger.push({ data })
+    config.logger.push({ data: JSON.stringify(data) })
     config.logger.info('data loaded from KVS')
     return new PersistentModel<JSM, Data>(data, config, spec)
   } catch (err) {
-    config.logger.push({ err })
+    config.logger.push({ exception: err instanceof Error ? { message: err.message } : String(err) })
     config.logger.info(`Error loading data from KVS for key: ${config.key}`)
     throw err
   }

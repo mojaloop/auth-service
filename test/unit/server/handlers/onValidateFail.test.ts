@@ -37,7 +37,7 @@ describe('server/handlers/onValidateFail', (): void => {
     const err = new Error('sample error')
     expect((): void => {
       onValidateFail(null as unknown as Request, null as unknown as ResponseToolkit, err)
-    }).toThrowError(err)
-    expect(spyBoomify).toBeCalledWith(err)
+    }).toThrow(err)
+    expect(spyBoomify).toHaveBeenCalledWith(err)
   })
 })

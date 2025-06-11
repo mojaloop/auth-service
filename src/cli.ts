@@ -30,6 +30,7 @@
 
 // This is required so that once we compile to js
 // the js `require()` can resolve the '~' paths
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require('module-alias/register')
 
 import Config, { PACKAGE } from './shared/config'

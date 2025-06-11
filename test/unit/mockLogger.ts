@@ -26,30 +26,31 @@
  --------------
  ******/
 
-import { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
+import type { Logger as SDKLogger } from '@mojaloop/sdk-standard-components'
 
-export default function mockLogger(keepQuiet = true): SDKLogger.Logger {
-  if (keepQuiet) {
-    const methods = {
-      // log methods
-      log: jest.fn(),
+export default function mockLogger(): SDKLogger.SdkLogger {
+  const methods = {
+    log: jest.fn(),
+    configure: jest.fn(),
 
-      configure: jest.fn(),
+    verbose: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+    trace: jest.fn(),
 
-      // generated methods from default levels
-      verbose: jest.fn(),
-      debug: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-      trace: jest.fn(),
-      info: jest.fn(),
-      fatal: jest.fn()
-    }
-    return {
-      ...methods,
-      push: jest.fn(() => methods)
-    } as unknown as SDKLogger.Logger
+    silly: jest.fn(),
+    audit: jest.fn(),
+    perf: jest.fn(),
+
+    push: jest.fn(),
+    child: jest.fn()
   }
-  // let be elaborative and log to console
-  return new SDKLogger.Logger()
+
+  // child should return same shape
+  methods.child.mockReturnValue(methods)
+
+  return methods as unknown as SDKLogger.SdkLogger
 }

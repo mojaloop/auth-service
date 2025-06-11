@@ -198,16 +198,16 @@ describe('PersistentModel', () => {
       checkPSMLayout(pm, { currentState: 'start' } as TestData)
 
       await pm.fsm.start2Middle()
-      expect(smConfig.methods!.onStart2Middle).toBeCalledTimes(1)
+      expect(smConfig.methods!.onStart2Middle).toHaveBeenCalledTimes(1)
       await pm.fsm.middle2End()
-      expect(smConfig.methods!.onMiddle2End).toBeCalledTimes(1)
+      expect(smConfig.methods!.onMiddle2End).toHaveBeenCalledTimes(1)
     })
   })
   describe('onPendingTransition', () => {
     it('should throw error if not `error` transition', async () => {
       const pm = new PersistentModel<TestStateMachine, TestData>(data, modelConfig, smConfig)
       checkPSMLayout(pm, { currentState: 'start' } as TestData)
-      expect(() => pm.fsm.start2Middle()).toThrowError(
+      expect(() => pm.fsm.start2Middle()).toThrow(
         "Transition 'start2Middle' requested while another transition is in progress"
       )
     })
@@ -274,7 +274,7 @@ describe('PersistentModel', () => {
 
       // transition `init` should encounter exception when saving `context.data`
       expect(() => pm.saveToKVS()).rejects.toEqual(new Error('error from KVS.set'))
-      expect(jest.mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
+      expect(jest.mocked(modelConfig.kvs.set)).toHaveBeenCalledWith(pm.key, pm.data)
     })
     it('should propagate error from KVS.set', async () => {
       jest.mocked(modelConfig.kvs.set).mockImplementationOnce(() => {
@@ -286,7 +286,7 @@ describe('PersistentModel', () => {
 
       // transition `init` should encounter exception when saving `context.data`
       expect(() => pm.saveToKVS()).rejects.toEqual(new Error('error from KVS.set'))
-      expect(jest.mocked(modelConfig.kvs.set)).toBeCalledWith(pm.key, pm.data)
+      expect(jest.mocked(modelConfig.kvs.set)).toHaveBeenCalledWith(pm.key, pm.data)
     })
   })
 })

@@ -65,6 +65,136 @@ jest.mock('~/shared/pub-sub')
 
 jest.mock('axios')
 
+jest.mock('@mojaloop/sdk-standard-components', () => {
+  // Define the MojaloopApiErrorCode type to match the structure
+  interface MojaloopApiErrorCode {
+    code: string
+    message: string
+    httpStatusCode: number
+  }
+
+  // Define the MojaloopApiErrorObject type to match the structure
+  interface MojaloopApiErrorObject {
+    errorInformation: {
+      errorCode: string
+      errorDescription: string
+      extensionList?: unknown[]
+    }
+  }
+
+  // Define the type for the errorCodes object
+  interface ErrorCodes {
+    [key: string]: MojaloopApiErrorCode
+    '2000': MojaloopApiErrorCode
+    '2001': MojaloopApiErrorCode
+  }
+
+  return {
+    Logger: {
+      loggerFactory: jest.fn(() => ({
+        log: jest.fn(),
+        configure: jest.fn(),
+        verbose: jest.fn(),
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+        trace: jest.fn(),
+        info: jest.fn(),
+        fatal: jest.fn(),
+        silly: jest.fn(),
+        audit: jest.fn(),
+        perf: jest.fn(),
+        push: jest.fn(),
+        child: jest.fn()
+      }))
+    },
+    Errors: {
+      MojaloopFSPIOPError: jest
+        .fn()
+        .mockImplementation(
+          (
+            cause: Error | undefined,
+            message: string,
+            replyTo: string,
+            apiErrorCode: MojaloopApiErrorCode,
+            extensions?: unknown
+          ) => ({
+            cause,
+            message,
+            replyTo,
+            apiErrorCode,
+            extensions,
+            toApiErrorObject: jest.fn().mockReturnValue({
+              errorInformation: {
+                errorCode: apiErrorCode.code,
+                errorDescription: apiErrorCode.message,
+                extensionList: extensions || undefined
+              }
+            } as MojaloopApiErrorObject)
+          })
+        ),
+      MojaloopApiErrorCodes: {
+        SERVER_ERROR: {
+          code: '2001',
+          message: 'Server Error',
+          httpStatusCode: 500
+        },
+        INTERNAL_SERVER_ERROR: {
+          code: '2000',
+          message: 'Internal Server Error',
+          httpStatusCode: 500
+        },
+        TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID: {
+          code: '7105',
+          message: 'Authorization received from PISP failed DFSP validation',
+          httpStatusCode: 500
+        }
+      },
+      MojaloopApiErrorCodeFromCode: jest.fn().mockImplementation((code: string): MojaloopApiErrorCode => {
+        const errorCodes: ErrorCodes = {
+          '2001': {
+            code: '2001',
+            message: 'Server Error',
+            httpStatusCode: 500
+          },
+          '2000': {
+            code: '2000',
+            message: 'Internal Server Error',
+            httpStatusCode: 500
+          }
+        }
+        return (
+          errorCodes[code] || {
+            code: '9999',
+            message: 'Unknown Error',
+            httpStatusCode: 500
+          }
+        )
+      }),
+      MojaloopApiErrorObjectFromCode: jest
+        .fn()
+        .mockImplementation((errorCode: MojaloopApiErrorCode): MojaloopApiErrorObject => {
+          return {
+            errorInformation: {
+              errorCode: errorCode.code,
+              errorDescription: errorCode.message,
+              extensionList: undefined // or [] if an empty array is expected
+            }
+          }
+        })
+    },
+    ThirdpartyRequests: jest.fn().mockImplementation(() => ({
+      postAuthorizations: jest.fn(),
+      putConsentRequests: jest.fn()
+    })),
+    MojaloopRequests: jest.fn().mockImplementation(() => ({
+      getParties: jest.fn(),
+      postQuotes: jest.fn(),
+      putTransfers: jest.fn()
+    }))
+  }
+})
+
 const mockGetConsent = jest.spyOn(ConsentDomain, 'getConsent')
 // yubi demo
 const credential: tpAPI.Schemas.VerifiedCredential = {
@@ -267,6 +397,25 @@ describe('VerifyTransactionModel', () => {
         expect(mockGetConsent).toHaveBeenCalledTimes(1)
         expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
         expect(error.message).toEqual('test error')
+      }
+    })
+
+    it('responds with an error if something went wrong fetching the consent - 2 ', async () => {
+      // Arrange
+      mockGetConsent.mockImplementationOnce(() => {
+        throw 'test error'
+      })
+      const model = await create(retrieveConsentData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.retrieveConsent()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(mockGetConsent).toHaveBeenCalledTimes(1)
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+        expect(error).toEqual('test error')
       }
     })
   })
@@ -477,7 +626,7 @@ describe('VerifyTransactionModel', () => {
 
       const result = await model.run()
 
-      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toHaveBeenCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })
@@ -487,7 +636,7 @@ describe('VerifyTransactionModel', () => {
 
       const result = await model.run()
 
-      expect(jest.mocked(modelConfig.logger.info)).toBeCalledWith('State machine in errored state')
+      expect(jest.mocked(modelConfig.logger.info)).toHaveBeenCalledWith('State machine in errored state')
 
       expect(result).toBeUndefined()
     })

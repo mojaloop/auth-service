@@ -63,7 +63,7 @@ describe('KVS: Key Value Storage', () => {
       })
     const result: Record<string, string> | undefined = await kvs.get('the-key')
     expect(result).toEqual({ am: 'the-value' })
-    expect(getSpy).toBeCalledTimes(1)
+    expect(getSpy).toHaveBeenCalledTimes(1)
     expect(getSpy.mock.calls[0][0]).toEqual('the-key')
   })
 
@@ -126,7 +126,7 @@ describe('KVS: Key Value Storage', () => {
       )
     const result = await kvs.set('the-key', { am: 'the-value' })
     expect(result).toEqual('OK')
-    expect(setSpy).toBeCalledTimes(1)
+    expect(setSpy).toHaveBeenCalledTimes(1)
     expect(setSpy.mock.calls[0][0]).toEqual('the-key')
     expect(setSpy.mock.calls[0][1]).toEqual(JSON.stringify({ am: 'the-value' }))
   })
@@ -166,8 +166,8 @@ describe('KVS: Key Value Storage', () => {
 
     const result = await kvs.del(key)
     expect(result).toBeTruthy()
-    expect(delSpy).toBeCalledTimes(1)
-    expect(delSpy).toBeCalledWith(key, expect.anything())
+    expect(delSpy).toHaveBeenCalledTimes(1)
+    expect(delSpy).toHaveBeenCalledWith(key, expect.anything())
   })
 
   it('should validate invalid key for DEL', async (): Promise<void> => {
@@ -188,7 +188,7 @@ describe('KVS: Key Value Storage', () => {
     const spyExists = jest.spyOn(kvs.client, 'exists')
     const result = await kvs.exists(key)
     expect(result).toBeFalsy()
-    expect(spyExists).toBeCalledWith(key, expect.anything())
+    expect(spyExists).toHaveBeenCalledWith(key, expect.anything())
   })
 
   it('should reject and propagate error from EXISTS', async () => {
@@ -209,6 +209,6 @@ describe('KVS: Key Value Storage', () => {
     } catch (err) {
       expect(err).toEqual(new Error('mocked-error'))
     }
-    expect(spyExists).toBeCalledWith(key, expect.anything())
+    expect(spyExists).toHaveBeenCalledWith(key, expect.anything())
   })
 })

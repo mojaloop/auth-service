@@ -33,6 +33,6 @@ export const logger = {
   error: jest.fn(() => logger),
   info: jest.fn(() => logger),
   push: jest.fn(() => logger)
-} as unknown as SDKLogger.Logger
+} as unknown as SDKLogger.SdkLogger
 
 export const logResponse = jest.fn()

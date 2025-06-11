@@ -62,28 +62,30 @@ describe('RedisConnection', () => {
   it('should do input validation for port', () => {
     const invalidPort = { ...config }
     invalidPort.port = -1
-    expect(() => new RedisConnection(invalidPort)).toThrowError(new InvalidPortError())
+    expect(() => new RedisConnection(invalidPort)).toThrow(new InvalidPortError())
   })
 
   it('should do input validation for host', () => {
     const invalidHost = { ...config }
     invalidHost.host = ''
-    expect(() => new RedisConnection(invalidHost)).toThrowError(new InvalidHostError())
+    expect(() => new RedisConnection(invalidHost)).toThrow(new InvalidHostError())
     invalidHost.host = null as unknown as string
-    expect(() => new RedisConnection(invalidHost)).toThrowError(new InvalidHostError())
+    expect(() => new RedisConnection(invalidHost)).toThrow(new InvalidHostError())
   })
 
   it('should do input validation for logger', () => {
     const invalidLogger = { ...config }
-    invalidLogger.logger = null as unknown as SDKLogger.Logger
-    expect(() => new RedisConnection(invalidLogger)).toThrowError(new InvalidLoggerError())
+    invalidLogger.logger = null as unknown as SDKLogger.SdkLogger
+    expect(() => new RedisConnection(invalidLogger)).toThrow(new InvalidLoggerError())
   })
 
   it('should connect', async (): Promise<void> => {
     const redis = new RedisConnection(config)
     await redis.connect()
     expect(redis.isConnected).toBeTruthy()
-    expect(config.logger.info).toBeCalledWith(`createClient: Connected to REDIS at: ${config.host}:${config.port}`)
+    expect(config.logger.info).toHaveBeenCalledWith(
+      `createClient: Connected to REDIS at: ${config.host}:${config.port}`
+    )
   })
 
   it('should connect if already connected', async (): Promise<void> => {
@@ -92,13 +94,15 @@ describe('RedisConnection', () => {
     expect(redis.isConnected).toBeTruthy()
     await redis.connect()
     expect(redis.isConnected).toBeTruthy()
-    expect(config.logger.info).toBeCalledWith(`createClient: Connected to REDIS at: ${config.host}:${config.port}`)
+    expect(config.logger.info).toHaveBeenCalledWith(
+      `createClient: Connected to REDIS at: ${config.host}:${config.port}`
+    )
   })
 
   it("should throw if trying to access 'client' property when not connected ", async (): Promise<void> => {
     const redis = new RedisConnection(config)
     expect(redis.isConnected).toBeFalsy()
-    expect(() => redis.client).toThrowError(new RedisConnectionError(config.port, config.host))
+    expect(() => redis.client).toThrow(new RedisConnectionError(config.port, config.host))
   })
 
   it('should disconnect when connected', async (): Promise<void> => {
@@ -161,7 +165,7 @@ describe('RedisConnection', () => {
       expect(error).toEqual(new Error('emitted'))
       expect(config.logger.push).toHaveBeenCalledWith({ err: new Error('emitted') })
       expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
-      expect(mockQuit).toBeCalledTimes(1)
+      expect(mockQuit).toHaveBeenCalledTimes(1)
     }
   })
 
@@ -193,7 +197,7 @@ describe('RedisConnection', () => {
       expect(error).toEqual(new Error('emitted'))
       expect(config.logger.push).toHaveBeenCalledWith({ err: new Error('emitted') })
       expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
-      expect(mockQuit).toBeCalledTimes(1)
+      expect(mockQuit).toHaveBeenCalledTimes(1)
     }
   })
 
@@ -223,7 +227,7 @@ describe('RedisConnection', () => {
                 expect(config.logger.push).toHaveBeenCalledWith({ err: new Error('emitted') })
                 expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
                 // if promise wasn't reject the quit shouldn't be called
-                expect(mockQuit).not.toBeCalled()
+                expect(mockQuit).not.toHaveBeenCalled()
                 done()
               }, 10)
             }

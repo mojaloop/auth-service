@@ -58,7 +58,7 @@ export class InvalidLoggerError extends Error {
     super('logger should be valid')
   }
 
-  static throwIfInvalid(logger: SDKLogger.Logger): void {
+  static throwIfInvalid(logger: SDKLogger.SdkLogger): void {
     if (!logger) {
       throw new InvalidLoggerError()
     }
@@ -80,7 +80,7 @@ export class InvalidHostError extends Error {
 export interface RedisConnectionConfig {
   host: string
   port: number
-  logger: SDKLogger.Logger
+  logger: SDKLogger.SdkLogger
   timeout?: number
 }
 
@@ -117,7 +117,7 @@ export class RedisConnection {
     return this.config.port
   }
 
-  get logger(): SDKLogger.Logger {
+  get logger(): SDKLogger.SdkLogger {
     return this.config.logger
   }
 

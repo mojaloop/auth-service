@@ -61,7 +61,8 @@ export function verifySignature(challenge: string, signature: string, publicKey:
 
     return verifier.verify(publicKey, signature, 'base64')
   } catch (error) {
-    logger.push({ error }).error('Unable to verify signature')
+    logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+    logger.error(`Unable to verify signature`)
     throw error
   }
 }

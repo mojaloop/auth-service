@@ -296,7 +296,7 @@ describe('fido-lib', (): void => {
           attestationObject: consentsPostRequestAUTH.payload.credential.fidoPayload!.response.attestationObject
         }
       }
-      // eslint-disable-next-line no-useless-catch
+
       try {
         const result = await f2l.attestationResult(clientAttestationResponse, attestationExpectations)
         console.log('credentialPublicKeyPem:', result.authnrData.get('credentialPublicKeyPem'))

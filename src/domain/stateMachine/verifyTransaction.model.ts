@@ -94,8 +94,8 @@ export class VerifyTransactionModel extends PersistentModel<VerifyTransactionSta
       const consent = await ConsentDomain.getConsent(consentId)
       this.data.consent = consent
     } catch (error) {
-      this.logger.push({ error }).error('start -> consentRetrieved')
-
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('start -> consentRetrieved')
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
@@ -171,11 +171,13 @@ export class VerifyTransactionModel extends PersistentModel<VerifyTransactionSta
         }
       } catch (error) {
         // planned error so we throw the appropriate code
-        this.logger.push({ error }).info('consentRetrieved -> transactionVerified f2l.assertionResult')
+        this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+        this.logger.info('consentRetrieved -> transactionVerified f2l.assertionResult')
         throw Errors.MojaloopApiErrorCodes.TP_FSP_TRANSACTION_AUTHORIZATION_NOT_VALID
       }
     } catch (error) {
-      this.logger.push({ error }).error('consentRetrieved -> transactionVerified')
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('consentRetrieved -> transactionVerified')
       let mojaloopError
       // if error is planned and is a MojaloopApiErrorCode we send back that code
       if ((error as Errors.MojaloopApiErrorCode).code) {
@@ -216,7 +218,8 @@ export class VerifyTransactionModel extends PersistentModel<VerifyTransactionSta
         participantDFSPId
       )
     } catch (error) {
-      this.logger.push({ error }).error('onSendCallbackToDFSP -> callbackSent')
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('onSendCallbackToDFSP -> callbackSent')
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
