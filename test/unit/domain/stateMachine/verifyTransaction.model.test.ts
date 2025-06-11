@@ -399,6 +399,25 @@ describe('VerifyTransactionModel', () => {
         expect(error.message).toEqual('test error')
       }
     })
+
+    it('responds with an error if something went wrong fetching the consent - 2 ', async () => {
+      // Arrange
+      mockGetConsent.mockImplementationOnce(() => {
+        throw 'test error'
+      })
+      const model = await create(retrieveConsentData, modelConfig)
+
+      // Act
+      try {
+        await model.fsm.retrieveConsent()
+        shouldNotBeExecuted()
+      } catch (error: any) {
+        // Assert
+        expect(mockGetConsent).toHaveBeenCalledTimes(1)
+        expect(modelConfig.thirdpartyRequests.putThirdpartyRequestsVerificationsError).toHaveBeenCalledTimes(1)
+        expect(error).toEqual('test error')
+      }
+    })
   })
 
   describe('onVerifyTransaction', () => {

@@ -260,11 +260,11 @@ export async function loadFromKVS<JSM extends ControlledStateMachine, Data exten
     if (!data) {
       throw new Error(`No data found in KVS for: ${config.key}`)
     }
-    config.logger.info(`${data}`)
+    config.logger.push({ data: JSON.stringify(data) })
     config.logger.info('data loaded from KVS')
     return new PersistentModel<JSM, Data>(data, config, spec)
   } catch (err) {
-    config.logger.error(`${err}`)
+    config.logger.push({ exception: err instanceof Error ? { message: err.message } : String(err) })
     config.logger.info(`Error loading data from KVS for key: ${config.key}`)
     throw err
   }

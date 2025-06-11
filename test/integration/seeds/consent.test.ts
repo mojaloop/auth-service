@@ -36,9 +36,6 @@ describe('testing Consent table', (): void => {
 
   beforeAll(async (): Promise<void> => {
     db = knex(Config.DATABASE)
-    console.log('Seeding Scope table-------------------===========> Config.DATABASE:', Config.DATABASE)
-    console.log(Config)
-    console.log(db)
     await db.seed.run()
   })
 

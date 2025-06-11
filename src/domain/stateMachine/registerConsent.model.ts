@@ -167,7 +167,8 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
       this.data.credentialPublicKey = attestationResult!.authnrData.get('credentialPublicKeyPem')
       this.data.credentialCounter = attestationResult!.authnrData.get('counter')
     } catch (error) {
-      this.logger.error(`start -> consentVerified ${error}`)
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('start -> consentVerified')
 
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
@@ -207,7 +208,8 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
         credentialCounter!
       )
     } catch (error) {
-      this.logger.error(`consentVerified -> consentStoredAndVerified ${error}`)
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('consentVerified -> consentStoredAndVerified')
 
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
@@ -291,7 +293,8 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
         .wait(this.config.requestProcessingTimeoutSeconds * 1000)
     } catch (error) {
       // unplanned error - inform participant
-      this.logger.error(`consentStoredAndVerified -> registeredAsAuthoritativeSource ${error}`)
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('consentStoredAndVerified -> registeredAsAuthoritativeSource')
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger
@@ -342,7 +345,8 @@ export class RegisterConsentModel extends PersistentModel<RegisterConsentStateMa
       )
     } catch (error) {
       // unplanned error - inform participant
-      this.logger.error(`registeredAsAuthoritativeSource -> callbackSent ${error}`)
+      this.logger.push({ exception: error instanceof Error ? { message: error.message } : String(error) })
+      this.logger.error('registeredAsAuthoritativeSource -> callbackSent')
       const mojaloopError = reformatError(
         Errors.MojaloopApiErrorCodes.SERVER_ERROR,
         this.logger

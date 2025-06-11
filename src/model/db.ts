@@ -48,7 +48,8 @@ async function insertConsentWithScopes(consent: ConsentModel, scopes: ScopeModel
     await scopeDB.insert(scopes, trx)
     await trx.commit()
   } catch (err) {
-    logger.debug(`db.insertConsentWithScopes error: ${err}`)
+    logger.push({ exception: err instanceof Error ? { message: err.message } : String(err) })
+    logger.debug('db.insertConsentWithScopes error')
     await trx.rollback()
     throw err
   }
