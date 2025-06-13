@@ -144,7 +144,7 @@
     "@hapi/vision": "7.0.3",
     "@mojaloop/api-snippets": "17.10.3",
     "@mojaloop/central-services-health": "15.1.0",
-    "@mojaloop/central-services-shared": "18.28.1",
+    "@mojaloop/central-services-shared": "18.28.2",
     "@mojaloop/event-sdk": ">=14.x.x",
     "@mojaloop/sdk-standard-components": "19.15.2",
     "atob": "2.1.2",
