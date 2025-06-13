@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.2.1](https://github.com/mojaloop/auth-service/compare/v15.2.0...v15.2.1) (2025-06-12)
+
+
+### Chore
+
+* **sbom:** add initial sbom ([#151](https://github.com/mojaloop/auth-service/issues/151)) ([9c36ace](https://github.com/mojaloop/auth-service/commit/9c36ace9cf9108d8e16e1789d39e3c7372182220))
+* **sbom:** update sbom-v15.2.0.csv [skip ci] ([41593c6](https://github.com/mojaloop/auth-service/commit/41593c633ba206389d45375f4af768efda0da79f))
+
 ## [15.2.0](https://github.com/mojaloop/auth-service/compare/v15.1.2...v15.2.0) (2025-06-11)
 
 
