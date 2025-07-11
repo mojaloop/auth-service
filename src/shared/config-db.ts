@@ -37,6 +37,8 @@ export interface DbConnection {
   password?: string
   database?: string
   timezone?: string
+  decimalNumbers?: boolean
+  jsonStrings?: boolean
 }
 
 export interface DbPool {
@@ -83,7 +85,7 @@ export const DatabaseConfigScheme = {
   },
   client: {
     doc: 'Which database client should we use',
-    format: ['mysql', 'sqlite3'],
+    format: ['mysql', 'mysql2', 'sqlite3'],
     default: 'sqlite',
     env: 'DB_CLIENT'
   },
@@ -148,6 +150,18 @@ export const DatabaseConfigScheme = {
       default: null,
       env: 'DB_CONNECTION_TIMEZONE',
       nullable: true
+    },
+    decimalNumbers: {
+      doc: 'Database decimal numbers',
+      format: Boolean,
+      default: true,
+      env: 'DB_CONNECTION_DECIMAL_NUMBERS'
+    },
+    jsonStrings: {
+      doc: 'Database json strings',
+      format: Boolean,
+      default: true,
+      env: 'DB_CONNECTION_JSON_STRINGS'
     }
   },
   pool: {
