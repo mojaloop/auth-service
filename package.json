@@ -108,7 +108,7 @@
     "@typescript-eslint/parser": "8.36.0",
     "add": "2.0.6",
     "audit-ci": "7.1.0",
-    "eslint": "9.30.1",
+    "eslint": "9.31.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-config-standard": "17.1.0",
     "eslint-import-resolver-typescript": "4.4.4",
@@ -178,7 +178,7 @@
   },
   "overrides": {
     "eslint-config-standard": {
-      "eslint": "9.30.1",
+      "eslint": "9.31.0",
       "eslint-plugin-import": "2.32.0",
       "eslint-plugin-node": "11.1.0",
       "eslint-plugin-promise": "7.2.1"
