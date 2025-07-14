@@ -1,2 +1,2 @@
-ALTER USER 'auth-service'@'%' identified WITH mysql_native_password by 'password';
+ALTER USER 'auth-service'@'%' identified WITH caching_sha2_password by 'password';
 FLUSH PRIVILEGES;

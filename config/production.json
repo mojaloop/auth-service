@@ -39,15 +39,16 @@
     }
   },
   "DATABASE": {
-    "client": "mysql",
-    "version": "5.5",
+    "client": "mysql2",
     "connection": {
       "host": "localhost",
       "port": 3306,
       "user": "auth-service",
       "password": "password",
       "database": "auth-service",
-      "timezone": "UTC"
+      "timezone": "UTC",
+      "decimalNumbers": true,
+      "jsonStrings": true
     },
     "pool": {
       "min": 10,
