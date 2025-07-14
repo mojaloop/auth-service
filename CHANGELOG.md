@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.2.5](https://github.com/mojaloop/auth-service/compare/v15.2.4...v15.2.5) (2025-07-14)
+
+
+### Chore
+
+* **sbom:** update sbom-v15.2.5-snapshot.0.csv [skip ci] ([7b8d26a](https://github.com/mojaloop/auth-service/commit/7b8d26a29dfd8fca77cae9354850dbae6096704a))
+* switch to mysql2 client ([#157](https://github.com/mojaloop/auth-service/issues/157)) ([2cb9271](https://github.com/mojaloop/auth-service/commit/2cb92710bd849f4ca4b386aa2d5d788785dc3812))
+
 ### [15.2.4](https://github.com/mojaloop/auth-service/compare/v15.2.3...v15.2.4) (2025-06-13)
 
 
