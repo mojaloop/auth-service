@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.2.6](https://github.com/mojaloop/auth-service/compare/v15.2.5...v15.2.6) (2025-07-17)
+
+
+### Chore
+
+* update orb version ([#158](https://github.com/mojaloop/auth-service/issues/158)) ([0e39e74](https://github.com/mojaloop/auth-service/commit/0e39e74747169112dff2b1e6f84b60d6fecbbf93))
+
 ### [15.2.5](https://github.com/mojaloop/auth-service/compare/v15.2.4...v15.2.5) (2025-07-14)
 
 
