@@ -157,7 +157,7 @@
     "convict": "6.2.4",
     "crypto-js": "4.2.0",
     "dot-prop": "9.0.0",
-    "fido2-lib": "2.8.3",
+    "fido2-lib": "3.0.0",
     "hapi-openapi": "3.0.0",
     "hapi-swagger": "17.3.2",
     "javascript-state-machine": "3.1.0",
