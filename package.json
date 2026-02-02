@@ -146,7 +146,7 @@
     "@mojaloop/central-services-health": "15.1.0",
     "@mojaloop/central-services-shared": "18.30.6",
     "@mojaloop/event-sdk": ">=14.x.x",
-    "@mojaloop/sdk-standard-components": "19.16.4",
+    "@mojaloop/sdk-standard-components": "19.18.5",
     "atob": "2.1.2",
     "axios": "^1.11.0",
     "babel-jest": "30.0.5",
