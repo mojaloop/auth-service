@@ -1,7 +1,11 @@
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import typescriptEslintParser from '@typescript-eslint/parser';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import prettierPlugin from 'eslint-plugin-prettier';
 import importPlugin from 'eslint-plugin-import';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default [
   {
@@ -21,7 +25,7 @@ export default [
         ecmaVersion: 2018,
         sourceType: 'module',
         project: './tsconfig.json',
-        tsconfigRootDir: './',
+        tsconfigRootDir: __dirname,
       },
     },
     plugins: {

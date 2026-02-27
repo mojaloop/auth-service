@@ -9,6 +9,11 @@ module.exports = {
     // `error parsing ASN.1`. Investigation needed.
     'fido2-lib',
     // @hapi/hapi past v21.3.2 introduces some type export errors
-    "@hapi/hapi"
+    "@hapi/hapi",
+    // eslint v10 breaks eslint-plugin-import peer dependency
+    'eslint',
+    // uuid v12+ drops CommonJS support; this project uses CJS (tsconfig module: commonjs)
+    'uuid',
+    '@types/uuid'
   ]
 }
