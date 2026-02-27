@@ -148,7 +148,7 @@
     "@mojaloop/event-sdk": ">=14.x.x",
     "@mojaloop/sdk-standard-components": "19.18.8",
     "atob": "2.1.2",
-    "axios": "^1.13.5",
+    "axios": "1.13.5",
     "babel-jest": "30.2.0",
     "blipp": "4.0.2",
     "btoa": "1.2.1",
@@ -220,7 +220,8 @@
       "undici": "7.22.0"
     },
     "lodash": "4.17.23",
-    "lodash-es": "4.17.23"
+    "lodash-es": "4.17.23",
+    "axios": "1.13.5"
   },
   "peerDependencies": {
     "@mojaloop/central-services-error-handling": ">=13.x.x",
