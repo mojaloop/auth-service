@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.2.8](https://github.com/mojaloop/auth-service/compare/v15.2.7...v15.2.8) (2026-03-24)
+
+
+### Chore
+
+* add private:true to prevent npm publish ([#4384](https://github.com/mojaloop/auth-service/issues/4384)) ([#179](https://github.com/mojaloop/auth-service/issues/179)) ([4b722ec](https://github.com/mojaloop/auth-service/commit/4b722ec2a3b5073aa2791f78bc51fb897db80c4b))
+* **sbom:** update sbom [skip ci] ([d21470c](https://github.com/mojaloop/auth-service/commit/d21470c9376953ef281e6b1d91eb08bbdd3cb908))
+
 ### [15.2.7](https://github.com/mojaloop/auth-service/compare/v15.2.6...v15.2.7) (2025-07-25)
 
 
