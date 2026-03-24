@@ -9,6 +9,12 @@ module.exports = {
     // `error parsing ASN.1`. Investigation needed.
     'fido2-lib',
     // @hapi/hapi past v21.3.2 introduces some type export errors
-    "@hapi/hapi"
+    "@hapi/hapi",
+    // eslint v10.x has peer dep conflicts with eslint-plugin-import
+    "eslint",
+    // uuid v13.x is ESM-only, breaks Jest
+    "uuid",
+    // typescript v6.x is a major version - keep on 5.x until verified
+    "typescript"
   ]
 }
