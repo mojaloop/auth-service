@@ -5,5 +5,9 @@
   "moderate": true,
   "allowlist": [
     // NOTE: Please add as much information as possible to any items added to the allowList
+    // lodash/lodash-es prototype pollution in _.unset and _.omit - no fix available in 4.x
+    "GHSA-xxjr-mmjv-4gpg",
+    // elliptic risky crypto implementation - fido2-lib pins vulnerable version
+    "GHSA-848j-6mx2-7j84"
   ]
 }
