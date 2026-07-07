@@ -1,0 +1,8 @@
+{
+  "exceptions": {
+    "oer-utils@5.1.2": {
+      "reason": "Apache-2.0 licensed (LICENSE file: 'Licensed under the Apache License, Version 2.0') but the upstream package.json omits the license field, so syft reads it as empty. Transitive via @mojaloop/sdk-standard-components -> ilp-packet@3.1.3. Verified 2026-07-07.",
+      "expires": "2026-12-31"
+    }
+  }
+}

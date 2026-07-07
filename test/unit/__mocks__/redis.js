@@ -55,5 +55,6 @@ class RedisClient extends redisMock.RedisClient {
 }
 
 module.exports = {
-  createClient: () => new RedisClient()
+  // redis-mock@0.56 RedisClient requires an options object (it reads options.host/options.db)
+  createClient: (options) => new RedisClient(options || {})
 }

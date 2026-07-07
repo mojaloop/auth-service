@@ -1,15 +1,22 @@
 scan-type: source
 
 ignore:
-  # - vulnerability: CVE-2025-3277 #  sqlite-libs 3.48.0-r2 
+  # - vulnerability: CVE-2025-3277 #  sqlite-libs 3.48.0-r2
   # - vulnerability: CVE-2024-9410 # ada-libs 2.9.2-r1
 
-  - vulnerability: GHSA-xxjr-mmjv-4gpg
+  # 2026-07-07: step-security/harden-runner@v2.15.0 is referenced by CI workflow files
+  # shipped inside the published fido2-lib npm package (node_modules/fido2-lib/.github/).
+  # Not a runtime dependency and not repo-owned — nothing to fix on our side.
+  - vulnerability: GHSA-46g3-37rh-v698
     include-aliases: true
-    reason: "lodash/lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets and @mojaloop/central-services-shared — no upgrade path available"
-  - vulnerability: GHSA-848j-6mx2-7j84
+    package:
+      name: step-security/harden-runner
+      version: v2.15.0
+  - vulnerability: GHSA-g699-3x6g-wm3g
     include-aliases: true
-    reason: "elliptic transitive via fido2-lib@2.8.3 — pinned version, no upgrade path available"
+    package:
+      name: step-security/harden-runner
+      version: v2.15.0
 
 # Set output format defaults
 output:

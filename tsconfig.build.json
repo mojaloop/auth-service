@@ -19,10 +19,10 @@
   "compilerOptions": {
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "test/*": [
-        "test/*"
+        "./test/*"
       ]
     }
   }

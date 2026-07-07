@@ -30,7 +30,7 @@
 import Inert from '@hapi/inert'
 import Vision from '@hapi/vision'
 import Blip from 'blipp'
-import { Server, ServerRoute, Utils as HapiUtil, RequestQuery } from '@hapi/hapi'
+import { Server, ServerRoute, Utils as HapiUtil, RequestQuery, HTTP_METHODS } from '@hapi/hapi'
 import { Readable as StreamReadable } from 'stream'
 import ErrorHandling from '@mojaloop/central-services-error-handling'
 import { Util } from '@mojaloop/central-services-shared'
@@ -78,7 +78,7 @@ async function register(server: Server): Promise<Server> {
 
 // Context is required for OpenAPI
 export interface Context {
-  method: HapiUtil.HTTP_METHODS_PARTIAL_LOWERCASE
+  method: Lowercase<HTTP_METHODS>
   path: string
   body: StreamReadable | Buffer | string | object
   query: RequestQuery

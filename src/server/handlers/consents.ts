@@ -45,7 +45,7 @@ import config from '~/shared/config'
 export async function post(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = request.payload as tpAPI.Schemas.ConsentsPostRequestAUTH
   const consentId = payload.consentId
-  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE] as string
 
   const data: RegisterConsentData = {
     dfspId: h.getDFSPId(),
