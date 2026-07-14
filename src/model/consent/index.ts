@@ -26,4 +26,5 @@
  --------------
  ******/
 
-export { ConsentDB, ConsentModel } from './consent'
+export { ConsentDB } from './consent'
+export type { ConsentModel } from './consent'

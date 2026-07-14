@@ -26,4 +26,5 @@
  --------------
  ******/
 
-export { ScopeModel, ScopeDB } from './scope'
+export { ScopeDB } from './scope'
+export type { ScopeModel } from './scope'

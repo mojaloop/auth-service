@@ -1,7 +1,7 @@
 import typescriptEslintParser from '@typescript-eslint/parser';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import prettierPlugin from 'eslint-plugin-prettier';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 
 export default [
   {
@@ -27,7 +27,7 @@ export default [
     plugins: {
       '@typescript-eslint': typescriptEslintPlugin,
       prettier: prettierPlugin,
-      import: importPlugin,
+      'import-x': importPlugin,
     },
     rules: {
       ...typescriptEslintPlugin.configs.recommended.rules,
@@ -42,7 +42,7 @@ export default [
       '@typescript-eslint/no-empty-interface': 'warn',
     },
     settings: {
-      'import/resolver': {
+      'import-x/resolver': {
         typescript: {},
       },
     },

@@ -19,7 +19,7 @@
   ],
   "compilerOptions": {
     "target": "es2018",
-    "module": "commonjs",
+    "module": "nodenext",
     "rootDirs": [
       "src",
       "test"
@@ -43,17 +43,18 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "baseUrl": "./",
+    "moduleResolution": "nodenext",
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "test/*": [
-        "test/*"
+        "./test/*"
       ]
     },
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": ["node", "jest"]
   }
 }

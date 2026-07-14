@@ -256,4 +256,5 @@ if (config.DEMO_SKIP_VALIDATION_FOR_CREDENTIAL_IDS.length > 0) {
 }
 
 export default config
-export { PACKAGE, ServiceConfig }
+export { PACKAGE }
+export type { ServiceConfig }
