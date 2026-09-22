@@ -1,0 +1,23 @@
+{
+  "reject": [
+    "redis-mock",
+    "why-redis-mock: caution advised past 0.52.0, investigation needed (carried over from the js config)",
+    "redis",
+    "@types/redis",
+    "why-redis: past v3 the next major introduces a lot of breaking changes (carried over from the js config)",
+    "fido2-lib",
+    "why-fido2: past 2.8.3 tests fail with 'error parsing ASN.1' (carried over from the js config)",
+    "@hapi/hapi",
+    "why-hapi: past 21.3.2 introduces type export errors (carried over from the js config); 21.4.10 also retyped Request Params as Record<string, unknown>",
+    "eslint",
+    "why-eslint: v10 has peer conflicts with the import plugin (carried over from the js config)",
+    "uuid",
+    "why-uuid: v13 is ESM-only and breaks the jest suites (carried over from the js config)",
+    "typescript",
+    "why-typescript: 7.x ships Go-built tsgo binaries that make the CircleCI Grype source scan report High Go stdlib CVEs, and the ts lint parser peer range tops out below 6.1 (carried over from the js config)",
+    "@types/node",
+    "why-types-node: its major must match the Node runtime major in .nvmrc (24); a higher major only weakens type checking (tsc accepts newer-Node-only APIs that crash at runtime); bump together with the runtime",
+    "ts-jest",
+    "why-ts-jest: 29.4.10 started honouring moduleResolution nodeNext with per-import resolutionMode, which makes namespace-style type references resolve to a package's ESM d.ts and fail with TS2503; hold at 29.4.6 until the sources use named type imports (reproduced 2026-09-18 in another repo)"
+  ]
+}
