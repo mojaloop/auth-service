@@ -1,23 +1,84 @@
 scan-type: source
-
 ignore:
-  # - vulnerability: CVE-2025-3277 #  sqlite-libs 3.48.0-r2 
-  # - vulnerability: CVE-2024-9410 # ada-libs 2.9.2-r1
-
+  - vulnerability: CVE-2026-85091
+    include-aliases: true
+    reason: >-
+      Alpine base image package (apk): zlib 1.3.2-r0 - base image node:24.21.0-alpine3.24, no fix in image as of
+      2026-09-18 (high severity)
+  - vulnerability: GHSA-mh99-v99m-4gvg
+    include-aliases: true
+    reason: >-
+      Base image npm package: brace-expansion 5.0.7 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in
+      image as of 2026-09-18 (high severity)
+  - vulnerability: GHSA-rgw5-rvv9-x895
+    include-aliases: true
+    reason: >-
+      Base image npm package: brace-expansion 5.0.7 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in
+      image as of 2026-09-18 (high severity)
+  - vulnerability: GHSA-mwp4-54f8-5fhr
+    include-aliases: true
+    reason: >-
+      Base image npm package: ip-address 10.2.0 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image
+      as of 2026-09-18 (high severity)
+  - vulnerability: GHSA-r292-9mhp-454m
+    include-aliases: true
+    reason: >-
+      Base image npm package: tar 7.5.19 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image as of
+      2026-09-18 (high severity)
+  - vulnerability: CVE-2025-60876
+    include-aliases: true
+    reason: >-
+      Alpine base image package (apk): busybox / busybox-binsh / ssl_client 1.37.0-r31 - base image
+      node:24.21.0-alpine3.24, no fix in image as of 2026-09-18 (medium severity)
+  - vulnerability: GHSA-22jq-vg5j-6vgg
+    include-aliases: true
+    reason: >-
+      Base image npm package: ip-address 10.2.0 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image
+      as of 2026-09-18 (medium severity)
+  - vulnerability: GHSA-4xrf-jv44-h6hh
+    include-aliases: true
+    reason: >-
+      Base image npm package: ip-address 10.2.0 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image
+      as of 2026-09-18 (medium severity)
+  - vulnerability: GHSA-8xcm-r25x-g524
+    include-aliases: true
+    reason: >-
+      Base image npm package: undici 6.27.0 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image as of
+      2026-09-18 (medium severity)
+  - vulnerability: GHSA-m8rv-5g2x-5cg5
+    include-aliases: true
+    reason: >-
+      Base image npm package: undici 6.27.0 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image as of
+      2026-09-18 (medium severity)
+  - vulnerability: GHSA-v3r7-h72x-cjcm
+    include-aliases: true
+    reason: >-
+      Base image npm package: undici 6.27.0 (bundled in npm) - base image node:24.21.0-alpine3.24, no fix in image as of
+      2026-09-18 (medium severity)
   - vulnerability: GHSA-xxjr-mmjv-4gpg
     include-aliases: true
-    reason: "lodash/lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets and @mojaloop/central-services-shared — no upgrade path available"
+    reason: >-
+      lodash/lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets and
+      @mojaloop/central-services-shared — no upgrade path available
   - vulnerability: GHSA-848j-6mx2-7j84
     include-aliases: true
-    reason: "elliptic transitive via fido2-lib@2.8.3 — pinned version, no upgrade path available"
-
-# Set output format defaults
+    reason: elliptic transitive via fido2-lib@2.8.3 — pinned version, no upgrade path available
+  - vulnerability: GHSA-46g3-37rh-v698
+    include-aliases: true
+    reason: >-
+      GitHub Action step-security/harden-runner v2.15.0 pinned inside node_modules/fido2-lib's own .github/workflows -
+      not used by this repository's CI and not fixable here (fido2-lib is held at 2.8.3, see .ncurc); as of 2026-09-22
+      (medium severity)
+  - vulnerability: GHSA-g699-3x6g-wm3g
+    include-aliases: true
+    reason: >-
+      GitHub Action step-security/harden-runner v2.15.0 pinned inside node_modules/fido2-lib's own .github/workflows -
+      not used by this repository's CI and not fixable here (fido2-lib is held at 2.8.3, see .ncurc); as of 2026-09-22
+      (medium severity)
 output:
-  - "table"
-  - "json"
-
-# Modify your CircleCI job to check critical count
+  - table
+  - json
 search:
-  scope: "squashed"
+  scope: squashed
 quiet: false
 check-for-app-update: false
