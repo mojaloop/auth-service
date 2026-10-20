@@ -43,7 +43,7 @@ async function put(_context: unknown, request: Request, h: StateResponseToolkit)
   const consentId = request.params.ID as string
   const payload = request.payload as fspiopAPI.Schemas.ErrorInformation
 
-  RegisterConsentModel.triggerWorkflow(
+  void RegisterConsentModel.triggerWorkflow(
     RegisterConsentPhase.waitOnParticipantResponseFromALS,
     consentId,
     h.getPublisher(),

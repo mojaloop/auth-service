@@ -44,7 +44,7 @@ async function put(_context: unknown, request: Request, h: StateResponseToolkit)
   const consentId = request.params.ID as string
   const payload = request.payload as tpAPI.Schemas.ParticipantsTypeIDPutResponse
 
-  RegisterConsentModel.triggerWorkflow(
+  void RegisterConsentModel.triggerWorkflow(
     RegisterConsentPhase.waitOnParticipantResponseFromALS,
     consentId,
     h.getPublisher(),
