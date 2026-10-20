@@ -40,7 +40,7 @@ import { Message } from '~/shared/pub-sub'
 async function put(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   // PUT /participants/{Type}/{ID}/error  is a response to POST /participants/{Type}/{ID}
   // when some went wrong with the ALS
-  const consentId = request.params.ID
+  const consentId = request.params.ID as string
   const payload = request.payload as fspiopAPI.Schemas.ErrorInformation
 
   RegisterConsentModel.triggerWorkflow(

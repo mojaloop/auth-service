@@ -41,7 +41,7 @@ async function put(_context: unknown, request: Request, h: StateResponseToolkit)
   // when the ALS is able to register the auth-service as the authoritative
   // owner of a Consent object
 
-  const consentId = request.params.ID
+  const consentId = request.params.ID as string
   const payload = request.payload as tpAPI.Schemas.ParticipantsTypeIDPutResponse
 
   RegisterConsentModel.triggerWorkflow(
