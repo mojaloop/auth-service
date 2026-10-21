@@ -92,7 +92,7 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
-    "@redocly/cli": "2.65.0",
+    "@redocly/cli": "2.67.0",
     "@types/atob": "2.1.4",
     "@types/btoa": "1.2.5",
     "@types/convict": "6.1.6",
@@ -190,16 +190,16 @@
     "shins": {
       "ajv": "6.12.3",
       "ejs": "3.1.10",
-      "sanitize-html": "2.17.7",
-      "markdown-it": "14.3.1",
+      "sanitize-html": "2.18.1",
+      "markdown-it": "14.3.3",
       "postcss": "8.5.23"
     },
     "widdershins": {
-      "markdown-it": "14.3.1",
+      "markdown-it": "14.3.3",
       "swagger2openapi": "7.0.8"
     },
     "cross-spawn": "7.0.6",
-    "markdown-it": "14.3.1",
+    "markdown-it": "14.3.3",
     "path-to-regexp": "0.1.13",
     "fast-xml-parser": "5.7.0",
     "immutable": "5.1.9",
@@ -219,10 +219,10 @@
     "fast-xml-builder": "1.1.7",
     "ip-address": "10.7.4",
     "@hapi/wreck": "18.1.2",
-    "sanitize-html": "2.17.7",
+    "sanitize-html": "2.18.1",
     "body-parser": "1.20.6",
     "@humanfs/node": "0.16.8",
-    "follow-redirects": "1.16.0",
+    "follow-redirects": "1.16.1",
     "@babel/core": "7.29.6",
     "picomatch@2": "2.3.2",
     "picomatch@4": "4.0.7",
