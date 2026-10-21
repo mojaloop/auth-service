@@ -203,6 +203,153 @@ ignore:
       GitHub Action pin (harden-runner v2.15.0) inside the workflow files that the fido2-lib npm tarball ships under
       node_modules/fido2-lib/.github/workflows; this repo never runs those workflows, and the fix is an upstream bump to
       2.16.0 in fido2-lib (2026-10-16)
+  - vulnerability: GHSA-jqcg-44mw-7w3h
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: proxy-addr (critical severity) as of 2026-10-21'
+  - vulnerability: GHSA-p8wg-vrv2-v86f
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: handlebars (critical severity) as of 2026-10-21'
+  - vulnerability: GHSA-86w9-cpqp-85rv
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: node-forge (high severity) as of 2026-10-21'
+  - vulnerability: GHSA-crv5-9vww-q3g8
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: dompurify (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-g8qq-57p8-ggw5
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: sanitize-html (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-vccv-cmxp-4j9h
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: sanitize-html (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-hp3w-g68c-fv3c
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: sprintf-js (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-4mjr-xmp4-gh2g
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: qs (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-rcvq-m9j9-6f4g
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: @hapi/inert (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-848j-6mx2-7j84
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: elliptic (low severity) as of 2026-10-21'
+  - vulnerability: GHSA-gg4h-3hg2-grpc
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: joi (low severity) as of 2026-10-21'
+  - vulnerability: GHSA-x4vx-rjvf-j5p4
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: dompurify (low severity) as of 2026-10-21'
+  - vulnerability: GHSA-3w6x-2g7m-8v23
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-q8qp-cvcw-x6jj
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-hfxv-24rg-xrqf
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-777c-7fjr-54vf
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-p92q-9vqr-4j8v
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-j5f8-grm9-p9fc
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-3g43-6gmg-66jw
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-35jp-ww65-95wh
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-898c-q2cr-xwhg
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-pjwm-pj3p-43mv
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-mmx7-hfxf-jppx
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-pmv8-rq9r-6j72
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-mwf2-3pr3-8698
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-7q8q-rj6j-mhjq
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-jqh4-m9w3-8hp9
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-f4gw-2p7v-4548
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-42h9-826w-cgv3
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-hcpx-6fm6-wx23
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-vh66-26gq-q6x8
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-9fr6-4gfg-395g
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-mghh-pgcx-3jjj
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-x97p-jq2g-jp4f
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-3pq3-5fj3-cg6v
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-542g-h47m-68v8
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-j8rh-479h-cp32
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-4hqw-qxg8-jxx2
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-44g4-m2mj-wpvx
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-fjxv-7rqg-78g4
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-hmw2-7cc7-3qxx
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-r7fv-28h4-cvq7
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-vfgh-jcmw-g37q
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-gfr2-rv44-r23c
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-x5fp-wj9c-mxmx
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-x3q4-9hxx-gx8m
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-374f-7chj-9948
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-cv27-6wvh-8x7j
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-23hp-3jrh-7fpw
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
 output:
   - table
   - json
