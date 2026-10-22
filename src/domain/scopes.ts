@@ -76,13 +76,11 @@ export function convertThirdpartyScopesToDatabaseScope(
 ): ScopeModel[] {
   const scopes: ScopeModel[] = thirdpartyScopes
     .map((element: tpAPI.Schemas.Scope): ScopeModel[] =>
-      element.actions.map(
-        (action: string): ScopeModel => ({
-          consentId,
-          address: element.address,
-          action
-        })
-      )
+      element.actions.map((action: string): ScopeModel => ({
+        consentId,
+        address: element.address,
+        action
+      }))
     )
     .flat()
 

@@ -136,109 +136,82 @@ describe('RedisConnection', () => {
     expect(pong).toBe(true)
   })
 
-  it('should handle redis errors', async (): Promise<void> => {
-    const createClientSpy = jest.spyOn(Redis, 'createClient')
-    const mockQuit = jest.fn()
-    createClientSpy.mockImplementationOnce(
-      () =>
-        ({
-          quit: mockQuit,
-          // simulate sending notification on error
-          on: jest.fn((msg: string, cb: (err: Error | null) => void): void => {
-            // do nothing on ready because we want to enforce error to reject promise
-            if (msg === 'ready') {
-              setTimeout(() => {
-                cb(null)
-              }, defaultTimeout + 10)
-            }
-            if (msg === 'error') {
-              setImmediate(() => cb(new Error('emitted')))
-            }
-          })
-        }) as unknown as Redis.RedisClient
-    )
+  // The client events are driven by hand so the ready/error ordering and the reconnect timeout are
+  // deterministic: the previous real-timer versions raced within 10 ms of each other and, on a slow
+  // runner, skipped the reject path (leaving its branches uncovered) while still passing.
+  const fakeClient = (): {
+    client: Redis.RedisClient
+    quit: jest.Mock
+    emit: (event: string, err?: Error | null) => void
+  } => {
+    const handlers: Record<string, (err: Error | null) => void> = {}
+    const quit = jest.fn()
+    const client = {
+      quit,
+      on: jest.fn((event: string, cb: (err: Error | null) => void): void => {
+        handlers[event] = cb
+      })
+    } as unknown as Redis.RedisClient
+    return { client, quit, emit: (event, err = null) => handlers[event]?.(err) }
+  }
 
+  it('should reject when no ready follows the error within the timeout', async (): Promise<void> => {
+    jest.useFakeTimers()
+    const fake = fakeClient()
+    jest.spyOn(Redis, 'createClient').mockImplementationOnce(() => fake.client)
     const redis = new RedisConnection(config)
-    try {
-      await redis.connect()
-    } catch (error) {
-      expect(error).toEqual(new Error('emitted'))
-      expect(config.logger.push).toHaveBeenCalledWith({ err: new Error('emitted') })
-      expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
-      expect(mockQuit).toHaveBeenCalledTimes(1)
-    }
+    const pending = redis.connect()
+    const expectation = expect(pending).rejects.toEqual(new Error('emitted'))
+    const err = new Error('emitted')
+    fake.emit('error', err)
+    // a second error while the reconnect timer is running is logged but does not start another timer
+    fake.emit('error', new Error('second'))
+    jest.advanceTimersByTime(defaultTimeout)
+    await expectation
+    expect(config.logger.push).toHaveBeenCalledWith({ err })
+    expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
+    expect(fake.quit).toHaveBeenCalledTimes(1)
+    // a late ready after the rejection is ignored
+    fake.emit('ready')
+    expect(config.logger.info).not.toHaveBeenCalled()
+    jest.useRealTimers()
   })
 
-  it('should not reject if reconnection successful', async (): Promise<void> => {
-    const createClientSpy = jest.spyOn(Redis, 'createClient')
-    const mockQuit = jest.fn()
-    createClientSpy.mockImplementationOnce(
-      () =>
-        ({
-          quit: mockQuit,
-          // simulate sending notification on error
-          on: jest.fn((msg: string, cb: (err: Error | null) => void): void => {
-            // do nothing on ready because we want to enforce error to reject promise
-            if (msg === 'ready') {
-              setTimeout(() => {
-                cb(null)
-              }, defaultTimeout - 10)
-            }
-            if (msg === 'error') {
-              setImmediate(() => cb(new Error('emitted')))
-            }
-          })
-        }) as unknown as Redis.RedisClient
-    )
+  it('should not reject if the reconnection succeeds before the timeout', async (): Promise<void> => {
+    jest.useFakeTimers()
+    const fake = fakeClient()
+    jest.spyOn(Redis, 'createClient').mockImplementationOnce(() => fake.client)
     const redis = new RedisConnection(config)
-    try {
-      await redis.connect()
-    } catch (error) {
-      expect(error).toEqual(new Error('emitted'))
-      expect(config.logger.push).toHaveBeenCalledWith({ err: new Error('emitted') })
-      expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
-      expect(mockQuit).toHaveBeenCalledTimes(1)
-    }
+    const pending = redis.connect()
+    fake.emit('error', new Error('emitted'))
+    jest.advanceTimersByTime(defaultTimeout - 10)
+    fake.emit('ready')
+    // the reconnect timer still fires, but finds the promise already resolved
+    jest.advanceTimersByTime(defaultTimeout)
+    await expect(pending).resolves.toBeUndefined()
+    expect(config.logger.info).toHaveBeenCalledWith(
+      `createClient: Connected to REDIS at: ${config.host}:${config.port}`
+    )
+    expect(fake.quit).not.toHaveBeenCalled()
+    jest.useRealTimers()
   })
 
-  it('should protected against multiple rejection when ready but log errors', (done): void => {
-    const createClientSpy = jest.spyOn(Redis, 'createClient')
-    const mockQuit = jest.fn()
-    createClientSpy.mockImplementationOnce(
-      () =>
-        ({
-          quit: mockQuit,
-          // simulate sending notification on error
-          on: jest.fn((msg: string, cb: (err: Error | null) => void): void => {
-            // invoke ready so promise resolve
-            if (msg === 'ready') {
-              setImmediate(() => {
-                expect(config.logger.info).toHaveBeenCalledTimes(0)
-                cb(null)
-                expect(config.logger.info).toHaveBeenCalledWith(
-                  `createClient: Connected to REDIS at: ${config.host}:${config.port}`
-                )
-              })
-            }
-            // after invoke ready trigger error to check the promise wasn't rejected
-            if (msg === 'error') {
-              setTimeout(() => {
-                cb(new Error('emitted'))
-                expect(config.logger.push).toHaveBeenCalledWith({ err: new Error('emitted') })
-                expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
-                // if promise wasn't reject the quit shouldn't be called
-                expect(mockQuit).not.toHaveBeenCalled()
-                done()
-              }, 10)
-            }
-          })
-        }) as unknown as Redis.RedisClient
-    )
+  it('should protect against multiple resolution and only log errors arriving after ready', async (): Promise<void> => {
+    jest.useFakeTimers()
+    const fake = fakeClient()
+    jest.spyOn(Redis, 'createClient').mockImplementationOnce(() => fake.client)
     const redis = new RedisConnection(config)
-    redis.connect().catch(() => {
-      // fail test if this line is reached
-      // so proof that multiple rejection doesn't happen
-      expect(true).toBe(false)
-    })
+    const pending = redis.connect()
+    fake.emit('ready')
+    fake.emit('ready')
+    const err = new Error('emitted')
+    fake.emit('error', err)
+    jest.advanceTimersByTime(defaultTimeout * 2)
+    await expect(pending).resolves.toBeUndefined()
+    expect(config.logger.info).toHaveBeenCalledTimes(1)
+    expect(config.logger.push).toHaveBeenCalledWith({ err })
+    expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
+    expect(fake.quit).not.toHaveBeenCalled()
+    jest.useRealTimers()
   })
 })

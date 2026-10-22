@@ -1,0 +1,15 @@
+{
+  "reject": [
+    "redis-mock",
+    "why-redis: redis 4+ (and the matching @types/redis 4 / redis-mock 0.56) replaces the callback client with a promise-based one and generic RedisClient types; src/shared/redis-connection.ts and kvs.ts need a rewrite first (re-tested 2026-10-20: 18 suites fail to compile)",
+    "redis",
+    "@types/redis",
+    "why-redis: redis 4+ (and the matching @types/redis 4 / redis-mock 0.56) replaces the callback client with a promise-based one and generic RedisClient types; src/shared/redis-connection.ts and kvs.ts need a rewrite first (re-tested 2026-10-20: 18 suites fail to compile)",
+    "eslint",
+    "why-eslint: 10.x cannot be installed by npm ci - eslint-plugin-import 2.32.0 (latest) declares a peer range that stops at eslint 9 (re-tested 2026-10-20)",
+    "typescript",
+    "why-typescript: 7.0.2 fails npm install with ERESOLVE because the ts lint parser 8.72 declares a peer range of typescript <6.1.0, and its Go-built tsgo binaries trip the Grype source scan (re-tested 2026-10-20)",
+    "@types/node",
+    "why-types-node: its major must match the Node runtime major in .nvmrc (24); a higher major only weakens type checking (tsc accepts newer-Node-only APIs that crash at runtime); bump together with the runtime"
+  ]
+}
