@@ -203,6 +203,9 @@ ignore:
       GitHub Action pin (harden-runner v2.15.0) inside the workflow files that the fido2-lib npm tarball ships under
       node_modules/fido2-lib/.github/workflows; this repo never runs those workflows, and the fix is an upstream bump to
       2.16.0 in fido2-lib (2026-10-16)
+  - vulnerability: CVE-2026-107891
+    include-aliases: true
+    reason: 'Alpine base image package (apk): musl - no npm fix available as of 2026-10-22 (info severity)'
 output:
   - table
   - json
