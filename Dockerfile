@@ -1,6 +1,5 @@
 # Arguments
-ARG NODE_VERSION=22.22.0-alpine3.23
-
+ARG NODE_VERSION="24.21.0-alpine3.24"
 # NOTE: Ensure you set NODE_VERSION Build Argument as follows...
 #
 #  export NODE_VERSION="$(cat .nvmrc)-alpine" \
@@ -11,22 +10,24 @@ ARG NODE_VERSION=22.22.0-alpine3.23
 #
 
 # Build Image
-FROM node:${NODE_VERSION} as builder
+FROM node:${NODE_VERSION} AS builder
 USER root
 
 WORKDIR /opt/app
 
-RUN apk add --no-cache -t build-dependencies make gcc g++ python3 libtool openssl-dev autoconf automake \
-    && cd $(npm root -g)/npm
+RUN apk add --no-cache --virtual .build-deps autoconf automake g++ gcc libtool make openssl-dev python3
 
 COPY package.json package-lock.json* /opt/app/
 
-RUN npm ci
+# Lifecycle scripts are skipped for supply-chain safety (docker:S6505); cbor-extract is
+# the only production dependency that needs its native build, so run it explicitly.
+RUN npm ci --ignore-scripts
+RUN npm rebuild cbor-extract
 
 COPY ./ /opt/app
 RUN npm run build
 RUN rm -rf src secrets test docs
-RUN npm prune --production
+RUN npm prune --omit=dev --ignore-scripts
 
 FROM node:${NODE_VERSION}
 
