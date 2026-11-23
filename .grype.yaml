@@ -295,6 +295,27 @@ ignore:
   - vulnerability: GHSA-4528-x5fx-h6hg
     include-aliases: true
     reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-11-20'
+  - vulnerability: CVE-2026-124709
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (high severity)'
+  - vulnerability: CVE-2026-107494
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (high severity)'
+  - vulnerability: CVE-2026-121482
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (high severity)'
+  - vulnerability: CVE-2026-84786
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (high severity)'
+  - vulnerability: CVE-2026-95690
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (moderate severity)'
+  - vulnerability: CVE-2026-35190
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (moderate severity)'
+  - vulnerability: CVE-2026-107493
+    include-aliases: true
+    reason: 'Alpine base image package (apk): libcrypto3 - no npm fix available as of 2026-11-23 (high severity)'
 output:
   - table
   - json
