@@ -49,6 +49,8 @@ describe('RedisConnection', () => {
   }
 
   beforeEach(() => jest.resetAllMocks())
+  // restore real timers even when a fake-timer test fails before reaching its end
+  afterEach(() => jest.useRealTimers())
 
   it('should be well constructed', () => {
     const redis = new RedisConnection(config)
@@ -174,7 +176,6 @@ describe('RedisConnection', () => {
     // a late ready after the rejection is ignored
     fake.emit('ready')
     expect(config.logger.info).not.toHaveBeenCalled()
-    jest.useRealTimers()
   })
 
   it('should not reject if the reconnection succeeds before the timeout', async (): Promise<void> => {
@@ -193,7 +194,6 @@ describe('RedisConnection', () => {
       `createClient: Connected to REDIS at: ${config.host}:${config.port}`
     )
     expect(fake.quit).not.toHaveBeenCalled()
-    jest.useRealTimers()
   })
 
   it('should protect against multiple resolution and only log errors arriving after ready', async (): Promise<void> => {
@@ -212,6 +212,5 @@ describe('RedisConnection', () => {
     expect(config.logger.push).toHaveBeenCalledWith({ err })
     expect(config.logger.error).toHaveBeenCalledWith('createClient: Error from REDIS client')
     expect(fake.quit).not.toHaveBeenCalled()
-    jest.useRealTimers()
   })
 })
