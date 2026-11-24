@@ -44,8 +44,8 @@ const mockGetScopesForConsentId = jest.spyOn(DB, 'getScopesForConsentId')
 //   ScopeFunction, 'convertThirdpartyScopesToDatabaseScope')
 
 describe('server/domain/consents', (): void => {
-  const consentId = requestWithPayloadScopes.params.ID
-  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
+  const consentId = requestWithPayloadScopes.params.ID as string
+  const participantId = requestWithPayloadScopes.headers['fspiop-destination'] as string
   const scopesExternal: tpAPI.Schemas.Scope[] = (requestWithPayloadScopes.payload as Record<string, unknown>)
     .scopes as unknown as tpAPI.Schemas.Scope[]
   const credential: tpAPI.Schemas.SignedCredential = {

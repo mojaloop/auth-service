@@ -48,7 +48,7 @@ type VerificationsPostRequest = tpAPI.Schemas.ThirdpartyRequestsVerificationsPos
 export async function post(_context: unknown, request: Request, h: StateResponseToolkit): Promise<ResponseObject> {
   const payload: VerificationsPostRequest = request.payload as VerificationsPostRequest
   const consentId = payload.consentId
-  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const initiatorId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE] as string
 
   const data: VerifyTransactionData = {
     participantDFSPId: initiatorId,

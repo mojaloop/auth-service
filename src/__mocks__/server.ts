@@ -27,8 +27,6 @@
  ******/
 
 // mock for server.run
-export default jest.fn(
-  (): Record<string, unknown> => ({
-    run: jest.fn()
-  })
-)
+export default jest.fn((): Record<string, unknown> => ({
+  run: jest.fn()
+}))

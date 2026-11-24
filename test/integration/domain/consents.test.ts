@@ -35,8 +35,8 @@ import { deriveChallenge } from '~/domain/challenge'
 describe('server/domain/consents', (): void => {
   const consentIdsToCleanup: Array<string> = []
 
-  const consentId = requestWithPayloadScopes.params.ID
-  const participantId = requestWithPayloadScopes.headers['fspiop-destination']
+  const consentId = requestWithPayloadScopes.params.ID as string
+  const participantId = requestWithPayloadScopes.headers['fspiop-destination'] as string
   const payload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
     status: 'ISSUED',
     consentId: 'b51ec534-ee48-4575-b6a9-ead2955b8069',

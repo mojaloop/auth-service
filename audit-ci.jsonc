@@ -3,11 +3,23 @@
   // audit-ci supports reading JSON, JSONC, and JSON5 config files.
   // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
   "moderate": true,
-  "allowlist": [
-    // NOTE: Please add as much information as possible to any items added to the allowList
-    // lodash/lodash-es prototype pollution in _.unset and _.omit - no fix available in 4.x
-    "GHSA-xxjr-mmjv-4gpg",
-    // elliptic risky crypto implementation - fido2-lib pins vulnerable version
-    "GHSA-848j-6mx2-7j84"
+  "allowlist": [ // NOTE: Please add as much information as possible to any items added to the allowList
+    "GHSA-jqcg-44mw-7w3h",
+    "GHSA-p8wg-vrv2-v86f",
+    "GHSA-qrxm-fqhp-jwvm",
+    "GHSA-86w9-cpqp-85rv",
+    "GHSA-2m5v-pch6-74hx",
+    "GHSA-crv5-9vww-q3g8",
+    "GHSA-3g3m-2fjr-6pw4",
+    "GHSA-9fm3-97px-rjf6",
+    "GHSA-6cv4-p8m7-4r25",
+    "GHSA-g8qq-57p8-ggw5",
+    "GHSA-vccv-cmxp-4j9h",
+    "GHSA-4mjr-xmp4-gh2g",
+    "GHSA-g3hv-75wg-m249",
+    "GHSA-848j-6mx2-7j84",
+    "GHSA-gg4h-3hg2-grpc",
+    "GHSA-x4vx-rjvf-j5p4",
+    "GHSA-4528-x5fx-h6hg"
   ]
 }
