@@ -1,4 +1,16 @@
 # Changelog: [mojaloop/auth-service](https://github.com/mojaloop/auth-service)
+### [15.2.9](https://github.com/mojaloop/auth-service/compare/v15.2.8...v15.2.9) (2026-11-24)
+
+
+### Bug Fixes
+
+* **security:** patch 72 vulnerabilities + update deps, orb, docker ([#182](https://github.com/mojaloop/auth-service/issues/182)) ([d301825](https://github.com/mojaloop/auth-service/commit/d301825f061eaca43f9afda3ee01d98c328d51b7))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([41fca01](https://github.com/mojaloop/auth-service/commit/41fca0180e13174f7e2838a0e86dcd33e1d50ae2))
+
 ### [15.2.8](https://github.com/mojaloop/auth-service/compare/v15.2.7...v15.2.8) (2026-03-24)
 
 
